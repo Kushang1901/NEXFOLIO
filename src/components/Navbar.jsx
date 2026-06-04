@@ -13,9 +13,12 @@ export default function Navbar() {
     const [menuOpen, setMenuOpen] = useState(false);
 
     useEffect(() => {
+        let activeEmail = null;
+
         const unsubscribe = subscribeToAuthChanges(async (loggedUser) => {
             setUser(loggedUser);
             if (loggedUser) {
+                activeEmail = loggedUser.email;
                 // Set fallback name and photo first
                 setDisplayName(loggedUser.displayName || loggedUser.email);
                 setPhotoUrl(loggedUser.photoURL || "");
@@ -25,17 +28,20 @@ export default function Navbar() {
                     const response = await fetch(`/api/user?email=${encodeURIComponent(loggedUser.email)}`);
                     if (response.ok) {
                         const data = await response.json();
-                        if (data.firstName || data.lastName) {
-                            setDisplayName(`${data.firstName} ${data.lastName}`.trim());
-                        }
-                        if (data.photoUrl) {
-                            setPhotoUrl(data.photoUrl);
+                        if (activeEmail === loggedUser.email) {
+                            if (data.firstName || data.lastName) {
+                                setDisplayName(`${data.firstName} ${data.lastName}`.trim());
+                            }
+                            if (data.photoUrl) {
+                                setPhotoUrl(data.photoUrl);
+                            }
                         }
                     }
                 } catch (err) {
                     console.error("Error fetching user details from database:", err);
                 }
             } else {
+                activeEmail = null;
                 setDisplayName("");
                 setPhotoUrl("");
             }

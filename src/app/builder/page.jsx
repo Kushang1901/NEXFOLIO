@@ -68,13 +68,15 @@ export default function ResumeBuilder() {
             setFormData(JSON.parse(savedData));
         }
 
+        let activeEmail = null;
         const unsubscribe = subscribeToAuthChanges(async (user) => {
             if (user && user.email) {
+                activeEmail = user.email;
                 try {
                     const response = await fetch(`/api/user?email=${encodeURIComponent(user.email)}`);
                     if (response.ok) {
                         const data = await response.json();
-                        if (data.photoUrl) {
+                        if (activeEmail === user.email && data.photoUrl) {
                             setFormData(prev => {
                                 if (!prev.profilePhoto) {
                                     const updated = { ...prev, profilePhoto: data.photoUrl };
@@ -88,6 +90,8 @@ export default function ResumeBuilder() {
                 } catch (err) {
                     console.error("Error fetching photo from database:", err);
                 }
+            } else {
+                activeEmail = null;
             }
         });
 

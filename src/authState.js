@@ -39,6 +39,10 @@ export function subscribeToAuthChanges(callback) {
     // 3. Listen to standard Firebase Auth changes
     const unsubscribeFirebase = onAuthStateChanged(auth, (user) => {
         if (user) {
+            // A real Firebase user is authenticated. Clear any stale mock session.
+            if (typeof window !== "undefined") {
+                localStorage.removeItem("mock_user");
+            }
             callback(user);
         } else {
             // Only emit null if there's no mock user active
