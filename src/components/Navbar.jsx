@@ -1,24 +1,64 @@
-﻿import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+"use client";
+
+import React, { useEffect, useState } from "react";
+import Link from "next/link";
 import { auth } from "../firebase";
 import { signOut } from "firebase/auth";
 import { subscribeToAuthChanges } from "../authState";
-import logo from "../assets/logo.png";
 
 export default function Navbar() {
     const [user, setUser] = useState(null);
+    const [displayName, setDisplayName] = useState("");
+    const [photoUrl, setPhotoUrl] = useState("");
     const [menuOpen, setMenuOpen] = useState(false);
 
     useEffect(() => {
-        subscribeToAuthChanges((loggedUser) => {
+        const unsubscribe = subscribeToAuthChanges(async (loggedUser) => {
             setUser(loggedUser);
+            if (loggedUser) {
+                // Set fallback name and photo first
+                setDisplayName(loggedUser.displayName || loggedUser.email);
+                setPhotoUrl(loggedUser.photoURL || "");
+                
+                // Fetch real name and photo from Neon PostgreSQL database
+                try {
+                    const response = await fetch(`/api/user?email=${encodeURIComponent(loggedUser.email)}`);
+                    if (response.ok) {
+                        const data = await response.json();
+                        if (data.firstName || data.lastName) {
+                            setDisplayName(`${data.firstName} ${data.lastName}`.trim());
+                        }
+                        if (data.photoUrl) {
+                            setPhotoUrl(data.photoUrl);
+                        }
+                    }
+                } catch (err) {
+                    console.error("Error fetching user details from database:", err);
+                }
+            } else {
+                setDisplayName("");
+                setPhotoUrl("");
+            }
         });
+        return () => {
+            if (typeof unsubscribe === "function") unsubscribe();
+        };
     }, []);
 
     const handleLogout = async () => {
-        await signOut(auth);
+        if (typeof window !== "undefined") {
+            localStorage.removeItem("mock_user");
+        }
+        try {
+            await signOut(auth);
+        } catch (err) {
+            console.error("Firebase SignOut error:", err);
+        }
         setMenuOpen(false);
         alert("Logged out successfully");
+        if (typeof window !== "undefined") {
+            window.location.href = "/";
+        }
     };
 
     const closeMenu = () => {
@@ -32,11 +72,11 @@ export default function Navbar() {
                 {/* LOGO */}
                 <Link
                     className="navbar-brand fw-bold d-flex align-items-center gap-2"
-                    to="/"
+                    href="/"
                     onClick={closeMenu}
                 >
                     <img
-                        src={logo}
+                        src="/logo.png"
                         alt="ResumeCraft AI Logo"
                         style={{ height: "32px", width: "32px" }}
                     />
@@ -48,6 +88,7 @@ export default function Navbar() {
                     className="navbar-toggler"
                     type="button"
                     onClick={() => setMenuOpen(!menuOpen)}
+                    suppressHydrationWarning
                 >
                     <span className="navbar-toggler-icon"></span>
                 </button>
@@ -57,7 +98,7 @@ export default function Navbar() {
                     <ul className="navbar-nav ms-auto mb-2 mb-lg-0">
 
                         <li className="nav-item">
-                            <Link className="nav-link" to="/" onClick={closeMenu}>
+                            <Link className="nav-link" href="/" onClick={closeMenu}>
                                 Home
                             </Link>
                         </li>
@@ -65,8 +106,16 @@ export default function Navbar() {
                         {user && (
                             <>
                                 <li className="nav-item">
-                                    <span className="nav-link text-info fw-bold">
-                                        {user.displayName || user.email}
+                                    <span className="nav-link text-info fw-bold d-flex align-items-center gap-2">
+                                        {photoUrl && (
+                                            <img 
+                                                src={photoUrl} 
+                                                alt="User Profile" 
+                                                className="rounded-circle border" 
+                                                style={{ width: "24px", height: "24px", objectFit: "cover", borderColor: "#38bdf8" }} 
+                                            />
+                                        )}
+                                        {displayName || user.email}
                                     </span>
                                 </li>
 
@@ -74,6 +123,7 @@ export default function Navbar() {
                                     <button
                                         className="btn btn-outline-danger ms-lg-3 mt-2 mt-lg-0"
                                         onClick={handleLogout}
+                                        suppressHydrationWarning
                                     >
                                         Logout
                                     </button>
@@ -84,13 +134,13 @@ export default function Navbar() {
                         {!user && (
                             <>
                                 <li className="nav-item">
-                                    <Link className="nav-link" to="/signup" onClick={closeMenu}>
+                                    <Link className="nav-link" href="/signup" onClick={closeMenu}>
                                         Sign Up
                                     </Link>
                                 </li>
 
                                 <li className="nav-item">
-                                    <Link className="nav-link" to="/login" onClick={closeMenu}>
+                                    <Link className="nav-link" href="/login" onClick={closeMenu}>
                                         Login
                                     </Link>
                                 </li>

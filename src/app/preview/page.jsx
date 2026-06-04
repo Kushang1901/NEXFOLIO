@@ -1,30 +1,40 @@
-﻿import React, { useState, useEffect } from "react";
+"use client";
+
+import React, { useState, useEffect } from "react";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
-import "bootstrap/dist/css/bootstrap.min.css";
-import Navbar from "../components/Navbar";
+import Navbar from "../../components/Navbar";
 
-import ClassicTemplate from "../templates/ClassicTemplate";
-import ModernTemplate from "../templates/ModernTemplate";
-import CreativeTemplate from "../templates/CreativeTemplate";
+import ClassicTemplate from "../../templates/ClassicTemplate";
+import ModernTemplate from "../../templates/ModernTemplate";
+import CreativeTemplate from "../../templates/CreativeTemplate";
+import MinimalistTemplate from "../../templates/MinimalistTemplate";
+import ExecutiveTemplate from "../../templates/ExecutiveTemplate";
+import DeveloperTemplate from "../../templates/DeveloperTemplate";
+import ElegantTemplate from "../../templates/ElegantTemplate";
+import AccentTemplate from "../../templates/AccentTemplate";
 
-
-import { normalizeResumeData } from "../utils/resumeAdapter";
+import { normalizeResumeData } from "../../utils/resumeAdapter";
+import { useRouter } from "next/navigation";
 
 export default function Preview() {
+    const router = useRouter();
     const [resumeData, setResumeData] = useState(null);
     const [aiOutput, setAiOutput] = useState("");
+    const [selectedTemplate, setSelectedTemplate] = useState("classic");
 
     useEffect(() => {
         const savedData = sessionStorage.getItem("resumeData");
         const savedAI = sessionStorage.getItem("aiOutput");
+        const savedTemplate = sessionStorage.getItem("selectedTemplate") || "classic";
 
         if (savedData) setResumeData(JSON.parse(savedData));
         if (savedAI && savedAI !== "undefined") setAiOutput(savedAI);
+        setSelectedTemplate(savedTemplate);
     }, []);
 
     const handleEdit = () => {
-        window.location.href = "/builder";
+        router.push("/builder");
     };
 
     const handleDownload = async () => {
@@ -55,15 +65,10 @@ export default function Preview() {
         );
     }
 
-    /* ================= NORMALIZE DATA (KEY STEP) ================= */
-
+    /* ================= NORMALIZE DATA ================= */
     const data = normalizeResumeData(resumeData);
 
     /* ================= TEMPLATE LOGIC ================= */
-
-    const selectedTemplate =
-        sessionStorage.getItem("selectedTemplate") || "classic";
-
     const renderTemplate = () => {
         switch (selectedTemplate) {
             case "modern":
@@ -72,23 +77,37 @@ export default function Preview() {
             case "creative":
                 return <CreativeTemplate data={data} />;
 
+            case "minimalist":
+                return <MinimalistTemplate data={data} />;
+
+            case "executive":
+                return <ExecutiveTemplate data={data} />;
+
+            case "developer":
+                return <DeveloperTemplate data={data} />;
+
+            case "elegant":
+                return <ElegantTemplate data={data} />;
+
+            case "accent":
+                return <AccentTemplate data={data} />;
+
             default:
                 return <ClassicTemplate data={data} />;
         }
     };
 
     /* ================= UI ================= */
-
     return (
         <div className="bg-dark text-white min-vh-100">
             <Navbar />
 
             <div className="container py-5">
                 <div className="d-flex justify-content-end gap-3 mb-4 no-print">
-                    <button onClick={handleEdit} className="btn btn-outline-light">
+                    <button onClick={handleEdit} className="btn btn-outline-light" suppressHydrationWarning>
                         ✏️ Edit
                     </button>
-                    <button onClick={handleDownload} className="btn btn-primary">
+                    <button onClick={handleDownload} className="btn btn-primary" suppressHydrationWarning>
                         📄 Download PDF
                     </button>
                 </div>

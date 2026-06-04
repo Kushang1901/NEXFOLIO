@@ -3,8 +3,9 @@ export async function getRecaptchaToken(action) {
         throw new Error("reCAPTCHA not loaded");
     }
 
+    const siteKey = process.env.REACT_APP_RECAPTCHA_SITE_KEY || "6LfIrjQsAAAAANY4PBe_oGp6mIFkTwyeAB_DdG81";
     return await window.grecaptcha.enterprise.execute(
-        process.env.REACT_APP_RECAPTCHA_SITE_KEY,
+        siteKey,
         { action }
     );
 }

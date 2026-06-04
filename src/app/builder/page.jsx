@@ -1,11 +1,13 @@
-﻿import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import "bootstrap/dist/css/bootstrap.min.css";
-import Navbar from "../components/Navbar";
-import { getRecaptchaToken } from "../utils/recaptcha";
+"use client";
+
+import React, { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import Navbar from "../../components/Navbar";
+import { getRecaptchaToken } from "../../utils/recaptcha";
+import { subscribeToAuthChanges } from "../../authState";
 
 export default function ResumeBuilder() {
-    const navigate = useNavigate();
+    const router = useRouter();
 
     /* ================= YEARS ================= */
     const MAX_YEAR = 2028;
@@ -65,6 +67,33 @@ export default function ResumeBuilder() {
         if (savedData) {
             setFormData(JSON.parse(savedData));
         }
+
+        const unsubscribe = subscribeToAuthChanges(async (user) => {
+            if (user && user.email) {
+                try {
+                    const response = await fetch(`/api/user?email=${encodeURIComponent(user.email)}`);
+                    if (response.ok) {
+                        const data = await response.json();
+                        if (data.photoUrl) {
+                            setFormData(prev => {
+                                if (!prev.profilePhoto) {
+                                    const updated = { ...prev, profilePhoto: data.photoUrl };
+                                    sessionStorage.setItem("resumeData", JSON.stringify(updated));
+                                    return updated;
+                                }
+                                return prev;
+                            });
+                        }
+                    }
+                } catch (err) {
+                    console.error("Error fetching photo from database:", err);
+                }
+            }
+        });
+
+        return () => {
+            if (typeof unsubscribe === "function") unsubscribe();
+        };
     }, []);
 
 
@@ -104,6 +133,22 @@ export default function ResumeBuilder() {
                 sessionStorage.setItem("resumeData", JSON.stringify(updated));
                 return updated;
             });
+
+            // Persist to Neon Postgres if logged in
+            const unsubscribe = subscribeToAuthChanges(async (user) => {
+                if (user && user.email) {
+                    try {
+                        await fetch("/api/user", {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({ email: user.email, photoUrl: reader.result })
+                        });
+                    } catch (err) {
+                        console.error("Failed to save photo to Postgres:", err);
+                    }
+                }
+            });
+            if (typeof unsubscribe === "function") unsubscribe();
         };
         reader.readAsDataURL(file);
     };
@@ -115,9 +160,9 @@ export default function ResumeBuilder() {
         e.preventDefault();
 
         try {
-            const recaptchaToken = await getRecaptchaToken("GENERATE_RESUME");
+            const recaptchaToken = await getRecaptchaToken("GENERATE_RESUME").catch(() => "MOCK_TOKEN");
 
-            // ✅ Always save complete data
+            // Save complete data
             sessionStorage.setItem("resumeData", JSON.stringify(formData));
 
             const prompt = `
@@ -163,7 +208,7 @@ ${formData.skills || "Not provided"}
 `;
 
             const res = await fetch(
-                `${process.env.REACT_APP_API_URL}/generate`,
+                "/api/generate",
                 {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
@@ -171,14 +216,19 @@ ${formData.skills || "Not provided"}
                 }
             );
 
+            if (!res.ok) {
+                const errData = await res.json().catch(() => ({}));
+                throw new Error(errData.error || "AI generation failed");
+            }
+
             const data = await res.json();
 
             sessionStorage.setItem("aiOutput", data.result);
-            navigate("/preview");
+            router.push("/preview");
 
         } catch (err) {
             console.error(err);
-            alert("AI generation failed. Please try again.");
+            alert(err.message || "AI generation failed. Please try again.");
         }
     };
 
@@ -216,6 +266,7 @@ ${formData.skills || "Not provided"}
                                         onChange={handleChange}
                                         placeholder="John Doe"
                                         required
+                                        suppressHydrationWarning
                                     />
                                 </div>
 
@@ -233,6 +284,7 @@ ${formData.skills || "Not provided"}
                                             onChange={handleChange}
                                             placeholder="john@example.com"
                                             required
+                                            suppressHydrationWarning
                                         />
                                     </div>
                                     <div className="col-md-6">
@@ -248,6 +300,7 @@ ${formData.skills || "Not provided"}
                                             onChange={handleChange}
                                             placeholder="+1 234 567 8900"
                                             required
+                                            suppressHydrationWarning
                                         />
                                     </div>
                                 </div>
@@ -262,6 +315,7 @@ ${formData.skills || "Not provided"}
                                         placeholder="Web Developer / Java Developer / DevOps Engineer"
                                         value={formData.role}
                                         onChange={handleChange}
+                                        suppressHydrationWarning
                                     />
                                 </div>
 
@@ -276,6 +330,7 @@ ${formData.skills || "Not provided"}
                                             placeholder="https://yourportfolio.com"
                                             value={formData.portfolio}
                                             onChange={handleChange}
+                                            suppressHydrationWarning
                                         />
                                     </div>
 
@@ -288,6 +343,7 @@ ${formData.skills || "Not provided"}
                                             placeholder="https://linkedin.com/in/username"
                                             value={formData.linkedin}
                                             onChange={handleChange}
+                                            suppressHydrationWarning
                                         />
                                     </div>
 
@@ -300,6 +356,7 @@ ${formData.skills || "Not provided"}
                                             placeholder="https://github.com/username"
                                             value={formData.github}
                                             onChange={handleChange}
+                                            suppressHydrationWarning
                                         />
                                     </div>
                                 </div>
@@ -316,6 +373,7 @@ ${formData.skills || "Not provided"}
                                         accept="image/*"
                                         className="form-control bg-dark text-white border-secondary"
                                         onChange={handlePhotoUpload}
+                                        suppressHydrationWarning
                                     />
 
                                     {formData.profilePhoto && (
@@ -348,6 +406,7 @@ ${formData.skills || "Not provided"}
                                         onChange={handleChange}
                                         rows="3"
                                         placeholder="Brief overview of your professional background and career objectives"
+                                        suppressHydrationWarning
                                     ></textarea>
                                     <small className="text-white-50">Optional - AI will generate if left empty</small>
                                 </div>
@@ -368,6 +427,7 @@ ${formData.skills || "Not provided"}
                                             onChange={(e) => handleNestedChange("graduation", "course", e.target.value)}
                                             placeholder="Bachelor of Science in Computer Science"
                                             required
+                                            suppressHydrationWarning
                                         />
                                     </div>
 
@@ -382,6 +442,7 @@ ${formData.skills || "Not provided"}
                                                 value={formData.graduation.startYear}
                                                 onChange={(e) => handleNestedChange("graduation", "startYear", e.target.value)}
                                                 required
+                                                suppressHydrationWarning
                                             >
                                                 <option value="">Select Year</option>
                                                 {getYears().map(y => <option key={y} value={y}>{y}</option>)}
@@ -397,6 +458,7 @@ ${formData.skills || "Not provided"}
                                                 value={formData.graduation.endYear}
                                                 onChange={(e) => handleNestedChange("graduation", "endYear", e.target.value)}
                                                 required
+                                                suppressHydrationWarning
                                             >
                                                 <option value="">Select Year</option>
                                                 {formData.graduation.startYear &&
@@ -416,6 +478,7 @@ ${formData.skills || "Not provided"}
                                             id="hasPostGrad"
                                             checked={formData.hasPostGraduation}
                                             onChange={(e) => setFormData(p => ({ ...p, hasPostGraduation: e.target.checked }))}
+                                            suppressHydrationWarning
                                         />
                                         <label className="form-check-label fw-semibold" htmlFor="hasPostGrad">
                                             I have Post Graduation
@@ -435,6 +498,7 @@ ${formData.skills || "Not provided"}
                                                     value={formData.postGraduation.course}
                                                     onChange={(e) => handleNestedChange("postGraduation", "course", e.target.value)}
                                                     placeholder="Master of Science in Data Science"
+                                                    suppressHydrationWarning
                                                 />
                                             </div>
 
@@ -448,6 +512,7 @@ ${formData.skills || "Not provided"}
                                                         id="pgStart"
                                                         value={formData.postGraduation.startYear}
                                                         onChange={(e) => handleNestedChange("postGraduation", "startYear", e.target.value)}
+                                                        suppressHydrationWarning
                                                     >
                                                         <option value="">Select Year</option>
                                                         {getYears().map(y => <option key={y} value={y}>{y}</option>)}
@@ -462,6 +527,7 @@ ${formData.skills || "Not provided"}
                                                         id="pgEnd"
                                                         value={formData.postGraduation.endYear}
                                                         onChange={(e) => handleNestedChange("postGraduation", "endYear", e.target.value)}
+                                                        suppressHydrationWarning
                                                     >
                                                         <option value="">Select Year</option>
                                                         {formData.postGraduation.startYear &&
@@ -483,6 +549,7 @@ ${formData.skills || "Not provided"}
                                             id="hasPhd"
                                             checked={formData.hasPhd}
                                             onChange={(e) => setFormData(p => ({ ...p, hasPhd: e.target.checked }))}
+                                            suppressHydrationWarning
                                         />
                                         <label className="form-check-label fw-semibold" htmlFor="hasPhd">
                                             I have PhD
@@ -502,6 +569,7 @@ ${formData.skills || "Not provided"}
                                                     value={formData.phd.course}
                                                     onChange={(e) => handleNestedChange("phd", "course", e.target.value)}
                                                     placeholder="Computer Science / Machine Learning"
+                                                    suppressHydrationWarning
                                                 />
                                             </div>
 
@@ -515,6 +583,7 @@ ${formData.skills || "Not provided"}
                                                         id="phdStart"
                                                         value={formData.phd.startYear}
                                                         onChange={(e) => handleNestedChange("phd", "startYear", e.target.value)}
+                                                        suppressHydrationWarning
                                                     >
                                                         <option value="">Select Year</option>
                                                         {getYears().map(y => <option key={y} value={y}>{y}</option>)}
@@ -529,6 +598,7 @@ ${formData.skills || "Not provided"}
                                                         id="phdEnd"
                                                         value={formData.phd.endYear}
                                                         onChange={(e) => handleNestedChange("phd", "endYear", e.target.value)}
+                                                        suppressHydrationWarning
                                                     >
                                                         <option value="">Select Year</option>
                                                         {formData.phd.startYear &&
@@ -554,6 +624,7 @@ ${formData.skills || "Not provided"}
                                         onChange={handleChange}
                                         rows="4"
                                         placeholder="E-commerce Platform&#10;- Built a full-stack application using React and Node.js&#10;- Implemented payment gateway integration"
+                                        suppressHydrationWarning
                                     ></textarea>
                                 </div>
 
@@ -571,6 +642,7 @@ ${formData.skills || "Not provided"}
 • Employee of the Month"
                                         value={formData.achievements}
                                         onChange={handleChange}
+                                        suppressHydrationWarning
                                     />
                                 </div>
 
@@ -588,6 +660,7 @@ ${formData.skills || "Not provided"}
                                         onChange={handleChange}
                                         rows="5"
                                         placeholder="Software Engineer - Company Name&#10;Jan 2024 - Present&#10;- Developed web applications using React and Node.js&#10;- Collaborated with cross-functional teams"
+                                        suppressHydrationWarning
                                     ></textarea>
                                 </div>
 
@@ -604,6 +677,7 @@ ${formData.skills || "Not provided"}
                                         onChange={handleChange}
                                         rows="2"
                                         placeholder="JavaScript, React, Node.js, Python, SQL, MongoDB"
+                                        suppressHydrationWarning
                                     ></textarea>
                                     <small className="text-white-50">Separate skills with commas</small>
                                 </div>
@@ -617,6 +691,7 @@ ${formData.skills || "Not provided"}
                                             borderRadius: '8px',
                                             boxShadow: '0 4px 15px rgba(13, 110, 253, 0.4)'
                                         }}
+                                        suppressHydrationWarning
                                     >
                                         Generate Resume with AI
                                     </button>
