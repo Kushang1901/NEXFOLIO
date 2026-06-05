@@ -63,17 +63,17 @@ export default function HomePage() {
                 <div className="container py-5">
                     <div className="row justify-content-center text-center py-5">
                         <div className="col-lg-8">
-                            <h1
-                                className="display-1 fw-bold mb-3"
-                                style={{ letterSpacing: '-0.02em' }}
-                            >
+                            <div className="text-primary fw-bold text-uppercase mb-2" style={{ letterSpacing: "0.15em", fontSize: "0.95rem" }}>
                                 ResumeCraft AI
+                            </div>
+                            <h1
+                                className="display-2 fw-bold mb-4"
+                                style={{ letterSpacing: '-0.02em', lineHeight: "1.2" }}
+                            >
+                                Free Resume Maker & <br className="d-none d-md-inline" /> AI Resume Builder
                             </h1>
-                            <h2 className="fs-2 text-primary fw-semibold mb-4">
-                                Free AI Resume Maker & ATS-Friendly Builder
-                            </h2>
                             <p className="lead fs-4 text-white-50 mb-5">
-                                Create ATS-friendly professional resumes instantly. Leverage artificial intelligence to craft compelling resume content tailored to your skills and stand out to top recruiters.
+                                Create professional, ATS-friendly resumes instantly with our free AI resume maker. Leverage advanced artificial intelligence to craft compelling resume content that stands out to top recruiters.
                             </p>
 
                             <button
@@ -97,7 +97,7 @@ export default function HomePage() {
             <section className="py-5 bg-dark">
                 <div className="container py-5">
                     <div className="text-center mb-5">
-                        <h2 className="display-6 fw-bold mb-3">Why Use Our AI Resume Generator?</h2>
+                        <h2 className="display-6 fw-bold mb-3">The Best Free AI Resume Maker for Job Seekers</h2>
                         <p className="text-white-50 max-w-2xl mx-auto fs-5">
                             Empower your job application process with smart builder tools tailored to pass recruitment screens.
                         </p>
@@ -112,7 +112,7 @@ export default function HomePage() {
                                 }}
                             >
                                 <div className="card-body p-4 text-center">
-                                    <h3 className="h5 fw-bold mb-3">AI Generated Content</h3>
+                                    <h3 className="h5 fw-bold mb-3">AI-Powered Resume Writer</h3>
                                     <p className="text-white-50 mb-0">
                                         Leverage advanced artificial intelligence to instantly draft compelling experience descriptions and bullet points that match your target role.
                                     </p>
@@ -129,7 +129,7 @@ export default function HomePage() {
                                 }}
                             >
                                 <div className="card-body p-4 text-center">
-                                    <h3 className="h5 fw-bold mb-3">Fast ATS Resume Builder</h3>
+                                    <h3 className="h5 fw-bold mb-3">ATS-Friendly Resume Builder</h3>
                                     <p className="text-white-50 mb-0">
                                         Build beautiful, job-winning resumes in minutes using our intuitive interface and templates engineered to be fully scan-readable.
                                     </p>
@@ -146,9 +146,9 @@ export default function HomePage() {
                                 }}
                             >
                                 <div className="card-body p-4 text-center">
-                                    <h3 className="h5 fw-bold mb-3">Download Print-Ready PDF</h3>
+                                    <h3 className="h5 fw-bold mb-3">Free PDF & PNG Exports</h3>
                                     <p className="text-white-50 mb-0">
-                                        Export your polished CV as a clean, professionally formatted PDF that maintains exact styling across all applicant tracking systems.
+                                        Export your polished CV as a clean, professionally formatted PDF or high-res PNG image that maintains exact styling across all tracking systems.
                                     </p>
                                 </div>
                             </div>

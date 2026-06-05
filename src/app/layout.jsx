@@ -7,12 +7,12 @@ export const viewport = {
 };
 
 export const metadata = {
-    title: "ResumeCraft AI – Free AI Resume Builder for Students & Professionals",
-    description: "Create ATS-friendly resumes instantly with ResumeCraft AI. Our free AI resume builder helps students and professionals craft polished, professional resumes in minutes.",
+    title: "Free Resume Maker & AI Resume Builder – ResumeCraft AI",
+    description: "Create professional ATS-friendly resumes instantly with ResumeCraft AI. Our free AI resume maker helps students and professionals craft polished resumes in minutes.",
     keywords: [
-        "AI Resume Builder", "Free AI Resume Maker", "Resume Generator", "ResumeCraft AI", 
-        "Free Resume Builder", "Student Resume Builder", "Professional Resume Maker", 
-        "ATS Friendly Resume", "Online Resume Builder", "AI CV Maker"
+        "Free Resume Maker", "AI Resume Maker", "Free AI Resume Builder", "Resume Generator", 
+        "ResumeCraft AI", "Best Free Resume Builder", "ATS Friendly Resume", "Online Resume Builder", 
+        "Free AI Resume Generator", "AI CV Maker Free", "Student Resume Creator"
     ],
     authors: [{ name: "Kushang Acharya", url: "https://kushangacharya.vercel.app" }],
     metadataBase: new URL("https://resumecraft-ai.vercel.app"),
@@ -20,8 +20,8 @@ export const metadata = {
         canonical: "/",
     },
     openGraph: {
-        title: "ResumeCraft AI – Free AI Resume Builder for Students & Professionals",
-        description: "Create ATS-friendly resumes instantly with ResumeCraft AI. Our free AI resume builder helps students and professionals craft polished, professional resumes in minutes.",
+        title: "Free Resume Maker & AI Resume Builder – ResumeCraft AI",
+        description: "Create professional ATS-friendly resumes instantly with ResumeCraft AI. Our free AI resume maker helps students and professionals craft polished resumes in minutes.",
         url: "https://resumecraft-ai.vercel.app",
         siteName: "ResumeCraft AI",
         locale: "en_US",
@@ -37,8 +37,8 @@ export const metadata = {
     },
     twitter: {
         card: "summary_large_image",
-        title: "ResumeCraft AI – Free AI Resume Builder",
-        description: "Create ATS-friendly resumes instantly with ResumeCraft AI. Our free AI resume builder helps students and professionals craft polished, professional resumes in minutes.",
+        title: "Free Resume Maker & AI Resume Builder – ResumeCraft AI",
+        description: "Create professional ATS-friendly resumes instantly with ResumeCraft AI. Our free AI resume maker helps students and professionals craft polished resumes in minutes.",
         images: ["https://res.cloudinary.com/dn45xyazy/image/upload/v1766464118/favicon_ahissk.png"],
     },
     robots: {
@@ -64,11 +64,11 @@ export default function RootLayout({ children }) {
         "@context": "https://schema.org",
         "@type": "WebApplication",
         "name": "ResumeCraft AI",
-        "alternateName": "ResumeCraft",
+        "alternateName": ["ResumeCraft", "Free AI Resume Builder", "AI Resume Maker", "Free Resume Maker"],
         "url": "https://resumecraft-ai.vercel.app",
         "logo": "https://res.cloudinary.com/dn45xyazy/image/upload/v1766464118/favicon_ahissk.png",
-        "description": "ResumeCraft AI is a free AI-powered resume builder that helps students and professionals create ATS-friendly resumes instantly.",
-        "applicationCategory": "BusinessApplication",
+        "description": "ResumeCraft AI is a free AI-powered resume maker that helps students and professionals create ATS-friendly resumes instantly.",
+        "applicationCategory": "BusinessApplication, EducationalApplication",
         "operatingSystem": "All",
         "browserRequirements": "Requires HTML5 support",
         "offers": {
@@ -76,6 +76,14 @@ export default function RootLayout({ children }) {
             "price": "0.00",
             "priceCurrency": "USD"
         },
+        "featureList": [
+            "AI Resume Content Generation",
+            "ATS-Friendly Format Optimization",
+            "Free PDF Resume Download",
+            "High-Resolution PNG Resume Export",
+            "Premium Resume Templates",
+            "No Hidden Fees Resume Maker"
+        ],
         "author": {
             "@type": "Person",
             "name": "Kushang Acharya",
