@@ -102,8 +102,9 @@ export default function Navbar() {
 
                 {/* NAV LINKS */}
                 <div className={`collapse navbar-collapse ${menuOpen ? "show" : ""}`} style={{ visibility: "visible" }}>
-                    <ul className="navbar-nav ms-auto mb-2 mb-lg-0">
-
+                    
+                    {/* Left navigation links */}
+                    <ul className="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-3 align-items-lg-center">
                         <li className="nav-item">
                             <Link className="nav-link" href="/" onClick={closeMenu}>
                                 Home
@@ -111,26 +112,47 @@ export default function Navbar() {
                         </li>
 
                         {user && (
+                            <li className="nav-item">
+                                <Link className="nav-link" href="/cover-letter" onClick={closeMenu}>
+                                    AI Cover Letter
+                                </Link>
+                            </li>
+                        )}
+                    </ul>
+
+                    {/* Right profile/action items */}
+                    <ul className="navbar-nav ms-auto mb-2 mb-lg-0 align-items-center gap-3">
+                        {user && (
                             <>
                                 <li className="nav-item">
-                                    <Link href="/profile" className="nav-link text-info fw-bold d-flex align-items-center gap-2" onClick={closeMenu}>
-                                        {photoUrl && (
+                                    <Link href="/profile" className="nav-link text-info fw-bold d-flex align-items-center gap-2 py-1" onClick={closeMenu}>
+                                        {photoUrl ? (
                                             <img 
                                                 src={photoUrl} 
                                                 alt="User Profile" 
                                                 className="rounded-circle border" 
-                                                style={{ width: "24px", height: "24px", objectFit: "cover", borderColor: "#38bdf8" }} 
+                                                style={{ width: "30px", height: "30px", objectFit: "cover", borderColor: "#38bdf8" }} 
                                             />
+                                        ) : (
+                                            <div 
+                                                className="rounded-circle d-flex align-items-center justify-content-center border fw-bold text-info"
+                                                style={{ width: "30px", height: "30px", fontSize: "12px", backgroundColor: "rgba(56, 189, 248, 0.1)", borderColor: "#38bdf8" }}
+                                            >
+                                                {(displayName || user.email).charAt(0).toUpperCase()}
+                                            </div>
                                         )}
-                                        {displayName || user.email}
+                                        <span className="d-inline-block text-truncate" style={{ maxWidth: "160px" }}>
+                                            {displayName || user.email}
+                                        </span>
                                     </Link>
                                 </li>
 
                                 <li className="nav-item">
                                     <button
-                                        className="btn btn-outline-danger ms-lg-3 mt-2 mt-lg-0"
+                                        className="btn btn-outline-danger btn-sm px-3 py-1.5"
                                         onClick={handleLogout}
                                         suppressHydrationWarning
+                                        style={{ borderRadius: "8px" }}
                                     >
                                         Logout
                                     </button>
@@ -147,13 +169,12 @@ export default function Navbar() {
                                 </li>
 
                                 <li className="nav-item">
-                                    <Link className="nav-link" href="/login" onClick={closeMenu}>
+                                    <Link className="nav-link btn btn-outline-primary btn-sm px-3 py-1.5 text-white" href="/login" onClick={closeMenu} style={{ borderRadius: "8px" }}>
                                         Login
                                     </Link>
                                 </li>
                             </>
                         )}
-
                     </ul>
                 </div>
 

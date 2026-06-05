@@ -27,6 +27,79 @@ export default function Profile() {
     // Subscribed state
     const [dbUser, setDbUser] = useState(null);
 
+    // Resumes state
+    const [resumes, setResumes] = useState([]);
+    const [loadingResumes, setLoadingResumes] = useState(true);
+
+    const fetchUserResumes = async (userEmail) => {
+        try {
+            setLoadingResumes(true);
+            const response = await fetch(`/api/resumes?email=${encodeURIComponent(userEmail)}`);
+            if (response.ok) {
+                const data = await response.json();
+                setResumes(data);
+            }
+        } catch (err) {
+            console.error("Error fetching user resumes:", err);
+        } finally {
+            setLoadingResumes(false);
+        }
+    };
+
+    const handleLoadResume = (id) => {
+        router.push(`/builder?id=${id}`);
+    };
+
+    const handlePreviewResume = async (id) => {
+        try {
+            setActionLoading(true);
+            const res = await fetch(`/api/resumes?email=${encodeURIComponent(user.email)}&id=${id}`);
+            if (res.ok) {
+                const data = await res.json();
+                if (data.resumeData) {
+                    sessionStorage.setItem("resumeData", JSON.stringify(data.resumeData));
+                }
+                if (data.selectedTemplate) {
+                    sessionStorage.setItem("selectedTemplate", data.selectedTemplate);
+                }
+                sessionStorage.setItem("resumeId", id);
+                sessionStorage.setItem("aiOutput", ""); // Reset AI output to let preview page fetch/generate
+                router.push("/preview");
+            } else {
+                showToast("Failed to load resume details.", "error");
+            }
+        } catch (err) {
+            console.error("Error loading resume preview:", err);
+            showToast("Error loading resume preview.", "error");
+        } finally {
+            setActionLoading(false);
+        }
+    };
+
+    const handleDeleteResume = async (id) => {
+        const confirmDelete = window.confirm("Are you sure you want to delete this resume? This action cannot be undone.");
+        if (!confirmDelete) return;
+
+        try {
+            setActionLoading(true);
+            const response = await fetch(`/api/resumes?email=${encodeURIComponent(user.email)}&id=${id}`, {
+                method: "DELETE"
+            });
+
+            if (response.ok) {
+                showToast("Resume deleted successfully!", "success");
+                await fetchUserResumes(user.email);
+            } else {
+                showToast("Failed to delete resume.", "error");
+            }
+        } catch (err) {
+            console.error("Delete resume error:", err);
+            showToast("An error occurred while deleting the resume.", "error");
+        } finally {
+            setActionLoading(false);
+        }
+    };
+
     useEffect(() => {
         const unsubscribe = subscribeToAuthChanges(async (loggedUser) => {
             if (loggedUser) {
@@ -53,6 +126,10 @@ export default function Profile() {
                 } catch (err) {
                     console.error("Error fetching database user:", err);
                 }
+
+                // Fetch resumes
+                await fetchUserResumes(loggedUser.email);
+
                 setLoading(false);
             } else {
                 setUser(null);
@@ -457,6 +534,93 @@ export default function Profile() {
                             </div>
                         </div>
 
+                    </div>
+
+                    {/* MY SAVED RESUMES SECTION */}
+                    <div className="row mt-5">
+                        <div className="col-12">
+                            <div className="glass-card p-4 p-md-5">
+                                <div className="d-flex justify-content-between align-items-center mb-4 border-bottom border-secondary pb-3">
+                                    <h3 className="fw-bold mb-0 text-white d-flex align-items-center gap-2">
+                                        <span className="material-symbols-outlined text-primary">folder_open</span>
+                                        My Saved Resumes
+                                    </h3>
+                                    <Link href="/templates" className="btn btn-primary btn-sm px-3 py-2 fw-semibold d-flex align-items-center gap-1.5" style={{ borderRadius: "8px" }}>
+                                        <i className="fas fa-plus"></i> Create New Resume
+                                    </Link>
+                                </div>
+
+                                {loadingResumes ? (
+                                    <div className="text-center py-5">
+                                        <div className="spinner-border text-info mb-2" role="status">
+                                            <span className="visually-hidden">Loading...</span>
+                                        </div>
+                                        <p className="text-white-50 small mb-0">Loading your saved resumes...</p>
+                                    </div>
+                                ) : resumes.length === 0 ? (
+                                    <div className="text-center py-5 text-white-50 border border-secondary border-dashed rounded-3" style={{ borderRadius: "12px" }}>
+                                        <i className="fas fa-folder-open fa-3x mb-3 text-muted"></i>
+                                        <p className="fs-5 mb-2">No saved resumes found</p>
+                                        <p className="small mb-4">You haven't saved any resumes to the cloud yet.</p>
+                                        <Link href="/templates" className="btn btn-outline-primary px-4 py-2 fw-semibold" style={{ borderRadius: "8px" }}>
+                                            Create Your First Resume
+                                        </Link>
+                                    </div>
+                                ) : (
+                                    <div className="row g-4">
+                                        {resumes.map((resume) => (
+                                            <div className="col-md-6 col-lg-4" key={resume.id}>
+                                                <div className="card h-100 bg-black border border-secondary p-3" style={{ borderRadius: "12px" }}>
+                                                    <div className="card-body p-0 d-flex flex-column justify-content-between">
+                                                        <div>
+                                                            <div className="d-flex justify-content-between align-items-start mb-2">
+                                                                <h5 className="fw-bold mb-1 text-white text-truncate" style={{ maxWidth: "80%" }}>
+                                                                    {resume.resumeName}
+                                                                </h5>
+                                                                <span className="badge text-bg-primary text-uppercase px-2 py-1" style={{ fontSize: "0.65rem" }}>
+                                                                    {resume.selectedTemplate.replace("_", " ")}
+                                                                </span>
+                                                            </div>
+                                                            <p className="text-white-50 small mb-4">
+                                                                Last updated: {new Date(resume.updatedAt).toLocaleDateString(undefined, {
+                                                                    month: 'short',
+                                                                    day: 'numeric',
+                                                                    year: 'numeric'
+                                                                })}
+                                                            </p>
+                                                        </div>
+                                                        <div className="d-flex gap-2">
+                                                            <button
+                                                                onClick={() => handleLoadResume(resume.id)}
+                                                                className="btn btn-sm btn-outline-info flex-grow-1 d-flex align-items-center justify-content-center gap-1.5 py-2"
+                                                                style={{ borderRadius: "6px" }}
+                                                            >
+                                                                <i className="fas fa-edit"></i> Edit
+                                                            </button>
+                                                            <button
+                                                                onClick={() => handlePreviewResume(resume.id)}
+                                                                className="btn btn-sm btn-outline-light flex-grow-1 d-flex align-items-center justify-content-center gap-1.5 py-2"
+                                                                style={{ borderRadius: "6px" }}
+                                                            >
+                                                                <i className="fas fa-eye"></i> View
+                                                            </button>
+                                                            <button
+                                                                onClick={() => handleDeleteResume(resume.id)}
+                                                                className="btn btn-sm btn-outline-danger d-flex align-items-center justify-content-center px-2.5 py-2"
+                                                                style={{ borderRadius: "6px" }}
+                                                                title="Delete Resume"
+                                                            >
+                                                                <i className="fas fa-trash-alt"></i>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
+                        </div>
                     </div>
 
                 </div>

@@ -27,6 +27,12 @@ export default function ResumeBuilder() {
 
     /* ================= STATE ================= */
     const [isLoading, setIsLoading] = useState(false);
+    const [isImporting, setIsImporting] = useState(false);
+    const [userEmail, setUserEmail] = useState(null);
+    const [resumeId, setResumeId] = useState(null);
+    const [resumeName, setResumeName] = useState("My Resume");
+    const [cloudSaving, setCloudSaving] = useState(false);
+    const [showSaveModal, setShowSaveModal] = useState(false);
     const [currentMessageIndex, setCurrentMessageIndex] = useState(0);
 
     const LOADING_MESSAGES = [
@@ -121,37 +127,72 @@ export default function ResumeBuilder() {
         skills: ""
     });
 
-    useEffect(() => {
-        const savedData = sessionStorage.getItem("resumeData");
-        if (savedData) {
-            try {
-                const parsed = JSON.parse(savedData);
-                // Migrate experience from string to structured if needed
-                if (parsed.experience && typeof parsed.experience === "string") {
-                    parsed.hasExperience = true;
-                    parsed.experience = {
-                        company: "",
-                        location: "",
-                        role: "",
-                        salary: "",
-                        ongoing: false,
-                        startMonth: "",
-                        startYear: "",
-                        endMonth: "",
-                        endYear: "",
-                        description: parsed.experience
-                    };
+    const loadResumeFromDb = async (email, id) => {
+        try {
+            setIsLoading(true);
+            const res = await fetch(`/api/resumes?email=${encodeURIComponent(email)}&id=${id}`);
+            if (res.ok) {
+                const data = await res.json();
+                setResumeId(data.id);
+                setResumeName(data.resumeName);
+                sessionStorage.setItem("resumeId", data.id);
+                if (data.resumeData) {
+                    setFormData(data.resumeData);
+                    sessionStorage.setItem("resumeData", JSON.stringify(data.resumeData));
                 }
-                setFormData(prev => ({ ...prev, ...parsed }));
-            } catch (err) {
-                console.error("Error parsing resumeData:", err);
+                if (data.selectedTemplate) {
+                    sessionStorage.setItem("selectedTemplate", data.selectedTemplate);
+                }
+            } else {
+                showToast("Failed to load saved resume.", "error");
             }
+        } catch (err) {
+            console.error("Error loading resume:", err);
+            showToast("Error loading saved resume.", "error");
+        } finally {
+            setIsLoading(false);
         }
+    };
 
+    useEffect(() => {
         let activeEmail = null;
         const unsubscribe = subscribeToAuthChanges(async (user) => {
             if (user && user.email) {
                 activeEmail = user.email;
+                setUserEmail(user.email);
+
+                const params = new URLSearchParams(window.location.search);
+                const id = params.get("id");
+
+                if (id) {
+                    await loadResumeFromDb(user.email, id);
+                } else {
+                    const savedData = sessionStorage.getItem("resumeData");
+                    if (savedData) {
+                        try {
+                            const parsed = JSON.parse(savedData);
+                            if (parsed.experience && typeof parsed.experience === "string") {
+                                parsed.hasExperience = true;
+                                parsed.experience = {
+                                    company: "",
+                                    location: "",
+                                    role: "",
+                                    salary: "",
+                                    ongoing: false,
+                                    startMonth: "",
+                                    startYear: "",
+                                    endMonth: "",
+                                    endYear: "",
+                                    description: parsed.experience
+                                };
+                            }
+                            setFormData(prev => ({ ...prev, ...parsed }));
+                        } catch (err) {
+                            console.error("Error parsing resumeData:", err);
+                        }
+                    }
+                }
+
                 try {
                     const response = await fetch(`/api/user?email=${encodeURIComponent(user.email)}`);
                     if (response.ok) {
@@ -172,6 +213,7 @@ export default function ResumeBuilder() {
                 }
             } else {
                 activeEmail = null;
+                setUserEmail(null);
                 router.push("/?triggerAuth=true");
             }
         });
@@ -183,6 +225,141 @@ export default function ResumeBuilder() {
 
 
     /* ================= HANDLERS ================= */
+    const handleCloudSave = async (e) => {
+        if (e) e.preventDefault();
+        if (!userEmail) {
+            showToast("You must be logged in to save to cloud.", "error");
+            return;
+        }
+
+        if (!resumeId) {
+            setShowSaveModal(true);
+            return;
+        }
+
+        setCloudSaving(true);
+        try {
+            const selectedTemplate = sessionStorage.getItem("selectedTemplate") || "classic";
+            const response = await fetch("/api/resumes", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    email: userEmail,
+                    id: resumeId,
+                    resumeName,
+                    resumeData: formData,
+                    selectedTemplate
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error("Failed to update resume in the cloud");
+            }
+
+            sessionStorage.setItem("resumeId", resumeId);
+            showToast("Resume saved to cloud successfully!", "success");
+        } catch (err) {
+            console.error(err);
+            showToast(err.message || "Failed to save resume", "error");
+        } finally {
+            setCloudSaving(false);
+        }
+    };
+
+    const handleCreateCloudSave = async (nameInput) => {
+        if (!nameInput.trim()) {
+            showToast("Please enter a valid resume name.", "error");
+            return;
+        }
+        setCloudSaving(true);
+        setShowSaveModal(false);
+        try {
+            const selectedTemplate = sessionStorage.getItem("selectedTemplate") || "classic";
+            const response = await fetch("/api/resumes", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    email: userEmail,
+                    resumeName: nameInput,
+                    resumeData: formData,
+                    selectedTemplate
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error("Failed to create resume in the cloud");
+            }
+
+            const data = await response.json();
+            setResumeId(data.id);
+            sessionStorage.setItem("resumeId", data.id);
+            setResumeName(nameInput);
+            showToast("Resume created and saved to cloud!", "success");
+
+            const newUrl = `${window.location.pathname}?id=${data.id}`;
+            window.history.pushState({ path: newUrl }, "", newUrl);
+        } catch (err) {
+            console.error(err);
+            showToast(err.message || "Failed to create resume", "error");
+        } finally {
+            setCloudSaving(false);
+        }
+    };
+
+    const handlePdfImport = async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        if (file.type !== "application/pdf") {
+            showToast("Please select a valid PDF file.", "error");
+            return;
+        }
+
+        setIsImporting(true);
+        try {
+            const reader = new FileReader();
+            reader.onload = async () => {
+                try {
+                    const base64Data = reader.result.split(',')[1];
+                    const response = await fetch("/api/parse", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ fileBase64: base64Data })
+                    });
+
+                    if (!response.ok) {
+                        const errData = await response.json().catch(() => ({}));
+                        throw new Error(errData.error || "Failed to parse PDF resume");
+                    }
+
+                    const parsedData = await response.json();
+                    
+                    setFormData(prev => {
+                        const updated = {
+                            ...prev,
+                            ...parsedData,
+                            profilePhoto: prev.profilePhoto
+                        };
+                        sessionStorage.setItem("resumeData", JSON.stringify(updated));
+                        return updated;
+                    });
+
+                    showToast("Resume parsed and imported successfully!", "success");
+                } catch (err) {
+                    console.error("PDF import API error:", err);
+                    showToast(err.message || "Failed to parse resume.", "error");
+                } finally {
+                    setIsImporting(false);
+                }
+            };
+            reader.readAsDataURL(file);
+        } catch (err) {
+            console.error("PDF read error:", err);
+            showToast("Failed to read the PDF file.", "error");
+            setIsImporting(false);
+        }
+    };
+
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData(prev => {
@@ -250,6 +427,22 @@ export default function ResumeBuilder() {
 
             // Save complete data
             sessionStorage.setItem("resumeData", JSON.stringify(formData));
+
+            // Auto-save to cloud if user is logged in and it's an existing cloud resume
+            if (userEmail && resumeId) {
+                const selectedTemplate = sessionStorage.getItem("selectedTemplate") || "classic";
+                fetch("/api/resumes", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        email: userEmail,
+                        id: resumeId,
+                        resumeName,
+                        resumeData: formData,
+                        selectedTemplate
+                    })
+                }).catch(err => console.error("Cloud auto-save error on submit:", err));
+            }
 
             const prompt = `
 Create a professional resume.
@@ -330,12 +523,80 @@ ${formData.skills || "Not provided"}
                             borderRadius: '12px',
                             boxShadow: '0 4px 20px rgba(0, 0, 0, 0.5)'
                         }}>
-                            <h1 className="display-5 fw-bold mb-4 text-center">
-                                Build Your Resume
-                            </h1>
-                            <p className="text-white-50 text-center mb-5">
-                                Fill in your details and let AI craft your professional resume
-                            </p>
+                            <div className="d-flex flex-column flex-md-row justify-content-between align-items-center mb-5 gap-3 border-bottom border-secondary pb-4">
+                                <div className="text-center text-md-start">
+                                    <h1 className="display-6 fw-bold mb-1 text-white">
+                                        {resumeId ? `Editing: ${resumeName}` : "Build Your Resume"}
+                                    </h1>
+                                    <p className="text-white-50 mb-0 small">
+                                        Fill in your details and let AI craft your professional resume
+                                    </p>
+                                </div>
+                                {userEmail && (
+                                    <button
+                                        onClick={handleCloudSave}
+                                        className="btn btn-outline-info d-flex align-items-center gap-2 px-4 py-2"
+                                        disabled={cloudSaving}
+                                        style={{ borderRadius: "8px" }}
+                                    >
+                                        {cloudSaving ? (
+                                            <>
+                                                <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                                Saving...
+                                            </>
+                                        ) : (
+                                            <>
+                                                <i className="fas fa-cloud-upload-alt"></i>
+                                                Save to Cloud
+                                            </>
+                                        )}
+                                    </button>
+                                )}
+                            </div>
+
+                            {/* PDF IMPORT AREA */}
+                            <div className="card bg-dark border-secondary mb-5" style={{
+                                borderRadius: '12px',
+                                border: '1px dashed rgba(13, 110, 253, 0.4)',
+                                background: 'linear-gradient(145deg, rgba(28, 32, 39, 0.6) 0%, rgba(17, 20, 26, 0.6) 100%)'
+                            }}>
+                                <div className="card-body p-4 text-center">
+                                    <div className="mb-3">
+                                        <i className="fas fa-file-invoice text-primary" style={{ fontSize: "2.5rem" }}></i>
+                                    </div>
+                                    <h3 className="h5 fw-bold mb-2">Import from Existing Resume</h3>
+                                    <p className="text-white-50 small mb-3">
+                                        Upload your PDF resume, and Gemini AI will pre-fill the form fields below.
+                                    </p>
+                                    <div className="d-flex justify-content-center">
+                                        <input
+                                            type="file"
+                                            accept="application/pdf"
+                                            id="pdf-resume-import"
+                                            className="d-none"
+                                            onChange={handlePdfImport}
+                                            disabled={isImporting || isLoading}
+                                        />
+                                        <label
+                                            htmlFor="pdf-resume-import"
+                                            className={`btn ${isImporting ? 'btn-secondary' : 'btn-outline-primary'} px-4 py-2 fw-semibold d-flex align-items-center gap-2`}
+                                            style={{ cursor: isImporting || isLoading ? 'not-allowed' : 'pointer' }}
+                                        >
+                                            {isImporting ? (
+                                                <>
+                                                    <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                                                    Parsing PDF Resume...
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <i className="fas fa-file-upload"></i>
+                                                    Upload PDF Resume
+                                                </>
+                                            )}
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
 
                             <div>
                                 {/* BASIC INFO */}
@@ -1188,6 +1449,65 @@ ${formData.skills || "Not provided"}
                             <div className="d-flex align-items-center justify-content-center gap-2 text-primary fw-semibold" style={{ fontSize: "0.9rem" }}>
                                 <i className="fas fa-circle-notch fa-spin"></i>
                                 <span>AI engine is generating content...</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* SAVE NAME MODAL */}
+            {showSaveModal && (
+                <div style={{
+                    position: "fixed",
+                    top: 0,
+                    left: 0,
+                    width: "100%",
+                    height: "100%",
+                    backgroundColor: "rgba(10, 14, 21, 0.8)",
+                    backdropFilter: "blur(8px)",
+                    zIndex: 9999,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center"
+                }}>
+                    <div className="card p-5 text-white animate-fade-in" style={{
+                        maxWidth: "450px",
+                        width: "90%",
+                        background: "linear-gradient(145deg, #1c2027 0%, #11141a 100%)",
+                        borderRadius: "20px",
+                        border: "1px solid rgba(142, 144, 160, 0.25)",
+                        boxShadow: "0 15px 35px rgba(0, 0, 0, 0.6)"
+                    }}>
+                        <div className="card-body p-0">
+                            <h3 className="fw-bold mb-3">Name Your Resume</h3>
+                            <p className="text-white-50 mb-4" style={{ fontSize: "0.95rem" }}>
+                                Give this resume a name to save it to your dashboard.
+                            </p>
+                            <input
+                                type="text"
+                                id="resume-name-input"
+                                className="form-control form-control-lg bg-dark text-white border-secondary mb-4"
+                                placeholder="e.g. Fullstack Developer Resume"
+                                defaultValue={resumeName}
+                            />
+                            <div className="d-flex justify-content-end gap-2">
+                                <button
+                                    onClick={() => setShowSaveModal(false)}
+                                    className="btn btn-outline-light px-4 py-2"
+                                    style={{ borderRadius: "8px" }}
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    onClick={() => {
+                                        const val = document.getElementById("resume-name-input").value;
+                                        handleCreateCloudSave(val);
+                                    }}
+                                    className="btn btn-primary px-4 py-2"
+                                    style={{ borderRadius: "8px" }}
+                                >
+                                    Save
+                                </button>
                             </div>
                         </div>
                     </div>

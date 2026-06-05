@@ -27,7 +27,33 @@ export async function initDb() {
         await sql`
             ALTER TABLE users ADD COLUMN IF NOT EXISTS photo_url TEXT;
         `;
-        console.log("✅ Database initialized successfully (users table checked/created/migrated)");
+        
+        // Create resumes table
+        await sql`
+            CREATE TABLE IF NOT EXISTS resumes (
+                id SERIAL PRIMARY KEY,
+                user_email VARCHAR(255) NOT NULL REFERENCES users(email) ON DELETE CASCADE,
+                resume_name VARCHAR(255) DEFAULT 'My Resume',
+                resume_data JSONB NOT NULL,
+                selected_template VARCHAR(100) DEFAULT 'classic',
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            );
+        `;
+        // Add selected_template column if it doesn't exist
+        await sql`
+            ALTER TABLE resumes ADD COLUMN IF NOT EXISTS selected_template VARCHAR(100) DEFAULT 'classic';
+        `;
+
+        // Add sharing columns if they don't exist
+        await sql`
+            ALTER TABLE resumes ADD COLUMN IF NOT EXISTS is_public BOOLEAN DEFAULT FALSE;
+        `;
+        await sql`
+            ALTER TABLE resumes ADD COLUMN IF NOT EXISTS shareable_link VARCHAR(500) DEFAULT NULL;
+        `;
+
+        console.log("✅ Database initialized successfully (users and resumes tables checked/created/migrated)");
     } catch (error) {
         console.error("❌ Database initialization failed:", error);
         throw error;
