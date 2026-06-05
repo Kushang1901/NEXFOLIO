@@ -122,7 +122,41 @@ export default function ExecutiveTemplate({ data }) {
                     {data.experience && (
                         <section className="mb-4">
                             <h5 className="fw-bold pb-2 text-uppercase mb-3" style={{ color: "#1b2a4a", borderBottom: "2px solid #1b2a4a" }}>Professional Experience</h5>
-                            <p className="small text-muted" style={{ whiteSpace: "pre-line", lineHeight: "1.6" }}>{data.experience}</p>
+                            {typeof data.experience === "string" ? (
+                                <p className="small text-muted" style={{ whiteSpace: "pre-line", lineHeight: "1.6" }}>{data.experience}</p>
+                            ) : (
+                                <div className="mb-2 small text-muted">
+                                    <div className="d-flex justify-content-between align-items-baseline text-dark fw-bold" style={{ color: "#1b2a4a" }}>
+                                        <span>{data.experience.role}</span>
+                                        <span>{data.experience.start} – {data.experience.end}</span>
+                                    </div>
+                                    <div className="d-flex justify-content-between italic">
+                                        <span>{data.experience.company} {data.experience.location && `| ${data.experience.location}`}</span>
+                                        {data.experience.salary && <span>Salary: {data.experience.salary}</span>}
+                                    </div>
+                                    {data.experience.description && (
+                                        <p className="mt-2 text-muted" style={{ whiteSpace: "pre-line", lineHeight: "1.6" }}>
+                                            {data.experience.description}
+                                        </p>
+                                    )}
+                                </div>
+                            )}
+                        </section>
+                    )}
+
+                    {/* Internship */}
+                    {data.internship && (
+                        <section className="mb-4">
+                            <h5 className="fw-bold pb-2 text-uppercase mb-3" style={{ color: "#1b2a4a", borderBottom: "2px solid #1b2a4a" }}>Internship</h5>
+                            <div className="mb-2 small text-muted">
+                                <div className="d-flex justify-content-between align-items-baseline text-dark fw-bold" style={{ color: "#1b2a4a" }}>
+                                    <span>{data.internship.field}</span>
+                                    <span>{data.internship.start} – {data.internship.end}</span>
+                                </div>
+                                <div className="italic">
+                                    {data.internship.company}
+                                </div>
+                            </div>
                         </section>
                     )}
 

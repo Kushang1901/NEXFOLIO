@@ -11,3 +11,8 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+/* Fix conflict between Bootstrap collapse and Tailwind CSS visibility: collapse */
+.collapse.navbar-collapse {
+  visibility: visible !important;
+}

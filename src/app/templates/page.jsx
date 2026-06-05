@@ -1,11 +1,21 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Navbar from "../../components/Navbar";
+import { subscribeToAuthChanges } from "../../authState";
 
 export default function TemplateSelection() {
     const router = useRouter();
+
+    useEffect(() => {
+        const unsubscribe = subscribeToAuthChanges((user) => {
+            if (!user) {
+                router.push("/?triggerAuth=true");
+            }
+        });
+        return () => unsubscribe();
+    }, [router]);
 
     const selectTemplate = (id) => {
         sessionStorage.setItem("selectedTemplate", id);
@@ -240,6 +250,112 @@ export default function TemplateSelection() {
                             <h5 className="text-center mb-1">Accent Line</h5>
                             <p className="text-center text-white-50 small mb-0">
                                 Modern • Clean Accent
+                            </p>
+                        </div>
+                    </div>
+
+                    {/* NAVY ELEGANCE */}
+                    <div className="col-md-6 col-lg-3">
+                        <div
+                            className="bg-black border p-3 h-100 template-card"
+                            style={{ borderRadius: "12px", cursor: "pointer" }}
+                            onClick={() => selectTemplate("navy_elegance")}
+                        >
+                            <div className="bg-white text-dark mb-3" style={{ minHeight: "220px", borderRadius: "6px", overflow: "hidden" }}>
+                                <div className="p-3 text-white text-center" style={{ background: "#0f172a", borderBottom: "3px solid #3b82f6" }}>
+                                    <h6 className="fw-bold mb-0" style={{ fontSize: "11px" }}>John Doe</h6>
+                                    <p className="mb-0 text-white-50" style={{ fontSize: "8px" }}>Navy Corporate</p>
+                                </div>
+                                <div className="p-2">
+                                    <p className="fw-bold mb-1" style={{ fontSize: "9px" }}>Summary</p>
+                                    <p className="text-muted mb-2" style={{ fontSize: "8px", lineHeight: "1.2" }}>Professional header banner layout.</p>
+                                    <p className="fw-bold mb-1" style={{ fontSize: "9px" }}>Education</p>
+                                    <p className="text-muted mb-0" style={{ fontSize: "8px" }}>B.S. Computer Science</p>
+                                </div>
+                            </div>
+                            <h5 className="text-center mb-1">Navy Elegance</h5>
+                            <p className="text-center text-white-50 small mb-0">
+                                Corporate • Blue Banner
+                            </p>
+                        </div>
+                    </div>
+
+                    {/* MODERN MINIMALIST B&W */}
+                    <div className="col-md-6 col-lg-3">
+                        <div
+                            className="bg-black border p-3 h-100 template-card"
+                            style={{ borderRadius: "12px", cursor: "pointer" }}
+                            onClick={() => selectTemplate("minimalist_bw")}
+                        >
+                            <div className="bg-white text-dark p-3 mb-3" style={{ minHeight: "220px", borderRadius: "6px" }}>
+                                <div className="border-bottom border-2 border-dark pb-2 mb-2">
+                                    <h6 className="fw-bold text-center mb-0" style={{ fontSize: "12px" }}>JOHN DOE</h6>
+                                    <p className="text-center text-muted mb-0" style={{ fontSize: "8px" }}>SOFTWARE ENGINEER</p>
+                                </div>
+                                <p className="fw-bold mb-1" style={{ fontSize: "9px" }}>PROFILE</p>
+                                <p className="text-muted mb-2" style={{ fontSize: "8px", lineHeight: "1.2" }}>High-contrast clean typography.</p>
+                                <div className="d-flex flex-wrap gap-1">
+                                    <span className="border border-dark px-1 text-center" style={{ fontSize: "7px" }}>React</span>
+                                    <span className="border border-dark px-1 text-center" style={{ fontSize: "7px" }}>Node</span>
+                                </div>
+                            </div>
+                            <h5 className="text-center mb-1">Modern Minimalist</h5>
+                            <p className="text-center text-white-50 small mb-0">
+                                Black & White • Clean
+                            </p>
+                        </div>
+                    </div>
+
+                    {/* EMERALD PROFESSIONAL */}
+                    <div className="col-md-6 col-lg-3">
+                        <div
+                            className="bg-black border p-3 h-100 template-card"
+                            style={{ borderRadius: "12px", cursor: "pointer" }}
+                            onClick={() => selectTemplate("emerald")}
+                        >
+                            <div className="bg-white text-dark p-3 mb-3" style={{ minHeight: "220px", borderRadius: "6px" }}>
+                                <div className="d-flex align-items-center gap-2 border-bottom pb-2 mb-2" style={{ borderColor: "#0f766e" }}>
+                                    <div className="bg-teal text-white rounded-circle d-flex align-items-center justify-content-center" style={{ width: "20px", height: "20px", background: "#0f766e", fontSize: "10px" }}>JD</div>
+                                    <div>
+                                        <h6 className="fw-bold mb-0" style={{ fontSize: "11px", color: "#0f766e" }}>John Doe</h6>
+                                        <p className="text-muted mb-0" style={{ fontSize: "8px" }}>Developer</p>
+                                    </div>
+                                </div>
+                                <p className="fw-bold mb-1" style={{ fontSize: "9px", color: "#0f766e" }}>Summary</p>
+                                <p className="text-muted mb-2" style={{ fontSize: "8px", lineHeight: "1.2" }}>Modern layout with teal highlights.</p>
+                                <span className="px-2 py-0.5 rounded-pill border" style={{ fontSize: "7px", color: "#0f766e", borderColor: "#0f766e", backgroundColor: "#f0fdfa" }}>React</span>
+                            </div>
+                            <h5 className="text-center mb-1">Emerald Professional</h5>
+                            <p className="text-center text-white-50 small mb-0">
+                                Fresh • Teal Accent
+                            </p>
+                        </div>
+                    </div>
+
+                    {/* SLATE TWO-COLUMN */}
+                    <div className="col-md-6 col-lg-3">
+                        <div
+                            className="bg-black border p-3 h-100 template-card"
+                            style={{ borderRadius: "12px", cursor: "pointer" }}
+                            onClick={() => selectTemplate("slate_two_column")}
+                        >
+                            <div className="bg-white text-dark d-flex mb-3" style={{ minHeight: "220px", borderRadius: "6px", overflow: "hidden" }}>
+                                <div className="p-2" style={{ width: "35%", background: "#f8fafc", borderRight: "1px solid #e2e8f0", height: "100%" }}>
+                                    <h6 className="fw-bold mb-1" style={{ fontSize: "9px" }}>John Doe</h6>
+                                    <p className="text-muted mb-2" style={{ fontSize: "7px" }}>Web Developer</p>
+                                    <hr className="my-1" />
+                                    <span className="bg-slate-200 text-slate-700 px-1 py-0.5 rounded" style={{ fontSize: "6px" }}>React</span>
+                                </div>
+                                <div className="p-2" style={{ width: "65%", height: "100%" }}>
+                                    <p className="fw-bold mb-1" style={{ fontSize: "9px" }}>Profile</p>
+                                    <p className="text-muted mb-2" style={{ fontSize: "7px", lineHeight: "1.2" }}>Two-column split layouts.</p>
+                                    <p className="fw-bold mb-1" style={{ fontSize: "9px" }}>Experience</p>
+                                    <p className="text-muted" style={{ fontSize: "7px" }}>Engineer</p>
+                                </div>
+                            </div>
+                            <h5 className="text-center mb-1">Slate Two-Column</h5>
+                            <p className="text-center text-white-50 small mb-0">
+                                Two-Column • Elegant
                             </p>
                         </div>
                     </div>

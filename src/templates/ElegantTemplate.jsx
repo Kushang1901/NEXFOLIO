@@ -75,7 +75,41 @@ export default function ElegantTemplate({ data }) {
             {data.experience && (
                 <div className="mb-4">
                     <h5 className="fw-semibold text-uppercase border-bottom pb-2 mb-3" style={{ fontSize: "16px", letterSpacing: "1.5px" }}>Professional Experience</h5>
-                    <p className="small text-muted" style={{ whiteSpace: "pre-line", lineHeight: "1.7", paddingLeft: "12px" }}>{data.experience}</p>
+                    {typeof data.experience === "string" ? (
+                        <p className="small text-muted" style={{ whiteSpace: "pre-line", lineHeight: "1.7", paddingLeft: "12px" }}>{data.experience}</p>
+                    ) : (
+                        <div className="mb-3 small text-muted" style={{ paddingLeft: "12px" }}>
+                            <div className="d-flex justify-content-between align-items-baseline text-dark fw-semibold" style={{ fontStyle: "italic" }}>
+                                <span>{data.experience.role}</span>
+                                <span style={{ fontStyle: "normal" }}>{data.experience.start} – {data.experience.end}</span>
+                            </div>
+                            <div className="d-flex justify-content-between italic small">
+                                <span>{data.experience.company} {data.experience.location && `| ${data.experience.location}`}</span>
+                                {data.experience.salary && <span>Salary: {data.experience.salary}</span>}
+                            </div>
+                            {data.experience.description && (
+                                <p className="mt-2 text-muted" style={{ whiteSpace: "pre-line", lineHeight: "1.7", fontStyle: "normal" }}>
+                                    {data.experience.description}
+                                </p>
+                            )}
+                        </div>
+                    )}
+                </div>
+            )}
+
+            {/* Internship */}
+            {data.internship && (
+                <div className="mb-4">
+                    <h5 className="fw-semibold text-uppercase border-bottom pb-2 mb-3" style={{ fontSize: "16px", letterSpacing: "1.5px" }}>Internship</h5>
+                    <div className="mb-2 small text-muted" style={{ paddingLeft: "12px" }}>
+                        <div className="d-flex justify-content-between align-items-baseline text-dark fw-semibold" style={{ fontStyle: "italic" }}>
+                            <span>{data.internship.field}</span>
+                            <span style={{ fontStyle: "normal" }}>{data.internship.start} – {data.internship.end}</span>
+                        </div>
+                        <div className="italic">
+                            {data.internship.company}
+                        </div>
+                    </div>
                 </div>
             )}
 

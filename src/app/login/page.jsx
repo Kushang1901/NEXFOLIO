@@ -9,6 +9,7 @@ import { app } from "../../firebase";
 import { getRecaptchaToken } from "../../utils/recaptcha";
 import { subscribeToAuthChanges } from "../../authState";
 import Script from "next/script";
+import { showToast } from "../../utils/toast";
 
 export default function Login() {
     const router = useRouter();
@@ -39,7 +40,7 @@ export default function Login() {
             localStorage.setItem("mock_user", JSON.stringify(mockUser));
             window.dispatchEvent(new Event("auth-state-change"));
         }
-        alert("Login successful!");
+        showToast("Login successful!");
         router.push("/");
     };
 
@@ -48,14 +49,19 @@ export default function Login() {
         e.preventDefault();
         setLoading(true);
         try {
+            // Verify that the user exists in PostgreSQL Neon Database before authentication
+            const checkRes = await fetch(`/api/user?email=${encodeURIComponent(formData.email)}`);
+            if (!checkRes.ok) {
+                showToast("Account does not exist. Please sign up first!");
+                router.push("/signup");
+                setLoading(false);
+                return;
+            }
+
             await signInWithEmailAndPassword(auth, formData.email, formData.password);
-            alert("Login successful!");
-            router.push("/");
         } catch (error) {
             console.error("Firebase Login Error:", error);
-            // Fallback to mock session so login succeeds regardless of Firebase setup
-            loginWithMockUser(formData.email, formData.email.split("@")[0]);
-        } finally {
+            showToast("Login failed: " + (error.message || error));
             setLoading(false);
         }
     };
@@ -64,9 +70,28 @@ export default function Login() {
     useEffect(() => {
         const unsubscribe = subscribeToAuthChanges(async (user) => {
             if (user) {
-                try {
-                    const recaptchaToken = await getRecaptchaToken("LOGIN").catch(() => "MOCK_TOKEN");
+                if (user.uid === "mock_user_12345") {
+                    router.push("/");
+                    return;
+                }
 
+                setLoading(true);
+                try {
+                    // Double check database existence to handle Google sign-ins cleanly
+                    const checkRes = await fetch(`/api/user?email=${encodeURIComponent(user.email)}`);
+                    if (!checkRes.ok) {
+                        const { signOut } = await import("firebase/auth");
+                        await signOut(auth);
+                        if (typeof window !== "undefined") {
+                            localStorage.removeItem("mock_user");
+                        }
+                        showToast("Account does not exist. Please sign up first!");
+                        router.push("/signup");
+                        setLoading(false);
+                        return;
+                    }
+
+                    const recaptchaToken = await getRecaptchaToken("LOGIN").catch(() => "MOCK_TOKEN");
                     await fetch("/api/login", {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
@@ -79,29 +104,33 @@ export default function Login() {
                             recaptchaToken
                         })
                     });
+                    
+                    showToast("Login successful!");
+                    router.push("/");
                 } catch (error) {
-                    console.error("Login API verification error:", error);
+                    console.error("Login verification error:", error);
+                    showToast("Login verification failed: " + (error.message || error));
+                } finally {
+                    setLoading(false);
                 }
-                router.push("/");
             }
         });
         return () => unsubscribe();
-    }, [router]);
+    }, [router, auth]);
 
     // GOOGLE LOGIN
     const handleGoogleLogin = async () => {
+        setLoading(true);
         try {
-            const result = await signInWithPopup(auth, googleProvider);
-            if (result.user) {
-                alert("Login successful!");
-                router.push("/");
-            }
+            await signInWithPopup(auth, googleProvider);
         } catch (error) {
             console.error("Firebase Google Login Error:", error);
-            // If network/other error occurs, log in transparently using a mock user session
-            loginWithMockUser("google.user@resumecraft.ai", "Google User");
+            showToast("Google login failed: " + (error.message || error));
+            setLoading(false);
         }
     };
+
+
 
     return (
         <>
@@ -231,7 +260,6 @@ export default function Login() {
                                 <h1 className="font-headline-lg text-headline-lg text-on-surface mb-2">Login</h1>
                                 <p className="font-body-sm text-body-sm text-on-surface-variant">Welcome back to professional excellence.</p>
                             </div>
-                            
                             {/* Google Login */}
                             <button 
                                 onClick={handleGoogleLogin}
@@ -254,7 +282,6 @@ export default function Login() {
                                 <span className="font-body-sm text-body-sm text-outline uppercase tracking-widest text-[10px]">or</span>
                                 <div className="flex-grow h-[1px] bg-outline-variant"></div>
                             </div>
-                            
                             {/* Form Fields */}
                             <form onSubmit={handleEmailLogin} className="flex flex-col gap-element-gap">
                                 <div className="flex flex-col gap-2">
@@ -297,7 +324,7 @@ export default function Login() {
                                 >
                                     {loading ? (
                                         <span className="flex items-center justify-center gap-2">
-                                            <span className="material-symbols-outlined animate-spin">sync</span>
+                                            <i className="fas fa-sync fa-spin"></i>
                                             Authenticating...
                                         </span>
                                     ) : "Login"}
@@ -330,7 +357,7 @@ export default function Login() {
                 <footer className="w-full py-8 px-8 flex flex-col md:flex-row justify-between items-center max-w-container-max-width mx-auto gap-4 bg-surface-container-lowest dark:bg-surface-container-lowest border-t border-outline-variant">
                     <div className="font-label-bold text-label-bold text-on-surface">ResumeCraft AI</div>
                     <div className="flex flex-col md:flex-row gap-6 items-center">
-                        <span className="font-body-sm text-body-sm text-tertiary-fixed-dim">© 2025 ResumeCraft AI. All rights reserved.</span>
+                        <span className="font-body-sm text-body-sm text-tertiary-fixed-dim">© 2026 ResumeCraft AI. All rights reserved.</span>
                         <div className="flex gap-6">
                             <a className="font-body-sm text-body-sm text-on-surface-variant hover:text-primary transition-colors duration-200 cursor-pointer" href="#">Privacy Policy</a>
                             <a className="font-body-sm text-body-sm text-on-surface-variant hover:text-primary transition-colors duration-200 cursor-pointer" href="#">Terms of Service</a>

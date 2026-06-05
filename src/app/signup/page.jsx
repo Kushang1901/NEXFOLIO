@@ -9,6 +9,7 @@ import { getRecaptchaToken } from "../../utils/recaptcha";
 import Navbar from "../../components/Navbar";
 import { subscribeToAuthChanges } from "../../authState";
 import Script from "next/script";
+import { showToast } from "../../utils/toast";
 
 export default function Signup() {
     const router = useRouter();
@@ -21,6 +22,7 @@ export default function Signup() {
         password: ""
     });
     const [loading, setLoading] = useState(false);
+    const apiCallingRef = React.useRef(new Set());
 
     const handleChange = (e) => {
         setFormData(prev => ({
@@ -33,8 +35,14 @@ export default function Signup() {
     useEffect(() => {
         const unsubscribe = subscribeToAuthChanges(async (user) => {
             if (user) {
+                if (apiCallingRef.current.has(user.email)) return;
+                apiCallingRef.current.add(user.email);
+
                 try {
                     const recaptchaToken = await getRecaptchaToken("SIGNUP").catch(() => "MOCK_TOKEN");
+                    const provider = user.uid?.startsWith("mock_user_") 
+                        ? "mock" 
+                        : (user.providerData[0]?.providerId === "google.com" ? "google" : "email");
 
                     const response = await fetch(
                         "/api/signup",
@@ -42,10 +50,10 @@ export default function Signup() {
                             method: "POST",
                             headers: { "Content-Type": "application/json" },
                             body: JSON.stringify({
-                                firstName: user.displayName?.split(" ")[0] || "",
-                                lastName: user.displayName?.split(" ").slice(1).join(" ") || "",
+                                firstName: user.displayName?.split(" ")[0] || formData.fullName?.split(" ")[0] || "",
+                                lastName: user.displayName?.split(" ").slice(1).join(" ") || formData.fullName?.split(" ").slice(1).join(" ") || "User",
                                 email: user.email,
-                                provider: "google",
+                                provider: provider,
                                 photoUrl: user.photoURL || "",
                                 recaptchaToken
                             })
@@ -61,7 +69,7 @@ export default function Signup() {
 
                     // 🔴 ALREADY REGISTERED USER
                     if (!data.isNewUser) {
-                        alert("You already have an account. Please login.");
+                        showToast("You already have an account. Please login.", "info");
                         router.push("/login");
                         return;
                     }
@@ -70,15 +78,17 @@ export default function Signup() {
                     router.push("/builder");
                 } catch (err) {
                     console.error("Google signup redirect error:", err);
-                    alert(err.message || "Signup failed. Please try again.");
+                    showToast(err.message || "Signup failed. Please try again.", "error");
+                } finally {
+                    apiCallingRef.current.delete(user.email);
                 }
             }
         });
         return () => unsubscribe();
-    }, [router]);
+    }, [router, formData.fullName]);
 
     // MOCK SIGNUP BYPASS
-    const signupWithMockUser = (email = "google.user@resumecraft.ai", displayName = "Google User") => {
+    const signupWithMockUser = (email = "demo@resumecraft.ai", displayName = "Demo User") => {
         const mockUser = {
             uid: "mock_user_12345",
             email: email,
@@ -90,7 +100,7 @@ export default function Signup() {
             localStorage.setItem("mock_user", JSON.stringify(mockUser));
             window.dispatchEvent(new Event("auth-state-change"));
         }
-        alert("Signup successful!");
+        showToast("Signup successful!");
         router.push("/builder");
     };
 
@@ -105,54 +115,25 @@ export default function Signup() {
             const result = await createUserWithEmailAndPassword(auth, formData.email, formData.password);
             await updateProfile(result.user, { displayName: formData.fullName });
             
-            // Call the local backend signup API to register in Neon PostgreSQL
-            const recaptchaToken = await getRecaptchaToken("SIGNUP").catch(() => "MOCK_TOKEN");
-            const response = await fetch("/api/signup", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    firstName,
-                    lastName,
-                    email: formData.email,
-                    provider: "email",
-                    recaptchaToken
-                })
-            });
-
-            if (!response.ok) {
-                const errData = await response.json().catch(() => ({}));
-                throw new Error(errData.error || "Server error during signup");
+            // If already processing/signup occurred, skip duplicate API call
+            if (apiCallingRef.current.has(formData.email)) {
+                showToast("Signup successful!");
+                router.push("/builder");
+                return;
             }
+            apiCallingRef.current.add(formData.email);
 
-            alert("Signup successful!");
-            router.push("/builder");
-        } catch (err) {
-            console.error("Firebase Signup Error:", err);
-            // Fallback to mock session so signup succeeds regardless of Firebase setup
-            signupWithMockUser(formData.email, formData.fullName || "Demo User");
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    // GOOGLE SIGNUP HANDLER
-    const handleGoogleSignup = async () => {
-        try {
-            const result = await signInWithPopup(auth, googleProvider);
-            if (result.user) {
-                const user = result.user;
-                
-                // Call the mock backend signup route to simulate signup success
+            try {
+                // Call the local backend signup API to register in Neon PostgreSQL
                 const recaptchaToken = await getRecaptchaToken("SIGNUP").catch(() => "MOCK_TOKEN");
                 const response = await fetch("/api/signup", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({
-                        firstName: user.displayName?.split(" ")[0] || "",
-                        lastName: user.displayName?.split(" ").slice(1).join(" ") || "",
-                        email: user.email,
-                        provider: "google",
-                        photoUrl: user.photoURL || "",
+                        firstName,
+                        lastName,
+                        email: formData.email,
+                        provider: "email",
                         recaptchaToken
                     })
                 });
@@ -162,16 +143,66 @@ export default function Signup() {
                     throw new Error(errData.error || "Server error during signup");
                 }
 
-                alert("Signup successful!");
+                showToast("Signup successful!");
                 router.push("/builder");
+            } finally {
+                apiCallingRef.current.delete(formData.email);
             }
         } catch (err) {
             console.error("Firebase Signup Error:", err);
-            // Transparently fallback to mock user on connection blocker errors
-            signupWithMockUser(formData.email || "google.user@resumecraft.ai", formData.fullName || "Google User");
+            // Fallback to mock session so signup succeeds regardless of Firebase setup
+            signupWithMockUser(formData.email, formData.fullName || "Demo User");
+        } finally {
+            setLoading(false);
         }
     };
+    // GOOGLE SIGNUP HANDLER
+    const handleGoogleSignup = async () => {
+        try {
+            const result = await signInWithPopup(auth, googleProvider);
+            if (result.user) {
+                const user = result.user;
+                
+                // If already processing/signup occurred, skip duplicate API call
+                if (apiCallingRef.current.has(user.email)) {
+                    showToast("Signup successful!");
+                    router.push("/builder");
+                    return;
+                }
+                apiCallingRef.current.add(user.email);
 
+                try {
+                    // Call the mock backend signup route to simulate signup success
+                    const recaptchaToken = await getRecaptchaToken("SIGNUP").catch(() => "MOCK_TOKEN");
+                    const response = await fetch("/api/signup", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({
+                            firstName: user.displayName?.split(" ")[0] || "",
+                            lastName: user.displayName?.split(" ").slice(1).join(" ") || "",
+                            email: user.email,
+                            provider: "google",
+                            photoUrl: user.photoURL || "",
+                            recaptchaToken
+                        })
+                    });
+
+                    if (!response.ok) {
+                        const errData = await response.json().catch(() => ({}));
+                        throw new Error(errData.error || "Server error during signup");
+                    }
+
+                    showToast("Signup successful!");
+                    router.push("/builder");
+                } finally {
+                    apiCallingRef.current.delete(user.email);
+                }
+            }
+        } catch (err) {
+            console.error("Firebase Signup Error:", err);
+            showToast("Google signup failed: " + (err.message || err));
+        }
+    };
     // FLOATING PARTICLES EFFECT FOR SIGNUP PAGE
     useEffect(() => {
         if (typeof window === "undefined") return;
@@ -364,7 +395,6 @@ export default function Signup() {
                                 <span className="font-label-bold text-label-bold text-outline uppercase tracking-widest text-[10px]">or email</span>
                                 <div className="flex-grow h-px bg-outline-variant"></div>
                             </div>
-                            
                             <div className="space-y-element-gap">
                                 <div className="space-y-2">
                                     <label className="block font-label-bold text-label-bold text-on-surface">Full Name</label>
@@ -426,7 +456,7 @@ export default function Signup() {
                             >
                                 {loading ? (
                                     <span className="flex items-center justify-center gap-2">
-                                        <span className="material-symbols-outlined animate-spin">sync</span>
+                                        <i className="fas fa-sync fa-spin"></i>
                                         Creating account...
                                     </span>
                                 ) : "Create Account"}
@@ -448,7 +478,7 @@ export default function Signup() {
                 <footer className="w-full py-8 px-8 flex flex-col md:flex-row justify-between items-center max-w-container-max-width mx-auto gap-4 bg-surface-container-lowest dark:bg-surface-container-lowest border-t border-outline-variant">
                     <div className="font-label-bold text-label-bold text-on-surface">ResumeCraft AI</div>
                     <div className="font-body-sm text-body-sm text-tertiary-fixed-dim">
-                        © 2025 ResumeCraft AI. All rights reserved.
+                        © 2026 ResumeCraft AI. All rights reserved.
                     </div>
                     <div className="flex gap-6 font-body-sm text-body-sm text-on-surface-variant">
                         <a className="hover:text-primary transition-colors duration-200 cursor-pointer" href="#">Privacy Policy</a>

@@ -39,7 +39,7 @@ export async function GET(request) {
 
 export async function POST(request) {
     try {
-        const { email, photoUrl } = await request.json();
+        const { email, firstName, lastName, photoUrl } = await request.json();
 
         if (!email) {
             return NextResponse.json(
@@ -51,11 +51,13 @@ export async function POST(request) {
         const db = await getDb();
         await db`
             UPDATE users
-            SET photo_url = ${photoUrl || null}
+            SET first_name = ${firstName || null},
+                last_name = ${lastName || null},
+                photo_url = ${photoUrl || null}
             WHERE email = ${email}
         `;
 
-        return NextResponse.json({ message: "Photo updated successfully" });
+        return NextResponse.json({ message: "Profile updated successfully" });
     } catch (err) {
         console.error("❌ User POST Route Error:", err);
         return NextResponse.json(
@@ -64,3 +66,32 @@ export async function POST(request) {
         );
     }
 }
+
+export async function DELETE(request) {
+    try {
+        const { searchParams } = new URL(request.url);
+        const email = searchParams.get("email");
+
+        if (!email) {
+            return NextResponse.json(
+                { error: "Email is required" },
+                { status: 400 }
+            );
+        }
+
+        const db = await getDb();
+        await db`
+            DELETE FROM users
+            WHERE email = ${email}
+        `;
+
+        return NextResponse.json({ message: "User deleted successfully from database" });
+    } catch (err) {
+        console.error("❌ User DELETE Route Error:", err);
+        return NextResponse.json(
+            { error: "Server error" },
+            { status: 500 }
+        );
+    }
+}
+

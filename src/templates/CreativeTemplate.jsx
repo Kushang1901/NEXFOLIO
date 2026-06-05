@@ -1,4 +1,4 @@
-﻿import React from "react";
+import React from "react";
 
 export default function CreativeTemplate({ data }) {
 
@@ -118,8 +118,42 @@ export default function CreativeTemplate({ data }) {
             {/* EXPERIENCE */}
             {data.experience && (
                 <div className="card p-4 mb-3">
-                    <h5 className="fw-bold">Experience</h5>
-                    <p style={{ whiteSpace: "pre-line" }}>{data.experience}</p>
+                    <h5 className="fw-bold">Job Experience</h5>
+                    {typeof data.experience === "string" ? (
+                        <p style={{ whiteSpace: "pre-line" }}>{data.experience}</p>
+                    ) : (
+                        <div className="mb-2">
+                            <div className="d-flex justify-content-between align-items-baseline">
+                                <span className="fw-bold">{data.experience.role}</span>
+                                <span className="text-muted small">{data.experience.start} – {data.experience.end}</span>
+                            </div>
+                            <div className="d-flex justify-content-between text-muted small italic">
+                                <span>{data.experience.company} {data.experience.location && `| ${data.experience.location}`}</span>
+                                {data.experience.salary && <span>Salary: {data.experience.salary}</span>}
+                            </div>
+                            {data.experience.description && (
+                                <p className="mt-2" style={{ whiteSpace: "pre-line" }}>
+                                    {data.experience.description}
+                                </p>
+                            )}
+                        </div>
+                    )}
+                </div>
+            )}
+
+            {/* INTERNSHIP */}
+            {data.internship && (
+                <div className="card p-4 mb-3">
+                    <h5 className="fw-bold">Internship</h5>
+                    <div className="mb-2">
+                        <div className="d-flex justify-content-between align-items-baseline">
+                            <span className="fw-bold">{data.internship.field}</span>
+                            <span className="text-muted small">{data.internship.start} – {data.internship.end}</span>
+                        </div>
+                        <div className="text-muted small italic">
+                            {data.internship.company}
+                        </div>
+                    </div>
                 </div>
             )}
 

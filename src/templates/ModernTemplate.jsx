@@ -1,4 +1,4 @@
-﻿import React from "react";
+import React from "react";
 
 export default function ModernTemplate({ data }) {
 
@@ -131,8 +131,42 @@ export default function ModernTemplate({ data }) {
                 {/* EXPERIENCE */}
                 {data.experience && (
                     <section className="mb-4">
-                        <h5 className="fw-bold">EXPERIENCE</h5>
-                        <p style={{ whiteSpace: "pre-line" }}>{data.experience}</p>
+                        <h5 className="fw-bold">JOB EXPERIENCE</h5>
+                        {typeof data.experience === "string" ? (
+                            <p style={{ whiteSpace: "pre-line" }}>{data.experience}</p>
+                        ) : (
+                            <div className="mb-2">
+                                <div className="d-flex justify-content-between align-items-baseline">
+                                    <span className="fw-bold">{data.experience.role}</span>
+                                    <span className="text-muted small">{data.experience.start} – {data.experience.end}</span>
+                                </div>
+                                <div className="d-flex justify-content-between text-muted small italic">
+                                    <span>{data.experience.company} {data.experience.location && `| ${data.experience.location}`}</span>
+                                    {data.experience.salary && <span>Salary: {data.experience.salary}</span>}
+                                </div>
+                                {data.experience.description && (
+                                    <p className="mt-2" style={{ whiteSpace: "pre-line" }}>
+                                        {data.experience.description}
+                                    </p>
+                                )}
+                            </div>
+                        )}
+                    </section>
+                )}
+
+                {/* INTERNSHIP */}
+                {data.internship && (
+                    <section className="mb-4">
+                        <h5 className="fw-bold">INTERNSHIP</h5>
+                        <div className="mb-2">
+                            <div className="d-flex justify-content-between align-items-baseline">
+                                <span className="fw-bold">{data.internship.field}</span>
+                                <span className="text-muted small">{data.internship.start} – {data.internship.end}</span>
+                            </div>
+                            <div className="text-muted small italic">
+                                {data.internship.company}
+                            </div>
+                        </div>
                     </section>
                 )}
 

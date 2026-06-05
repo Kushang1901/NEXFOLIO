@@ -70,8 +70,42 @@ export default function MinimalistTemplate({ data }) {
             {/* Experience */}
             {data.experience && (
                 <div className="mb-4">
-                    <h6 className="text-uppercase fw-semibold border-bottom pb-2 mb-3 text-secondary" style={{ letterSpacing: "1px" }}>Experience</h6>
-                    <p className="text-muted small" style={{ whiteSpace: "pre-line", lineHeight: "1.6" }}>{data.experience}</p>
+                    <h6 className="text-uppercase fw-semibold border-bottom pb-2 mb-3 text-secondary" style={{ letterSpacing: "1px" }}>Job Experience</h6>
+                    {typeof data.experience === "string" ? (
+                        <p className="text-muted small" style={{ whiteSpace: "pre-line", lineHeight: "1.6" }}>{data.experience}</p>
+                    ) : (
+                        <div className="mb-2 text-muted small">
+                            <div className="d-flex justify-content-between align-items-baseline text-dark fw-semibold">
+                                <span>{data.experience.role}</span>
+                                <span>{data.experience.start} – {data.experience.end}</span>
+                            </div>
+                            <div className="d-flex justify-content-between italic">
+                                <span>{data.experience.company} {data.experience.location && `| ${data.experience.location}`}</span>
+                                {data.experience.salary && <span>Salary: {data.experience.salary}</span>}
+                            </div>
+                            {data.experience.description && (
+                                <p className="mt-2 text-muted" style={{ whiteSpace: "pre-line", lineHeight: "1.6" }}>
+                                    {data.experience.description}
+                                </p>
+                            )}
+                        </div>
+                    )}
+                </div>
+            )}
+
+            {/* Internship */}
+            {data.internship && (
+                <div className="mb-4">
+                    <h6 className="text-uppercase fw-semibold border-bottom pb-2 mb-3 text-secondary" style={{ letterSpacing: "1px" }}>Internship</h6>
+                    <div className="mb-2 text-muted small">
+                        <div className="d-flex justify-content-between align-items-baseline text-dark fw-semibold">
+                            <span>{data.internship.field}</span>
+                            <span>{data.internship.start} – {data.internship.end}</span>
+                        </div>
+                        <div className="italic">
+                            {data.internship.company}
+                        </div>
+                    </div>
                 </div>
             )}
 

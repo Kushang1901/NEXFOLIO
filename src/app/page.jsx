@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import Navbar from "../components/Navbar";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -8,15 +8,51 @@ import { subscribeToAuthChanges } from "../authState";
 
 export default function HomePage() {
     const router = useRouter();
+    const [user, setUser] = useState(null);
+    const [loadingAuth, setLoadingAuth] = useState(true);
+    const [showAuthModal, setShowAuthModal] = useState(false);
+    const [countdown, setCountdown] = useState(3);
 
     useEffect(() => {
-        const unsubscribe = subscribeToAuthChanges((user) => {
-            if (!user) {
-                router.push("/signup");
+        const unsubscribe = subscribeToAuthChanges((loggedUser) => {
+            setUser(loggedUser);
+            setLoadingAuth(false);
+            
+            // Check if redirect triggered the auth modal
+            if (!loggedUser && typeof window !== "undefined") {
+                const params = new URLSearchParams(window.location.search);
+                if (params.get("triggerAuth") === "true") {
+                    triggerAuthPopup();
+                }
             }
         });
         return () => unsubscribe();
     }, [router]);
+
+    const triggerAuthPopup = () => {
+        setShowAuthModal(true);
+        let timer = 3;
+        setCountdown(3);
+        const interval = setInterval(() => {
+            timer -= 1;
+            setCountdown(timer);
+            if (timer <= 0) {
+                clearInterval(interval);
+                router.push("/signup");
+            }
+        }, 1000);
+    };
+
+    const handleStartResume = (e) => {
+        e.preventDefault();
+        if (loadingAuth) return;
+
+        if (user) {
+            router.push("/templates");
+        } else {
+            triggerAuthPopup();
+        }
+    };
 
     return (
         <div className="bg-dark text-white min-vh-100">
@@ -28,17 +64,20 @@ export default function HomePage() {
                     <div className="row justify-content-center text-center py-5">
                         <div className="col-lg-8">
                             <h1
-                                className="display-1 fw-bold mb-4"
+                                className="display-1 fw-bold mb-3"
                                 style={{ letterSpacing: '-0.02em' }}
                             >
                                 ResumeCraft AI
                             </h1>
-                            <p className="lead fs-3 text-white-50 mb-5">
-                                Create AI-crafted resumes instantly — smart, simple and professional.
+                            <h2 className="fs-2 text-primary fw-semibold mb-4">
+                                Free AI Resume Maker & ATS-Friendly Builder
+                            </h2>
+                            <p className="lead fs-4 text-white-50 mb-5">
+                                Create ATS-friendly professional resumes instantly. Leverage artificial intelligence to craft compelling resume content tailored to your skills and stand out to top recruiters.
                             </p>
 
-                            <Link
-                                href="/templates"
+                            <button
+                                onClick={handleStartResume}
                                 className="btn btn-primary btn-lg px-5 py-3 fw-semibold"
                                 style={{
                                     fontSize: "1.1rem",
@@ -46,8 +85,8 @@ export default function HomePage() {
                                     boxShadow: "0 4px 15px rgba(13, 110, 253, 0.4)"
                                 }}
                             >
-                                Build Resume
-                            </Link>
+                                Build Resume Now
+                            </button>
 
                         </div>
                     </div>
@@ -57,6 +96,12 @@ export default function HomePage() {
             {/* Features Section */}
             <section className="py-5 bg-dark">
                 <div className="container py-5">
+                    <div className="text-center mb-5">
+                        <h2 className="display-6 fw-bold mb-3">Why Use Our AI Resume Generator?</h2>
+                        <p className="text-white-50 max-w-2xl mx-auto fs-5">
+                            Empower your job application process with smart builder tools tailored to pass recruitment screens.
+                        </p>
+                    </div>
                     <div className="row g-4">
                         <div className="col-md-4">
                             <div
@@ -67,9 +112,9 @@ export default function HomePage() {
                                 }}
                             >
                                 <div className="card-body p-4 text-center">
-                                    <h3 className="h4 fw-bold mb-3">AI Generated Content</h3>
+                                    <h3 className="h5 fw-bold mb-3">AI Generated Content</h3>
                                     <p className="text-white-50 mb-0">
-                                        Leverage artificial intelligence to create compelling resume content tailored to your experience and skills.
+                                        Leverage advanced artificial intelligence to instantly draft compelling experience descriptions and bullet points that match your target role.
                                     </p>
                                 </div>
                             </div>
@@ -84,9 +129,9 @@ export default function HomePage() {
                                 }}
                             >
                                 <div className="card-body p-4 text-center">
-                                    <h3 className="h4 fw-bold mb-3">Fast Resume Builder</h3>
+                                    <h3 className="h5 fw-bold mb-3">Fast ATS Resume Builder</h3>
                                     <p className="text-white-50 mb-0">
-                                        Build professional resumes in minutes with our intuitive interface and smart templates.
+                                        Build beautiful, job-winning resumes in minutes using our intuitive interface and templates engineered to be fully scan-readable.
                                     </p>
                                 </div>
                             </div>
@@ -101,9 +146,9 @@ export default function HomePage() {
                                 }}
                             >
                                 <div className="card-body p-4 text-center">
-                                    <h3 className="h4 fw-bold mb-3">Download as PDF</h3>
+                                    <h3 className="h5 fw-bold mb-3">Download Print-Ready PDF</h3>
                                     <p className="text-white-50 mb-0">
-                                        Export your polished resume as a high-quality PDF ready to send to employers instantly.
+                                        Export your polished CV as a clean, professionally formatted PDF that maintains exact styling across all applicant tracking systems.
                                     </p>
                                 </div>
                             </div>
@@ -118,18 +163,21 @@ export default function HomePage() {
                     <div className="row justify-content-center text-center">
                         <div className="col-lg-6">
                             <h2 className="display-5 fw-bold mb-4">
-                                Your Dream Job Starts Here
+                                Build Your ATS-Friendly Resume Today
                             </h2>
-                            <button
+                            <p className="text-white-50 fs-5 mb-4">
+                                Join thousands of job seekers using ResumeCraft AI to land interviews. Start for free now.
+                            </p>
+                             <button
                                 className="btn btn-primary btn-lg px-5 py-3 fw-semibold"
                                 style={{
                                     fontSize: "1.1rem",
                                     borderRadius: "8px",
                                     boxShadow: "0 4px 15px rgba(13, 110, 253, 0.4)"
                                 }}
-                                onClick={() => router.push("/signup")}
+                                onClick={handleStartResume}
                             >
-                                Start Now
+                                Get Started Free
                             </button>
                         </div>
                     </div>
@@ -141,7 +189,7 @@ export default function HomePage() {
                 <div className="container">
                     <div className="text-center text-white-50">
                         <p className="mb-1">
-                            &copy; 2025 ResumeCraft AI. All rights reserved.
+                            &copy; 2026 ResumeCraft AI. All rights reserved.
                         </p>
                         <p className="mb-0">
                             Designed &amp; Developed by{" "}
@@ -157,6 +205,47 @@ export default function HomePage() {
                     </div>
                 </div>
             </footer>
+
+            {/* AUTH REQUIRED MODAL */}
+            {showAuthModal && (
+                <div style={{
+                    position: "fixed",
+                    top: 0,
+                    left: 0,
+                    width: "100%",
+                    height: "100%",
+                    backgroundColor: "rgba(10, 14, 21, 0.8)",
+                    backdropFilter: "blur(8px)",
+                    zIndex: 9999,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    transition: "opacity 0.3s ease"
+                }}>
+                    <div className="card text-center p-5 text-white animate-fade-in" style={{
+                        maxWidth: "450px",
+                        width: "90%",
+                        background: "linear-gradient(145deg, #1c2027 0%, #11141a 100%)",
+                        borderRadius: "20px",
+                        border: "1px solid rgba(142, 144, 160, 0.25)",
+                        boxShadow: "0 15px 35px rgba(0, 0, 0, 0.6)"
+                    }}>
+                        <div className="card-body">
+                            <div className="mb-4">
+                                <i className="fas fa-lock text-primary" style={{ fontSize: "3rem" }}></i>
+                            </div>
+                            <h3 className="fw-bold mb-3" style={{ letterSpacing: "-0.01em" }}>Sign Up First</h3>
+                            <p className="text-white-50 mb-4" style={{ fontSize: "1.05rem", lineHeight: "1.5" }}>
+                                You have to sign up first to create your professional resume.
+                            </p>
+                            <div className="d-flex align-items-center justify-content-center gap-2 text-primary fw-semibold">
+                                <i className="fas fa-sync fa-spin"></i>
+                                <span>Redirecting you to Sign Up in {countdown}s...</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
 
         </div>
     );

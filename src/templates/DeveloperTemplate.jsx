@@ -115,8 +115,44 @@ export default function DeveloperTemplate({ data }) {
                     {/* Experience */}
                     {data.experience && (
                         <section className="mb-4">
-                            <h5 className="fw-bold mb-3" style={{ borderBottom: "2px solid #0f172a", paddingBottom: "6px" }}>const experience = () =&gt; &#123;</h5>
-                            <p className="small text-muted" style={{ paddingLeft: "16px", borderLeft: "2px dashed #cbd5e1", whiteSpace: "pre-line", lineHeight: "1.6" }}>{data.experience}</p>
+                            <h5 className="fw-bold mb-3" style={{ borderBottom: "2px solid #0f172a", paddingBottom: "6px" }}>const jobExperience = () =&gt; &#123;</h5>
+                            <div className="small text-muted" style={{ paddingLeft: "16px", borderLeft: "2px dashed #cbd5e1", lineHeight: "1.6" }}>
+                                {typeof data.experience === "string" ? (
+                                    <p style={{ whiteSpace: "pre-line" }}>{data.experience}</p>
+                                ) : (
+                                    <div className="mb-2">
+                                        <div className="d-flex justify-content-between align-items-baseline text-dark fw-bold">
+                                            <span>role: "{data.experience.role}"</span>
+                                            <span>duration: "{data.experience.start} - {data.experience.end}"</span>
+                                        </div>
+                                        <div>
+                                            company: "{data.experience.company}"{data.experience.location && `, location: "${data.experience.location}"`}
+                                            {data.experience.salary && `, salary: "${data.experience.salary}"`}
+                                        </div>
+                                        {data.experience.description && (
+                                            <p className="mt-2" style={{ whiteSpace: "pre-line" }}>
+                                                // details:<br />
+                                                {data.experience.description}
+                                            </p>
+                                        )}
+                                    </div>
+                                )}
+                            </div>
+                            <h5 className="fw-bold mt-2">&#125;</h5>
+                        </section>
+                    )}
+
+                    {/* Internship */}
+                    {data.internship && (
+                        <section className="mb-4">
+                            <h5 className="fw-bold mb-3" style={{ borderBottom: "2px solid #0f172a", paddingBottom: "6px" }}>const internship = () =&gt; &#123;</h5>
+                            <div className="small text-muted" style={{ paddingLeft: "16px", borderLeft: "2px dashed #cbd5e1", lineHeight: "1.6" }}>
+                                <div className="d-flex justify-content-between align-items-baseline text-dark fw-bold">
+                                    <span>field: "{data.internship.field}"</span>
+                                    <span>duration: "{data.internship.start} - {data.internship.end}"</span>
+                                </div>
+                                <div>company: "{data.internship.company}"</div>
+                            </div>
                             <h5 className="fw-bold mt-2">&#125;</h5>
                         </section>
                     )}

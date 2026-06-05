@@ -5,11 +5,12 @@ import { useRouter } from "next/navigation";
 import Navbar from "../../components/Navbar";
 import { getRecaptchaToken } from "../../utils/recaptcha";
 import { subscribeToAuthChanges } from "../../authState";
+import { showToast } from "../../utils/toast";
 
 export default function ResumeBuilder() {
     const router = useRouter();
 
-    /* ================= YEARS ================= */
+    /* ================= YEARS & MONTHS ================= */
     const MAX_YEAR = 2028;
     const MIN_YEAR = 1980;
 
@@ -19,7 +20,36 @@ export default function ResumeBuilder() {
             (_, i) => startFrom - i
         );
 
+    const MONTHS = [
+        "January", "February", "March", "April", "May", "June",
+        "July", "August", "September", "October", "November", "December"
+    ];
+
     /* ================= STATE ================= */
+    const [isLoading, setIsLoading] = useState(false);
+    const [currentMessageIndex, setCurrentMessageIndex] = useState(0);
+
+    const LOADING_MESSAGES = [
+        "Analyzing your professional profile...",
+        "Brainstorming compelling impact statements...",
+        "Aligning achievements with ATS recommendations...",
+        "Structuring education & work history...",
+        "Polishing content phrasing with Gemini AI...",
+        "Formatting layout & applying design tokens...",
+        "Preparing final resume document preview..."
+    ];
+
+    useEffect(() => {
+        if (!isLoading) {
+            setCurrentMessageIndex(0);
+            return;
+        }
+        const interval = setInterval(() => {
+            setCurrentMessageIndex((prev) => (prev + 1) % LOADING_MESSAGES.length);
+        }, 3000);
+        return () => clearInterval(interval);
+    }, [isLoading]);
+
     const [formData, setFormData] = useState({
         profilePhoto: "",
 
@@ -37,35 +67,85 @@ export default function ResumeBuilder() {
 
         graduation: {
             course: "",
+            startMonth: "",
             startYear: "",
+            endMonth: "",
             endYear: ""
         },
 
         hasPostGraduation: false,
         postGraduation: {
             course: "",
+            startMonth: "",
             startYear: "",
+            endMonth: "",
             endYear: ""
         },
 
         hasPhd: false,
         phd: {
             course: "",
+            startMonth: "",
             startYear: "",
+            endMonth: "",
             endYear: ""
+        },
+
+        hasInternship: false,
+        internship: {
+            field: "",
+            company: "",
+            ongoing: false,
+            startMonth: "",
+            startYear: "",
+            endMonth: "",
+            endYear: ""
+        },
+
+        hasExperience: false,
+        experience: {
+            company: "",
+            location: "",
+            role: "",
+            salary: "",
+            ongoing: false,
+            startMonth: "",
+            startYear: "",
+            endMonth: "",
+            endYear: "",
+            description: ""
         },
 
         projects: "",
         achievements: "",
-
-        experience: "",
         skills: ""
     });
 
     useEffect(() => {
         const savedData = sessionStorage.getItem("resumeData");
         if (savedData) {
-            setFormData(JSON.parse(savedData));
+            try {
+                const parsed = JSON.parse(savedData);
+                // Migrate experience from string to structured if needed
+                if (parsed.experience && typeof parsed.experience === "string") {
+                    parsed.hasExperience = true;
+                    parsed.experience = {
+                        company: "",
+                        location: "",
+                        role: "",
+                        salary: "",
+                        ongoing: false,
+                        startMonth: "",
+                        startYear: "",
+                        endMonth: "",
+                        endYear: "",
+                        description: parsed.experience
+                    };
+                }
+                setFormData(prev => ({ ...prev, ...parsed }));
+            } catch (err) {
+                console.error("Error parsing resumeData:", err);
+            }
         }
 
         let activeEmail = null;
@@ -92,6 +172,7 @@ export default function ResumeBuilder() {
                 }
             } else {
                 activeEmail = null;
+                router.push("/?triggerAuth=true");
             }
         });
 
@@ -162,6 +243,7 @@ export default function ResumeBuilder() {
     /* ================= SUBMIT ================= */
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setIsLoading(true);
 
         try {
             const recaptchaToken = await getRecaptchaToken("GENERATE_RESUME").catch(() => "MOCK_TOKEN");
@@ -188,24 +270,22 @@ Professional Summary:
 ${formData.professionalSummary || "Generate a strong professional summary."}
 
 Education:
-Graduation: ${formData.graduation.course}
-(${formData.graduation.startYear} - ${formData.graduation.endYear})
+Graduation: ${formData.graduation.course} (${[formData.graduation.startMonth, formData.graduation.startYear].filter(Boolean).join(" ")} - ${[formData.graduation.endMonth, formData.graduation.endYear].filter(Boolean).join(" ")})
+Post Graduation: ${formData.hasPostGraduation ? `${formData.postGraduation.course} (${[formData.postGraduation.startMonth, formData.postGraduation.startYear].filter(Boolean).join(" ")} - ${[formData.postGraduation.endMonth, formData.postGraduation.endYear].filter(Boolean).join(" ")})` : "Not Applicable"}
+PhD: ${formData.hasPhd ? `${formData.phd.course} (${[formData.phd.startMonth, formData.phd.startYear].filter(Boolean).join(" ")} - ${[formData.phd.endMonth, formData.phd.endYear].filter(Boolean).join(" ")})` : "Not Applicable"}
 
-Post Graduation:
-${formData.hasPostGraduation
-                    ? `${formData.postGraduation.course} (${formData.postGraduation.startYear} - ${formData.postGraduation.endYear})`
-                    : "Not Applicable"}
+Internship:
+${formData.hasInternship
+    ? `Company: ${formData.internship.company}, Field/Role: ${formData.internship.field}, Duration: ${[formData.internship.startMonth, formData.internship.startYear].filter(Boolean).join(" ")} to ${formData.internship.ongoing ? "Present (Ongoing)" : [formData.internship.endMonth, formData.internship.endYear].filter(Boolean).join(" ")}`
+    : "Not Applicable"}
 
-PhD:
-${formData.hasPhd
-                    ? `${formData.phd.course} (${formData.phd.startYear} - ${formData.phd.endYear})`
-                    : "Not Applicable"}
+Job Experience:
+${formData.hasExperience
+    ? `Company: ${formData.experience.company}, Location: ${formData.experience.location}, Position/Role: ${formData.experience.role}, Salary: ${formData.experience.salary}, Duration: ${[formData.experience.startMonth, formData.experience.startYear].filter(Boolean).join(" ")} to ${formData.experience.ongoing ? "Present (Ongoing)" : [formData.experience.endMonth, formData.experience.endYear].filter(Boolean).join(" ")}. Details/Responsibilities: ${formData.experience.description}`
+    : "Not Applicable"}
 
 Projects:
 ${formData.projects || "Not provided"}
-
-Experience:
-${formData.experience || "Not provided"}
 
 Skills:
 ${formData.skills || "Not provided"}
@@ -232,7 +312,9 @@ ${formData.skills || "Not provided"}
 
         } catch (err) {
             console.error(err);
-            alert(err.message || "AI generation failed. Please try again.");
+            showToast(err.message || "AI generation failed. Please try again.", "error");
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -438,37 +520,63 @@ ${formData.skills || "Not provided"}
                                     <div className="row">
                                         <div className="col-md-6 mb-3">
                                             <label htmlFor="gradStart" className="form-label fw-semibold">
-                                                Start Year
+                                                Start Date
                                             </label>
-                                            <select
-                                                className="form-select bg-dark text-white border-secondary"
-                                                id="gradStart"
-                                                value={formData.graduation.startYear}
-                                                onChange={(e) => handleNestedChange("graduation", "startYear", e.target.value)}
-                                                required
-                                                suppressHydrationWarning
-                                            >
-                                                <option value="">Select Year</option>
-                                                {getYears().map(y => <option key={y} value={y}>{y}</option>)}
-                                            </select>
+                                            <div className="d-flex gap-2">
+                                                <select
+                                                    className="form-select bg-dark text-white border-secondary"
+                                                    id="gradStartMonth"
+                                                    value={formData.graduation.startMonth || ""}
+                                                    onChange={(e) => handleNestedChange("graduation", "startMonth", e.target.value)}
+                                                    required
+                                                    suppressHydrationWarning
+                                                >
+                                                    <option value="">Month</option>
+                                                    {MONTHS.map(m => <option key={m} value={m}>{m}</option>)}
+                                                </select>
+                                                <select
+                                                    className="form-select bg-dark text-white border-secondary"
+                                                    id="gradStart"
+                                                    value={formData.graduation.startYear}
+                                                    onChange={(e) => handleNestedChange("graduation", "startYear", e.target.value)}
+                                                    required
+                                                    suppressHydrationWarning
+                                                >
+                                                    <option value="">Year</option>
+                                                    {getYears().map(y => <option key={y} value={y}>{y}</option>)}
+                                                </select>
+                                            </div>
                                         </div>
                                         <div className="col-md-6 mb-3">
                                             <label htmlFor="gradEnd" className="form-label fw-semibold">
-                                                End Year
+                                                End Date
                                             </label>
-                                            <select
-                                                className="form-select bg-dark text-white border-secondary"
-                                                id="gradEnd"
-                                                value={formData.graduation.endYear}
-                                                onChange={(e) => handleNestedChange("graduation", "endYear", e.target.value)}
-                                                required
-                                                suppressHydrationWarning
-                                            >
-                                                <option value="">Select Year</option>
-                                                {formData.graduation.startYear &&
-                                                    getYears(MAX_YEAR).filter(y => y > formData.graduation.startYear)
-                                                        .map(y => <option key={y} value={y}>{y}</option>)}
-                                            </select>
+                                            <div className="d-flex gap-2">
+                                                <select
+                                                    className="form-select bg-dark text-white border-secondary"
+                                                    id="gradEndMonth"
+                                                    value={formData.graduation.endMonth || ""}
+                                                    onChange={(e) => handleNestedChange("graduation", "endMonth", e.target.value)}
+                                                    required
+                                                    suppressHydrationWarning
+                                                >
+                                                    <option value="">Month</option>
+                                                    {MONTHS.map(m => <option key={m} value={m}>{m}</option>)}
+                                                </select>
+                                                <select
+                                                    className="form-select bg-dark text-white border-secondary"
+                                                    id="gradEnd"
+                                                    value={formData.graduation.endYear}
+                                                    onChange={(e) => handleNestedChange("graduation", "endYear", e.target.value)}
+                                                    required
+                                                    suppressHydrationWarning
+                                                >
+                                                    <option value="">Year</option>
+                                                    {formData.graduation.startYear &&
+                                                        getYears(MAX_YEAR).filter(y => y >= formData.graduation.startYear)
+                                                            .map(y => <option key={y} value={y}>{y}</option>)}
+                                                </select>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -509,35 +617,59 @@ ${formData.skills || "Not provided"}
                                             <div className="row">
                                                 <div className="col-md-6 mb-3">
                                                     <label htmlFor="pgStart" className="form-label fw-semibold">
-                                                        Start Year
+                                                        Start Date
                                                     </label>
-                                                    <select
-                                                        className="form-select bg-dark text-white border-secondary"
-                                                        id="pgStart"
-                                                        value={formData.postGraduation.startYear}
-                                                        onChange={(e) => handleNestedChange("postGraduation", "startYear", e.target.value)}
-                                                        suppressHydrationWarning
-                                                    >
-                                                        <option value="">Select Year</option>
-                                                        {getYears().map(y => <option key={y} value={y}>{y}</option>)}
-                                                    </select>
+                                                    <div className="d-flex gap-2">
+                                                        <select
+                                                            className="form-select bg-dark text-white border-secondary"
+                                                            id="pgStartMonth"
+                                                            value={formData.postGraduation.startMonth || ""}
+                                                            onChange={(e) => handleNestedChange("postGraduation", "startMonth", e.target.value)}
+                                                            suppressHydrationWarning
+                                                        >
+                                                            <option value="">Month</option>
+                                                            {MONTHS.map(m => <option key={m} value={m}>{m}</option>)}
+                                                        </select>
+                                                        <select
+                                                            className="form-select bg-dark text-white border-secondary"
+                                                            id="pgStart"
+                                                            value={formData.postGraduation.startYear}
+                                                            onChange={(e) => handleNestedChange("postGraduation", "startYear", e.target.value)}
+                                                            suppressHydrationWarning
+                                                        >
+                                                            <option value="">Year</option>
+                                                            {getYears().map(y => <option key={y} value={y}>{y}</option>)}
+                                                        </select>
+                                                    </div>
                                                 </div>
                                                 <div className="col-md-6 mb-3">
                                                     <label htmlFor="pgEnd" className="form-label fw-semibold">
-                                                        End Year
+                                                        End Date
                                                     </label>
-                                                    <select
-                                                        className="form-select bg-dark text-white border-secondary"
-                                                        id="pgEnd"
-                                                        value={formData.postGraduation.endYear}
-                                                        onChange={(e) => handleNestedChange("postGraduation", "endYear", e.target.value)}
-                                                        suppressHydrationWarning
-                                                    >
-                                                        <option value="">Select Year</option>
-                                                        {formData.postGraduation.startYear &&
-                                                            getYears(MAX_YEAR).filter(y => y > formData.postGraduation.startYear)
-                                                                .map(y => <option key={y} value={y}>{y}</option>)}
-                                                    </select>
+                                                    <div className="d-flex gap-2">
+                                                        <select
+                                                            className="form-select bg-dark text-white border-secondary"
+                                                            id="pgEndMonth"
+                                                            value={formData.postGraduation.endMonth || ""}
+                                                            onChange={(e) => handleNestedChange("postGraduation", "endMonth", e.target.value)}
+                                                            suppressHydrationWarning
+                                                        >
+                                                            <option value="">Month</option>
+                                                            {MONTHS.map(m => <option key={m} value={m}>{m}</option>)}
+                                                        </select>
+                                                        <select
+                                                            className="form-select bg-dark text-white border-secondary"
+                                                            id="pgEnd"
+                                                            value={formData.postGraduation.endYear}
+                                                            onChange={(e) => handleNestedChange("postGraduation", "endYear", e.target.value)}
+                                                            suppressHydrationWarning
+                                                        >
+                                                            <option value="">Year</option>
+                                                            {formData.postGraduation.startYear &&
+                                                                getYears(MAX_YEAR).filter(y => y >= formData.postGraduation.startYear)
+                                                                    .map(y => <option key={y} value={y}>{y}</option>)}
+                                                        </select>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </>
@@ -580,36 +712,186 @@ ${formData.skills || "Not provided"}
                                             <div className="row">
                                                 <div className="col-md-6 mb-3">
                                                     <label htmlFor="phdStart" className="form-label fw-semibold">
-                                                        Start Year
+                                                        Start Date
                                                     </label>
-                                                    <select
-                                                        className="form-select bg-dark text-white border-secondary"
-                                                        id="phdStart"
-                                                        value={formData.phd.startYear}
-                                                        onChange={(e) => handleNestedChange("phd", "startYear", e.target.value)}
-                                                        suppressHydrationWarning
-                                                    >
-                                                        <option value="">Select Year</option>
-                                                        {getYears().map(y => <option key={y} value={y}>{y}</option>)}
-                                                    </select>
+                                                    <div className="d-flex gap-2">
+                                                        <select
+                                                            className="form-select bg-dark text-white border-secondary"
+                                                            id="phdStartMonth"
+                                                            value={formData.phd.startMonth || ""}
+                                                            onChange={(e) => handleNestedChange("phd", "startMonth", e.target.value)}
+                                                            suppressHydrationWarning
+                                                        >
+                                                            <option value="">Month</option>
+                                                            {MONTHS.map(m => <option key={m} value={m}>{m}</option>)}
+                                                        </select>
+                                                        <select
+                                                            className="form-select bg-dark text-white border-secondary"
+                                                            id="phdStart"
+                                                            value={formData.phd.startYear}
+                                                            onChange={(e) => handleNestedChange("phd", "startYear", e.target.value)}
+                                                            suppressHydrationWarning
+                                                        >
+                                                            <option value="">Year</option>
+                                                            {getYears().map(y => <option key={y} value={y}>{y}</option>)}
+                                                        </select>
+                                                    </div>
                                                 </div>
                                                 <div className="col-md-6 mb-3">
                                                     <label htmlFor="phdEnd" className="form-label fw-semibold">
-                                                        End Year
+                                                        End Date
                                                     </label>
-                                                    <select
-                                                        className="form-select bg-dark text-white border-secondary"
-                                                        id="phdEnd"
-                                                        value={formData.phd.endYear}
-                                                        onChange={(e) => handleNestedChange("phd", "endYear", e.target.value)}
-                                                        suppressHydrationWarning
-                                                    >
-                                                        <option value="">Select Year</option>
-                                                        {formData.phd.startYear &&
-                                                            getYears(MAX_YEAR).filter(y => y > formData.phd.startYear)
-                                                                .map(y => <option key={y} value={y}>{y}</option>)}
-                                                    </select>
+                                                    <div className="d-flex gap-2">
+                                                        <select
+                                                            className="form-select bg-dark text-white border-secondary"
+                                                            id="phdEndMonth"
+                                                            value={formData.phd.endMonth || ""}
+                                                            onChange={(e) => handleNestedChange("phd", "endMonth", e.target.value)}
+                                                            suppressHydrationWarning
+                                                        >
+                                                            <option value="">Month</option>
+                                                            {MONTHS.map(m => <option key={m} value={m}>{m}</option>)}
+                                                        </select>
+                                                        <select
+                                                            className="form-select bg-dark text-white border-secondary"
+                                                            id="phdEnd"
+                                                            value={formData.phd.endYear}
+                                                            onChange={(e) => handleNestedChange("phd", "endYear", e.target.value)}
+                                                            suppressHydrationWarning
+                                                        >
+                                                            <option value="">Year</option>
+                                                            {formData.phd.startYear &&
+                                                                getYears(MAX_YEAR).filter(y => y >= formData.phd.startYear)
+                                                                    .map(y => <option key={y} value={y}>{y}</option>)}
+                                                        </select>
+                                                    </div>
                                                 </div>
+                                            </div>
+                                        </>
+                                    )}
+                                </div>
+
+                                {/* INTERNSHIP */}
+                                <div className="mb-4 pb-3 border-bottom border-secondary">
+                                    <div className="form-check mb-3">
+                                        <input
+                                            className="form-check-input"
+                                            type="checkbox"
+                                            id="hasInternship"
+                                            checked={formData.hasInternship}
+                                            onChange={(e) => setFormData(p => ({ ...p, hasInternship: e.target.checked }))}
+                                            suppressHydrationWarning
+                                        />
+                                        <label className="form-check-label fw-semibold" htmlFor="hasInternship">
+                                            I have Internship experience
+                                        </label>
+                                    </div>
+
+                                    {formData.hasInternship && (
+                                        <>
+                                            <div className="mb-3">
+                                                <label htmlFor="internshipField" className="form-label fw-semibold">
+                                                    Field of Internship
+                                                </label>
+                                                <input
+                                                    type="text"
+                                                    className="form-control bg-dark text-white border-secondary"
+                                                    id="internshipField"
+                                                    value={formData.internship.field}
+                                                    onChange={(e) => handleNestedChange("internship", "field", e.target.value)}
+                                                    placeholder="Frontend Web Developer / Marketing Intern"
+                                                    suppressHydrationWarning
+                                                />
+                                            </div>
+
+                                            <div className="mb-3">
+                                                <label htmlFor="internshipCompany" className="form-label fw-semibold">
+                                                    Company Name
+                                                </label>
+                                                <input
+                                                    type="text"
+                                                    className="form-control bg-dark text-white border-secondary"
+                                                    id="internshipCompany"
+                                                    value={formData.internship.company}
+                                                    onChange={(e) => handleNestedChange("internship", "company", e.target.value)}
+                                                    placeholder="Google / Tech StartUp"
+                                                    suppressHydrationWarning
+                                                />
+                                            </div>
+
+                                            <div className="form-check mb-3">
+                                                <input
+                                                    className="form-check-input"
+                                                    type="checkbox"
+                                                    id="internshipOngoing"
+                                                    checked={formData.internship.ongoing}
+                                                    onChange={(e) => handleNestedChange("internship", "ongoing", e.target.checked)}
+                                                    suppressHydrationWarning
+                                                />
+                                                <label className="form-check-label text-white-50" htmlFor="internshipOngoing">
+                                                    Ongoing Internship
+                                                </label>
+                                            </div>
+
+                                            <div className="row">
+                                                <div className="col-md-6 mb-3">
+                                                    <label htmlFor="internshipStart" className="form-label fw-semibold">
+                                                        Start Date
+                                                    </label>
+                                                    <div className="d-flex gap-2">
+                                                        <select
+                                                            className="form-select bg-dark text-white border-secondary"
+                                                            id="internshipStartMonth"
+                                                            value={formData.internship.startMonth || ""}
+                                                            onChange={(e) => handleNestedChange("internship", "startMonth", e.target.value)}
+                                                            suppressHydrationWarning
+                                                        >
+                                                            <option value="">Month</option>
+                                                            {MONTHS.map(m => <option key={m} value={m}>{m}</option>)}
+                                                        </select>
+                                                        <select
+                                                            className="form-select bg-dark text-white border-secondary"
+                                                            id="internshipStart"
+                                                            value={formData.internship.startYear}
+                                                            onChange={(e) => handleNestedChange("internship", "startYear", e.target.value)}
+                                                            suppressHydrationWarning
+                                                        >
+                                                            <option value="">Year</option>
+                                                            {getYears().map(y => <option key={y} value={y}>{y}</option>)}
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                {!formData.internship.ongoing && (
+                                                    <div className="col-md-6 mb-3">
+                                                        <label htmlFor="internshipEnd" className="form-label fw-semibold">
+                                                            End Date
+                                                        </label>
+                                                        <div className="d-flex gap-2">
+                                                            <select
+                                                                className="form-select bg-dark text-white border-secondary"
+                                                                id="internshipEndMonth"
+                                                                value={formData.internship.endMonth || ""}
+                                                                onChange={(e) => handleNestedChange("internship", "endMonth", e.target.value)}
+                                                                suppressHydrationWarning
+                                                            >
+                                                                <option value="">Month</option>
+                                                                {MONTHS.map(m => <option key={m} value={m}>{m}</option>)}
+                                                            </select>
+                                                            <select
+                                                                className="form-select bg-dark text-white border-secondary"
+                                                                id="internshipEnd"
+                                                                value={formData.internship.endYear}
+                                                                onChange={(e) => handleNestedChange("internship", "endYear", e.target.value)}
+                                                                suppressHydrationWarning
+                                                            >
+                                                                <option value="">Year</option>
+                                                                {formData.internship.startYear &&
+                                                                    getYears(MAX_YEAR).filter(y => y >= formData.internship.startYear)
+                                                                        .map(y => <option key={y} value={y}>{y}</option>)}
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                )}
                                             </div>
                                         </>
                                     )}
@@ -651,21 +933,153 @@ ${formData.skills || "Not provided"}
                                 </div>
 
 
-                                {/* EXPERIENCE */}
-                                <div className="mb-4">
-                                    <label htmlFor="experience" className="form-label fw-semibold">
-                                        Experience
-                                    </label>
-                                    <textarea
-                                        className="form-control bg-dark text-white border-secondary"
-                                        id="experience"
-                                        name="experience"
-                                        value={formData.experience}
-                                        onChange={handleChange}
-                                        rows="5"
-                                        placeholder="Software Engineer - Company Name&#10;Jan 2024 - Present&#10;- Developed web applications using React and Node.js&#10;- Collaborated with cross-functional teams"
-                                        suppressHydrationWarning
-                                    ></textarea>
+                                {/* JOB EXPERIENCE */}
+                                <div className="mb-4 pb-3 border-bottom border-secondary">
+                                    <div className="form-check mb-3">
+                                        <input
+                                            className="form-check-input"
+                                            type="checkbox"
+                                            id="hasExperience"
+                                            checked={formData.hasExperience}
+                                            onChange={(e) => setFormData(p => ({ ...p, hasExperience: e.target.checked }))}
+                                            suppressHydrationWarning
+                                        />
+                                        <label className="form-check-label fw-semibold" htmlFor="hasExperience">
+                                            I have Job experience
+                                        </label>
+                                    </div>
+
+                                    {formData.hasExperience && (
+                                        <>
+                                            <div className="row">
+                                                <div className="col-md-6 mb-3">
+                                                    <label htmlFor="expCompany" className="form-label fw-semibold">
+                                                        Company Name
+                                                    </label>
+                                                    <input
+                                                        type="text"
+                                                        className="form-control bg-dark text-white border-secondary"
+                                                        id="expCompany"
+                                                        value={formData.experience.company || ""}
+                                                        onChange={(e) => handleNestedChange("experience", "company", e.target.value)}
+                                                        placeholder="Google LLC"
+                                                        suppressHydrationWarning
+                                                    />
+                                                </div>
+                                                <div className="col-md-6 mb-3">
+                                                    <label htmlFor="expLocation" className="form-label fw-semibold">
+                                                        City & State
+                                                    </label>
+                                                    <input
+                                                        type="text"
+                                                        className="form-control bg-dark text-white border-secondary"
+                                                        id="expLocation"
+                                                        value={formData.experience.location || ""}
+                                                        onChange={(e) => handleNestedChange("experience", "location", e.target.value)}
+                                                        placeholder="San Francisco, CA"
+                                                        suppressHydrationWarning
+                                                    />
+                                                </div>
+                                            </div>
+
+                                            <div className="row">
+                                                <div className="col-md-6 mb-3">
+                                                    <label htmlFor="expRole" className="form-label fw-semibold">
+                                                        Position / Role
+                                                    </label>
+                                                    <input
+                                                        type="text"
+                                                        className="form-control bg-dark text-white border-secondary"
+                                                        id="expRole"
+                                                        value={formData.experience.role || ""}
+                                                        onChange={(e) => handleNestedChange("experience", "role", e.target.value)}
+                                                        placeholder="Senior Software Engineer"
+                                                        suppressHydrationWarning
+                                                    />
+                                                </div>
+                                                <div className="col-md-6 mb-3">
+                                                    <label htmlFor="expSalary" className="form-label fw-semibold">
+                                                        Salary per Annum
+                                                    </label>
+                                                    <input
+                                                        type="text"
+                                                        className="form-control bg-dark text-white border-secondary"
+                                                        id="expSalary"
+                                                        value={formData.experience.salary || ""}
+                                                        onChange={(e) => handleNestedChange("experience", "salary", e.target.value)}
+                                                        placeholder="e.g. $120,000 / 12 LPA"
+                                                        suppressHydrationWarning
+                                                    />
+                                                </div>
+                                            </div>
+
+                                            <div className="form-check mb-3">
+                                                <input
+                                                    className="form-check-input"
+                                                    type="checkbox"
+                                                    id="expOngoing"
+                                                    checked={formData.experience.ongoing || false}
+                                                    onChange={(e) => handleNestedChange("experience", "ongoing", e.target.checked)}
+                                                    suppressHydrationWarning
+                                                />
+                                                <label className="form-check-label text-white-50" htmlFor="expOngoing">
+                                                    Ongoing Job
+                                                </label>
+                                            </div>
+
+                                            <div className="row mb-3">
+                                                <div className="col-md-6 mb-3 mb-md-0">
+                                                    <label htmlFor="expStart" className="form-label fw-semibold">
+                                                        Start Year
+                                                    </label>
+                                                    <select
+                                                        className="form-select bg-dark text-white border-secondary"
+                                                        id="expStart"
+                                                        value={formData.experience.startYear || ""}
+                                                        onChange={(e) => handleNestedChange("experience", "startYear", e.target.value)}
+                                                        suppressHydrationWarning
+                                                    >
+                                                        <option value="">Select Year</option>
+                                                        {getYears().map(y => <option key={y} value={y}>{y}</option>)}
+                                                    </select>
+                                                </div>
+                                                {!formData.experience.ongoing && (
+                                                    <div className="col-md-6">
+                                                        <label htmlFor="expEnd" className="form-label fw-semibold">
+                                                            End Year
+                                                        </label>
+                                                        <select
+                                                            className="form-select bg-dark text-white border-secondary"
+                                                            id="expEnd"
+                                                            value={formData.experience.endYear || ""}
+                                                            onChange={(e) => handleNestedChange("experience", "endYear", e.target.value)}
+                                                            suppressHydrationWarning
+                                                        >
+                                                            <option value="">Select Year</option>
+                                                            {formData.experience.startYear &&
+                                                                getYears(MAX_YEAR).filter(y => y >= formData.experience.startYear)
+                                                                    .map(y => <option key={y} value={y}>{y}</option>)}
+                                                        </select>
+                                                    </div>
+                                                )}
+                                            </div>
+
+                                            <div className="mb-3">
+                                                <label htmlFor="expDescription" className="form-label fw-semibold">
+                                                    Responsibilities / Description
+                                                </label>
+                                                <textarea
+                                                    className="form-control bg-dark text-white border-secondary"
+                                                    id="expDescription"
+                                                    value={formData.experience.description || ""}
+                                                    onChange={(e) => handleNestedChange("experience", "description", e.target.value)}
+                                                    rows="4"
+                                                    placeholder="Describe your role and key achievements..."
+                                                    suppressHydrationWarning
+                                                ></textarea>
+                                            </div>
+                                        </>
+                                    )}
                                 </div>
 
                                 {/* SKILLS */}
@@ -709,10 +1123,76 @@ ${formData.skills || "Not provided"}
             <footer className="bg-black border-top border-secondary py-4 mt-5">
                 <div className="container">
                     <div className="text-center text-white-50">
-                        <p className="mb-0">&copy; 2024 ResumeCraft AI. All rights reserved.</p>
+                        <p className="mb-0">&copy; 2026 ResumeCraft AI. All rights reserved.</p>
                     </div>
                 </div>
             </footer>
+
+            {/* LOADING OVERLAY */}
+            {isLoading && (
+                <div style={{
+                    position: "fixed",
+                    top: 0,
+                    left: 0,
+                    width: "100%",
+                    height: "100%",
+                    backgroundColor: "rgba(10, 14, 21, 0.85)",
+                    backdropFilter: "blur(12px)",
+                    zIndex: 9999,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center"
+                }}>
+                    <style>{`
+                        @keyframes glow-pulse {
+                            0% { transform: scale(0.95); opacity: 0.6; filter: drop-shadow(0 0 10px rgba(13, 110, 253, 0.4)); }
+                            50% { transform: scale(1.05); opacity: 1; filter: drop-shadow(0 0 25px rgba(13, 110, 253, 0.8)); }
+                            100% { transform: scale(0.95); opacity: 0.6; filter: drop-shadow(0 0 10px rgba(13, 110, 253, 0.4)); }
+                        }
+                        @keyframes spin-slow {
+                            from { transform: rotate(0deg); }
+                            to { transform: rotate(360deg); }
+                        }
+                    `}</style>
+                    <div className="card text-center p-5 text-white animate-fade-in" style={{
+                        maxWidth: "500px",
+                        width: "90%",
+                        background: "linear-gradient(145deg, #1c2027 0%, #11141a 100%)",
+                        borderRadius: "24px",
+                        border: "1px solid rgba(13, 110, 253, 0.25)",
+                        boxShadow: "0 20px 50px rgba(0, 0, 0, 0.7)"
+                    }}>
+                        <div className="card-body py-4">
+                            <div className="mb-4 d-flex justify-content-center align-items-center position-relative" style={{ height: "120px" }}>
+                                {/* Outer rotating dashed border spinner */}
+                                <div style={{
+                                    width: "100px",
+                                    height: "100px",
+                                    borderRadius: "50%",
+                                    border: "2px dashed rgba(13, 110, 253, 0.4)",
+                                    borderTopColor: "#0d6efd",
+                                    animation: "spin-slow 6s linear infinite"
+                                }}></div>
+                                {/* Inner pulsing AI magic wand icon */}
+                                <div className="position-absolute d-flex align-items-center justify-content-center">
+                                    <i className="fas fa-wand-magic-sparkles text-primary" style={{
+                                        fontSize: "3rem",
+                                        animation: "glow-pulse 2s infinite ease-in-out"
+                                    }}></i>
+                                </div>
+                            </div>
+                            <h3 className="fw-bold mb-3" style={{ letterSpacing: "-0.01em" }}>Crafting Your Resume</h3>
+                            <p className="text-white-50 mb-4 px-3" style={{ fontSize: "1.05rem", minHeight: "48px", transition: "all 0.3s ease" }}>
+                                {LOADING_MESSAGES[currentMessageIndex]}
+                            </p>
+                            <div className="d-flex align-items-center justify-content-center gap-2 text-primary fw-semibold" style={{ fontSize: "0.9rem" }}>
+                                <i className="fas fa-circle-notch fa-spin"></i>
+                                <span>AI engine is generating content...</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

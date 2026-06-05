@@ -49,6 +49,31 @@ export async function POST(request) {
         );
 
     } catch (err) {
+        // Handle race conditions where parallel requests trigger duplicate inserts
+        if (err.code === "23505" || err.message?.includes("unique constraint")) {
+            console.warn("ℹ️ Signup Route: Handled parallel signup race condition (duplicate key).");
+            try {
+                const db = await getDb();
+                const existingUsers = await db`
+                    SELECT id, email, first_name AS "firstName", last_name AS "lastName", provider, photo_url AS "photoUrl", created_at AS "createdAt", last_login AS "lastLogin"
+                    FROM users
+                    WHERE email = ${email}
+                `;
+                if (existingUsers.length > 0) {
+                    return NextResponse.json(
+                        {
+                            message: "User already exists (race condition resolved)",
+                            isNewUser: false,
+                            user: existingUsers[0]
+                        },
+                        { status: 200 }
+                    );
+                }
+            } catch (innerErr) {
+                console.error("❌ Inner error resolving duplicate key:", innerErr);
+            }
+        }
+
         console.error("❌ Signup Route Error:", err);
         return NextResponse.json(
             { error: "Server error" },

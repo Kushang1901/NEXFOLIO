@@ -2,11 +2,14 @@
 
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { auth } from "../firebase";
 import { signOut } from "firebase/auth";
 import { subscribeToAuthChanges } from "../authState";
+import { showToast } from "../utils/toast";
 
 export default function Navbar() {
+    const router = useRouter();
     const [user, setUser] = useState(null);
     const [displayName, setDisplayName] = useState("");
     const [photoUrl, setPhotoUrl] = useState("");
@@ -61,10 +64,8 @@ export default function Navbar() {
             console.error("Firebase SignOut error:", err);
         }
         setMenuOpen(false);
-        alert("Logged out successfully");
-        if (typeof window !== "undefined") {
-            window.location.href = "/";
-        }
+        showToast("Logged out successfully");
+        router.push("/");
     };
 
     const closeMenu = () => {
@@ -100,7 +101,7 @@ export default function Navbar() {
                 </button>
 
                 {/* NAV LINKS */}
-                <div className={`collapse navbar-collapse ${menuOpen ? "show" : ""}`}>
+                <div className={`collapse navbar-collapse ${menuOpen ? "show" : ""}`} style={{ visibility: "visible" }}>
                     <ul className="navbar-nav ms-auto mb-2 mb-lg-0">
 
                         <li className="nav-item">
@@ -112,7 +113,7 @@ export default function Navbar() {
                         {user && (
                             <>
                                 <li className="nav-item">
-                                    <span className="nav-link text-info fw-bold d-flex align-items-center gap-2">
+                                    <Link href="/profile" className="nav-link text-info fw-bold d-flex align-items-center gap-2" onClick={closeMenu}>
                                         {photoUrl && (
                                             <img 
                                                 src={photoUrl} 
@@ -122,7 +123,7 @@ export default function Navbar() {
                                             />
                                         )}
                                         {displayName || user.email}
-                                    </span>
+                                    </Link>
                                 </li>
 
                                 <li className="nav-item">

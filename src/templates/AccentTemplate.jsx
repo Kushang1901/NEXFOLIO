@@ -87,8 +87,42 @@ export default function AccentTemplate({ data }) {
                 {/* Experience */}
                 {data.experience && (
                     <section className="mb-4">
-                        <h6 className="fw-bold text-uppercase pb-1 mb-2" style={{ color: "#0083b0", borderBottom: "1px solid #e2e8f0" }}>Experience History</h6>
-                        <p className="small text-muted" style={{ whiteSpace: "pre-line", lineHeight: "1.6" }}>{data.experience}</p>
+                        <h6 className="fw-bold text-uppercase pb-1 mb-2" style={{ color: "#0083b0", borderBottom: "1px solid #e2e8f0" }}>Job Experience</h6>
+                        {typeof data.experience === "string" ? (
+                            <p className="small text-muted" style={{ whiteSpace: "pre-line", lineHeight: "1.6" }}>{data.experience}</p>
+                        ) : (
+                            <div className="mb-2 small text-muted">
+                                <div className="d-flex justify-content-between align-items-baseline text-dark fw-bold">
+                                    <span>{data.experience.role}</span>
+                                    <span>{data.experience.start} – {data.experience.end}</span>
+                                </div>
+                                <div className="d-flex justify-content-between italic small">
+                                    <span>{data.experience.company} {data.experience.location && `| ${data.experience.location}`}</span>
+                                    {data.experience.salary && <span>Salary: {data.experience.salary}</span>}
+                                </div>
+                                {data.experience.description && (
+                                    <p className="mt-2 text-muted" style={{ whiteSpace: "pre-line", lineHeight: "1.6" }}>
+                                        {data.experience.description}
+                                    </p>
+                                )}
+                            </div>
+                        )}
+                    </section>
+                )}
+
+                {/* Internship */}
+                {data.internship && (
+                    <section className="mb-4">
+                        <h6 className="fw-bold text-uppercase pb-1 mb-2" style={{ color: "#0083b0", borderBottom: "1px solid #e2e8f0" }}>Internship</h6>
+                        <div className="mb-2 small text-muted">
+                            <div className="d-flex justify-content-between align-items-baseline text-dark fw-bold">
+                                <span>{data.internship.field}</span>
+                                <span>{data.internship.start} – {data.internship.end}</span>
+                            </div>
+                            <div className="italic">
+                                {data.internship.company}
+                            </div>
+                        </div>
                     </section>
                 )}
 
