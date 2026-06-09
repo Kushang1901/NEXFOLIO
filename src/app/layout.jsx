@@ -28,7 +28,7 @@ export const metadata = {
         type: "website",
         images: [
             {
-                url: "https://res.cloudinary.com/dn45xyazy/image/upload/v1766464118/favicon_ahissk.png",
+                url: "/logo.png",
                 width: 800,
                 height: 600,
                 alt: "Nexfolio Logo",
@@ -39,7 +39,7 @@ export const metadata = {
         card: "summary_large_image",
         title: "Free Resume Maker & AI Resume Builder – Nexfolio",
         description: "Create professional ATS-friendly resumes instantly with Nexfolio. Our free AI resume maker helps students and professionals craft polished resumes in minutes.",
-        images: ["https://res.cloudinary.com/dn45xyazy/image/upload/v1766464118/favicon_ahissk.png"],
+        images: ["/logo.png"],
     },
     robots: {
         index: true,
@@ -53,7 +53,8 @@ export const metadata = {
         },
     },
     icons: {
-        icon: "https://res.cloudinary.com/dn45xyazy/image/upload/v1766464118/favicon_ahissk.png",
+        icon: "/favicon.ico",
+        shortcut: "/favicon.png",
         apple: "/logo192.png",
     },
     manifest: "/manifest.json",
@@ -66,7 +67,7 @@ export default function RootLayout({ children }) {
         "name": "Nexfolio",
         "alternateName": ["Nexfolio", "Free AI Resume Builder", "AI Resume Maker", "Free Resume Maker"],
         "url": "https://nexfolio.vercel.app",
-        "logo": "https://res.cloudinary.com/dn45xyazy/image/upload/v1766464118/favicon_ahissk.png",
+        "logo": "https://nexfolio.vercel.app/logo.png",
         "description": "Nexfolio is a free AI-powered resume maker that helps students and professionals create ATS-friendly resumes instantly.",
         "applicationCategory": "BusinessApplication, EducationalApplication",
         "operatingSystem": "All",
