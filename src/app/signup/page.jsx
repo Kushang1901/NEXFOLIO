@@ -88,7 +88,7 @@ export default function Signup() {
     }, [router, formData.fullName]);
 
     // MOCK SIGNUP BYPASS
-    const signupWithMockUser = (email = "demo@resumecraft.ai", displayName = "Demo User") => {
+    const signupWithMockUser = (email = "demo@nexfolio.com", displayName = "Demo User") => {
         const mockUser = {
             uid: "mock_user_12345",
             email: email,
@@ -476,9 +476,9 @@ export default function Signup() {
 
                 {/* Footer */}
                 <footer className="w-full py-8 px-8 flex flex-col md:flex-row justify-between items-center max-w-container-max-width mx-auto gap-4 bg-surface-container-lowest dark:bg-surface-container-lowest border-t border-outline-variant">
-                    <div className="font-label-bold text-label-bold text-on-surface">ResumeCraft AI</div>
+                    <div className="font-label-bold text-label-bold text-on-surface">Nexfolio</div>
                     <div className="font-body-sm text-body-sm text-tertiary-fixed-dim">
-                        © 2026 ResumeCraft AI. All rights reserved.
+                        © 2026 Nexfolio. All rights reserved.
                     </div>
                     <div className="flex gap-6 font-body-sm text-body-sm text-on-surface-variant">
                         <a className="hover:text-primary transition-colors duration-200 cursor-pointer" href="#">Privacy Policy</a>

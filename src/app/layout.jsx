@@ -7,23 +7,23 @@ export const viewport = {
 };
 
 export const metadata = {
-    title: "Free Resume Maker & AI Resume Builder – ResumeCraft AI",
-    description: "Create professional ATS-friendly resumes instantly with ResumeCraft AI. Our free AI resume maker helps students and professionals craft polished resumes in minutes.",
+    title: "Free Resume Maker & AI Resume Builder – Nexfolio",
+    description: "Create professional ATS-friendly resumes instantly with Nexfolio. Our free AI resume maker helps students and professionals craft polished resumes in minutes.",
     keywords: [
         "Free Resume Maker", "AI Resume Maker", "Free AI Resume Builder", "Resume Generator", 
-        "ResumeCraft AI", "Best Free Resume Builder", "ATS Friendly Resume", "Online Resume Builder", 
+        "Nexfolio", "Best Free Resume Builder", "ATS Friendly Resume", "Online Resume Builder", 
         "Free AI Resume Generator", "AI CV Maker Free", "Student Resume Creator"
     ],
     authors: [{ name: "Kushang Acharya", url: "https://kushangacharya.vercel.app" }],
-    metadataBase: new URL("https://resumecraft-ai.vercel.app"),
+    metadataBase: new URL("https://nexfolio.vercel.app"),
     alternates: {
         canonical: "/",
     },
     openGraph: {
-        title: "Free Resume Maker & AI Resume Builder – ResumeCraft AI",
-        description: "Create professional ATS-friendly resumes instantly with ResumeCraft AI. Our free AI resume maker helps students and professionals craft polished resumes in minutes.",
-        url: "https://resumecraft-ai.vercel.app",
-        siteName: "ResumeCraft AI",
+        title: "Free Resume Maker & AI Resume Builder – Nexfolio",
+        description: "Create professional ATS-friendly resumes instantly with Nexfolio. Our free AI resume maker helps students and professionals craft polished resumes in minutes.",
+        url: "https://nexfolio.vercel.app",
+        siteName: "Nexfolio",
         locale: "en_US",
         type: "website",
         images: [
@@ -31,14 +31,14 @@ export const metadata = {
                 url: "https://res.cloudinary.com/dn45xyazy/image/upload/v1766464118/favicon_ahissk.png",
                 width: 800,
                 height: 600,
-                alt: "ResumeCraft AI Logo",
+                alt: "Nexfolio Logo",
             },
         ],
     },
     twitter: {
         card: "summary_large_image",
-        title: "Free Resume Maker & AI Resume Builder – ResumeCraft AI",
-        description: "Create professional ATS-friendly resumes instantly with ResumeCraft AI. Our free AI resume maker helps students and professionals craft polished resumes in minutes.",
+        title: "Free Resume Maker & AI Resume Builder – Nexfolio",
+        description: "Create professional ATS-friendly resumes instantly with Nexfolio. Our free AI resume maker helps students and professionals craft polished resumes in minutes.",
         images: ["https://res.cloudinary.com/dn45xyazy/image/upload/v1766464118/favicon_ahissk.png"],
     },
     robots: {
@@ -63,11 +63,11 @@ export default function RootLayout({ children }) {
     const jsonLd = {
         "@context": "https://schema.org",
         "@type": "WebApplication",
-        "name": "ResumeCraft AI",
-        "alternateName": ["ResumeCraft", "Free AI Resume Builder", "AI Resume Maker", "Free Resume Maker"],
-        "url": "https://resumecraft-ai.vercel.app",
+        "name": "Nexfolio",
+        "alternateName": ["Nexfolio", "Free AI Resume Builder", "AI Resume Maker", "Free Resume Maker"],
+        "url": "https://nexfolio.vercel.app",
         "logo": "https://res.cloudinary.com/dn45xyazy/image/upload/v1766464118/favicon_ahissk.png",
-        "description": "ResumeCraft AI is a free AI-powered resume maker that helps students and professionals create ATS-friendly resumes instantly.",
+        "description": "Nexfolio is a free AI-powered resume maker that helps students and professionals create ATS-friendly resumes instantly.",
         "applicationCategory": "BusinessApplication, EducationalApplication",
         "operatingSystem": "All",
         "browserRequirements": "Requires HTML5 support",

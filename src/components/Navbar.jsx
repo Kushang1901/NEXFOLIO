@@ -84,10 +84,10 @@ export default function Navbar() {
                 >
                     <img
                         src="/logo.png"
-                        alt="ResumeCraft AI Logo"
+                        alt="Nexfolio Logo"
                         style={{ height: "32px", width: "32px" }}
                     />
-                    ResumeCraft AI
+                    Nexfolio
                 </Link>
 
                 {/* HAMBURGER */}

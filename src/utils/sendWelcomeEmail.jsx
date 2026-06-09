@@ -1,4 +1,4 @@
-﻿const nodemailer = require("nodemailer");
+const nodemailer = require("nodemailer");
 
 const transporter = nodemailer.createTransport({
     service: "gmail",
@@ -10,20 +10,20 @@ const transporter = nodemailer.createTransport({
 
 async function sendWelcomeEmail(to, name) {
     await transporter.sendMail({
-        from: `"ResumeCraft AI" <${process.env.EMAIL_USER}>`,
+        from: `"Nexfolio" <${process.env.EMAIL_USER}>`,
         to,
-        subject: "Welcome to ResumeCraft AI 🎉",
+        subject: "Welcome to Nexfolio 🎉",
         html: `
             <div style="font-family: Arial; padding: 20px">
                 <h2>Welcome ${name || "there"} 👋</h2>
                 <p>
-                    You have successfully joined <b>ResumeCraft AI</b>.
+                    You have successfully joined <b>Nexfolio</b>.
                 </p>
                 <p>
                     Start building your professional resume today!
                 </p>
                 <br />
-                <strong>– ResumeCraft AI Team</strong>
+                <strong>– Nexfolio Team</strong>
             </div>
         `
     });

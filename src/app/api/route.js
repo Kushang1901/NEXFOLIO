@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
 
 export async function GET() {
-    return NextResponse.json({ message: "ResumeCraft AI Backend is running 🚀" });
+    return NextResponse.json({ message: "Nexfolio Backend is running 🚀" });
 }

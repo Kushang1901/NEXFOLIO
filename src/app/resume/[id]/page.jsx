@@ -65,7 +65,7 @@ export default function PublicResumePage() {
         if (resumeData?.fullName) {
             document.title = `${resumeData.fullName} - Professional Resume`;
         } else {
-            document.title = "Shared Resume - ResumeCraft AI";
+            document.title = "Shared Resume - Nexfolio";
         }
     }, [resumeData]);
 
@@ -187,7 +187,7 @@ export default function PublicResumePage() {
                     </div>
                     <div className="d-flex align-items-center gap-2">
                         <span className="text-white-50 small d-none d-md-inline me-2">
-                            Powered by ResumeCraft AI
+                            Powered by Nexfolio
                         </span>
                         <button 
                             onClick={downloadAsPDF} 

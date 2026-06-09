@@ -1,5 +1,5 @@
 export default function sitemap() {
-    const baseUrl = "https://resumecraft-ai.vercel.app";
+    const baseUrl = "https://nexfolio.vercel.app";
     return [
         {
             url: baseUrl,

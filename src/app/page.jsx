@@ -64,7 +64,7 @@ export default function HomePage() {
                     <div className="row justify-content-center text-center py-5">
                         <div className="col-lg-8">
                             <div className="text-primary fw-bold text-uppercase mb-2" style={{ letterSpacing: "0.15em", fontSize: "0.95rem" }}>
-                                ResumeCraft AI
+                                Nexfolio
                             </div>
                             <h1
                                 className="display-2 fw-bold mb-4"
@@ -166,7 +166,7 @@ export default function HomePage() {
                                 Build Your ATS-Friendly Resume Today
                             </h2>
                             <p className="text-white-50 fs-5 mb-4">
-                                Join thousands of job seekers using ResumeCraft AI to land interviews. Start for free now.
+                                Join thousands of job seekers using Nexfolio to land interviews. Start for free now.
                             </p>
                              <button
                                 className="btn btn-primary btn-lg px-5 py-3 fw-semibold"
@@ -189,7 +189,7 @@ export default function HomePage() {
                 <div className="container">
                     <div className="text-center text-white-50">
                         <p className="mb-1">
-                            &copy; 2026 ResumeCraft AI. All rights reserved.
+                            &copy; 2026 Nexfolio. All rights reserved.
                         </p>
                         <p className="mb-0">
                             Designed &amp; Developed by{" "}

@@ -7,6 +7,6 @@ export default function robots() {
                 disallow: ["/builder", "/preview", "/profile", "/login", "/signup", "/api/"],
             },
         ],
-        sitemap: "https://resumecraft-ai.vercel.app/sitemap.xml",
+        sitemap: "https://nexfolio.vercel.app/sitemap.xml",
     };
 }
