@@ -81,13 +81,24 @@ export default function Navbar() {
                     className="navbar-brand fw-bold d-flex align-items-center gap-2"
                     href="/"
                     onClick={closeMenu}
+                    style={{ textDecoration: "none" }}
                 >
                     <img
                         src="/logo.png"
                         alt="Nexfolio Logo"
                         style={{ height: "32px", width: "32px" }}
                     />
-                    Nexfolio
+                    <span style={{ 
+                        fontFamily: "'Space Grotesk', sans-serif", 
+                        fontWeight: "700", 
+                        letterSpacing: "0.08em",
+                        background: "linear-gradient(90deg, #ffffff 0%, #b6c4ff 100%)",
+                        WebkitBackgroundClip: "text",
+                        WebkitTextFillColor: "transparent",
+                        fontSize: "1.3rem"
+                    }}>
+                        NEXFOLIO
+                    </span>
                 </Link>
 
                 {/* HAMBURGER */}

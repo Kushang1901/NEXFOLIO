@@ -96,6 +96,8 @@ export default function RootLayout({ children }) {
             <head>
                 {/* FontAwesome */}
                 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+                {/* Google Fonts - Space Grotesk */}
+                <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet" />
                 {/* reCAPTCHA Enterprise */}
                 <script src="https://www.google.com/recaptcha/enterprise.js?render=6LfIrjQsAAAAANY4PBe_oGp6mIFkTwyeAB_DdG81" async defer></script>
                 {/* Google tag (gtag.js) */}
