@@ -9,12 +9,12 @@ export async function verifyRecaptcha(token, action) {
     // 1. Bypass validation in development if no backend key is configured to allow easy local testing
     if (process.env.NODE_ENV === "development" && (!token || token === "MOCK_TOKEN" || !process.env.RECAPTCHA_API_KEY)) {
         console.log(`ℹ️ [reCAPTCHA Bypass] Bypassed verification for action: ${action} in development.`);
-        return true;
+        return { success: true, reason: "Bypassed in development" };
     }
 
     if (!token) {
         console.warn(`❌ [reCAPTCHA] No token provided for action: ${action}`);
-        return false;
+        return { success: false, reason: "No token provided" };
     }
 
     const projectId = process.env.GCP_PROJECT_ID || "resumecraft-e16fe";
@@ -23,7 +23,7 @@ export async function verifyRecaptcha(token, action) {
 
     if (!apiKey) {
         console.warn("⚠️ [reCAPTCHA] RECAPTCHA_API_KEY is not defined in backend environment variables. Bypassing check.");
-        return true;
+        return { success: true, reason: "API key missing (bypassed)" };
     }
 
     try {
@@ -47,7 +47,7 @@ export async function verifyRecaptcha(token, action) {
         if (!response.ok) {
             const errorText = await response.text();
             console.error(`❌ [reCAPTCHA] API returned error status ${response.status}: ${errorText}`);
-            return false;
+            return { success: false, reason: `API returned error status ${response.status}: ${errorText}` };
         }
 
         const data = await response.json();
@@ -55,13 +55,13 @@ export async function verifyRecaptcha(token, action) {
         // Validate token properties
         if (!data.tokenProperties || !data.tokenProperties.valid) {
             console.warn(`❌ [reCAPTCHA] Invalid token. Reason: ${data.tokenProperties?.invalidReason}`);
-            return false;
+            return { success: false, reason: `Invalid token properties: ${data.tokenProperties?.invalidReason || "malformed"}` };
         }
 
         // Check for expected action mismatch
         if (data.tokenProperties.action !== action) {
             console.warn(`❌ [reCAPTCHA] Action mismatch. Expected: ${action}, Received: ${data.tokenProperties.action}`);
-            return false;
+            return { success: false, reason: `Action mismatch: expected ${action}, received ${data.tokenProperties.action}` };
         }
 
         // Verify risk score
@@ -78,12 +78,12 @@ export async function verifyRecaptcha(token, action) {
 
         if (score < threshold) {
             console.warn(`❌ [reCAPTCHA] Score ${score} is below threshold ${threshold}`);
-            return false;
+            return { success: false, reason: `Score ${score} is below threshold ${threshold}`, score };
         }
 
-        return true;
+        return { success: true, score };
     } catch (err) {
         console.error("🔥 [reCAPTCHA] Exception during verification:", err);
-        return false;
+        return { success: false, reason: `Exception: ${err.message}` };
     }
 }

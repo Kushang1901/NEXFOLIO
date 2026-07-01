@@ -16,10 +16,10 @@ export async function POST(request) {
         }
 
         // Verify reCAPTCHA
-        const isHuman = await verifyRecaptcha(recaptchaToken, "GENERATE_RESUME");
-        if (!isHuman) {
+        const recaptchaResult = await verifyRecaptcha(recaptchaToken, "GENERATE_RESUME");
+        if (!recaptchaResult.success) {
             return NextResponse.json(
-                { error: "reCAPTCHA verification failed. Bot activity detected." },
+                { error: `reCAPTCHA verification failed: ${recaptchaResult.reason || "Bot activity detected."}` },
                 { status: 403 }
             );
         }

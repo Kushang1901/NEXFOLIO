@@ -17,6 +17,12 @@ import NavyEleganceTemplate from "../../templates/NavyEleganceTemplate";
 import ModernMinimalistTemplate from "../../templates/ModernMinimalistTemplate";
 import EmeraldTemplate from "../../templates/EmeraldTemplate";
 import SlateTwoColumnTemplate from "../../templates/SlateTwoColumnTemplate";
+import SunriseTemplate from "../../templates/SunriseTemplate";
+import MidnightTemplate from "../../templates/MidnightTemplate";
+import NordicTemplate from "../../templates/NordicTemplate";
+import CrimsonTemplate from "../../templates/CrimsonTemplate";
+import AuroraTemplate from "../../templates/AuroraTemplate";
+import TimelineTemplate from "../../templates/TimelineTemplate";
 
 import { normalizeResumeData } from "../../utils/resumeAdapter";
 import { useRouter } from "next/navigation";
@@ -282,6 +288,24 @@ export default function Preview() {
 
             case "slate_two_column":
                 return <SlateTwoColumnTemplate data={data} />;
+
+            case "sunrise":
+                return <SunriseTemplate data={data} />;
+
+            case "midnight":
+                return <MidnightTemplate data={data} />;
+
+            case "nordic":
+                return <NordicTemplate data={data} />;
+
+            case "crimson":
+                return <CrimsonTemplate data={data} />;
+
+            case "aurora":
+                return <AuroraTemplate data={data} />;
+
+            case "timeline":
+                return <TimelineTemplate data={data} />;
 
             default:
                 return <ClassicTemplate data={data} />;

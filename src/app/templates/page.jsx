@@ -360,6 +360,229 @@ export default function TemplateSelection() {
                         </div>
                     </div>
 
+                    {/* SUNRISE TEMPLATE */}
+                    <div className="col-md-6 col-lg-3">
+                        <div
+                            className="bg-black border p-3 h-100 template-card"
+                            style={{ borderRadius: "12px", cursor: "pointer" }}
+                            onClick={() => selectTemplate("sunrise")}
+                        >
+                            <div className="text-dark mb-3" style={{ minHeight: "220px", borderRadius: "6px", overflow: "hidden" }}>
+                                <div style={{ background: "linear-gradient(135deg, #e85d04, #f48c06)", padding: "14px", position: "relative" }}>
+                                    <h6 className="fw-bold mb-0" style={{ fontSize: "12px", color: "#fff" }}>John Doe</h6>
+                                    <p className="mb-0" style={{ fontSize: "8px", color: "rgba(255,255,255,0.8)", fontStyle: "italic" }}>Full Stack Developer</p>
+                                    <div style={{ position: "absolute", bottom: 0, right: 0, width: "50px", height: "50px", background: "rgba(255,255,255,0.1)", borderRadius: "50% 0 0 0" }}></div>
+                                </div>
+                                <div style={{ height: "8px", background: "#fff", marginTop: "-8px", clipPath: "polygon(0 100%, 100% 0, 100% 100%)" }}></div>
+                                <div style={{ padding: "6px 10px", display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px" }}>
+                                    <div>
+                                        <p className="fw-bold mb-1" style={{ fontSize: "8px", color: "#e85d04" }}>About Me</p>
+                                        <p className="text-muted mb-0" style={{ fontSize: "7px", lineHeight: "1.2" }}>Warm orange gradient with diagonal clip.</p>
+                                    </div>
+                                    <div>
+                                        <p className="fw-bold mb-1" style={{ fontSize: "8px", color: "#e85d04" }}>Skills</p>
+                                        <span style={{ background: "#fff3e0", color: "#e85d04", fontSize: "6px", padding: "2px 5px", borderRadius: "10px" }}>React</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <h5 className="text-center mb-1">Sunrise</h5>
+                            <p className="text-center text-white-50 small mb-0">
+                                Warm • Energetic
+                            </p>
+                        </div>
+                    </div>
+
+                    {/* MIDNIGHT TEMPLATE */}
+                    <div className="col-md-6 col-lg-3">
+                        <div
+                            className="bg-black border p-3 h-100 template-card"
+                            style={{ borderRadius: "12px", cursor: "pointer" }}
+                            onClick={() => selectTemplate("midnight")}
+                        >
+                            <div className="mb-3" style={{ minHeight: "220px", borderRadius: "6px", overflow: "hidden", background: "#0f0a1e" }}>
+                                <div style={{ padding: "12px", background: "linear-gradient(135deg, #0f0a1e, #1e3a5f22)", borderBottom: "1px solid #2d1f5e" }}>
+                                    <div style={{ width: "30px", height: "30px", borderRadius: "50%", background: "linear-gradient(135deg, #7c3aed, #6d28d9)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "12px", fontWeight: "700", color: "#fff", marginBottom: "6px" }}>J</div>
+                                    <h6 className="fw-bold mb-0" style={{ fontSize: "11px", color: "#e2d9f3" }}>John Doe</h6>
+                                    <p className="mb-0" style={{ fontSize: "8px", color: "#a78bfa" }}>Software Engineer</p>
+                                </div>
+                                <div style={{ display: "grid", gridTemplateColumns: "1fr 1.8fr" }}>
+                                    <div style={{ background: "#1a1033", padding: "8px", borderRight: "1px solid #2d1f5e" }}>
+                                        <p style={{ fontSize: "7px", fontWeight: "700", color: "#7c3aed", textTransform: "uppercase", letterSpacing: "1px", marginBottom: "5px" }}>Skills</p>
+                                        <div style={{ background: "#7c3aed22", border: "1px solid #2d1f5e", borderRadius: "4px", padding: "2px 5px", fontSize: "6px", color: "#d8b4fe", marginBottom: "3px" }}>React</div>
+                                        <div style={{ background: "#7c3aed22", border: "1px solid #2d1f5e", borderRadius: "4px", padding: "2px 5px", fontSize: "6px", color: "#d8b4fe" }}>Node</div>
+                                    </div>
+                                    <div style={{ padding: "8px" }}>
+                                        <p style={{ fontSize: "7px", fontWeight: "700", color: "#7c3aed", textTransform: "uppercase", letterSpacing: "1px", marginBottom: "5px" }}>About</p>
+                                        <p style={{ fontSize: "7px", color: "#c4b5fd", lineHeight: "1.3", margin: 0 }}>Dark purple theme for tech-savvy professionals.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <h5 className="text-center mb-1">Midnight</h5>
+                            <p className="text-center text-white-50 small mb-0">
+                                Dark • Futuristic
+                            </p>
+                        </div>
+                    </div>
+
+                    {/* NORDIC TEMPLATE */}
+                    <div className="col-md-6 col-lg-3">
+                        <div
+                            className="bg-black border p-3 h-100 template-card"
+                            style={{ borderRadius: "12px", cursor: "pointer" }}
+                            onClick={() => selectTemplate("nordic")}
+                        >
+                            <div className="bg-white text-dark mb-3" style={{ minHeight: "220px", borderRadius: "6px", overflow: "hidden" }}>
+                                <div style={{ height: "5px", background: "#2563eb" }}></div>
+                                <div style={{ padding: "10px 12px", borderBottom: "1px solid #e5e7eb", display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+                                    <div>
+                                        <h6 className="fw-bold mb-0" style={{ fontSize: "12px", letterSpacing: "-0.02em" }}>John Doe</h6>
+                                        <p className="mb-0" style={{ fontSize: "7px", color: "#2563eb", textTransform: "uppercase", letterSpacing: "1px", fontWeight: "600" }}>Software Engineer</p>
+                                    </div>
+                                    <div style={{ textAlign: "right", fontSize: "7px", color: "#6b7280" }}>
+                                        <div>john@email.com</div>
+                                        <div>+91 99999</div>
+                                    </div>
+                                </div>
+                                <div style={{ display: "grid", gridTemplateColumns: "1.8fr 1fr" }}>
+                                    <div style={{ padding: "8px 10px", borderRight: "1px solid #e5e7eb" }}>
+                                        <p className="fw-bold mb-1" style={{ fontSize: "7px", color: "#2563eb", textTransform: "uppercase", letterSpacing: "1px" }}>Profile</p>
+                                        <p className="text-muted mb-0" style={{ fontSize: "7px", lineHeight: "1.3" }}>Clean Scandinavian-inspired layout.</p>
+                                    </div>
+                                    <div style={{ padding: "8px", background: "#f9fafb" }}>
+                                        <p className="fw-bold mb-1" style={{ fontSize: "7px", color: "#2563eb", textTransform: "uppercase", letterSpacing: "1px" }}>Skills</p>
+                                        <div style={{ display: "flex", flexDirection: "column", gap: "3px" }}>
+                                            <div style={{ display: "flex", alignItems: "center", gap: "4px" }}>
+                                                <span style={{ width: "4px", height: "4px", background: "#2563eb", borderRadius: "50%" }}></span>
+                                                <span style={{ fontSize: "6px" }}>React</span>
+                                            </div>
+                                            <div style={{ display: "flex", alignItems: "center", gap: "4px" }}>
+                                                <span style={{ width: "4px", height: "4px", background: "#2563eb", borderRadius: "50%" }}></span>
+                                                <span style={{ fontSize: "6px" }}>Node</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <h5 className="text-center mb-1">Nordic</h5>
+                            <p className="text-center text-white-50 small mb-0">
+                                Scandinavian • Crisp
+                            </p>
+                        </div>
+                    </div>
+
+                    {/* CRIMSON TEMPLATE */}
+                    <div className="col-md-6 col-lg-3">
+                        <div
+                            className="bg-black border p-3 h-100 template-card"
+                            style={{ borderRadius: "12px", cursor: "pointer" }}
+                            onClick={() => selectTemplate("crimson")}
+                        >
+                            <div className="mb-3" style={{ minHeight: "220px", borderRadius: "6px", overflow: "hidden" }}>
+                                <div style={{ background: "#1c1917", padding: "12px", display: "flex", alignItems: "center", gap: "10px" }}>
+                                    <div style={{ width: "28px", height: "28px", background: "#be123c", borderRadius: "3px", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "13px", fontWeight: "700", color: "#fff", flexShrink: 0 }}>J</div>
+                                    <div>
+                                        <h6 className="fw-bold mb-0" style={{ fontSize: "11px", color: "#fff", fontFamily: "Georgia, serif" }}>John Doe</h6>
+                                        <p className="mb-0" style={{ fontSize: "7px", color: "#be123c", textTransform: "uppercase", letterSpacing: "1.5px", fontFamily: "sans-serif" }}>Senior Director</p>
+                                    </div>
+                                </div>
+                                <div className="bg-white" style={{ padding: "8px 10px" }}>
+                                    <div style={{ display: "grid", gridTemplateColumns: "1.5fr 1fr", gap: "10px" }}>
+                                        <div>
+                                            <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "6px" }}>
+                                                <p className="fw-bold mb-0" style={{ fontSize: "8px", fontFamily: "Georgia, serif", fontStyle: "italic" }}>Experience</p>
+                                                <div style={{ flex: 1, height: "1px", background: "#e7e5e4" }}></div>
+                                            </div>
+                                            <p className="text-muted mb-0" style={{ fontSize: "7px", lineHeight: "1.2", fontFamily: "Georgia, serif" }}>Elegant editorial with serif typography.</p>
+                                        </div>
+                                        <div>
+                                            <div style={{ display: "flex", alignItems: "center", gap: "6px", marginBottom: "6px" }}>
+                                                <p className="fw-bold mb-0" style={{ fontSize: "8px", fontFamily: "Georgia, serif", fontStyle: "italic" }}>Skills</p>
+                                                <div style={{ flex: 1, height: "1px", background: "#e7e5e4" }}></div>
+                                            </div>
+                                            <span style={{ background: "#fff1f2", color: "#be123c", fontSize: "6px", padding: "2px 5px" }}>Strategy</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <h5 className="text-center mb-1">Crimson</h5>
+                            <p className="text-center text-white-50 small mb-0">
+                                Editorial • Serif
+                            </p>
+                        </div>
+                    </div>
+
+                    {/* AURORA TEMPLATE */}
+                    <div className="col-md-6 col-lg-3">
+                        <div
+                            className="bg-black border p-3 h-100 template-card"
+                            style={{ borderRadius: "12px", cursor: "pointer" }}
+                            onClick={() => selectTemplate("aurora")}
+                        >
+                            <div className="mb-3" style={{ minHeight: "220px", borderRadius: "6px", overflow: "hidden" }}>
+                                <div style={{ background: "linear-gradient(135deg, #0f172a, #1e3a5f, #0d4f3c)", padding: "12px", position: "relative" }}>
+                                    <div style={{ position: "absolute", top: "-20px", left: "40%", width: "80px", height: "80px", background: "radial-gradient(circle, #22d3ee33 0%, transparent 70%)" }}></div>
+                                    <div style={{ width: "28px", height: "28px", borderRadius: "50%", background: "linear-gradient(135deg, #22d3ee, #4ade80)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "12px", fontWeight: "700", color: "#0f172a", marginBottom: "6px" }}>J</div>
+                                    <h6 className="fw-bold mb-0" style={{ fontSize: "11px", color: "#fff" }}>John Doe</h6>
+                                    <p className="mb-0" style={{ fontSize: "8px", background: "linear-gradient(90deg, #22d3ee, #4ade80)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", fontWeight: "600" }}>Web Developer</p>
+                                </div>
+                                <div style={{ display: "grid", gridTemplateColumns: "1fr 1.8fr", background: "#fff" }}>
+                                    <div style={{ padding: "8px", background: "#f8fafc", borderRight: "1px solid #e2e8f0" }}>
+                                        <p style={{ fontSize: "7px", fontWeight: "700", color: "#0369a1", textTransform: "uppercase", letterSpacing: "1px", marginBottom: "5px" }}>Skills</p>
+                                        <span style={{ background: "#e0f2fe", color: "#0369a1", padding: "2px 6px", borderRadius: "10px", fontSize: "6px", fontWeight: "600" }}>React</span>
+                                    </div>
+                                    <div style={{ padding: "8px" }}>
+                                        <p style={{ fontSize: "7px", fontWeight: "700", color: "#0369a1", textTransform: "uppercase", letterSpacing: "1px", marginBottom: "5px" }}>About</p>
+                                        <p style={{ fontSize: "7px", color: "#334155", lineHeight: "1.3", margin: 0 }}>Teal aurora gradient glow header.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <h5 className="text-center mb-1">Aurora</h5>
+                            <p className="text-center text-white-50 small mb-0">
+                                Dark Teal • Glowing
+                            </p>
+                        </div>
+                    </div>
+
+                    {/* TIMELINE TEMPLATE */}
+                    <div className="col-md-6 col-lg-3">
+                        <div
+                            className="bg-black border p-3 h-100 template-card"
+                            style={{ borderRadius: "12px", cursor: "pointer" }}
+                            onClick={() => selectTemplate("timeline")}
+                        >
+                            <div className="mb-3" style={{ minHeight: "220px", borderRadius: "6px", overflow: "hidden", display: "grid", gridTemplateColumns: "70px 1fr" }}>
+                                <div style={{ background: "#0f172a", padding: "10px 8px" }}>
+                                    <div style={{ width: "24px", height: "24px", borderRadius: "50%", background: "#0d9488", border: "2px solid #fff", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "10px", fontWeight: "700", color: "#fff", marginBottom: "6px" }}>J</div>
+                                    <h6 className="fw-bold mb-1" style={{ fontSize: "8px", color: "#fff" }}>John Doe</h6>
+                                    <p className="mb-0" style={{ fontSize: "6px", color: "#0d9488", textTransform: "uppercase", letterSpacing: "0.5px" }}>Dev</p>
+                                    <div style={{ borderTop: "1px solid #0d948844", marginTop: "8px", paddingTop: "8px" }}>
+                                        <span style={{ background: "#0d948822", color: "#5eead4", padding: "2px 4px", borderRadius: "3px", fontSize: "6px" }}>React</span>
+                                    </div>
+                                </div>
+                                <div className="bg-white" style={{ padding: "8px" }}>
+                                    <p className="fw-bold mb-1" style={{ fontSize: "7px", color: "#0d9488", textTransform: "uppercase", letterSpacing: "1px" }}>Career Timeline</p>
+                                    <div style={{ position: "relative", paddingLeft: "14px" }}>
+                                        <div style={{ position: "absolute", left: "4px", top: 0, bottom: 0, width: "1px", background: "#0d9488" }}></div>
+                                        <div style={{ position: "relative", marginBottom: "8px" }}>
+                                            <div style={{ position: "absolute", left: "-14px", top: "2px", width: "6px", height: "6px", borderRadius: "50%", background: "#0d9488" }}></div>
+                                            <p className="fw-bold mb-0" style={{ fontSize: "7px" }}>Senior Dev</p>
+                                            <p className="text-muted mb-0" style={{ fontSize: "6px" }}>TechCorp · 2022–Now</p>
+                                        </div>
+                                        <div style={{ position: "relative" }}>
+                                            <div style={{ position: "absolute", left: "-14px", top: "2px", width: "6px", height: "6px", borderRadius: "50%", background: "#fff", border: "1px solid #0d9488" }}></div>
+                                            <p className="fw-bold mb-0" style={{ fontSize: "7px" }}>Intern</p>
+                                            <p className="text-muted mb-0" style={{ fontSize: "6px" }}>StartupXYZ · 2021</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <h5 className="text-center mb-1">Timeline</h5>
+                            <p className="text-center text-white-50 small mb-0">
+                                Visual Timeline • Teal
+                            </p>
+                        </div>
+                    </div>
+
                 </div>
             </div>
         </div>
