@@ -1,16 +1,26 @@
 import { NextResponse } from "next/server";
 import { GoogleGenerativeAI } from "@google/generative-ai";
+import { verifyRecaptcha } from "../../../utils/recaptchaVerify";
 
 const apiKey = process.env.GEMINI_API_KEY;
 
 export async function POST(request) {
     try {
-        const { prompt } = await request.json();
+        const { prompt, recaptchaToken } = await request.json();
 
         if (!prompt || typeof prompt !== "string") {
             return NextResponse.json(
                 { error: "Prompt is required and must be a string" },
                 { status: 400 }
+            );
+        }
+
+        // Verify reCAPTCHA
+        const isHuman = await verifyRecaptcha(recaptchaToken, "GENERATE_RESUME");
+        if (!isHuman) {
+            return NextResponse.json(
+                { error: "reCAPTCHA verification failed. Bot activity detected." },
+                { status: 403 }
             );
         }
 

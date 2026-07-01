@@ -1,0 +1,89 @@
+/**
+ * Backend utility to verify Google reCAPTCHA Enterprise tokens.
+ *
+ * @param {string} token - The recaptcha token received from the client
+ * @param {string} action - The expected action name (e.g. 'SIGNUP', 'LOGIN', 'GENERATE_RESUME')
+ * @returns {Promise<boolean>} True if valid and score is above threshold, otherwise false.
+ */
+export async function verifyRecaptcha(token, action) {
+    // 1. Bypass validation in development if no backend key is configured to allow easy local testing
+    if (process.env.NODE_ENV === "development" && (!token || token === "MOCK_TOKEN" || !process.env.RECAPTCHA_API_KEY)) {
+        console.log(`ℹ️ [reCAPTCHA Bypass] Bypassed verification for action: ${action} in development.`);
+        return true;
+    }
+
+    if (!token) {
+        console.warn(`❌ [reCAPTCHA] No token provided for action: ${action}`);
+        return false;
+    }
+
+    const projectId = process.env.GCP_PROJECT_ID || "resumecraft-e16fe";
+    const siteKey = process.env.REACT_APP_RECAPTCHA_SITE_KEY || "6LfIrjQsAAAAANY4PBe_oGp6mIFkTwyeAB_DdG81";
+    const apiKey = process.env.RECAPTCHA_API_KEY;
+
+    if (!apiKey) {
+        console.warn("⚠️ [reCAPTCHA] RECAPTCHA_API_KEY is not defined in backend environment variables. Bypassing check.");
+        return true;
+    }
+
+    try {
+        const url = `https://recaptchaenterprise.googleapis.com/v1/projects/${projectId}/assessments?key=${apiKey}`;
+        
+        console.log(`[reCAPTCHA] Calling assessments API for action: ${action}`);
+        const response = await fetch(url, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                event: {
+                    token: token,
+                    siteKey: siteKey,
+                    expectedAction: action
+                }
+            })
+        });
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error(`❌ [reCAPTCHA] API returned error status ${response.status}: ${errorText}`);
+            return false;
+        }
+
+        const data = await response.json();
+
+        // Validate token properties
+        if (!data.tokenProperties || !data.tokenProperties.valid) {
+            console.warn(`❌ [reCAPTCHA] Invalid token. Reason: ${data.tokenProperties?.invalidReason}`);
+            return false;
+        }
+
+        // Check for expected action mismatch
+        if (data.tokenProperties.action !== action) {
+            console.warn(`❌ [reCAPTCHA] Action mismatch. Expected: ${action}, Received: ${data.tokenProperties.action}`);
+            return false;
+        }
+
+        // Verify risk score
+        const score = data.riskAnalysis?.score ?? 0;
+        const threshold = parseFloat(process.env.RECAPTCHA_MIN_SCORE || "0.5");
+        
+        console.log(`🤖 [reCAPTCHA] Assessment score: ${score} (threshold: ${threshold}) for action: ${action}`);
+
+        if (data.riskAnalysis?.reasons && data.riskAnalysis.reasons.length > 0) {
+            data.riskAnalysis.reasons.forEach((reason) => {
+                console.log(`[reCAPTCHA Reason] ${reason}`);
+            });
+        }
+
+        if (score < threshold) {
+            console.warn(`❌ [reCAPTCHA] Score ${score} is below threshold ${threshold}`);
+            return false;
+        }
+
+        return true;
+    } catch (err) {
+        console.error("🔥 [reCAPTCHA] Exception during verification:", err);
+        return false;
+    }
+}

@@ -1,14 +1,24 @@
 import { NextResponse } from "next/server";
 import { getDb } from "../../../lib/db";
+import { verifyRecaptcha } from "../../../utils/recaptchaVerify";
 
 export async function POST(request) {
     try {
-        const { firstName, lastName, email, provider, photoUrl } = await request.json();
+        const { firstName, lastName, email, provider, photoUrl, recaptchaToken } = await request.json();
 
         if (!email) {
             return NextResponse.json(
                 { error: "Email is required" },
                 { status: 400 }
+            );
+        }
+
+        // Verify reCAPTCHA
+        const isHuman = await verifyRecaptcha(recaptchaToken, "LOGIN");
+        if (!isHuman) {
+            return NextResponse.json(
+                { error: "reCAPTCHA verification failed. Bot activity detected." },
+                { status: 403 }
             );
         }
 
