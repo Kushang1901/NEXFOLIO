@@ -3,10 +3,17 @@ export default function robots() {
         rules: [
             {
                 userAgent: "*",
-                allow: ["/", "/templates"],
-                disallow: ["/builder", "/preview", "/profile", "/login", "/signup", "/api/"],
+                allow: ["/", "/templates", "/cover-letter", "/signup", "/login"],
+                disallow: ["/builder", "/preview", "/profile", "/api/", "/_next/", "/resume/"],
+            },
+            {
+                userAgent: "Googlebot",
+                allow: ["/", "/templates", "/cover-letter", "/signup", "/login"],
+                disallow: ["/builder", "/preview", "/profile", "/api/"],
+                crawlDelay: 0,
             },
         ],
-        sitemap: "https://nexfolio.vercel.app/sitemap.xml",
+        sitemap: "https://nexfolio-ai.vercel.app/sitemap.xml",
+        host: "https://nexfolio-ai.vercel.app",
     };
 }

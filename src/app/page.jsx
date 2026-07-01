@@ -184,6 +184,69 @@ export default function HomePage() {
                 </div>
             </section>
 
+            {/* FAQ Section — matches FAQPage JSON-LD for Google Featured Snippets */}
+            <section className="py-5 bg-dark" id="faq">
+                <div className="container py-4">
+                    <div className="text-center mb-5">
+                        <h2 className="display-6 fw-bold mb-3">Frequently Asked Questions</h2>
+                        <p className="text-white-50 fs-5">Everything you need to know about Nexfolio's free AI resume builder.</p>
+                    </div>
+                    <div className="row justify-content-center">
+                        <div className="col-lg-8">
+                            {[
+                                {
+                                    q: "Is Nexfolio really free to use?",
+                                    a: "Yes! Nexfolio is 100% free. You can create a resume, choose from 18+ premium templates, generate AI content, and download your resume as a PDF — all without paying anything or entering a credit card.",
+                                },
+                                {
+                                    q: "Are the resume templates ATS-friendly?",
+                                    a: "All resume templates on Nexfolio are designed to be ATS (Applicant Tracking System) friendly. They use clean formatting, standard section headings, and readable fonts that pass recruiter screening software.",
+                                },
+                                {
+                                    q: "How does the AI resume builder work?",
+                                    a: "Nexfolio uses Google Gemini AI to generate professional resume content based on your job role, experience, and skills. Simply enter your details, click generate, review the content, and download your finished resume.",
+                                },
+                                {
+                                    q: "Can I download my resume as a PDF?",
+                                    a: "Yes! Once you've built your resume, you can download it as a high-quality PDF or PNG image with a single click. No watermarks, no subscriptions — completely free.",
+                                },
+                                {
+                                    q: "Does Nexfolio work for freshers and students?",
+                                    a: "Absolutely. Nexfolio is specifically designed for students, freshers, and entry-level job seekers. The AI helps you write professional resume content even if you have limited work experience.",
+                                },
+                                {
+                                    q: "How many resume templates are available?",
+                                    a: "Nexfolio offers 18+ professionally designed resume templates including Classic, Modern, Creative, Executive, Developer, Minimalist, Elegant, Navy Elegance, Emerald, Aurora, Midnight, Nordic, Crimson, and more.",
+                                },
+                            ].map((item, i) => (
+                                <details
+                                    key={i}
+                                    className="mb-3"
+                                    style={{
+                                        background: "rgba(255,255,255,0.04)",
+                                        border: "1px solid rgba(255,255,255,0.1)",
+                                        borderRadius: "10px",
+                                        padding: "1rem 1.25rem",
+                                        cursor: "pointer",
+                                    }}
+                                >
+                                    <summary
+                                        className="fw-semibold text-white"
+                                        style={{ fontSize: "1rem", listStyle: "none", display: "flex", justifyContent: "space-between", alignItems: "center" }}
+                                    >
+                                        {item.q}
+                                        <span className="text-primary ms-3" style={{ fontSize: "1.25rem", flexShrink: 0 }}>+</span>
+                                    </summary>
+                                    <p className="text-white-50 mb-0 mt-3" style={{ fontSize: "0.97rem", lineHeight: "1.65" }}>
+                                        {item.a}
+                                    </p>
+                                </details>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+            </section>
+
             {/* Footer */}
             <footer className="bg-black border-top border-secondary py-4">
                 <div className="container">
