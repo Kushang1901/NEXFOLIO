@@ -28,7 +28,7 @@ export default function CreativeTemplate({ data }) {
     };
 
     return (
-        <div className="p-5">
+        <div className="p-5" style={{ minHeight: "297mm", boxSizing: "border-box", width: "100%" }}>
             {/* HEADER */}
             <div className="text-center mb-4">
                 {data.basics.photo && (

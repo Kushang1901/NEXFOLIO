@@ -15,7 +15,7 @@ export default function ExecutiveTemplate({ data }) {
     };
 
     return (
-        <div style={{ fontFamily: "Georgia, serif", color: "#1a1a1a" }}>
+        <div style={{ fontFamily: "Georgia, serif", color: "#1a1a1a", minHeight: "297mm", boxSizing: "border-box", display: "flex", flexDirection: "column", width: "100%" }}>
             {/* Top Corporate Navy Header */}
             <div className="p-5 text-white d-flex align-items-center justify-content-between flex-wrap gap-3" style={{ background: "#1b2a4a" }}>
                 <div>
@@ -40,9 +40,9 @@ export default function ExecutiveTemplate({ data }) {
                 </div>
             </div>
 
-            <div className="d-flex flex-column flex-md-row" style={{ minHeight: "600px" }}>
+            <div className="d-flex flex-row flex-grow-1" style={{ flexGrow: 1 }}>
                 {/* Left Gray Sidebar Column */}
-                <div className="p-4" style={{ width: "100%", md: "35%", width: "35%", background: "#f1f5f9", borderRight: "1px solid #e2e8f0" }}>
+                <div className="p-4" style={{ width: "35%", background: "#f1f5f9", borderRight: "1px solid #e2e8f0" }}>
                     {data.basics.photo && (
                         <div className="text-center mb-4">
                             <img
@@ -109,7 +109,7 @@ export default function ExecutiveTemplate({ data }) {
                 </div>
 
                 {/* Right Content Column */}
-                <div className="p-5" style={{ width: "100%", md: "65%", width: "65%" }}>
+                <div className="p-5" style={{ width: "65%" }}>
                     {/* Summary */}
                     {data.summary && (
                         <section className="mb-4">

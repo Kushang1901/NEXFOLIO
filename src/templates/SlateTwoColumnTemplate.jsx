@@ -15,20 +15,9 @@ export default function SlateTwoColumnTemplate({ data }) {
     };
 
     return (
-        <div className="d-flex flex-column md:flex-row min-vh-100" style={{ fontFamily: "Inter, system-ui, sans-serif", color: "#334155" }}>
-            {/* Sidebar Column (35% width on md/lg, full on small) */}
-            <div className="p-4 p-md-5" style={{ width: "100%", maxWidth: "100%", minHeight: "100%", background: "#f8fafc", borderRight: "1px solid #e2e8f0" }}>
-                <style dangerouslySetInnerHTML={{ __html: `
-                    @media (min-width: 768px) {
-                        .sidebar-col {
-                            width: 32% !important;
-                            flex-shrink: 0;
-                        }
-                        .main-col {
-                            width: 68% !important;
-                        }
-                    }
-                ` }} />
+        <div className="d-flex flex-row" style={{ fontFamily: "Inter, system-ui, sans-serif", color: "#334155", minHeight: "297mm", boxSizing: "border-box", width: "100%" }}>
+            {/* Sidebar Column */}
+            <div className="p-4 p-md-5" style={{ width: "32%", background: "#f8fafc", borderRight: "1px solid #e2e8f0", flexShrink: 0 }}>
                 <div className="sidebar-col w-100">
                     <div className="text-center text-md-start mb-4">
                         {data.basics.photo && (
@@ -98,8 +87,8 @@ export default function SlateTwoColumnTemplate({ data }) {
                 </div>
             </div>
 
-            {/* Main Content Column (65% width) */}
-            <div className="p-4 p-md-5 main-col flex-grow-1" style={{ background: "#ffffff" }}>
+            {/* Main Content Column (68% width) */}
+            <div className="p-4 p-md-5 main-col flex-grow-1" style={{ width: "68%", background: "#ffffff" }}>
                 {/* Summary */}
                 {data.summary && (
                     <section className="mb-4 pb-2">

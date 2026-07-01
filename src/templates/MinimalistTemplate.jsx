@@ -15,7 +15,7 @@ export default function MinimalistTemplate({ data }) {
     };
 
     return (
-        <div className="p-5" style={{ fontFamily: "system-ui, -apple-system, sans-serif", color: "#2d3748" }}>
+        <div className="p-5" style={{ fontFamily: "system-ui, -apple-system, sans-serif", color: "#2d3748", minHeight: "297mm", boxSizing: "border-box", width: "100%" }}>
             {/* Header */}
             <div className="text-center mb-5">
                 {data.basics.photo && (
@@ -123,7 +123,7 @@ export default function MinimalistTemplate({ data }) {
                     <h6 className="text-uppercase fw-semibold border-bottom pb-2 mb-3 text-secondary" style={{ letterSpacing: "1px" }}>Education</h6>
                     <div className="row g-3">
                         {data.education.map((edu, i) => (
-                            <div key={i} className="col-md-6 small text-muted">
+                            <div key={i} className="col-6 small text-muted">
                                 <div className="fw-semibold text-dark">{edu.course}</div>
                                 <div>{edu.start} – {edu.end}</div>
                             </div>

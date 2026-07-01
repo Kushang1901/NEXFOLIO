@@ -29,7 +29,7 @@ export default function ModernTemplate({ data }) {
 
 
     return (
-        <div className="d-flex" style={{ minHeight: "100%" }}>
+        <div className="d-flex" style={{ minHeight: "297mm", boxSizing: "border-box", width: "100%" }}>
             {/* LEFT SIDEBAR */}
             <div
                 className="p-4 text-white"

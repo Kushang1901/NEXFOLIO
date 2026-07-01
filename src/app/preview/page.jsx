@@ -181,10 +181,25 @@ export default function Preview() {
             const imgData = canvas.toDataURL("image/png");
             const pdf = new jsPDF("p", "mm", "a4");
 
-            const pdfWidth = pdf.internal.pageSize.getWidth();
-            const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+            const imgWidth = pdf.internal.pageSize.getWidth(); // 210
+            const pageHeight = pdf.internal.pageSize.getHeight(); // 297
+            const imgHeight = (canvas.height * imgWidth) / canvas.width;
+            
+            let heightLeft = imgHeight;
+            let position = 0;
 
-            pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
+            // Add the first page
+            pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
+            heightLeft -= pageHeight;
+
+            // Add subsequent pages if there is remaining height
+            while (heightLeft > 0) {
+                position = heightLeft - imgHeight; // slide image up
+                pdf.addPage();
+                pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
+                heightLeft -= pageHeight;
+            }
+
             pdf.save(`${resumeData?.fullName ? resumeData.fullName.replace(/\s+/g, "_") : "Resume"}.pdf`);
             setShowDownloadModal(false);
             showToast("Resume downloaded as PDF successfully!", "success");
@@ -357,15 +372,21 @@ export default function Preview() {
                     </button>
                 </div>
 
-                <div
-                    id="resume-preview"
-                    className="bg-white text-dark"
-                    style={{
-                        borderRadius: "12px",
-                        boxShadow: "0 8px 30px rgba(0,0,0,0.5)"
-                    }}
-                >
-                    {renderTemplate()}
+                <div className="w-100 overflow-auto py-3 d-flex justify-content-center no-print">
+                    <div
+                        id="resume-preview"
+                        className="bg-white text-dark"
+                        style={{
+                            width: "210mm",
+                            minHeight: "297mm",
+                            boxShadow: "0 8px 30px rgba(0,0,0,0.5)",
+                            boxSizing: "border-box",
+                            position: "relative",
+                            overflow: "hidden"
+                        }}
+                    >
+                        {renderTemplate()}
+                    </div>
                 </div>
             </div>
 
@@ -373,6 +394,18 @@ export default function Preview() {
                 @media print {
                     .no-print {
                         display: none !important;
+                    }
+                    body {
+                        background: white !important;
+                        color: black !important;
+                    }
+                    #resume-preview {
+                        width: 100% !important;
+                        min-height: 100vh !important;
+                        box-shadow: none !important;
+                        border-radius: 0 !important;
+                        margin: 0 !important;
+                        padding: 0 !important;
                     }
                 }
             `}</style>

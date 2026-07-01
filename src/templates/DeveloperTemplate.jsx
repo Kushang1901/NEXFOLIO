@@ -15,8 +15,8 @@ export default function DeveloperTemplate({ data }) {
     };
 
     return (
-        <div style={{ fontFamily: "monospace, 'Fira Code', 'Courier New'", color: "#1e293b", background: "#ffffff" }}>
-            <div className="d-flex flex-column flex-md-row" style={{ minHeight: "100%" }}>
+        <div style={{ fontFamily: "monospace, 'Fira Code', 'Courier New'", color: "#1e293b", background: "#ffffff", minHeight: "297mm", boxSizing: "border-box", width: "100%" }}>
+            <div className="d-flex flex-row" style={{ minHeight: "297mm", height: "100%" }}>
                 {/* Left Side Console Column */}
                 <div className="p-4 text-white" style={{ width: "35%", background: "#0f172a" }}>
                     {data.basics.photo && (

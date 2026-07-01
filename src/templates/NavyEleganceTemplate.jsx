@@ -15,10 +15,10 @@ export default function NavyEleganceTemplate({ data }) {
     };
 
     return (
-        <div style={{ fontFamily: "Georgia, serif", color: "#2d3748" }}>
+        <div style={{ fontFamily: "Georgia, serif", color: "#2d3748", minHeight: "297mm", boxSizing: "border-box", width: "100%" }}>
             {/* Header Banner */}
             <div className="p-5 text-white" style={{ background: "#0f172a", borderBottom: "5px solid #3b82f6" }}>
-                <div className="d-flex flex-col md:flex-row align-items-center justify-content-between gap-4">
+                <div className="d-flex flex-row align-items-center justify-content-between gap-4">
                     <div className="d-flex align-items-center gap-4">
                         {data.basics.photo && (
                             <img
@@ -136,7 +136,7 @@ export default function NavyEleganceTemplate({ data }) {
                         </h4>
                         <div className="row g-3">
                             {data.education.map((edu, i) => (
-                                <div key={i} className="col-md-6" style={{ fontSize: "0.95rem" }}>
+                                <div key={i} className="col-6" style={{ fontSize: "0.95rem" }}>
                                     <div className="fw-bold text-dark">{edu.course}</div>
                                     <div className="text-muted">{edu.start} – {edu.end}</div>
                                 </div>

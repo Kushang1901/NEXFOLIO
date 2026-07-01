@@ -15,10 +15,10 @@ export default function ModernMinimalistTemplate({ data }) {
     };
 
     return (
-        <div className="p-5" style={{ fontFamily: "system-ui, -apple-system, sans-serif", color: "#111111", lineHeight: "1.5" }}>
+        <div className="p-5" style={{ fontFamily: "system-ui, -apple-system, sans-serif", color: "#111111", lineHeight: "1.5", minHeight: "297mm", boxSizing: "border-box", width: "100%" }}>
             {/* Header Section */}
             <div className="border-bottom border-2 border-dark pb-4 mb-4">
-                <div className="d-flex flex-col md:flex-row justify-content-between align-items-start gap-4">
+                <div className="d-flex flex-row justify-content-between align-items-start gap-4">
                     <div className="d-flex align-items-center gap-4">
                         {data.basics.photo && (
                             <img
@@ -136,7 +136,7 @@ export default function ModernMinimalistTemplate({ data }) {
                     </h5>
                     <div className="row g-3">
                         {data.education.map((edu, i) => (
-                            <div key={i} className="col-md-6" style={{ fontSize: "0.95rem" }}>
+                            <div key={i} className="col-6" style={{ fontSize: "0.95rem" }}>
                                 <div className="fw-bold">{edu.course}</div>
                                 <div className="text-muted">{edu.start} – {edu.end}</div>
                             </div>

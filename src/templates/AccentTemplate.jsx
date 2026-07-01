@@ -15,14 +15,14 @@ export default function AccentTemplate({ data }) {
     };
 
     return (
-        <div style={{ fontFamily: "system-ui, -apple-system, sans-serif", color: "#1e293b" }}>
+        <div style={{ fontFamily: "system-ui, -apple-system, sans-serif", color: "#1e293b", minHeight: "297mm", boxSizing: "border-box", width: "100%", display: "flex", flexDirection: "column" }}>
             {/* Top Accent Color Line */}
             <div style={{ height: "6px", background: "linear-gradient(to right, #00b4db, #0083b0)" }}></div>
 
-            <div className="p-5">
+            <div className="p-5 flex-grow-1" style={{ flexGrow: 1 }}>
                 {/* Header Grid */}
                 <div className="row align-items-center mb-4">
-                    <div className="col-md-8">
+                    <div className="col-8">
                         <h2 className="fw-bold mb-1" style={{ color: "#0083b0" }}>{data.basics.name}</h2>
                         {data.basics.role && (
                             <p className="text-uppercase tracking-wider fw-semibold text-secondary small mb-3">
@@ -34,7 +34,7 @@ export default function AccentTemplate({ data }) {
                             <span><i className="fa-solid fa-phone me-1"></i>{data.basics.phone}</span>
                         </div>
                     </div>
-                    <div className="col-md-4 text-md-end mt-3 mt-md-0">
+                    <div className="col-4 text-end">
                         {data.basics.photo && (
                             <img
                                 src={data.basics.photo}
@@ -140,7 +140,7 @@ export default function AccentTemplate({ data }) {
                         <h6 className="fw-bold text-uppercase pb-1 mb-2" style={{ color: "#0083b0", borderBottom: "1px solid #e2e8f0" }}>Education & Credentials</h6>
                         <div className="row g-2">
                             {data.education.map((edu, i) => (
-                                <div key={i} className="col-md-6 small text-muted">
+                                <div key={i} className="col-6 small text-muted">
                                     <div className="fw-bold text-dark">{edu.course}</div>
                                     <div>{edu.start} – {edu.end}</div>
                                 </div>

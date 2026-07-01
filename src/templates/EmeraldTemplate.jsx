@@ -15,9 +15,9 @@ export default function EmeraldTemplate({ data }) {
     };
 
     return (
-        <div className="p-5" style={{ fontFamily: "Inter, system-ui, sans-serif", color: "#334155" }}>
+        <div className="p-5" style={{ fontFamily: "Inter, system-ui, sans-serif", color: "#334155", minHeight: "297mm", boxSizing: "border-box", width: "100%" }}>
             {/* Header Section */}
-            <div className="d-flex flex-column md:flex-row align-items-center justify-content-between border-bottom pb-4 mb-4" style={{ borderColor: "#0f766e" }}>
+            <div className="d-flex flex-row align-items-center justify-content-between border-bottom pb-4 mb-4" style={{ borderColor: "#0f766e" }}>
                 <div className="d-flex align-items-center gap-4">
                     {data.basics.photo && (
                         <img
@@ -133,7 +133,7 @@ export default function EmeraldTemplate({ data }) {
                     </h5>
                     <div className="row g-3">
                         {data.education.map((edu, i) => (
-                            <div key={i} className="col-md-6" style={{ fontSize: "0.95rem" }}>
+                            <div key={i} className="col-6" style={{ fontSize: "0.95rem" }}>
                                 <div className="fw-bold text-slate-800" style={{ color: "#1e293b" }}>{edu.course}</div>
                                 <div className="text-muted">{edu.start} – {edu.end}</div>
                             </div>
