@@ -54,8 +54,18 @@ export async function verifyRecaptcha(token, action) {
 
         // Validate token properties
         if (!data.tokenProperties || !data.tokenProperties.valid) {
-            console.warn(`❌ [reCAPTCHA] Invalid token. Reason: ${data.tokenProperties?.invalidReason}`);
-            return { success: false, reason: `Invalid token properties: ${data.tokenProperties?.invalidReason || "malformed"}` };
+            const invalidReason = data.tokenProperties?.invalidReason;
+            console.warn(`❌ [reCAPTCHA] Invalid token. Reason: ${invalidReason}`);
+            
+            // If the invalidReason is BROWSER_ERROR, it's a retriable client-side network or ad-blocker issue.
+            // To prevent locking out legitimate users with ad blockers, DNS blocklists (like Pi-hole), or network issues,
+            // we log a warning but allow the request to proceed.
+            if (invalidReason === "BROWSER_ERROR") {
+                console.warn("⚠️ [reCAPTCHA] Allowing request despite BROWSER_ERROR to prevent user lockout.");
+                return { success: true, reason: "BROWSER_ERROR (allowed)", score: 1.0 };
+            }
+
+            return { success: false, reason: `Invalid token properties: ${invalidReason || "malformed"}` };
         }
 
         // Check for expected action mismatch
