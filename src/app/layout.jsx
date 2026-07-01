@@ -1,6 +1,7 @@
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./globals.css";
 import ToastContainer from "../components/Toast";
+import PageLoader from "../components/PageLoader";
 
 export const viewport = {
     themeColor: "#000000",
@@ -116,6 +117,7 @@ export default function RootLayout({ children }) {
                 />
             </head>
             <body>
+                <PageLoader />
                 <ToastContainer />
                 {children}
             </body>
