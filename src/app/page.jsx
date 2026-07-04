@@ -59,7 +59,7 @@ export default function HomePage() {
             <Navbar />
 
             {/* ═══════ 3D ORB HERO ═══════ */}
-            <header style={{ position:"relative", height:"100vh", display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"flex-start", overflow:"hidden", background:"#09090f", textAlign:"center", padding:"80px 20px 24px" }}>
+            <header style={{ position:"relative", height:"100vh", display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"flex-start", overflow:"hidden", background:"#09090f", textAlign:"center", padding:"90px 20px 20px" }}>
 
                 <style>{`
                     @keyframes rippleOut {
@@ -109,14 +109,14 @@ export default function HomePage() {
                         Build Your Professional Resume
                     </h1>
                 </div>
-                <div className="hero-text" style={{ animationDelay:"0.2s", zIndex:10, marginBottom:"6px" }}>
-                    <h2 style={{ fontSize:"clamp(1.6rem, 4vw, 2.8rem)", fontWeight:"700", lineHeight:1.2, letterSpacing:"-0.02em", color:"rgba(180,185,230,0.75)", margin:"0 auto", maxWidth:"600px" }}>
+                <div className="hero-text" style={{ animationDelay:"0.2s", zIndex:10, marginBottom:"15px" }}>
+                    <h2 style={{ fontSize:"clamp(1.4rem, 3.2vw, 2.2rem)", fontWeight:"700", lineHeight:1.2, letterSpacing:"-0.02em", color:"rgba(180,185,230,0.75)", margin:"0 auto", maxWidth:"600px" }}>
                         with AI Resume Builder
                     </h2>
                 </div>
 
                 {/* ══════ 3D ORB + RIPPLE STAGE ══════ */}
-                <div className="hero-orb-stage" style={{ position:"relative", width:"340px", height:"260px", display:"flex", alignItems:"center", justifyContent:"center", zIndex:10 }}>
+                <div className="hero-orb-stage" style={{ position:"relative", width:"340px", height:"270px", display:"flex", alignItems:"center", justifyContent:"center", zIndex:10 }}>
 
                     {/* Ripple rings — ellipses on the "floor" plane */}
                     <div style={{ position:"absolute", bottom:"0px", left:"50%", transform:"translateX(-50%)", width:"200px", height:"60px", zIndex:2, pointerEvents:"none" }}>
@@ -153,7 +153,7 @@ export default function HomePage() {
                 </div>
 
                 {/* ── CTA below orb ── */}
-                <div className="hero-text" style={{ animationDelay:"0.35s", marginTop:"8px", zIndex:10 }}>
+                <div className="hero-text" style={{ animationDelay:"0.35s", marginTop:"20px", zIndex:10 }}>
                     <button
                         onClick={handleStartResume}
                         style={{ padding:"14px 36px", background:"rgba(255,255,255,0.06)", border:"1px solid rgba(255,255,255,0.18)", borderRadius:"10px", color:"rgba(255,255,255,0.9)", fontWeight:"700", fontSize:"1rem", cursor:"pointer", backdropFilter:"blur(10px)", transition:"all 0.2s", letterSpacing:"-0.01em" }}

@@ -21,6 +21,13 @@ export default function Login() {
         password: "",
     });
     const [loading, setLoading] = useState(false);
+    const [tailwindLoaded, setTailwindLoaded] = useState(false);
+
+    useEffect(() => {
+        if (typeof window !== "undefined" && window.tailwind) {
+            setTailwindLoaded(true);
+        }
+    }, []);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -135,7 +142,11 @@ export default function Login() {
     return (
         <>
             {/* Tailwind script injection */}
-            <Script src="https://cdn.tailwindcss.com?plugins=forms,container-queries" strategy="afterInteractive" />
+            <Script 
+                src="https://cdn.tailwindcss.com?plugins=forms,container-queries" 
+                strategy="afterInteractive" 
+                onLoad={() => setTailwindLoaded(true)}
+            />
             <Script id="tailwind-config" strategy="afterInteractive" dangerouslySetInnerHTML={{ __html: `
                 window.tailwind = window.tailwind || {};
                 window.tailwind.config = {
@@ -242,10 +253,37 @@ export default function Login() {
                 .material-symbols-outlined {
                     font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24 !important;
                 }
+                .initial-loader-container {
+                    position: fixed;
+                    inset: 0;
+                    background-color: #0f131b;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    z-index: 99999;
+                }
+                .initial-loader-spinner {
+                    width: 48px;
+                    height: 48px;
+                    border: 3px solid rgba(74, 114, 243, 0.15);
+                    border-top-color: #4a72f3;
+                    border-radius: 50%;
+                    animation: spin 0.8s linear infinite;
+                }
+                @keyframes spin {
+                    to { transform: rotate(360deg); }
+                }
             ` }} />
 
-            <div className="bg-background text-on-surface min-h-screen flex flex-col">
+            {!tailwindLoaded && (
+                <div className="initial-loader-container">
+                    <div className="initial-loader-spinner"></div>
+                </div>
+            )}
+
+            <div className="bg-background text-on-surface min-h-screen flex flex-col" style={{ opacity: tailwindLoaded ? 1 : 0, transition: "opacity 0.15s ease-in" }}>
                 <Navbar />
+
 
                 <main className="flex-grow flex items-center justify-center px-4 pt-24 pb-16 relative overflow-hidden">
                     {/* Atmospheric Background Elements */}

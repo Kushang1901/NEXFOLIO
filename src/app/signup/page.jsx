@@ -22,7 +22,14 @@ export default function Signup() {
         password: ""
     });
     const [loading, setLoading] = useState(false);
+    const [tailwindLoaded, setTailwindLoaded] = useState(false);
     const apiCallingRef = React.useRef(new Set());
+
+    useEffect(() => {
+        if (typeof window !== "undefined" && window.tailwind) {
+            setTailwindLoaded(true);
+        }
+    }, []);
 
     const handleChange = (e) => {
         setFormData(prev => ({
@@ -239,7 +246,11 @@ export default function Signup() {
     return (
         <>
             {/* Tailwind script injection */}
-            <Script src="https://cdn.tailwindcss.com?plugins=forms,container-queries" strategy="afterInteractive" />
+            <Script 
+                src="https://cdn.tailwindcss.com?plugins=forms,container-queries" 
+                strategy="afterInteractive" 
+                onLoad={() => setTailwindLoaded(true)}
+            />
             <Script id="tailwind-config" strategy="afterInteractive" dangerouslySetInnerHTML={{ __html: `
                 window.tailwind = window.tailwind || {};
                 window.tailwind.config = {
@@ -355,10 +366,37 @@ export default function Signup() {
                     z-index: -1 !important;
                     filter: blur(60px) !important;
                 }
+                .initial-loader-container {
+                    position: fixed;
+                    inset: 0;
+                    background-color: #0f131b;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    z-index: 99999;
+                }
+                .initial-loader-spinner {
+                    width: 48px;
+                    height: 48px;
+                    border: 3px solid rgba(74, 114, 243, 0.15);
+                    border-top-color: #4a72f3;
+                    border-radius: 50%;
+                    animation: spin 0.8s linear infinite;
+                }
+                @keyframes spin {
+                    to { transform: rotate(360deg); }
+                }
             ` }} />
 
-            <div className="min-h-screen flex flex-col">
+            {!tailwindLoaded && (
+                <div className="initial-loader-container">
+                    <div className="initial-loader-spinner"></div>
+                </div>
+            )}
+
+            <div className="min-h-screen flex flex-col" style={{ opacity: tailwindLoaded ? 1 : 0, transition: "opacity 0.15s ease-in" }}>
                 <Navbar />
+
 
                 <main className="flex-grow flex items-center justify-center pt-24 pb-16 px-margin-mobile relative">
                     <div className="bg-glow -top-20 -left-20"></div>
