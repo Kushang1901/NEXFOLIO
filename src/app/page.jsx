@@ -58,40 +58,114 @@ export default function HomePage() {
         <div className="bg-dark text-white min-vh-100">
             <Navbar />
 
-            {/* Hero Section */}
-            <header className="bg-black py-5">
-                <div className="container py-5">
-                    <div className="row justify-content-center text-center py-5">
-                        <div className="col-lg-8">
-                            <div className="text-primary fw-bold text-uppercase mb-2" style={{ letterSpacing: "0.15em", fontSize: "0.95rem" }}>
-                                Nexfolio
-                            </div>
-                            <h1
-                                className="display-2 fw-bold mb-4"
-                                style={{ letterSpacing: '-0.02em', lineHeight: "1.2" }}
-                            >
-                                Free Resume Maker & <br className="d-none d-md-inline" /> AI Resume Builder
-                            </h1>
-                            <p className="lead fs-4 text-white-50 mb-5">
-                                Create professional, ATS-friendly resumes instantly with our free AI resume maker. Leverage advanced artificial intelligence to craft compelling resume content that stands out to top recruiters.
-                            </p>
+            {/* ═══════ 3D ORB HERO ═══════ */}
+            <header style={{ position:"relative", height:"100vh", display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"flex-start", overflow:"hidden", background:"#09090f", textAlign:"center", padding:"80px 20px 24px" }}>
 
-                            <button
-                                onClick={handleStartResume}
-                                className="btn btn-primary btn-lg px-5 py-3 fw-semibold"
-                                style={{
-                                    fontSize: "1.1rem",
-                                    borderRadius: "8px",
-                                    boxShadow: "0 4px 15px rgba(13, 110, 253, 0.4)"
-                                }}
-                            >
-                                Build Resume Now
-                            </button>
+                <style>{`
+                    @keyframes rippleOut {
+                        0%   { transform: scaleX(1) scaleY(1); opacity: 0.55; }
+                        100% { transform: scaleX(2.8) scaleY(2.8); opacity: 0; }
+                    }
+                    @keyframes orbFloat {
+                        0%,100% { transform: translateY(0px); }
+                        50%      { transform: translateY(-14px); }
+                    }
+                    @keyframes orbPulse {
+                        0%,100% { box-shadow: 0 0 80px 20px rgba(80,90,255,0.35), 0 0 160px 60px rgba(60,70,220,0.18), inset 0 0 40px rgba(120,140,255,0.12); }
+                        50%      { box-shadow: 0 0 120px 40px rgba(80,90,255,0.55), 0 0 220px 90px rgba(60,70,220,0.3), inset 0 0 60px rgba(120,140,255,0.2); }
+                    }
+                    @keyframes heroIn {
+                        from { opacity:0; transform: translateY(30px); }
+                        to   { opacity:1; transform: translateY(0); }
+                    }
+                    @keyframes specularShimmer {
+                        0%,100% { opacity: 0.8; }
+                        50%      { opacity: 1; }
+                    }
+                    .hero-orb-wrap { animation: orbFloat 6s ease-in-out infinite; }
+                    .hero-orb      { animation: orbPulse 4s ease-in-out infinite; }
+                    .hero-text     { animation: heroIn 1s ease forwards; }
+                    .ripple-ring   { animation: rippleOut 3.6s ease-out infinite; }
+                    .rr2           { animation-delay: 1.2s; }
+                    .rr3           { animation-delay: 2.4s; }
+                    @media (max-width: 768px) {
+                        .hero-orb { width: 180px !important; height: 180px !important; }
+                        .hero-orb-stage { width: 260px !important; height: 260px !important; }
+                    }
+                    @media (max-height: 700px) {
+                        .hero-orb { width: 180px !important; height: 180px !important; }
+                        .hero-orb-stage { width: 260px !important; height: 260px !important; }
+                    }
+                `}</style>
 
+                {/* ── Dark radial bg ── */}
+                <div style={{ position:"absolute", inset:0, background:"radial-gradient(ellipse 70% 55% at 50% 55%, rgba(30,35,120,0.55) 0%, transparent 70%)", pointerEvents:"none" }} />
+
+                {/* ── Top announcement pill ── */}
+
+                {/* ── Headline ── */}
+                <div className="hero-text" style={{ animationDelay:"0.1s", zIndex:10, marginBottom:"6px" }}>
+                    <h1 style={{ fontSize:"clamp(2.2rem, 5.5vw, 4rem)", fontWeight:"800", lineHeight:1.15, letterSpacing:"-0.03em", color:"#fff", maxWidth:"700px", margin:"0 auto" }}>
+                        Build Your Professional Resume
+                    </h1>
+                </div>
+                <div className="hero-text" style={{ animationDelay:"0.2s", zIndex:10, marginBottom:"6px" }}>
+                    <h2 style={{ fontSize:"clamp(1.6rem, 4vw, 2.8rem)", fontWeight:"700", lineHeight:1.2, letterSpacing:"-0.02em", color:"rgba(180,185,230,0.75)", margin:"0 auto", maxWidth:"600px" }}>
+                        with AI Resume Builder
+                    </h2>
+                </div>
+
+                {/* ══════ 3D ORB + RIPPLE STAGE ══════ */}
+                <div className="hero-orb-stage" style={{ position:"relative", width:"340px", height:"260px", display:"flex", alignItems:"center", justifyContent:"center", zIndex:10 }}>
+
+                    {/* Ripple rings — ellipses on the "floor" plane */}
+                    <div style={{ position:"absolute", bottom:"0px", left:"50%", transform:"translateX(-50%)", width:"200px", height:"60px", zIndex:2, pointerEvents:"none" }}>
+                        {[0,1,2].map(i => (
+                            <div key={i} className={`ripple-ring rr${i+1}`} style={{ position:"absolute", inset:0, borderRadius:"50%", border:"1.5px solid rgba(90,100,255,0.5)", background:"transparent" }} />
+                        ))}
+                    </div>
+
+                    {/* Orb wrapper (floating) */}
+                    <div className="hero-orb-wrap" style={{ position:"relative", zIndex:5 }}>
+
+                        {/* Shadow on floor */}
+                        <div style={{ position:"absolute", bottom:"-30px", left:"50%", transform:"translateX(-50%)", width:"180px", height:"30px", borderRadius:"50%", background:"radial-gradient(ellipse, rgba(40,50,200,0.5) 0%, transparent 70%)", filter:"blur(12px)" }} />
+
+                        {/* ── The Glass Orb ── */}
+                        <div className="hero-orb" style={{
+                            width:"260px", height:"260px", borderRadius:"50%",
+                            background:"radial-gradient(circle at 35% 28%, rgba(200,210,255,0.18) 0%, rgba(100,115,255,0.95) 28%, rgba(40,55,200,1) 55%, rgba(15,20,100,1) 80%, rgba(5,8,40,1) 100%)",
+                            position:"relative", overflow:"visible"
+                        }}>
+                            {/* Main specular highlight */}
+                            <div style={{ position:"absolute", top:"13%", left:"20%", width:"55px", height:"40px", borderRadius:"50%", background:"radial-gradient(ellipse, rgba(255,255,255,0.95) 0%, rgba(200,210,255,0.5) 50%, transparent 100%)", filter:"blur(4px)", animation:"specularShimmer 4s ease-in-out infinite" }} />
+                            {/* Secondary small flare */}
+                            <div style={{ position:"absolute", top:"22%", left:"28%", width:"18px", height:"14px", borderRadius:"50%", background:"rgba(255,255,255,0.85)", filter:"blur(2px)" }} />
+                            {/* Core glow inside */}
+                            <div style={{ position:"absolute", top:"30%", left:"25%", width:"90px", height:"90px", borderRadius:"50%", background:"radial-gradient(circle, rgba(130,150,255,0.5) 0%, transparent 70%)", filter:"blur(10px)" }} />
+                            {/* Bottom rim reflection */}
+                            <div style={{ position:"absolute", bottom:"8%", right:"12%", width:"40px", height:"20px", borderRadius:"50%", background:"rgba(80,100,255,0.3)", filter:"blur(5px)", transform:"rotate(-20deg)" }} />
+                            {/* Equator gloss ring */}
+                            <div style={{ position:"absolute", top:"42%", left:"5%", right:"5%", height:"12px", borderRadius:"50%", background:"linear-gradient(90deg, transparent, rgba(180,200,255,0.12), rgba(255,255,255,0.08), rgba(180,200,255,0.12), transparent)", filter:"blur(2px)" }} />
                         </div>
+
                     </div>
                 </div>
+
+                {/* ── CTA below orb ── */}
+                <div className="hero-text" style={{ animationDelay:"0.35s", marginTop:"8px", zIndex:10 }}>
+                    <button
+                        onClick={handleStartResume}
+                        style={{ padding:"14px 36px", background:"rgba(255,255,255,0.06)", border:"1px solid rgba(255,255,255,0.18)", borderRadius:"10px", color:"rgba(255,255,255,0.9)", fontWeight:"700", fontSize:"1rem", cursor:"pointer", backdropFilter:"blur(10px)", transition:"all 0.2s", letterSpacing:"-0.01em" }}
+                        onMouseEnter={e => { e.currentTarget.style.background="rgba(99,102,241,0.25)"; e.currentTarget.style.borderColor="rgba(99,102,241,0.6)"; e.currentTarget.style.color="#fff"; }}
+                        onMouseLeave={e => { e.currentTarget.style.background="rgba(255,255,255,0.06)"; e.currentTarget.style.borderColor="rgba(255,255,255,0.18)"; e.currentTarget.style.color="rgba(255,255,255,0.9)"; }}
+                    >
+                        Build Resume Now
+                    </button>
+                </div>
+
             </header>
+
 
             {/* Features Section */}
             <section className="py-5 bg-dark">
