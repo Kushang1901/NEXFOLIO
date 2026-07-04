@@ -7,6 +7,7 @@ import { auth } from "../firebase";
 import { signOut } from "firebase/auth";
 import { subscribeToAuthChanges } from "../authState";
 import { showToast } from "../utils/toast";
+import { Home, Palette, FileSignature, Target, BookOpen, FileText, X, ArrowRight } from "lucide-react";
 
 const NAV_LINKS = [
     { label: "Home", href: "/" },
@@ -195,7 +196,9 @@ export default function Navbar() {
                 {/* Drawer Header */}
                 <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "20px 24px", borderBottom: "1px solid rgba(255,255,255,0.07)" }}>
                     <span style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: "700", letterSpacing: "0.08em", background: "linear-gradient(90deg, #fff 0%, #b6c4ff 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", fontSize: "1.1rem" }}>NEXFOLIO</span>
-                    <button onClick={closeMenu} aria-label="Close menu" style={{ background: "rgba(255,255,255,0.07)", border: "1px solid rgba(255,255,255,0.12)", borderRadius: "8px", color: "#fff", width: "36px", height: "36px", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", fontSize: "16px" }}>✕</button>
+                    <button onClick={closeMenu} aria-label="Close menu" style={{ background: "rgba(255,255,255,0.07)", border: "1px solid rgba(255,255,255,0.12)", borderRadius: "8px", color: "#fff", width: "36px", height: "36px", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}>
+                        <X size={16} />
+                    </button>
                 </div>
 
                 {/* User Card (logged in) */}
@@ -210,32 +213,43 @@ export default function Navbar() {
                         )}
                         <div style={{ overflow: "hidden" }}>
                             <div style={{ color: "#38bdf8", fontWeight: "600", fontSize: "0.95rem", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{displayName || user.email}</div>
-                            <div style={{ color: "rgba(255,255,255,0.4)", fontSize: "0.75rem", marginTop: "2px" }}>View Profile →</div>
+                            <div style={{ color: "rgba(255,255,255,0.4)", fontSize: "0.75rem", marginTop: "2px", display: "flex", alignItems: "center", gap: "4px" }}>
+                                View Profile <ArrowRight size={12} />
+                            </div>
                         </div>
                     </Link>
                 )}
 
                 {/* Nav Links */}
                 <nav style={{ flex: 1, padding: "8px 0" }}>
-                    {NAV_LINKS.map((link) => (
-                        <Link key={link.href} href={link.href} onClick={closeMenu} style={{
-                            ...drawerLinkStyle,
-                            color: isActive(link.href) ? "#fff" : "rgba(255,255,255,0.75)",
-                            background: isActive(link.href) ? "rgba(111,157,255,0.1)" : "transparent",
-                            borderLeft: isActive(link.href) ? "3px solid #6f9dff" : "3px solid transparent",
-                        }}>
-                            <span style={{ fontSize: "1rem" }}>{drawerIcons[link.href] || "→"}</span>
-                            {link.label}
-                        </Link>
-                    ))}
+                    {NAV_LINKS.map((link) => {
+                        const Icon = drawerIcons[link.href];
+                        return (
+                            <Link key={link.href} href={link.href} onClick={closeMenu} style={{
+                                ...drawerLinkStyle,
+                                color: isActive(link.href) ? "#fff" : "rgba(255,255,255,0.75)",
+                                background: isActive(link.href) ? "rgba(111,157,255,0.1)" : "transparent",
+                                borderLeft: isActive(link.href) ? "3px solid #6f9dff" : "3px solid transparent",
+                                display: "flex",
+                                alignItems: "center",
+                                gap: "10px",
+                            }}>
+                                {Icon ? <Icon size={16} /> : null}
+                                {link.label}
+                            </Link>
+                        );
+                    })}
                     {user && (
                         <Link href="/my-resumes" onClick={closeMenu} style={{
                             ...drawerLinkStyle,
                             color: isActive("/my-resumes") ? "#fff" : "rgba(255,255,255,0.75)",
                             background: isActive("/my-resumes") ? "rgba(111,157,255,0.1)" : "transparent",
                             borderLeft: isActive("/my-resumes") ? "3px solid #6f9dff" : "3px solid transparent",
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "10px",
                         }}>
-                            <span>📄</span> My Resumes
+                            <FileText size={16} /> My Resumes
                         </Link>
                     )}
 
@@ -292,9 +306,9 @@ const drawerLinkStyle = {
     transition: "all 0.15s ease",
 };
 const drawerIcons = {
-    "/": "🏠",
-    "/templates": "🎨",
-    "/cover-letter": "✉️",
-    "/ats-checker": "🎯",
-    "/blog": "📝",
+    "/": Home,
+    "/templates": Palette,
+    "/cover-letter": FileSignature,
+    "/ats-checker": Target,
+    "/blog": BookOpen,
 };

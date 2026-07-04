@@ -2,7 +2,7 @@
 
 import React, { useState, useRef } from "react";
 import Navbar from "../../components/Navbar";
-import { ListChecks, KeyRound, LayoutTemplate, Type, FileText, HardDrive } from "lucide-react";
+import { ListChecks, KeyRound, LayoutTemplate, Type, FileText, HardDrive, Sparkles, CheckCircle, UploadCloud, Target, Lightbulb } from "lucide-react";
 
 const TIPS = [
     { Icon: ListChecks,     color: "#6366f1", title: "Use Standard Section Headings",          desc: "ATS bots look for keywords like 'Experience', 'Education', 'Skills'. Avoid creative names like 'My Journey'." },
@@ -89,7 +89,7 @@ export default function ATSCheckerPage() {
                 <div style={{ position: "absolute", top: "-80px", left: "50%", transform: "translateX(-50%)", width: "600px", height: "600px", background: "radial-gradient(circle, rgba(99,102,241,0.12) 0%, transparent 70%)", pointerEvents: "none" }} />
                 <div style={{ maxWidth: "720px", margin: "0 auto", position: "relative" }}>
                     <div style={{ display: "inline-flex", alignItems: "center", gap: "8px", background: "rgba(99,102,241,0.12)", border: "1px solid rgba(99,102,241,0.3)", borderRadius: "999px", padding: "6px 18px", fontSize: "0.8rem", color: "#a5b4fc", fontWeight: "600", letterSpacing: "0.06em", textTransform: "uppercase", marginBottom: "24px" }}>
-                        🎯 AI-Powered
+                        <Sparkles size={13} color="#a5b4fc" /> AI-Powered
                     </div>
                     <h1 style={{ fontSize: "clamp(2rem, 5vw, 3.2rem)", fontWeight: "800", lineHeight: "1.15", marginBottom: "20px", letterSpacing: "-0.02em" }}>
                         Free ATS Resume Checker
@@ -125,7 +125,13 @@ export default function ATSCheckerPage() {
                             }}
                         >
                             <input ref={fileRef} type="file" accept=".pdf,.doc,.docx" style={{ display: "none" }} onChange={handleFileChange} />
-                            <div style={{ fontSize: "3rem", marginBottom: "16px" }}>{file ? "✅" : "📤"}</div>
+                            <div style={{ display: "flex", justifyContent: "center", marginBottom: "16px" }}>
+                                {file ? (
+                                    <CheckCircle size={44} color="#22c55e" />
+                                ) : (
+                                    <UploadCloud size={44} color="rgba(255,255,255,0.4)" />
+                                )}
+                            </div>
                             {file ? (
                                 <>
                                     <p style={{ color: "#22c55e", fontWeight: "700", fontSize: "1rem", marginBottom: "6px" }}>{file.name}</p>
@@ -180,7 +186,11 @@ export default function ATSCheckerPage() {
                                     <span style={{ display: "inline-block", width: "18px", height: "18px", border: "2px solid rgba(255,255,255,0.3)", borderTopColor: "#fff", borderRadius: "50%", animation: "spin 0.8s linear infinite" }} />
                                     Analyzing Resume...
                                 </>
-                            ) : "🎯 Check ATS Score"}
+                            ) : (
+                                <>
+                                    <Target size={18} /> Check ATS Score
+                                </>
+                            )}
                         </button>
                         <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
                     </div>
@@ -232,7 +242,9 @@ export default function ATSCheckerPage() {
 
                             {/* Improvements */}
                             <div style={{ background: "rgba(99,102,241,0.06)", border: "1px solid rgba(99,102,241,0.2)", borderRadius: "16px", padding: "20px 24px" }}>
-                                <h3 style={{ fontSize: "0.9rem", fontWeight: "700", color: "#a5b4fc", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: "14px" }}>💡 Top Improvements</h3>
+                                <h3 style={{ fontSize: "0.9rem", fontWeight: "700", color: "#a5b4fc", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: "14px", display: "flex", alignItems: "center", gap: "8px" }}>
+                                    <Lightbulb size={18} /> Top Improvements
+                                </h3>
                                 <ul style={{ margin: 0, padding: 0, listStyle: "none", display: "flex", flexDirection: "column", gap: "10px" }}>
                                     {result.improvements.map((tip, i) => (
                                         <li key={i} style={{ display: "flex", gap: "10px", fontSize: "0.88rem", color: "rgba(255,255,255,0.75)", lineHeight: "1.5" }}>

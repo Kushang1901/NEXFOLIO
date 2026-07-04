@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import Navbar from "../../components/Navbar";
 import { subscribeToAuthChanges } from "../../authState";
+import { LayoutDashboard, Plus, FileText, Palette, Pencil, Eye, Trash2, Lightbulb } from "lucide-react";
 
 // Sample data — replace with real API calls from your DB
 const SAMPLE_RESUMES = [
@@ -70,7 +71,9 @@ export default function MyResumesPage() {
             <section style={{ background: "linear-gradient(160deg, #0a0a1a 0%, #000 70%)", padding: "56px 24px 40px", borderBottom: "1px solid rgba(255,255,255,0.07)" }}>
                 <div style={{ maxWidth: "1040px", margin: "0 auto", display: "flex", alignItems: "flex-end", justifyContent: "space-between", flexWrap: "wrap", gap: "20px" }}>
                     <div>
-                        <div style={{ color: "rgba(255,255,255,0.4)", fontSize: "0.82rem", fontWeight: "600", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "10px" }}>📄 Dashboard</div>
+                        <div style={{ color: "rgba(255,255,255,0.4)", fontSize: "0.82rem", fontWeight: "600", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "10px", display: "flex", alignItems: "center", gap: "6px" }}>
+                            <LayoutDashboard size={14} /> Dashboard
+                        </div>
                         <h1 style={{ fontSize: "clamp(1.8rem, 4vw, 2.6rem)", fontWeight: "800", marginBottom: "8px", letterSpacing: "-0.02em" }}>My Resumes</h1>
                         <p style={{ color: "rgba(255,255,255,0.45)", fontSize: "0.95rem" }}>
                             {resumes.length === 0 ? "You haven't created any resumes yet." : `${resumes.length} resume${resumes.length !== 1 ? "s" : ""} saved`}
@@ -80,7 +83,7 @@ export default function MyResumesPage() {
                         onMouseEnter={e => e.currentTarget.style.opacity = "0.85"}
                         onMouseLeave={e => e.currentTarget.style.opacity = "1"}
                     >
-                        ＋ Create New Resume
+                        <Plus size={16} /> Create New Resume
                     </Link>
                 </div>
             </section>
@@ -90,13 +93,15 @@ export default function MyResumesPage() {
                 {resumes.length === 0 ? (
                     /* Empty State */
                     <div style={{ textAlign: "center", padding: "80px 24px", animation: "fadeUp 0.4s ease" }}>
-                        <div style={{ width: "96px", height: "96px", background: "rgba(99,102,241,0.1)", border: "2px dashed rgba(99,102,241,0.3)", borderRadius: "24px", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "2.5rem", margin: "0 auto 28px" }}>📄</div>
+                        <div style={{ width: "96px", height: "96px", background: "rgba(99,102,241,0.1)", border: "2px dashed rgba(99,102,241,0.3)", borderRadius: "24px", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 28px" }}>
+                            <FileText size={40} color="#6366f1" />
+                        </div>
                         <h2 style={{ fontSize: "1.5rem", fontWeight: "800", marginBottom: "12px" }}>No resumes yet</h2>
                         <p style={{ color: "rgba(255,255,255,0.45)", fontSize: "0.97rem", marginBottom: "32px", maxWidth: "380px", margin: "0 auto 32px", lineHeight: "1.7" }}>
                             Create your first resume in minutes using our AI-powered builder with 18+ professional templates.
                         </p>
                         <Link href="/templates" style={{ display: "inline-flex", alignItems: "center", gap: "8px", padding: "14px 32px", background: "linear-gradient(135deg, #6366f1, #4f46e5)", borderRadius: "12px", color: "#fff", textDecoration: "none", fontWeight: "700", fontSize: "1rem", boxShadow: "0 4px 20px rgba(99,102,241,0.35)" }}>
-                            🎨 Browse Templates
+                            <Palette size={16} /> Browse Templates
                         </Link>
                     </div>
                 ) : (
@@ -130,22 +135,28 @@ export default function MyResumesPage() {
                                     <div style={{ display: "flex", gap: "8px" }}>
                                         <button
                                             onClick={() => router.push(`/resume/${resume.id}`)}
-                                            style={{ flex: 1, padding: "9px 0", background: "rgba(99,102,241,0.12)", border: "1px solid rgba(99,102,241,0.25)", borderRadius: "9px", color: "#a5b4fc", fontSize: "0.82rem", fontWeight: "600", cursor: "pointer", transition: "all 0.15s" }}
+                                            style={{ flex: 1, padding: "9px 0", background: "rgba(99,102,241,0.12)", border: "1px solid rgba(99,102,241,0.25)", borderRadius: "9px", color: "#a5b4fc", fontSize: "0.82rem", fontWeight: "600", cursor: "pointer", transition: "all 0.15s", display: "flex", alignItems: "center", justifyContent: "center", gap: "6px" }}
                                             onMouseEnter={e => { e.currentTarget.style.background = "rgba(99,102,241,0.22)"; e.currentTarget.style.color = "#fff"; }}
                                             onMouseLeave={e => { e.currentTarget.style.background = "rgba(99,102,241,0.12)"; e.currentTarget.style.color = "#a5b4fc"; }}
-                                        >✏️ Edit</button>
+                                        >
+                                            <Pencil size={12} /> Edit
+                                        </button>
                                         <button
                                             onClick={() => router.push(`/preview?id=${resume.id}`)}
-                                            style={{ flex: 1, padding: "9px 0", background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "9px", color: "rgba(255,255,255,0.7)", fontSize: "0.82rem", fontWeight: "600", cursor: "pointer", transition: "all 0.15s" }}
+                                            style={{ flex: 1, padding: "9px 0", background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "9px", color: "rgba(255,255,255,0.7)", fontSize: "0.82rem", fontWeight: "600", cursor: "pointer", transition: "all 0.15s", display: "flex", alignItems: "center", justifyContent: "center", gap: "6px" }}
                                             onMouseEnter={e => { e.currentTarget.style.background = "rgba(255,255,255,0.1)"; e.currentTarget.style.color = "#fff"; }}
                                             onMouseLeave={e => { e.currentTarget.style.background = "rgba(255,255,255,0.05)"; e.currentTarget.style.color = "rgba(255,255,255,0.7)"; }}
-                                        >👁 Preview</button>
+                                        >
+                                            <Eye size={12} /> Preview
+                                        </button>
                                         <button
                                             onClick={() => setDeleteTarget(resume.id)}
-                                            style={{ padding: "9px 12px", background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.2)", borderRadius: "9px", color: "#ef4444", fontSize: "0.9rem", cursor: "pointer", transition: "all 0.15s" }}
+                                            style={{ padding: "9px 12px", background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.2)", borderRadius: "9px", color: "#ef4444", fontSize: "0.9rem", cursor: "pointer", transition: "all 0.15s", display: "flex", alignItems: "center", justifyContent: "center" }}
                                             onMouseEnter={e => { e.currentTarget.style.background = "rgba(239,68,68,0.18)"; }}
                                             onMouseLeave={e => { e.currentTarget.style.background = "rgba(239,68,68,0.08)"; }}
-                                        >🗑</button>
+                                        >
+                                            <Trash2 size={14} />
+                                        </button>
                                     </div>
                                 </div>
                             </div>
@@ -156,7 +167,9 @@ export default function MyResumesPage() {
                             onMouseEnter={e => { e.currentTarget.style.borderColor = "rgba(99,102,241,0.4)"; e.currentTarget.style.background = "rgba(99,102,241,0.05)"; }}
                             onMouseLeave={e => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.1)"; e.currentTarget.style.background = "rgba(255,255,255,0.02)"; }}
                         >
-                            <div style={{ width: "52px", height: "52px", borderRadius: "14px", background: "rgba(99,102,241,0.1)", border: "1.5px solid rgba(99,102,241,0.3)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "1.5rem", color: "#a5b4fc" }}>＋</div>
+                            <div style={{ width: "52px", height: "52px", borderRadius: "14px", background: "rgba(99,102,241,0.1)", border: "1.5px solid rgba(99,102,241,0.3)", display: "flex", alignItems: "center", justifyContent: "center", color: "#a5b4fc" }}>
+                                <Plus size={24} />
+                            </div>
                             <div style={{ textAlign: "center" }}>
                                 <p style={{ fontWeight: "700", color: "rgba(255,255,255,0.7)", marginBottom: "4px", fontSize: "0.95rem" }}>Create New Resume</p>
                                 <p style={{ color: "rgba(255,255,255,0.3)", fontSize: "0.8rem" }}>Choose from 18+ templates</p>
@@ -170,8 +183,8 @@ export default function MyResumesPage() {
             {resumes.length > 0 && (
                 <div style={{ maxWidth: "1040px", margin: "0 auto 48px", padding: "0 24px" }}>
                     <div style={{ background: "rgba(99,102,241,0.06)", border: "1px solid rgba(99,102,241,0.2)", borderRadius: "14px", padding: "20px 24px", display: "flex", gap: "16px", alignItems: "flex-start", flexWrap: "wrap" }}>
-                        <span style={{ fontSize: "1.4rem" }}>💡</span>
-                        <div>
+                        <Lightbulb size={22} color="#a5b4fc" style={{ flexShrink: 0 }} />
+                        <div style={{ flex: 1 }}>
                             <p style={{ fontWeight: "700", marginBottom: "4px", color: "#a5b4fc", fontSize: "0.9rem" }}>Pro Tip</p>
                             <p style={{ color: "rgba(255,255,255,0.5)", fontSize: "0.86rem", margin: 0, lineHeight: "1.6" }}>
                                 Tailor a different resume for each job application. Use our <Link href="/ats-checker" style={{ color: "#6366f1", fontWeight: "600" }}>ATS Checker</Link> to optimize your resume for each role before applying.
@@ -185,7 +198,9 @@ export default function MyResumesPage() {
             {deleteTarget && (
                 <div style={{ position: "fixed", inset: 0, zIndex: 9999, background: "rgba(0,0,0,0.7)", backdropFilter: "blur(6px)", display: "flex", alignItems: "center", justifyContent: "center", padding: "24px" }}>
                     <div style={{ background: "linear-gradient(145deg, #1c2027, #11141a)", border: "1px solid rgba(239,68,68,0.25)", borderRadius: "20px", padding: "36px", maxWidth: "400px", width: "100%", textAlign: "center", boxShadow: "0 20px 60px rgba(0,0,0,0.7)", animation: "fadeUp 0.25s ease" }}>
-                        <div style={{ fontSize: "2.5rem", marginBottom: "16px" }}>🗑️</div>
+                        <div style={{ display: "flex", justifyContent: "center", marginBottom: "16px" }}>
+                            <Trash2 size={40} color="#ef4444" />
+                        </div>
                         <h3 style={{ fontWeight: "800", marginBottom: "10px", fontSize: "1.2rem" }}>Delete Resume?</h3>
                         <p style={{ color: "rgba(255,255,255,0.5)", marginBottom: "28px", fontSize: "0.9rem", lineHeight: "1.6" }}>This action cannot be undone. Your resume will be permanently deleted.</p>
                         <div style={{ display: "flex", gap: "12px" }}>

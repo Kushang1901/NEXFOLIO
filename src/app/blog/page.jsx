@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import Navbar from "../../components/Navbar";
-import { ScanSearch, GraduationCap, Bot, Zap, MessageSquare, FileStack, KeyRound, Mail } from "lucide-react";
+import { ScanSearch, GraduationCap, Bot, Zap, MessageSquare, FileStack, KeyRound, Mail, BookOpen, Search, Sparkles, Inbox } from "lucide-react";
 
 const CATEGORIES = ["All", "Resume Tips", "Career Advice", "ATS", "Interview Prep", "AI Tools"];
 
@@ -112,7 +112,7 @@ export default function BlogPage() {
                 <div style={{ position: "absolute", top: "-100px", left: "50%", transform: "translateX(-50%)", width: "700px", height: "700px", background: "radial-gradient(circle, rgba(34,197,94,0.08) 0%, transparent 65%)", pointerEvents: "none" }} />
                 <div style={{ maxWidth: "680px", margin: "0 auto", position: "relative" }}>
                     <div style={{ display: "inline-flex", alignItems: "center", gap: "8px", background: "rgba(34,197,94,0.1)", border: "1px solid rgba(34,197,94,0.3)", borderRadius: "999px", padding: "6px 18px", fontSize: "0.8rem", color: "#86efac", fontWeight: "600", letterSpacing: "0.06em", textTransform: "uppercase", marginBottom: "24px" }}>
-                        📝 Career Resource Hub
+                        <BookOpen size={13} color="#86efac" /> Career Resource Hub
                     </div>
                     <h1 style={{ fontSize: "clamp(2rem, 5vw, 3rem)", fontWeight: "800", lineHeight: "1.15", marginBottom: "18px", letterSpacing: "-0.02em" }}>
                         Resume Tips, Career Advice<br />& AI Tools
@@ -123,7 +123,9 @@ export default function BlogPage() {
 
                     {/* Search */}
                     <div style={{ position: "relative", maxWidth: "460px", margin: "0 auto" }}>
-                        <span style={{ position: "absolute", left: "16px", top: "50%", transform: "translateY(-50%)", fontSize: "1rem", color: "rgba(255,255,255,0.35)" }}>🔍</span>
+                        <span style={{ position: "absolute", left: "16px", top: "50%", transform: "translateY(-50%)", display: "flex", alignItems: "center", pointerEvents: "none" }}>
+                            <Search size={18} color="rgba(255,255,255,0.35)" />
+                        </span>
                         <input
                             type="text"
                             placeholder="Search articles..."
@@ -157,7 +159,9 @@ export default function BlogPage() {
                 {/* Featured Post */}
                 {featuredPost && activeCategory === "All" && !searchQuery && (
                     <div style={{ marginBottom: "48px" }}>
-                        <div style={{ fontSize: "0.75rem", color: "rgba(255,255,255,0.4)", fontWeight: "600", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "16px" }}>✨ Featured Article</div>
+                        <div style={{ fontSize: "0.75rem", color: "rgba(255,255,255,0.4)", fontWeight: "600", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "16px", display: "flex", alignItems: "center", gap: "6px" }}>
+                            <Sparkles size={14} color="#6366f1" /> Featured Article
+                        </div>
                         <div style={{ background: `linear-gradient(135deg, ${featuredPost.color}12, rgba(0,0,0,0.5))`, border: `1px solid ${featuredPost.color}30`, borderRadius: "20px", padding: "clamp(24px, 4vw, 48px)", display: "grid", gridTemplateColumns: "1fr auto", gap: "32px", alignItems: "center", cursor: "pointer", transition: "transform 0.2s, box-shadow 0.2s" }}
                             onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-3px)"; e.currentTarget.style.boxShadow = `0 20px 48px ${featuredPost.color}18`; }}
                             onMouseLeave={e => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "none"; }}
@@ -181,7 +185,9 @@ export default function BlogPage() {
                 {/* Post Grid */}
                 {filteredPosts.length === 0 ? (
                     <div style={{ textAlign: "center", padding: "80px 24px" }}>
-                        <div style={{ fontSize: "3rem", marginBottom: "16px" }}>🔍</div>
+                        <div style={{ display: "flex", justifyContent: "center", marginBottom: "16px" }}>
+                            <Search size={40} color="rgba(255,255,255,0.2)" />
+                        </div>
                         <h3 style={{ fontWeight: "700", marginBottom: "8px" }}>No articles found</h3>
                         <p style={{ color: "rgba(255,255,255,0.45)" }}>Try a different search term or category.</p>
                     </div>
@@ -219,7 +225,9 @@ export default function BlogPage() {
             {/* Newsletter CTA */}
             <section style={{ borderTop: "1px solid rgba(255,255,255,0.07)", padding: "72px 24px", background: "rgba(255,255,255,0.015)" }}>
                 <div style={{ maxWidth: "540px", margin: "0 auto", textAlign: "center" }}>
-                    <div style={{ fontSize: "2.5rem", marginBottom: "20px" }}>📬</div>
+                    <div style={{ display: "flex", justifyContent: "center", marginBottom: "20px" }}>
+                        <Inbox size={40} color="#22c55e" />
+                    </div>
                     <h2 style={{ fontSize: "1.8rem", fontWeight: "800", marginBottom: "12px" }}>Get Career Tips in Your Inbox</h2>
                     <p style={{ color: "rgba(255,255,255,0.5)", marginBottom: "28px", lineHeight: "1.7" }}>Weekly resume tips, job search strategies, and AI tool guides — no spam, unsubscribe anytime.</p>
                     <div style={{ display: "flex", gap: "10px", maxWidth: "400px", margin: "0 auto", flexWrap: "wrap" }}>
