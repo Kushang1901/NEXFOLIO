@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
+import { Lock, Home } from "lucide-react";
 
 import ClassicTemplate from "../../../templates/ClassicTemplate";
 import ModernTemplate from "../../../templates/ModernTemplate";
@@ -120,16 +121,18 @@ export default function PublicResumePage() {
                     border: "1px solid rgba(142, 144, 160, 0.25)",
                     boxShadow: "0 15px 35px rgba(0, 0, 0, 0.6)"
                 }}>
-                    <div className="card-body">
-                        <div className="mb-4">
-                            <i className="fas fa-lock fa-3x text-warning"></i>
+                    <div className="card-body p-0">
+                        <div style={{ display: "flex", justifyContent: "center", marginBottom: "24px" }}>
+                            <div style={{ width: "80px", height: "80px", borderRadius: "20px", background: "rgba(245,158,11,0.1)", border: "1px solid rgba(245,158,11,0.25)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                                <Lock size={40} color="#f59e0b" />
+                            </div>
                         </div>
-                        <h3 className="fw-bold mb-3">🔒 Resume is Private</h3>
-                        <p className="text-white-50 mb-4" style={{ fontSize: "0.95rem" }}>
+                        <h3 className="fw-bold mb-3" style={{ letterSpacing: "-0.01em" }}>Resume is Private</h3>
+                        <p className="text-white-50 mb-4" style={{ fontSize: "0.95rem", lineHeight: "1.6" }}>
                             {error}
                         </p>
-                        <a href="/" className="btn btn-primary px-4 py-2" style={{ borderRadius: "8px" }}>
-                            Go to Homepage
+                        <a href="/" className="btn btn-primary py-2.5 px-4 fw-semibold d-flex align-items-center justify-content-center gap-2" style={{ borderRadius: "10px", background: "linear-gradient(135deg, #3b82f6, #6366f1)", border: "none" }}>
+                            <Home size={16} /> Go to Homepage
                         </a>
                     </div>
                 </div>

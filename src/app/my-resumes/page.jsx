@@ -5,14 +5,29 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import Navbar from "../../components/Navbar";
 import { subscribeToAuthChanges } from "../../authState";
+import { showToast } from "../../utils/toast";
 import { LayoutDashboard, Plus, FileText, Palette, Pencil, Eye, Trash2, Lightbulb } from "lucide-react";
 
-// Sample data — replace with real API calls from your DB
-const SAMPLE_RESUMES = [
-    { id: "res_001", name: "Software Engineer Resume", template: "Developer", updatedAt: "2025-06-30", preview: "#0f172a", accentColor: "#38bdf8", initials: "JD" },
-    { id: "res_002", name: "Internship Application", template: "Nordic", updatedAt: "2025-06-22", preview: "#f8fafc", accentColor: "#2563eb", initials: "JD" },
-    { id: "res_003", name: "Marketing Role — Creative", template: "Aurora", updatedAt: "2025-06-15", preview: "#0f172a", accentColor: "#22d3ee", initials: "JD" },
-];
+const TEMPLATE_THEMES = {
+    classic: { bg: "#1e1e2e", color: "#6c71c4" },
+    modern: { bg: "#0d1b2a", color: "#4f8ef7" },
+    creative: { bg: "#22092c", color: "#f43f5e" },
+    minimalist: { bg: "#1b1b1b", color: "#a3a3a3" },
+    executive: { bg: "#0b132b", color: "#38bdf8" },
+    developer: { bg: "#0c1020", color: "#4ade80" },
+    elegant: { bg: "#282a36", color: "#bd93f9" },
+    accent: { bg: "#1f2d3d", color: "#00b4db" },
+    navy_elegance: { bg: "#0d1b2a", color: "#3b82f6" },
+    minimalist_bw: { bg: "#111111", color: "#ffffff" },
+    emerald: { bg: "#022c22", color: "#0f766e" },
+    slate_two_column: { bg: "#1e293b", color: "#64748b" },
+    sunrise: { bg: "#3c1503", color: "#f48c06" },
+    midnight: { bg: "#090514", color: "#7c3aed" },
+    nordic: { bg: "#0f172a", color: "#2563eb" },
+    crimson: { bg: "#1c1917", color: "#be123c" },
+    aurora: { bg: "#041c16", color: "#22d3ee" },
+    timeline: { bg: "#031d1a", color: "#0d9488" },
+};
 
 function timeAgo(dateStr) {
     const diff = Date.now() - new Date(dateStr).getTime();
@@ -24,6 +39,15 @@ function timeAgo(dateStr) {
     return `${Math.floor(days / 365)} years ago`;
 }
 
+const getInitials = (name) => {
+    if (!name) return "CV";
+    const words = name.trim().split(/\s+/);
+    if (words.length >= 2) {
+        return (words[0][0] + words[1][0]).toUpperCase();
+    }
+    return name.slice(0, 2).toUpperCase();
+};
+
 export default function MyResumesPage() {
     const router = useRouter();
     const [user, setUser] = useState(null);
@@ -32,22 +56,50 @@ export default function MyResumesPage() {
     const [deleteTarget, setDeleteTarget] = useState(null);
 
     useEffect(() => {
-        const unsubscribe = subscribeToAuthChanges((loggedUser) => {
+        const unsubscribe = subscribeToAuthChanges(async (loggedUser) => {
             setUser(loggedUser);
-            setLoading(false);
             if (!loggedUser) {
                 router.push("/?triggerAuth=true");
             } else {
-                // TODO: Replace with real API call: fetch(`/api/resumes?email=${loggedUser.email}`)
-                setResumes(SAMPLE_RESUMES);
+                try {
+                    setLoading(true);
+                    const res = await fetch(`/api/resumes?email=${encodeURIComponent(loggedUser.email)}`);
+                    if (res.ok) {
+                        const data = await res.json();
+                        setResumes(data);
+                    } else {
+                        showToast("Failed to load your resumes.", "error");
+                    }
+                } catch (err) {
+                    console.error("Error fetching resumes:", err);
+                    showToast("Error connecting to database.", "error");
+                } finally {
+                    setLoading(false);
+                }
             }
         });
         return () => { if (typeof unsubscribe === "function") unsubscribe(); };
     }, [router]);
 
-    const handleDelete = (id) => {
-        setResumes(prev => prev.filter(r => r.id !== id));
-        setDeleteTarget(null);
+    const handleDelete = async (id) => {
+        if (!user) return;
+        try {
+            const res = await fetch(`/api/resumes?id=${id}&email=${encodeURIComponent(user.email)}`, {
+                method: "DELETE"
+            });
+            if (res.ok) {
+                setResumes(prev => prev.filter(r => r.id !== id));
+                showToast("Resume deleted successfully!", "success");
+            } else {
+                const errData = await res.json().catch(() => ({}));
+                showToast(errData.error || "Failed to delete resume.", "error");
+            }
+        } catch (err) {
+            console.error("Error deleting resume:", err);
+            showToast("Failed to delete resume. Please try again.", "error");
+        } finally {
+            setDeleteTarget(null);
+        }
     };
 
     if (loading) {
@@ -108,59 +160,66 @@ export default function MyResumesPage() {
                     /* Resume Grid */
                     <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(290px, 1fr))", gap: "24px", animation: "fadeUp 0.4s ease" }}>
 
-                        {resumes.map((resume, idx) => (
-                            <div key={resume.id} style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: "18px", overflow: "hidden", transition: "all 0.2s ease", animationDelay: `${idx * 0.05}s` }}
-                                onMouseEnter={e => { e.currentTarget.style.borderColor = "rgba(99,102,241,0.35)"; e.currentTarget.style.transform = "translateY(-4px)"; e.currentTarget.style.boxShadow = "0 16px 40px rgba(99,102,241,0.12)"; }}
-                                onMouseLeave={e => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.08)"; e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "none"; }}
-                            >
-                                {/* Preview Thumbnail */}
-                                <div style={{ height: "160px", background: resume.preview, position: "relative", overflow: "hidden", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                                    <div style={{ position: "absolute", inset: 0, background: `linear-gradient(135deg, ${resume.accentColor}22, transparent)` }} />
-                                    <div style={{ textAlign: "center", position: "relative" }}>
-                                        <div style={{ width: "56px", height: "56px", borderRadius: "14px", background: `${resume.accentColor}22`, border: `2px solid ${resume.accentColor}55`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: "1.3rem", fontWeight: "800", color: resume.accentColor, margin: "0 auto 10px" }}>{resume.initials}</div>
-                                        <div style={{ fontSize: "0.72rem", color: resume.accentColor, fontWeight: "700", textTransform: "uppercase", letterSpacing: "1px", background: `${resume.accentColor}18`, border: `1px solid ${resume.accentColor}35`, borderRadius: "999px", padding: "3px 12px" }}>{resume.template}</div>
-                                    </div>
-                                    {/* Lines decoration */}
-                                    {[...Array(4)].map((_, i) => (
-                                        <div key={i} style={{ position: "absolute", bottom: `${20 + i * 14}px`, left: "16px", right: "16px", height: "2px", background: "rgba(255,255,255,0.06)", borderRadius: "2px" }} />
-                                    ))}
-                                </div>
+                        {resumes.map((resume, idx) => {
+                            const name = resume.resumeName || "Untitled Resume";
+                            const template = resume.selectedTemplate || "classic";
+                            const theme = TEMPLATE_THEMES[template] || { bg: "#0d0d1e", color: "#6366f1" };
+                            const initials = getInitials(name);
 
-                                {/* Card Body */}
-                                <div style={{ padding: "18px 20px" }}>
-                                    <h3 style={{ fontSize: "0.97rem", fontWeight: "700", marginBottom: "6px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{resume.name}</h3>
-                                    <p style={{ color: "rgba(255,255,255,0.4)", fontSize: "0.8rem", marginBottom: "18px" }}>Updated {timeAgo(resume.updatedAt)}</p>
+                            return (
+                                <div key={resume.id} style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: "18px", overflow: "hidden", transition: "all 0.2s ease", animationDelay: `${idx * 0.05}s` }}
+                                    onMouseEnter={e => { e.currentTarget.style.borderColor = `${theme.color}40`; e.currentTarget.style.transform = "translateY(-4px)"; e.currentTarget.style.boxShadow = `0 16px 40px ${theme.color}12`; }}
+                                    onMouseLeave={e => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.08)"; e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "none"; }}
+                                >
+                                    {/* Preview Thumbnail */}
+                                    <div style={{ height: "160px", background: theme.bg, position: "relative", overflow: "hidden", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                                        <div style={{ position: "absolute", inset: 0, background: `linear-gradient(135deg, ${theme.color}22, transparent)` }} />
+                                        <div style={{ textAlign: "center", position: "relative" }}>
+                                            <div style={{ width: "56px", height: "56px", borderRadius: "14px", background: `${theme.color}22`, border: `2px solid ${theme.color}55`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: "1.3rem", fontWeight: "800", color: theme.color, margin: "0 auto 10px" }}>{initials}</div>
+                                            <div style={{ fontSize: "0.72rem", color: theme.color, fontWeight: "700", textTransform: "uppercase", letterSpacing: "1px", background: `${theme.color}18`, border: `1px solid ${theme.color}35`, borderRadius: "999px", padding: "3px 12px" }}>{template}</div>
+                                        </div>
+                                        {/* Lines decoration */}
+                                        {[...Array(4)].map((_, i) => (
+                                            <div key={i} style={{ position: "absolute", bottom: `${20 + i * 14}px`, left: "16px", right: "16px", height: "2px", background: "rgba(255,255,255,0.06)", borderRadius: "2px" }} />
+                                        ))}
+                                    </div>
 
-                                    {/* Actions */}
-                                    <div style={{ display: "flex", gap: "8px" }}>
-                                        <button
-                                            onClick={() => router.push(`/resume/${resume.id}`)}
-                                            style={{ flex: 1, padding: "9px 0", background: "rgba(99,102,241,0.12)", border: "1px solid rgba(99,102,241,0.25)", borderRadius: "9px", color: "#a5b4fc", fontSize: "0.82rem", fontWeight: "600", cursor: "pointer", transition: "all 0.15s", display: "flex", alignItems: "center", justifyContent: "center", gap: "6px" }}
-                                            onMouseEnter={e => { e.currentTarget.style.background = "rgba(99,102,241,0.22)"; e.currentTarget.style.color = "#fff"; }}
-                                            onMouseLeave={e => { e.currentTarget.style.background = "rgba(99,102,241,0.12)"; e.currentTarget.style.color = "#a5b4fc"; }}
-                                        >
-                                            <Pencil size={12} /> Edit
-                                        </button>
-                                        <button
-                                            onClick={() => router.push(`/preview?id=${resume.id}`)}
-                                            style={{ flex: 1, padding: "9px 0", background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "9px", color: "rgba(255,255,255,0.7)", fontSize: "0.82rem", fontWeight: "600", cursor: "pointer", transition: "all 0.15s", display: "flex", alignItems: "center", justifyContent: "center", gap: "6px" }}
-                                            onMouseEnter={e => { e.currentTarget.style.background = "rgba(255,255,255,0.1)"; e.currentTarget.style.color = "#fff"; }}
-                                            onMouseLeave={e => { e.currentTarget.style.background = "rgba(255,255,255,0.05)"; e.currentTarget.style.color = "rgba(255,255,255,0.7)"; }}
-                                        >
-                                            <Eye size={12} /> Preview
-                                        </button>
-                                        <button
-                                            onClick={() => setDeleteTarget(resume.id)}
-                                            style={{ padding: "9px 12px", background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.2)", borderRadius: "9px", color: "#ef4444", fontSize: "0.9rem", cursor: "pointer", transition: "all 0.15s", display: "flex", alignItems: "center", justifyContent: "center" }}
-                                            onMouseEnter={e => { e.currentTarget.style.background = "rgba(239,68,68,0.18)"; }}
-                                            onMouseLeave={e => { e.currentTarget.style.background = "rgba(239,68,68,0.08)"; }}
-                                        >
-                                            <Trash2 size={14} />
-                                        </button>
+                                    {/* Card Body */}
+                                    <div style={{ padding: "18px 20px" }}>
+                                        <h3 style={{ fontSize: "0.97rem", fontWeight: "700", marginBottom: "6px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{name}</h3>
+                                        <p style={{ color: "rgba(255,255,255,0.4)", fontSize: "0.8rem", marginBottom: "18px" }}>Updated {timeAgo(resume.updatedAt)}</p>
+
+                                        {/* Actions */}
+                                        <div style={{ display: "flex", gap: "8px" }}>
+                                            <button
+                                                onClick={() => router.push(`/builder?id=${resume.id}`)}
+                                                style={{ flex: 1, padding: "9px 0", background: "rgba(99,102,241,0.12)", border: "1px solid rgba(99,102,241,0.25)", borderRadius: "9px", color: "#a5b4fc", fontSize: "0.82rem", fontWeight: "600", cursor: "pointer", transition: "all 0.15s", display: "flex", alignItems: "center", justifyContent: "center", gap: "6px" }}
+                                                onMouseEnter={e => { e.currentTarget.style.background = "rgba(99,102,241,0.22)"; e.currentTarget.style.color = "#fff"; }}
+                                                onMouseLeave={e => { e.currentTarget.style.background = "rgba(99,102,241,0.12)"; e.currentTarget.style.color = "#a5b4fc"; }}
+                                            >
+                                                <Pencil size={12} /> Edit
+                                            </button>
+                                            <button
+                                                onClick={() => router.push(`/preview?id=${resume.id}`)}
+                                                style={{ flex: 1, padding: "9px 0", background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "9px", color: "rgba(255,255,255,0.7)", fontSize: "0.82rem", fontWeight: "600", cursor: "pointer", transition: "all 0.15s", display: "flex", alignItems: "center", justifyContent: "center", gap: "6px" }}
+                                                onMouseEnter={e => { e.currentTarget.style.background = "rgba(255,255,255,0.1)"; e.currentTarget.style.color = "#fff"; }}
+                                                onMouseLeave={e => { e.currentTarget.style.background = "rgba(255,255,255,0.05)"; e.currentTarget.style.color = "rgba(255,255,255,0.7)"; }}
+                                            >
+                                                <Eye size={12} /> Preview
+                                            </button>
+                                            <button
+                                                onClick={() => setDeleteTarget(resume.id)}
+                                                style={{ padding: "9px 12px", background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.2)", borderRadius: "9px", color: "#ef4444", fontSize: "0.9rem", cursor: "pointer", transition: "all 0.15s", display: "flex", alignItems: "center", justifyContent: "center" }}
+                                                onMouseEnter={e => { e.currentTarget.style.background = "rgba(239,68,68,0.18)"; }}
+                                                onMouseLeave={e => { e.currentTarget.style.background = "rgba(239,68,68,0.08)"; }}
+                                            >
+                                                <Trash2 size={14} />
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        ))}
+                            );
+                        })}
 
                         {/* Create New Card */}
                         <Link href="/templates" style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", height: "100%", minHeight: "280px", background: "rgba(255,255,255,0.02)", border: "2px dashed rgba(255,255,255,0.1)", borderRadius: "18px", cursor: "pointer", textDecoration: "none", transition: "all 0.2s ease", gap: "12px", padding: "32px" }}

@@ -3,7 +3,9 @@
 import React, { useState, useEffect } from "react";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
+import Link from "next/link";
 import Navbar from "../../components/Navbar";
+import { FileQuestion, ChevronRight, Home } from "lucide-react";
 
 import ClassicTemplate from "../../templates/ClassicTemplate";
 import ModernTemplate from "../../templates/ModernTemplate";
@@ -64,6 +66,30 @@ export default function Preview() {
     };
 
     useEffect(() => {
+        const params = new URLSearchParams(window.location.search);
+        const id = params.get("id");
+
+        const loadResume = async (email, resumeId) => {
+            try {
+                const res = await fetch(`/api/resumes?email=${encodeURIComponent(email)}&id=${resumeId}`);
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data.resumeData) {
+                        setResumeData(data.resumeData);
+                        sessionStorage.setItem("resumeData", JSON.stringify(data.resumeData));
+                    }
+                    if (data.selectedTemplate) {
+                        setSelectedTemplate(data.selectedTemplate);
+                        sessionStorage.setItem("selectedTemplate", data.selectedTemplate);
+                    }
+                    setResumeId(data.id);
+                    sessionStorage.setItem("resumeId", data.id);
+                }
+            } catch (err) {
+                console.error("Error loading resume in preview:", err);
+            }
+        };
+
         const savedData = sessionStorage.getItem("resumeData");
         const savedAI = sessionStorage.getItem("aiOutput");
         const savedTemplate = sessionStorage.getItem("selectedTemplate") || "classic";
@@ -79,8 +105,12 @@ export default function Preview() {
         const unsubscribe = subscribeToAuthChanges(async (loggedUser) => {
             if (loggedUser && loggedUser.email) {
                 setUserEmail(loggedUser.email);
-                if (savedId) {
-                    await fetchSharingStatus(savedId, loggedUser.email);
+                const targetId = id || savedId;
+                if (targetId) {
+                    await fetchSharingStatus(targetId, loggedUser.email);
+                    if (id) {
+                        await loadResume(loggedUser.email, id);
+                    }
                 }
             }
         });
@@ -256,9 +286,45 @@ export default function Preview() {
 
     if (!resumeData) {
         return (
-            <div className="bg-dark text-white min-vh-100 d-flex align-items-center justify-content-center">
+            <div className="bg-dark text-white min-vh-100 d-flex flex-column">
                 <Navbar />
-                <h3>No resume data found</h3>
+                <div className="flex-grow-1 d-flex align-items-center justify-content-center px-3" style={{ padding: "60px 0" }}>
+                    <div className="card text-center p-5 text-white" style={{
+                        maxWidth: "480px",
+                        width: "90%",
+                        background: "linear-gradient(145deg, #1c2027 0%, #11141a 100%)",
+                        borderRadius: "20px",
+                        border: "1px solid rgba(255,255,255,0.08)",
+                        boxShadow: "0 15px 35px rgba(0, 0, 0, 0.6)",
+                        animation: "fadeUp 0.3s ease"
+                    }}>
+                        <div className="card-body p-0">
+                            <div style={{ display: "flex", justifyContent: "center", marginBottom: "24px" }}>
+                                <div style={{ width: "80px", height: "80px", borderRadius: "20px", background: "rgba(99,102,241,0.1)", border: "1px solid rgba(99,102,241,0.25)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                                    <FileQuestion size={40} color="#a5b4fc" />
+                                </div>
+                            </div>
+                            <h3 className="fw-bold mb-3" style={{ letterSpacing: "-0.01em" }}>No Resume Data Found</h3>
+                            <p className="text-white-50 mb-4" style={{ fontSize: "0.95rem", lineHeight: "1.6" }}>
+                                We couldn't find any resume data to preview. Create a new resume or import your details to generate professional layouts.
+                            </p>
+                            <div className="d-flex flex-column gap-2">
+                                <Link href="/templates" className="btn btn-primary py-2.5 fw-bold d-flex align-items-center justify-content-center gap-2" style={{ borderRadius: "10px", background: "linear-gradient(135deg, #6366f1, #4f46e5)", border: "none" }}>
+                                    Create Resume <ChevronRight size={16} />
+                                </Link>
+                                <Link href="/" className="btn btn-outline-light py-2.5 fw-semibold d-flex align-items-center justify-content-center gap-2" style={{ borderRadius: "10px", border: "1px solid rgba(255,255,255,0.15)" }}>
+                                    <Home size={16} /> Go to Homepage
+                                </Link>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <style>{`
+                    @keyframes fadeUp {
+                        from { opacity: 0; transform: translateY(20px); }
+                        to { opacity: 1; transform: translateY(0); }
+                    }
+                `}</style>
             </div>
         );
     }
