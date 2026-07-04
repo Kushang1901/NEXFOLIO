@@ -141,6 +141,7 @@ export default function Signup() {
                         lastName,
                         email: formData.email,
                         provider: "email",
+                        password: formData.password,
                         recaptchaToken
                     })
                 });

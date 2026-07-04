@@ -27,6 +27,17 @@ export async function initDb() {
         await sql`
             ALTER TABLE users ADD COLUMN IF NOT EXISTS photo_url TEXT;
         `;
+
+        // Alter existing table to add password, otp_code, and otp_expiry for custom auth
+        await sql`
+            ALTER TABLE users ADD COLUMN IF NOT EXISTS password TEXT;
+        `;
+        await sql`
+            ALTER TABLE users ADD COLUMN IF NOT EXISTS otp_code VARCHAR(10);
+        `;
+        await sql`
+            ALTER TABLE users ADD COLUMN IF NOT EXISTS otp_expiry TIMESTAMP;
+        `;
         
         // Create resumes table
         await sql`

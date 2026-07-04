@@ -65,9 +65,31 @@ export default function Login() {
                 return;
             }
 
-            await signInWithEmailAndPassword(auth, formData.email, formData.password);
+            try {
+                await signInWithEmailAndPassword(auth, formData.email, formData.password);
+            } catch (firebaseError) {
+                console.warn("Firebase authentication failed. Trying database credentials fallback...", firebaseError);
+                
+                // Fallback: Validate credentials against PostgreSQL
+                const fallbackRes = await fetch("/api/login/fallback", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ email: formData.email, password: formData.password })
+                });
+
+                if (fallbackRes.ok) {
+                    const fallbackData = await fallbackRes.json();
+                    loginWithMockUser(formData.email, `${fallbackData.firstName || ""} ${fallbackData.lastName || ""}`.trim());
+                    return;
+                } else {
+                    const fallbackData = await fallbackRes.json().catch(() => ({}));
+                    const errorMessage = fallbackData.error || firebaseError.message || firebaseError;
+                    showToast("Login failed: " + errorMessage);
+                    setLoading(false);
+                }
+            }
         } catch (error) {
-            console.error("Firebase Login Error:", error);
+            console.error("General Login Error:", error);
             showToast("Login failed: " + (error.message || error));
             setLoading(false);
         }
@@ -337,10 +359,10 @@ export default function Login() {
                                     />
                                 </div>
                                 <div className="flex flex-col gap-2">
-                                    <div className="flex justify-between items-center">
-                                        <label className="font-label-bold text-label-bold text-on-surface" htmlFor="password">Password</label>
-                                        <a className="text-[12px] text-primary hover:underline" href="#">Forgot password?</a>
-                                    </div>
+                                     <div className="flex justify-between items-center">
+                                         <label className="font-label-bold text-label-bold text-on-surface" htmlFor="password">Password</label>
+                                         <Link className="text-[12px] text-primary hover:underline" href="/forgot-password">Forgot password?</Link>
+                                     </div>
                                     <input 
                                         className="w-full bg-white text-surface-container-lowest font-body-lg text-body-lg p-input-padding rounded border-none focus:ring-2 focus:ring-primary h-[48px]" 
                                         id="password" 

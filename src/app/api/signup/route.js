@@ -1,10 +1,11 @@
 import { NextResponse } from "next/server";
 import { getDb } from "../../../lib/db";
 import { verifyRecaptcha } from "../../../utils/recaptchaVerify";
+import { hashPassword } from "../../../utils/crypto";
 
 export async function POST(request) {
     try {
-        const { firstName, lastName, email, provider, photoUrl, recaptchaToken } = await request.json();
+        const { firstName, lastName, email, provider, photoUrl, password, recaptchaToken } = await request.json();
 
         if (!email) {
             return NextResponse.json(
@@ -43,9 +44,10 @@ export async function POST(request) {
         }
 
         // 2. Insert new user
+        const hashedPassword = hashPassword(password);
         const newUsers = await db`
-            INSERT INTO users (email, first_name, last_name, provider, photo_url)
-            VALUES (${email}, ${firstName || email.split("@")[0]}, ${lastName || "User"}, ${provider || "email"}, ${photoUrl || null})
+            INSERT INTO users (email, first_name, last_name, provider, photo_url, password)
+            VALUES (${email}, ${firstName || email.split("@")[0]}, ${lastName || "User"}, ${provider || "email"}, ${photoUrl || null}, ${hashedPassword})
             RETURNING id, email, first_name AS "firstName", last_name AS "lastName", provider, photo_url AS "photoUrl", created_at AS "createdAt", last_login AS "lastLogin"
         `;
 
