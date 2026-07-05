@@ -266,6 +266,9 @@ export default function Login() {
                     background-color: #0f131b !important;
                     color: #dfe2ed !important;
                 }
+                input {
+                    color: #000000 !important;
+                }
                 .glass-card {
                     background: rgba(28, 32, 39, 0.7) !important;
                     backdrop-filter: blur(12px) !important;
@@ -347,7 +350,7 @@ export default function Login() {
                                 <div className="flex flex-col gap-2">
                                     <label className="font-label-bold text-label-bold text-on-surface" htmlFor="email">Email Address</label>
                                     <input 
-                                        className="w-full bg-white text-surface-container-lowest font-body-lg text-body-lg p-input-padding rounded border-none focus:ring-2 focus:ring-primary h-[48px]" 
+                                        className="w-full bg-white text-black font-body-lg text-body-lg p-input-padding rounded border-none focus:ring-2 focus:ring-primary h-[48px]" 
                                         id="email" 
                                         name="email"
                                         placeholder="name@company.com" 
@@ -364,7 +367,7 @@ export default function Login() {
                                          <Link className="text-[12px] text-primary hover:underline" href="/forgot-password">Forgot password?</Link>
                                      </div>
                                     <input 
-                                        className="w-full bg-white text-surface-container-lowest font-body-lg text-body-lg p-input-padding rounded border-none focus:ring-2 focus:ring-primary h-[48px]" 
+                                        className="w-full bg-white text-black font-body-lg text-body-lg p-input-padding rounded border-none focus:ring-2 focus:ring-primary h-[48px]" 
                                         id="password" 
                                         name="password"
                                         placeholder="••••••••" 

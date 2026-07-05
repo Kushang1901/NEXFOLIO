@@ -350,6 +350,9 @@ export default function Signup() {
                     font-family: 'Inter', sans-serif !important;
                     overflow-x: hidden !important;
                 }
+                input {
+                    color: #000000 !important;
+                }
                 .glass-card {
                     background: rgba(28, 32, 39, 0.7) !important;
                     backdrop-filter: blur(12px) !important;
@@ -438,7 +441,7 @@ export default function Signup() {
                                 <div className="space-y-2">
                                     <label className="block font-label-bold text-label-bold text-on-surface">Full Name</label>
                                     <input 
-                                        className="w-full h-12 px-input-padding bg-white text-surface-container-lowest rounded-lg border border-outline-variant focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all placeholder:text-outline/50" 
+                                        className="w-full h-12 px-input-padding bg-white text-black rounded-lg border border-outline-variant focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all placeholder:text-outline/50" 
                                         name="fullName"
                                         placeholder="John Doe" 
                                         type="text"
@@ -449,9 +452,9 @@ export default function Signup() {
                                     />
                                 </div>
                                 <div className="space-y-2">
-                                    <label className="block font-label-bold text-label-bold text-on-surface">Email Address</label>
+                                     <label className="block font-label-bold text-label-bold text-on-surface">Email Address</label>
                                     <input 
-                                        className="w-full h-12 px-input-padding bg-white text-surface-container-lowest rounded-lg border border-outline-variant focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all placeholder:text-outline/50" 
+                                        className="w-full h-12 px-input-padding bg-white text-black rounded-lg border border-outline-variant focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all placeholder:text-outline/50" 
                                         name="email"
                                         placeholder="name@company.com" 
                                         type="email"
@@ -462,9 +465,9 @@ export default function Signup() {
                                     />
                                 </div>
                                 <div className="space-y-2">
-                                    <label className="block font-label-bold text-label-bold text-on-surface">Password</label>
+                                     <label className="block font-label-bold text-label-bold text-on-surface">Password</label>
                                     <input 
-                                        className="w-full h-12 px-input-padding bg-white text-surface-container-lowest rounded-lg border border-outline-variant focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all placeholder:text-outline/50" 
+                                        className="w-full h-12 px-input-padding bg-white text-black rounded-lg border border-outline-variant focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all placeholder:text-outline/50" 
                                         name="password"
                                         placeholder="••••••••" 
                                         type="password"

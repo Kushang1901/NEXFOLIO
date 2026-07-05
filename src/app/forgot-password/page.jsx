@@ -276,6 +276,9 @@ export default function ForgotPassword() {
                     background-color: #0f131b !important;
                     color: #dfe2ed !important;
                 }
+                input {
+                    color: #000000 !important;
+                }
                 .glass-card {
                     background: rgba(28, 32, 39, 0.7) !important;
                     backdrop-filter: blur(12px) !important;
@@ -345,7 +348,7 @@ export default function ForgotPassword() {
                                     <div className="flex flex-col gap-2">
                                         <label className="font-label-bold text-label-bold text-on-surface" htmlFor="email">Email Address</label>
                                         <input 
-                                            className="w-full bg-white text-surface-container-lowest font-body-lg text-body-lg p-input-padding rounded border-none focus:ring-2 focus:ring-primary h-[48px]" 
+                                            className="w-full bg-white text-black font-body-lg text-body-lg p-input-padding rounded border-none focus:ring-2 focus:ring-primary h-[48px]" 
                                             id="email" 
                                             name="email"
                                             placeholder="name@company.com" 
@@ -371,7 +374,7 @@ export default function ForgotPassword() {
                                     <div className="flex flex-col gap-2">
                                         <label className="font-label-bold text-label-bold text-on-surface" htmlFor="otp">One-Time Password (OTP)</label>
                                         <input 
-                                            className="w-full bg-white text-surface-container-lowest font-body-lg text-body-lg p-input-padding rounded border-none focus:ring-2 focus:ring-primary tracking-[0.3em] text-center font-bold h-[48px]" 
+                                            className="w-full bg-white text-black font-body-lg text-body-lg p-input-padding rounded border-none focus:ring-2 focus:ring-primary tracking-[0.3em] text-center font-bold h-[48px]" 
                                             id="otp" 
                                             name="otp"
                                             placeholder="••••••" 
@@ -418,7 +421,7 @@ export default function ForgotPassword() {
                                     <div className="flex flex-col gap-2">
                                         <label className="font-label-bold text-label-bold text-on-surface" htmlFor="newPassword">New Password</label>
                                         <input 
-                                            className="w-full bg-white text-surface-container-lowest font-body-lg text-body-lg p-input-padding rounded border-none focus:ring-2 focus:ring-primary h-[48px]" 
+                                            className="w-full bg-white text-black font-body-lg text-body-lg p-input-padding rounded border-none focus:ring-2 focus:ring-primary h-[48px]" 
                                             id="newPassword" 
                                             name="newPassword"
                                             placeholder="••••••••" 
@@ -431,7 +434,7 @@ export default function ForgotPassword() {
                                     <div className="flex flex-col gap-2">
                                         <label className="font-label-bold text-label-bold text-on-surface" htmlFor="confirmPassword">Retype New Password</label>
                                         <input 
-                                            className="w-full bg-white text-surface-container-lowest font-body-lg text-body-lg p-input-padding rounded border-none focus:ring-2 focus:ring-primary h-[48px]" 
+                                            className="w-full bg-white text-black font-body-lg text-body-lg p-input-padding rounded border-none focus:ring-2 focus:ring-primary h-[48px]" 
                                             id="confirmPassword" 
                                             name="confirmPassword"
                                             placeholder="••••••••" 
