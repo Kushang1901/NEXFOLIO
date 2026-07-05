@@ -7,14 +7,14 @@ import { auth } from "../firebase";
 import { signOut } from "firebase/auth";
 import { subscribeToAuthChanges } from "../authState";
 import { showToast } from "../utils/toast";
-import { Home, Palette, FileSignature, Target, BookOpen, FileText, X, ArrowRight } from "lucide-react";
+import { Home, Palette, FileSignature, Target, Sparkles, FileText, X, ArrowRight } from "lucide-react";
 
 const NAV_LINKS = [
     { label: "Home", href: "/" },
     { label: "Templates", href: "/templates" },
     { label: "AI Cover Letter", href: "/cover-letter" },
     { label: "ATS Checker", href: "/ats-checker" },
-    { label: "Blog", href: "/blog" },
+    { label: "AI Tools", href: "/ai-tools" },
 ];
 
 export default function Navbar() {
@@ -310,5 +310,5 @@ const drawerIcons = {
     "/templates": Palette,
     "/cover-letter": FileSignature,
     "/ats-checker": Target,
-    "/blog": BookOpen,
+    "/ai-tools": Sparkles,
 };

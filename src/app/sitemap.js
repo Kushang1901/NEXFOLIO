@@ -28,6 +28,18 @@ export default function sitemap() {
             priority: 0.8,
         },
         {
+            url: `${baseUrl}/ats-checker`,
+            lastModified: today,
+            changeFrequency: "monthly",
+            priority: 0.8,
+        },
+        {
+            url: `${baseUrl}/ai-tools`,
+            lastModified: today,
+            changeFrequency: "weekly",
+            priority: 0.85,
+        },
+        {
             url: `${baseUrl}/signup`,
             lastModified: today,
             changeFrequency: "monthly",

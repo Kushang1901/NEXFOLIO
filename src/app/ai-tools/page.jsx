@@ -1,247 +1,354 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import Navbar from "../../components/Navbar";
-import { ScanSearch, GraduationCap, Bot, Zap, MessageSquare, FileStack, KeyRound, Mail, BookOpen, Search, Sparkles, Inbox } from "lucide-react";
+import Script from "next/script";
+import { Sparkles, ScanLine, FileText, UploadCloud, CheckCircle, ArrowRight, ShieldCheck, Cpu, Target, Eye } from "lucide-react";
 
-const CATEGORIES = ["All", "Resume Tips", "Career Advice", "ATS", "Interview Prep", "AI Tools"];
+export default function AIToolsHub() {
+    const [tailwindLoaded, setTailwindLoaded] = useState(false);
 
-const POSTS = [
-    {
-        id: 1, category: "ATS", readTime: "5 min read",
-        date: "Jun 28, 2025",
-        Icon: ScanSearch,
-        title: "How ATS Systems Work — And How to Beat Them in 2025",
-        excerpt: "Applicant Tracking Systems reject 75% of resumes before a human ever sees them. Here's exactly how they parse your resume and what you can do to pass every time.",
-        tags: ["ATS", "Resume Tips"],
-        featured: true,
-        color: "#6366f1",
-    },
-    {
-        id: 2, category: "Resume Tips", readTime: "4 min read",
-        date: "Jun 22, 2025",
-        Icon: GraduationCap,
-        title: "The Perfect Resume Format for Freshers in 2025",
-        excerpt: "No experience? No problem. Learn exactly how to structure a resume as a student or fresher that gets callbacks from top companies.",
-        tags: ["Freshers", "Resume Tips"],
-        featured: false,
-        color: "#22c55e",
-    },
-    {
-        id: 3, category: "AI Tools", readTime: "6 min read",
-        date: "Jun 15, 2025",
-        Icon: Bot,
-        title: "How to Use AI to Write Your Resume (The Right Way)",
-        excerpt: "AI can help you write a stronger resume faster — but only if you use it correctly. We break down the do's and don'ts of AI resume writing.",
-        tags: ["AI", "Resume Tips"],
-        featured: false,
-        color: "#f59e0b",
-    },
-    {
-        id: 4, category: "Career Advice", readTime: "7 min read",
-        date: "Jun 9, 2025",
-        Icon: Zap,
-        title: "10 Power Verbs That Make Recruiters Stop and Read",
-        excerpt: "The words you choose define how recruiters perceive your impact. Replace weak verbs with these 10 powerful action words to instantly improve your resume.",
-        tags: ["Writing", "Career Advice"],
-        featured: false,
-        color: "#ec4899",
-    },
-    {
-        id: 5, category: "Interview Prep", readTime: "8 min read",
-        date: "Jun 3, 2025",
-        Icon: MessageSquare,
-        title: "How to Answer 'Tell Me About Yourself' — With Examples",
-        excerpt: "This is the most common interview opener and most candidates blow it. Here's a proven framework to nail it every time, with 5 real example answers.",
-        tags: ["Interview Prep", "Career Advice"],
-        featured: false,
-        color: "#14b8a6",
-    },
-    {
-        id: 6, category: "Resume Tips", readTime: "3 min read",
-        date: "May 27, 2025",
-        Icon: FileStack,
-        title: "Should Your Resume Be 1 Page or 2 Pages?",
-        excerpt: "The age-old debate, finally settled. We analyzed 500+ resumes and recruiter feedback to give you a definitive answer based on your experience level.",
-        tags: ["Resume Tips", "Formatting"],
-        featured: false,
-        color: "#8b5cf6",
-    },
-    {
-        id: 7, category: "ATS", readTime: "5 min read",
-        date: "May 20, 2025",
-        Icon: KeyRound,
-        title: "Resume Keywords: How to Find and Use Them Effectively",
-        excerpt: "Keywords are what ATS systems and recruiters scan for first. Learn how to extract the right keywords from any job description in under 10 minutes.",
-        tags: ["ATS", "Keywords"],
-        featured: false,
-        color: "#f97316",
-    },
-    {
-        id: 8, category: "Career Advice", readTime: "6 min read",
-        date: "May 14, 2025",
-        Icon: Mail,
-        title: "How to Write a Cold Email to a Hiring Manager That Gets Replies",
-        excerpt: "Most cold emails get ignored. Here's a 5-step formula for crafting outreach emails that get real responses — with templates you can copy today.",
-        tags: ["Career Advice", "Networking"],
-        featured: false,
-        color: "#06b6d4",
-    },
-];
+    useEffect(() => {
+        if (typeof window !== "undefined" && window.tailwind) {
+            setTailwindLoaded(true);
+        }
+    }, []);
 
-export default function BlogPage() {
-    const [activeCategory, setActiveCategory] = useState("All");
-    const [searchQuery, setSearchQuery] = useState("");
+    // Ambient floating particles effect
+    useEffect(() => {
+        if (typeof window === "undefined") return;
 
-    const filteredPosts = POSTS.filter(post => {
-        const matchesCategory = activeCategory === "All" || post.category === activeCategory || post.tags.includes(activeCategory);
-        const matchesSearch = post.title.toLowerCase().includes(searchQuery.toLowerCase()) || post.excerpt.toLowerCase().includes(searchQuery.toLowerCase());
-        return matchesCategory && matchesSearch;
-    });
+        const interval = setInterval(() => {
+            const p = document.createElement("div");
+            p.style.position = "fixed";
+            p.style.width = Math.random() * 5 + 3 + "px";
+            p.style.height = p.style.width;
+            p.style.background = "radial-gradient(circle, rgba(99, 102, 241, 0.25) 0%, rgba(139, 92, 246, 0.05) 100%)";
+            p.style.borderRadius = "50%";
+            p.style.left = Math.random() * 100 + "vw";
+            p.style.top = "100vh";
+            p.style.pointerEvents = "none";
+            p.style.zIndex = "1";
+            document.body.appendChild(p);
 
-    const featuredPost = POSTS.find(p => p.featured);
-    const regularPosts = filteredPosts.filter(p => !p.featured || activeCategory !== "All" || searchQuery);
+            const duration = Math.random() * 4000 + 4000;
+            p.animate([
+                { opacity: 0, transform: "translateY(0) scale(0.5)" },
+                { opacity: 0.6, transform: "translateY(-50vh) scale(1.2)" },
+                { opacity: 0, transform: "translateY(-100vh) scale(0.8)" }
+            ], {
+                duration: duration,
+                easing: "ease-out"
+            });
+
+            setTimeout(() => p.remove(), duration);
+        }, 600);
+
+        return () => clearInterval(interval);
+    }, []);
+
+    const tools = [
+        {
+            title: "Gemini AI Resume Builder",
+            description: "Generate highly professional summaries, work experience bullet points, and customized skills based on your target job description. Powered by Google Gemini AI.",
+            details: [
+                "Tailored summaries & content",
+                "18+ ATS-optimized templates",
+                "100% free PDF download"
+            ],
+            Icon: Sparkles,
+            ctaText: "Build Resume Now",
+            ctaLink: "/templates",
+            badge: "Most Popular",
+            color: "#6366f1", // Indigo
+            bgColor: "rgba(99, 102, 241, 0.08)",
+            borderColor: "rgba(99, 102, 241, 0.2)"
+        },
+        {
+            title: "ATS Score & Match Checker",
+            description: "Check your resume's compatibility score against any job description instantly. Get detailed feedback on keyword density, missing keywords, and layout structure.",
+            details: [
+                "Instant match scoring (0-100%)",
+                "Keyword gap identification",
+                "Actionable layout suggestions"
+            ],
+            Icon: Target,
+            ctaText: "Check ATS Score",
+            ctaLink: "/ats-checker",
+            badge: "Career Booster",
+            color: "#10b981", // Emerald
+            bgColor: "rgba(16, 185, 129, 0.08)",
+            borderColor: "rgba(16, 185, 129, 0.2)"
+        },
+        {
+            title: "AI Cover Letter Generator",
+            description: "Create a highly personalized, compelling cover letter in seconds. Tailor the tone and content directly to the job description to grab recruiter attention immediately.",
+            details: [
+                "Matches any job description",
+                "Adjustable tone profiles",
+                "Saves directly to your profile"
+            ],
+            Icon: FileText,
+            ctaText: "Generate Cover Letter",
+            ctaLink: "/cover-letter",
+            badge: "Time Saver",
+            color: "#ec4899", // Pink
+            bgColor: "rgba(236, 72, 153, 0.08)",
+            borderColor: "rgba(236, 72, 153, 0.2)"
+        },
+        {
+            title: "Smart PDF Resume Parser",
+            description: "Already have a resume? Upload it to our parser and let AI automatically extract your profile information to pre-fill the builder, upgrading your template in seconds.",
+            details: [
+                "Extracts text & structure",
+                "Quick template transitions",
+                "No manual typing required"
+            ],
+            Icon: UploadCloud,
+            ctaText: "Import Resume PDF",
+            ctaLink: "/builder",
+            badge: "Instant Upload",
+            color: "#f59e0b", // Amber
+            bgColor: "rgba(245, 158, 11, 0.08)",
+            borderColor: "rgba(245, 158, 11, 0.2)"
+        }
+    ];
 
     return (
-        <div style={{ minHeight: "100vh", background: "#000", color: "#fff" }}>
-            <Navbar />
+        <>
+            <Script 
+                src="https://cdn.tailwindcss.com?plugins=forms,container-queries" 
+                strategy="afterInteractive" 
+                onLoad={() => setTailwindLoaded(true)}
+            />
+            <Script id="tailwind-config" strategy="afterInteractive" dangerouslySetInnerHTML={{ __html: `
+                window.tailwind = window.tailwind || {};
+                window.tailwind.config = {
+                    darkMode: "class",
+                    theme: {
+                        extend: {
+                            "colors": {
+                                "surface-container-lowest": "#0a0e15",
+                                "tertiary-fixed-dim": "#c3c6cd",
+                                "surface-container-highest": "#31353d",
+                                "primary": "#b6c4ff",
+                                "on-surface": "#dfe2ed",
+                                "background": "#0f131b",
+                                "primary-container": "#6789ff",
+                                "surface-container-low": "#181c23",
+                                "surface-variant": "#31353d",
+                                "secondary": "#ffb3b0",
+                                "tertiary": "#c3c6cd",
+                                "surface-container-high": "#262a32",
+                                "outline": "#8e90a0",
+                                "primary-fixed": "#dce1ff",
+                                "on-surface-variant": "#c4c5d7",
+                                "outline-variant": "#434654",
+                                "surface-container": "#1c2027",
+                                "surface": "#0f131b",
+                            }
+                        }
+                    }
+                }
+            ` }} />
+            <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+            
+            <style dangerouslySetInnerHTML={{ __html: `
+                body {
+                    background-color: #0f131b !important;
+                    color: #dfe2ed !important;
+                    font-family: 'Inter', sans-serif !important;
+                    overflow-x: hidden !important;
+                }
+                .glass-card {
+                    background: rgba(28, 32, 39, 0.7) !important;
+                    backdrop-filter: blur(16px) !important;
+                    border: 1px solid rgba(67, 70, 84, 0.4) !important;
+                }
+                .glow-circle {
+                    position: absolute !important;
+                    width: 500px !important;
+                    height: 500px !important;
+                    background: radial-gradient(circle, rgba(99, 102, 241, 0.1) 0%, rgba(15, 19, 27, 0) 70%) !important;
+                    z-index: -1 !important;
+                    filter: blur(50px) !important;
+                    pointer-events: none !important;
+                }
+                .initial-loader-container {
+                    position: fixed;
+                    inset: 0;
+                    background-color: #0f131b;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    z-index: 99999;
+                }
+                .initial-loader-spinner {
+                    width: 48px;
+                    height: 48px;
+                    border: 3px solid rgba(99, 102, 241, 0.15);
+                    border-top-color: #6366f1;
+                    border-radius: 50%;
+                    animation: spin 0.8s linear infinite;
+                }
+                @keyframes spin {
+                    to { transform: rotate(360deg); }
+                }
+            ` }} />
 
-            {/* Hero */}
-            <section style={{ background: "linear-gradient(160deg, #0a0a1a 0%, #000 60%)", padding: "72px 24px 56px", textAlign: "center", position: "relative", overflow: "hidden" }}>
-                <div style={{ position: "absolute", top: "-100px", left: "50%", transform: "translateX(-50%)", width: "700px", height: "700px", background: "radial-gradient(circle, rgba(34,197,94,0.08) 0%, transparent 65%)", pointerEvents: "none" }} />
-                <div style={{ maxWidth: "680px", margin: "0 auto", position: "relative" }}>
-                    <div style={{ display: "inline-flex", alignItems: "center", gap: "8px", background: "rgba(34,197,94,0.1)", border: "1px solid rgba(34,197,94,0.3)", borderRadius: "999px", padding: "6px 18px", fontSize: "0.8rem", color: "#86efac", fontWeight: "600", letterSpacing: "0.06em", textTransform: "uppercase", marginBottom: "24px" }}>
-                        <BookOpen size={13} color="#86efac" /> Career Resource Hub
-                    </div>
-                    <h1 style={{ fontSize: "clamp(2rem, 5vw, 3rem)", fontWeight: "800", lineHeight: "1.15", marginBottom: "18px", letterSpacing: "-0.02em" }}>
-                        Resume Tips, Career Advice<br />& AI Tools
-                    </h1>
-                    <p style={{ fontSize: "1.05rem", color: "rgba(255,255,255,0.55)", lineHeight: "1.7", marginBottom: "36px" }}>
-                        Expert guides to help you land more interviews, write better resumes, and grow your career.
-                    </p>
-
-                    {/* Search */}
-                    <div style={{ position: "relative", maxWidth: "460px", margin: "0 auto" }}>
-                        <span style={{ position: "absolute", left: "16px", top: "50%", transform: "translateY(-50%)", display: "flex", alignItems: "center", pointerEvents: "none" }}>
-                            <Search size={18} color="rgba(255,255,255,0.35)" />
-                        </span>
-                        <input
-                            type="text"
-                            placeholder="Search articles..."
-                            value={searchQuery}
-                            onChange={e => setSearchQuery(e.target.value)}
-                            style={{ width: "100%", background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.12)", borderRadius: "12px", color: "#fff", padding: "13px 16px 13px 46px", fontSize: "0.95rem", outline: "none", fontFamily: "inherit", boxSizing: "border-box", transition: "border-color 0.2s" }}
-                            onFocus={e => e.target.style.borderColor = "rgba(34,197,94,0.4)"}
-                            onBlur={e => e.target.style.borderColor = "rgba(255,255,255,0.12)"}
-                        />
-                    </div>
+            {!tailwindLoaded && (
+                <div className="initial-loader-container">
+                    <div className="initial-loader-spinner"></div>
                 </div>
-            </section>
+            )}
 
-            {/* Category Filter */}
-            <div style={{ borderBottom: "1px solid rgba(255,255,255,0.07)", padding: "0 24px", overflowX: "auto" }}>
-                <div style={{ maxWidth: "1040px", margin: "0 auto", display: "flex", gap: "4px", padding: "4px 0" }}>
-                    {CATEGORIES.map(cat => (
-                        <button key={cat} onClick={() => setActiveCategory(cat)} style={{
-                            background: "transparent", border: "none", color: activeCategory === cat ? "#fff" : "rgba(255,255,255,0.45)",
-                            fontWeight: activeCategory === cat ? "700" : "500",
-                            borderBottom: activeCategory === cat ? "2px solid #22c55e" : "2px solid transparent",
-                            padding: "14px 16px", cursor: "pointer", fontSize: "0.88rem",
-                            whiteSpace: "nowrap", transition: "all 0.15s ease",
-                        }}>{cat}</button>
-                    ))}
-                </div>
-            </div>
+            <div className="min-h-screen flex flex-col" style={{ opacity: tailwindLoaded ? 1 : 0, transition: "opacity 0.2s ease-in" }}>
+                <Navbar />
 
-            <div style={{ maxWidth: "1040px", margin: "0 auto", padding: "48px 24px" }}>
-
-                {/* Featured Post */}
-                {featuredPost && activeCategory === "All" && !searchQuery && (
-                    <div style={{ marginBottom: "48px" }}>
-                        <div style={{ fontSize: "0.75rem", color: "rgba(255,255,255,0.4)", fontWeight: "600", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "16px", display: "flex", alignItems: "center", gap: "6px" }}>
-                            <Sparkles size={14} color="#6366f1" /> Featured Article
+                {/* Hero Section */}
+                <header className="relative pt-36 pb-20 px-6 text-center overflow-hidden">
+                    <div className="glow-circle top-0 left-1/2 -translate-x-1/2"></div>
+                    <div className="max-w-4xl mx-auto relative z-10">
+                        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-indigo-500/10 border border-indigo-500/30 text-indigo-300 text-sm font-semibold mb-6 tracking-wide uppercase">
+                            <Cpu size={14} className="animate-pulse" /> Advanced Career Suite
                         </div>
-                        <div style={{ background: `linear-gradient(135deg, ${featuredPost.color}12, rgba(0,0,0,0.5))`, border: `1px solid ${featuredPost.color}30`, borderRadius: "20px", padding: "clamp(24px, 4vw, 48px)", display: "grid", gridTemplateColumns: "1fr auto", gap: "32px", alignItems: "center", cursor: "pointer", transition: "transform 0.2s, box-shadow 0.2s" }}
-                            onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-3px)"; e.currentTarget.style.boxShadow = `0 20px 48px ${featuredPost.color}18`; }}
-                            onMouseLeave={e => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "none"; }}
-                        >
-                            <div>
-                                <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "16px", flexWrap: "wrap" }}>
-                                    <span style={{ background: `${featuredPost.color}22`, color: featuredPost.color, border: `1px solid ${featuredPost.color}40`, borderRadius: "999px", padding: "4px 12px", fontSize: "0.78rem", fontWeight: "700" }}>{featuredPost.category}</span>
-                                    <span style={{ color: "rgba(255,255,255,0.4)", fontSize: "0.82rem" }}>{featuredPost.date} · {featuredPost.readTime}</span>
-                                </div>
-                                <h2 style={{ fontSize: "clamp(1.3rem, 2.5vw, 1.8rem)", fontWeight: "800", marginBottom: "14px", lineHeight: "1.25", letterSpacing: "-0.01em" }}>{featuredPost.title}</h2>
-                                <p style={{ color: "rgba(255,255,255,0.6)", fontSize: "1rem", lineHeight: "1.7", marginBottom: "20px" }}>{featuredPost.excerpt}</p>
-                                <span style={{ color: featuredPost.color, fontWeight: "700", fontSize: "0.9rem" }}>Read Article →</span>
-                            </div>
-                            <div className="d-none d-md-block" style={{ width: "100px", height: "100px", borderRadius: "24px", background: `${featuredPost.color}18`, border: `1px solid ${featuredPost.color}35`, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, opacity: 0.9 }}>
-                                <featuredPost.Icon size={48} color={featuredPost.color} strokeWidth={1.5} />
-                            </div>
-                        </div>
+                        <h1 className="text-4xl md:text-6xl font-extrabold text-on-surface tracking-tight leading-tight mb-6">
+                            Supercharge Your Career Search <br />
+                            <span className="bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400">
+                                Powered by Next-Gen AI
+                            </span>
+                        </h1>
+                        <p className="text-lg md:text-xl text-on-surface-variant max-w-2xl mx-auto leading-relaxed mb-10">
+                            Discover our comprehensive suite of career tools designed to get you past automated tracking systems, write professional content, and secure callbacks.
+                        </p>
                     </div>
-                )}
+                </header>
 
-                {/* Post Grid */}
-                {filteredPosts.length === 0 ? (
-                    <div style={{ textAlign: "center", padding: "80px 24px" }}>
-                        <div style={{ display: "flex", justifyContent: "center", marginBottom: "16px" }}>
-                            <Search size={40} color="rgba(255,255,255,0.2)" />
-                        </div>
-                        <h3 style={{ fontWeight: "700", marginBottom: "8px" }}>No articles found</h3>
-                        <p style={{ color: "rgba(255,255,255,0.45)" }}>Try a different search term or category.</p>
-                    </div>
-                ) : (
-                    <>
-                        {(activeCategory !== "All" || searchQuery) && (
-                            <p style={{ color: "rgba(255,255,255,0.4)", fontSize: "0.88rem", marginBottom: "24px" }}>{filteredPosts.length} article{filteredPosts.length !== 1 ? "s" : ""} found</p>
-                        )}
-                        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: "24px" }}>
-                            {(activeCategory === "All" && !searchQuery ? regularPosts : filteredPosts).map(post => (
-                                <article key={post.id} style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: "16px", padding: "24px", cursor: "pointer", transition: "all 0.2s ease", display: "flex", flexDirection: "column" }}
-                                    onMouseEnter={e => { e.currentTarget.style.borderColor = `${post.color}40`; e.currentTarget.style.transform = "translateY(-4px)"; e.currentTarget.style.boxShadow = `0 12px 32px ${post.color}12`; }}
-                                    onMouseLeave={e => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.08)"; e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "none"; }}
+                {/* Tools Grid */}
+                <main className="max-w-7xl mx-auto px-6 pb-24 relative flex-grow">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-20">
+                        {tools.map((tool, idx) => {
+                            const IconComponent = tool.Icon;
+                            return (
+                                <section 
+                                    key={idx} 
+                                    className="glass-card rounded-2xl p-8 flex flex-col justify-between transition-all duration-300 hover:-translate-y-2 hover:border-opacity-65 hover:shadow-[0_20px_50px_rgba(0,0,0,0.4)] relative group overflow-hidden"
+                                    style={{ borderColor: tool.borderColor }}
                                 >
-                                    <div style={{ width: "48px", height: "48px", borderRadius: "14px", background: `${post.color}18`, border: `1px solid ${post.color}35`, display: "flex", alignItems: "center", justifyContent: "center", marginBottom: "16px" }}>
-                                        <post.Icon size={24} color={post.color} strokeWidth={1.8} />
-                                    </div>
-                                    <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "12px", flexWrap: "wrap" }}>
-                                        <span style={{ background: `${post.color}18`, color: post.color, border: `1px solid ${post.color}35`, borderRadius: "999px", padding: "3px 10px", fontSize: "0.75rem", fontWeight: "700" }}>{post.category}</span>
-                                        <span style={{ color: "rgba(255,255,255,0.35)", fontSize: "0.78rem" }}>{post.readTime}</span>
-                                    </div>
-                                    <h3 style={{ fontSize: "1rem", fontWeight: "700", marginBottom: "10px", lineHeight: "1.4", flex: 1 }}>{post.title}</h3>
-                                    <p style={{ color: "rgba(255,255,255,0.5)", fontSize: "0.86rem", lineHeight: "1.65", marginBottom: "18px" }}>{post.excerpt}</p>
-                                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                                        <span style={{ color: "rgba(255,255,255,0.35)", fontSize: "0.78rem" }}>{post.date}</span>
-                                        <span style={{ color: post.color, fontWeight: "700", fontSize: "0.85rem" }}>Read →</span>
-                                    </div>
-                                </article>
-                            ))}
-                        </div>
-                    </>
-                )}
-            </div>
+                                    {/* Accent background glow */}
+                                    <div 
+                                        className="absolute -right-20 -top-20 w-48 h-48 rounded-full blur-[80px] pointer-events-none transition-all duration-300 group-hover:scale-125"
+                                        style={{ background: tool.color, opacity: 0.15 }}
+                                    ></div>
 
-            {/* Newsletter CTA */}
-            <section style={{ borderTop: "1px solid rgba(255,255,255,0.07)", padding: "72px 24px", background: "rgba(255,255,255,0.015)" }}>
-                <div style={{ maxWidth: "540px", margin: "0 auto", textAlign: "center" }}>
-                    <div style={{ display: "flex", justifyContent: "center", marginBottom: "20px" }}>
-                        <Inbox size={40} color="#22c55e" />
+                                    <div>
+                                        {/* Header */}
+                                        <div className="flex justify-between items-start mb-6">
+                                            <div 
+                                                className="w-14 h-14 rounded-xl flex items-center justify-center border transition-transform duration-300 group-hover:scale-110"
+                                                style={{ 
+                                                    backgroundColor: tool.bgColor, 
+                                                    borderColor: tool.borderColor,
+                                                    color: tool.color 
+                                                }}
+                                            >
+                                                <IconComponent size={28} />
+                                            </div>
+                                            <span 
+                                                className="text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-full border"
+                                                style={{ 
+                                                    color: tool.color, 
+                                                    borderColor: tool.borderColor,
+                                                    backgroundColor: tool.bgColor
+                                                }}
+                                            >
+                                                {tool.badge}
+                                            </span>
+                                        </div>
+
+                                        {/* Title & Description */}
+                                        <h2 className="text-2xl font-bold text-on-surface mb-3 group-hover:text-white transition-colors duration-200">
+                                            {tool.title}
+                                        </h2>
+                                        <p className="text-on-surface-variant mb-6 text-sm md:text-base leading-relaxed">
+                                            {tool.description}
+                                        </p>
+
+                                        {/* Checklist features */}
+                                        <ul className="space-y-3 mb-8">
+                                            {tool.details.map((detail, dIdx) => (
+                                                <li key={dIdx} className="flex items-center gap-3 text-sm text-on-surface-variant/90">
+                                                    <CheckCircle size={16} className="flex-shrink-0" style={{ color: tool.color }} />
+                                                    <span>{detail}</span>
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    </div>
+
+                                    {/* Action button */}
+                                    <Link 
+                                        href={tool.ctaLink}
+                                        className="w-full flex items-center justify-center gap-2 py-3 px-5 rounded-xl font-semibold text-white transition-all duration-200 hover:brightness-110 shadow-lg cursor-pointer text-sm"
+                                        style={{ 
+                                            background: `linear-gradient(135deg, ${tool.color}, rgba(0, 0, 0, 0.2))`,
+                                            boxShadow: `0 4px 20px -2px ${tool.color}35`
+                                        }}
+                                    >
+                                        {tool.ctaText} <ArrowRight size={16} className="transition-transform duration-200 group-hover:translate-x-1" />
+                                    </Link>
+                                </section>
+                            );
+                        })}
                     </div>
-                    <h2 style={{ fontSize: "1.8rem", fontWeight: "800", marginBottom: "12px" }}>Get Career Tips in Your Inbox</h2>
-                    <p style={{ color: "rgba(255,255,255,0.5)", marginBottom: "28px", lineHeight: "1.7" }}>Weekly resume tips, job search strategies, and AI tool guides — no spam, unsubscribe anytime.</p>
-                    <div style={{ display: "flex", gap: "10px", maxWidth: "400px", margin: "0 auto", flexWrap: "wrap" }}>
-                        <input type="email" placeholder="your@email.com" style={{ flex: 1, minWidth: "200px", background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.15)", borderRadius: "10px", color: "#fff", padding: "12px 16px", fontSize: "0.9rem", outline: "none", fontFamily: "inherit" }}
-                            onFocus={e => e.target.style.borderColor = "rgba(34,197,94,0.45)"}
-                            onBlur={e => e.target.style.borderColor = "rgba(255,255,255,0.15)"}
-                        />
-                        <button style={{ padding: "12px 24px", background: "linear-gradient(135deg, #22c55e, #16a34a)", border: "none", borderRadius: "10px", color: "#fff", fontWeight: "700", fontSize: "0.9rem", cursor: "pointer", transition: "opacity 0.2s", whiteSpace: "nowrap" }}
-                            onMouseEnter={e => e.currentTarget.style.opacity = "0.85"}
-                            onMouseLeave={e => e.currentTarget.style.opacity = "1"}
-                        >Subscribe</button>
+
+                    {/* Trust Block / Why CVGrid */}
+                    <section className="glass-card rounded-2xl p-8 md:p-12 text-center max-w-4xl mx-auto relative overflow-hidden">
+                        <div className="absolute inset-0 bg-gradient-to-r from-indigo-500/5 to-purple-500/5 pointer-events-none"></div>
+                        <h3 className="text-3xl font-bold mb-4">Why Job Seekers Choose CVGrid</h3>
+                        <p className="text-on-surface-variant max-w-xl mx-auto mb-10 text-sm md:text-base">
+                            We build premium tools designed with one goal: helping you land your next role without paywalls or watermarks.
+                        </p>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 text-left">
+                            <div className="p-4 rounded-xl bg-white/5 border border-white/5 flex gap-4 items-start">
+                                <ShieldCheck className="text-indigo-400 mt-0.5 flex-shrink-0" size={20} />
+                                <div>
+                                    <h4 className="font-bold mb-1 text-sm text-on-surface">100% Free & Open</h4>
+                                    <p className="text-xs text-on-surface-variant leading-relaxed">No hidden fees, no subscriptions, and zero watermarks on your PDF downloads.</p>
+                                </div>
+                            </div>
+                            <div className="p-4 rounded-xl bg-white/5 border border-white/5 flex gap-4 items-start">
+                                <ScanLine className="text-emerald-400 mt-0.5 flex-shrink-0" size={20} />
+                                <div>
+                                    <h4 className="font-bold mb-1 text-sm text-on-surface">ATS Compatibility</h4>
+                                    <p className="text-xs text-on-surface-variant leading-relaxed">Our templates are strictly designed to pass parse checks by top company systems.</p>
+                                </div>
+                            </div>
+                            <div className="p-4 rounded-xl bg-white/5 border border-white/5 flex gap-4 items-start">
+                                <Eye className="text-pink-400 mt-0.5 flex-shrink-0" size={20} />
+                                <div>
+                                    <h4 className="font-bold mb-1 text-sm text-on-surface">Secure Cloud Sync</h4>
+                                    <p className="text-xs text-on-surface-variant leading-relaxed">Your data belongs to you. Keep it stored securely and access it anywhere anytime.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </main>
+
+                {/* Footer */}
+                <footer className="w-full py-8 px-8 flex flex-col md:flex-row justify-between items-center max-w-7xl mx-auto gap-4 border-t border-outline-variant bg-surface-container-lowest">
+                    <div className="font-label-bold text-label-bold text-on-surface font-semibold">CVGrid</div>
+                    <div className="flex flex-col md:flex-row gap-6 items-center">
+                        <span className="text-sm text-tertiary-fixed-dim">© 2026 CVGrid. All rights reserved.</span>
+                        <div className="flex gap-6">
+                            <a className="text-sm text-on-surface-variant hover:text-primary transition-colors duration-200 cursor-pointer" href="#">Privacy Policy</a>
+                            <a className="text-sm text-on-surface-variant hover:text-primary transition-colors duration-200 cursor-pointer" href="#">Terms of Service</a>
+                            <a className="text-sm text-on-surface-variant hover:text-primary transition-colors duration-200 cursor-pointer" href="#">Contact Support</a>
+                        </div>
                     </div>
-                </div>
-            </section>
-        </div>
+                </footer>
+            </div>
+        </>
     );
 }
