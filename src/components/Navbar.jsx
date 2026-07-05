@@ -7,7 +7,7 @@ import { auth } from "../firebase";
 import { signOut } from "firebase/auth";
 import { subscribeToAuthChanges } from "../authState";
 import { showToast } from "../utils/toast";
-import { Home, Palette, FileSignature, Target, Sparkles, FileText, X, ArrowRight } from "lucide-react";
+import { Home, Palette, FileSignature, Target, Sparkles, FileText, X, ArrowRight, LogOut } from "lucide-react";
 
 const NAV_LINKS = [
     { label: "Home", href: "/" },
@@ -140,18 +140,38 @@ export default function Navbar() {
                     <div className="d-none d-lg-flex align-items-center" style={{ gap: "12px", marginLeft: "auto" }}>
                         {user ? (
                             <>
-                                <Link href="/profile" onClick={closeMenu} style={{ display: "flex", alignItems: "center", gap: "8px", textDecoration: "none", color: "#38bdf8", fontWeight: "600", fontSize: "0.9rem" }}>
+                                <Link href="/profile" onClick={closeMenu} style={profileCapsuleStyle}
+                                    onMouseEnter={e => {
+                                        e.currentTarget.style.background = "rgba(255, 255, 255, 0.09)";
+                                        e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.15)";
+                                    }}
+                                    onMouseLeave={e => {
+                                        e.currentTarget.style.background = "rgba(255, 255, 255, 0.05)";
+                                        e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.08)";
+                                    }}
+                                >
                                     {photoUrl ? (
-                                        <img src={photoUrl} alt="Profile" style={{ width: "32px", height: "32px", borderRadius: "50%", objectFit: "cover", border: "2px solid #38bdf8" }} />
+                                        <img src={photoUrl} alt="Profile" style={{ width: "28px", height: "28px", borderRadius: "50%", objectFit: "cover" }} />
                                     ) : (
                                         <div style={avatarStyle}>{(displayName || user.email).charAt(0).toUpperCase()}</div>
                                     )}
-                                    <span style={{ maxWidth: "140px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{displayName || user.email}</span>
+                                    <span style={{ color: "rgba(255, 255, 255, 0.9)", fontSize: "0.85rem", fontWeight: "500", maxWidth: "120px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{displayName || user.email}</span>
                                 </Link>
                                 <button onClick={handleLogout} style={logoutBtnStyle}
-                                    onMouseEnter={e => e.currentTarget.style.background = "rgba(239,68,68,0.18)"}
-                                    onMouseLeave={e => e.currentTarget.style.background = "transparent"}
-                                >Logout</button>
+                                    onMouseEnter={e => {
+                                        e.currentTarget.style.background = "rgba(239, 68, 68, 0.08)";
+                                        e.currentTarget.style.borderColor = "rgba(239, 68, 68, 0.2)";
+                                        e.currentTarget.style.color = "#ef4444";
+                                    }}
+                                    onMouseLeave={e => {
+                                        e.currentTarget.style.background = "rgba(255, 255, 255, 0.04)";
+                                        e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.08)";
+                                        e.currentTarget.style.color = "rgba(255, 255, 255, 0.75)";
+                                    }}
+                                >
+                                    <LogOut size={14} />
+                                    Logout
+                                </button>
                             </>
                         ) : (
                             <>
@@ -288,15 +308,37 @@ const hamburgerStyle = {
 };
 const burgerLine = { display: "block", width: "22px", height: "2px", background: "#fff", borderRadius: "2px" };
 const avatarStyle = {
-    width: "32px", height: "32px", borderRadius: "50%",
-    background: "rgba(56,189,248,0.1)", border: "2px solid #38bdf8",
-    color: "#38bdf8", display: "flex", alignItems: "center",
-    justifyContent: "center", fontWeight: "700", fontSize: "13px",
+    width: "28px", height: "28px", borderRadius: "50%",
+    background: "linear-gradient(135deg, #6366f1, #8b5cf6)", 
+    color: "#ffffff", display: "flex", alignItems: "center",
+    justifyContent: "center", fontWeight: "600", fontSize: "12px",
+    flexShrink: 0
 };
 const logoutBtnStyle = {
-    background: "transparent", border: "1.5px solid rgba(239,68,68,0.5)",
-    borderRadius: "8px", color: "#ef4444", padding: "7px 16px",
-    fontWeight: "600", fontSize: "0.88rem", cursor: "pointer", transition: "background 0.2s",
+    background: "rgba(255, 255, 255, 0.04)", 
+    border: "1px solid rgba(255, 255, 255, 0.08)",
+    borderRadius: "8px", 
+    color: "rgba(255, 255, 255, 0.75)", 
+    padding: "6px 14px",
+    fontWeight: "500", 
+    fontSize: "0.85rem", 
+    cursor: "pointer", 
+    transition: "all 0.2s ease",
+    display: "flex",
+    alignItems: "center",
+    gap: "6px"
+};
+const profileCapsuleStyle = {
+    display: "flex", 
+    alignItems: "center", 
+    gap: "8px", 
+    textDecoration: "none", 
+    background: "rgba(255, 255, 255, 0.05)",
+    border: "1px solid rgba(255, 255, 255, 0.08)",
+    borderRadius: "30px",
+    padding: "4px 12px 4px 4px",
+    transition: "all 0.2s ease",
+    cursor: "pointer"
 };
 const drawerLinkStyle = {
     display: "flex", alignItems: "center", gap: "12px",
