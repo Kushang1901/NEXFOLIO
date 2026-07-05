@@ -13,7 +13,7 @@ const SITE_TITLE = "Free Resume Maker & AI Resume Builder – CVGrid";
 const SITE_DESC =
     "Create a professional, ATS-friendly resume in minutes with CVGrid's free AI resume builder. Choose from 18+ premium templates, generate AI content, and download as PDF — 100% free, no watermark, no credit card.";
 const OG_IMAGE = `${BASE_URL}/og-image.png`;
-const LOGO = `${BASE_URL}/logo.png`;    
+const LOGO = `${BASE_URL}/logo.png`;
 
 // ─────────────────────────────────────────────
 // VIEWPORT (separate export per Next.js 14+)
@@ -601,74 +601,74 @@ export default function RootLayout({ children }) {
                 ════════════════════════════════════════════════ */}
 
                 {/* ── Dublin Core Metadata ────────────────────── */}
-                <meta name="DC.title"       content={SITE_TITLE} />
+                <meta name="DC.title" content={SITE_TITLE} />
                 <meta name="DC.description" content={SITE_DESC} />
-                <meta name="DC.creator"     content="Kushang Acharya" />
-                <meta name="DC.publisher"   content={SITE_NAME} />
-                <meta name="DC.language"    content="en" />
-                <meta name="DC.type"        content="InteractiveResource" />
-                <meta name="DC.format"      content="text/html" />
-                <meta name="DC.identifier"  content={BASE_URL} />
-                <meta name="DC.rights"      content={`Copyright 2026 ${SITE_NAME}`} />
-                <meta name="DC.subject"     content="Resume Builder, AI Resume, ATS Friendly Resume, Free CV Maker" />
-                <meta name="DC.date"        content="2024-01-01" />
-                <meta name="DC.coverage"    content="Worldwide" />
-                <meta name="DC.relation"    content={`${BASE_URL}/templates`} />
+                <meta name="DC.creator" content="Kushang Acharya" />
+                <meta name="DC.publisher" content={SITE_NAME} />
+                <meta name="DC.language" content="en" />
+                <meta name="DC.type" content="InteractiveResource" />
+                <meta name="DC.format" content="text/html" />
+                <meta name="DC.identifier" content={BASE_URL} />
+                <meta name="DC.rights" content={`Copyright 2026 ${SITE_NAME}`} />
+                <meta name="DC.subject" content="Resume Builder, AI Resume, ATS Friendly Resume, Free CV Maker" />
+                <meta name="DC.date" content="2024-01-01" />
+                <meta name="DC.coverage" content="Worldwide" />
+                <meta name="DC.relation" content={`${BASE_URL}/templates`} />
 
                 {/* ── Geographic / Geo Tags ───────────────────── */}
-                <meta name="geo.region"     content="IN" />
-                <meta name="geo.placename"  content="India" />
-                <meta name="geo.position"   content="20.5937;78.9629" />
-                <meta name="ICBM"           content="20.5937, 78.9629" />
+                <meta name="geo.region" content="IN" />
+                <meta name="geo.placename" content="India" />
+                <meta name="geo.position" content="20.5937;78.9629" />
+                <meta name="ICBM" content="20.5937, 78.9629" />
 
                 {/* ── Apple / PWA / Mobile ────────────────────── */}
-                <meta name="apple-mobile-web-app-capable"          content="yes" />
+                <meta name="apple-mobile-web-app-capable" content="yes" />
                 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-                <meta name="apple-mobile-web-app-title"            content={SITE_NAME} />
-                <meta name="mobile-web-app-capable"                content="yes" />
+                <meta name="apple-mobile-web-app-title" content={SITE_NAME} />
+                <meta name="mobile-web-app-capable" content="yes" />
 
                 {/* ── Content & Behaviour ─────────────────────── */}
-                <meta name="rating"          content="general" />
-                <meta name="revisit-after"   content="7 days" />
-                <meta name="language"        content="English" />
+                <meta name="rating" content="general" />
+                <meta name="revisit-after" content="7 days" />
+                <meta name="language" content="English" />
                 <meta name="content-language" content="en" />
-                <meta name="audience"        content="all" />
-                <meta name="target"          content="all" />
-                <meta name="coverage"        content="Worldwide" />
-                <meta name="distribution"    content="Global" />
+                <meta name="audience" content="all" />
+                <meta name="target" content="all" />
+                <meta name="coverage" content="Worldwide" />
+                <meta name="distribution" content="Global" />
                 <meta name="HandheldFriendly" content="True" />
-                <meta name="MobileOptimized"  content="320" />
+                <meta name="MobileOptimized" content="320" />
                 <meta name="format-detection" content="telephone=no" />
-                <meta name="referrer"         content="origin-when-cross-origin" />
+                <meta name="referrer" content="origin-when-cross-origin" />
 
                 {/* ── Site Category / Abstract ────────────────── */}
-                <meta name="abstract"        content="Free AI resume builder with 18+ ATS-friendly templates. Build, customize, and download your professional resume as PDF — powered by advanced AI." />
-                <meta name="topic"           content="Resume Builder, AI Resume, Career Tools, Job Search" />
-                <meta name="summary"         content="CVGrid is a free AI-powered resume builder for students and job seekers." />
-                <meta name="Classification"  content="Resume Builder" />
-                <meta name="category"        content="Technology, AI Tools, Career" />
-                <meta name="pagename"        content={SITE_TITLE} />
-                <meta name="owner"           content="Kushang Acharya" />
-                <meta name="url"             content={BASE_URL} />
-                <meta name="identifier-URL"  content={BASE_URL} />
-                <meta name="directory"       content="submission" />
+                <meta name="abstract" content="Free AI resume builder with 18+ ATS-friendly templates. Build, customize, and download your professional resume as PDF — powered by advanced AI." />
+                <meta name="topic" content="Resume Builder, AI Resume, Career Tools, Job Search" />
+                <meta name="summary" content="CVGrid is a free AI-powered resume builder for students and job seekers." />
+                <meta name="Classification" content="Resume Builder" />
+                <meta name="category" content="Technology, AI Tools, Career" />
+                <meta name="pagename" content={SITE_TITLE} />
+                <meta name="owner" content="Kushang Acharya" />
+                <meta name="url" content={BASE_URL} />
+                <meta name="identifier-URL" content={BASE_URL} />
+                <meta name="directory" content="submission" />
 
                 {/* ── Bing / Microsoft ────────────────────────── */}
-                <meta name="msapplication-TileColor"          content="#6366f1" />
-                <meta name="msapplication-TileImage"          content="/logo192.png" />
-                <meta name="msapplication-navbutton-color"    content="#6366f1" />
-                <meta name="msapplication-starturl"           content="/" />
-                <meta name="msapplication-task"               content="name=Build Resume;action-uri=/builder;icon-uri=/favicon.png" />
+                <meta name="msapplication-TileColor" content="#6366f1" />
+                <meta name="msapplication-TileImage" content="/logo192.png" />
+                <meta name="msapplication-navbutton-color" content="#6366f1" />
+                <meta name="msapplication-starturl" content="/" />
+                <meta name="msapplication-task" content="name=Build Resume;action-uri=/builder;icon-uri=/favicon.png" />
 
                 {/* ── Pinterest ───────────────────────────────── */}
                 <meta name="pinterest-rich-pin" content="true" />
-                <meta property="article:author"  content="Kushang Acharya" />
+                <meta property="article:author" content="Kushang Acharya" />
 
                 {/* ── Additional Open Graph ───────────────────── */}
-                <meta property="og:updated_time"   content={new Date().toISOString()} />
-                <meta property="og:price:amount"   content="0" />
+                <meta property="og:updated_time" content={new Date().toISOString()} />
+                <meta property="og:price:amount" content="0" />
                 <meta property="og:price:currency" content="USD" />
-                <meta property="og:availability"   content="instock" />
+                <meta property="og:availability" content="instock" />
 
                 {/* ── Structured Data: JSON-LD ────────────────── */}
                 <script
@@ -699,10 +699,7 @@ export default function RootLayout({ children }) {
                         }
                         
                         gtag('consent', 'default', {
-                            'analytics_storage': savedConsent === 'accepted' ? 'granted' : 'denied',
-                            'ad_storage': 'denied',
-                            'ad_user_data': 'denied',
-                            'ad_personalization': 'denied'
+                            'analytics_storage': savedConsent === 'accepted' ? 'granted' : 'denied'
                         });
                     `
                 }} />
