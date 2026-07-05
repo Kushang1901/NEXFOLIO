@@ -18,7 +18,29 @@ export default function TemplateSelection() {
                 router.push("/?triggerAuth=true");
             }
         });
-        return () => unsubscribe();
+
+        // Parse category from URL query parameter on mount
+        if (typeof window !== "undefined") {
+            const params = new URLSearchParams(window.location.search);
+            const cat = params.get("category");
+            if (cat) {
+                setSelectedCategory(cat);
+            }
+        }
+
+        // Custom event listener for same-page category changes from Navbar
+        const handleCategoryChange = (e) => {
+            if (e.detail) {
+                setSelectedCategory(e.detail);
+            }
+        };
+
+        window.addEventListener("categoryChange", handleCategoryChange);
+
+        return () => {
+            unsubscribe();
+            window.removeEventListener("categoryChange", handleCategoryChange);
+        };
     }, [router]);
 
     const selectTemplate = (id) => {

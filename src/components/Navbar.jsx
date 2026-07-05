@@ -24,6 +24,14 @@ export default function Navbar() {
     const [displayName, setDisplayName] = useState("");
     const [photoUrl, setPhotoUrl] = useState("");
     const [menuOpen, setMenuOpen] = useState(false);
+    const [showTemplatesDropdown, setShowTemplatesDropdown] = useState(false);
+
+    const handleCategoryClick = (category) => {
+        if (typeof window !== "undefined") {
+            const event = new CustomEvent("categoryChange", { detail: category });
+            window.dispatchEvent(event);
+        }
+    };
 
     useEffect(() => {
         let activeEmail = null;
@@ -108,19 +116,294 @@ export default function Navbar() {
 
                     {/* ── Desktop: Left Nav Links ── */}
                     <div className="d-none d-lg-flex align-items-center" style={{ gap: "4px", flex: 1 }}>
-                        {NAV_LINKS.map((link) => (
-                            <Link key={link.href} href={link.href} style={{
-                                ...desktopLinkStyle,
-                                color: isActive(link.href) ? "#fff" : "rgba(255,255,255,0.65)",
-                                background: isActive(link.href) ? "rgba(255,255,255,0.08)" : "transparent",
-                                borderBottom: isActive(link.href) ? "2px solid #6f9dff" : "2px solid transparent",
-                            }}
-                                onMouseEnter={e => { if (!isActive(link.href)) { e.currentTarget.style.color = "#fff"; e.currentTarget.style.background = "rgba(255,255,255,0.05)"; } }}
-                                onMouseLeave={e => { if (!isActive(link.href)) { e.currentTarget.style.color = "rgba(255,255,255,0.65)"; e.currentTarget.style.background = "transparent"; } }}
-                            >
-                                {link.label}
-                            </Link>
-                        ))}
+                        {NAV_LINKS.map((link) => {
+                            if (link.label === "Templates") {
+                                return (
+                                    <div
+                                        key={link.href}
+                                        onMouseEnter={() => setShowTemplatesDropdown(true)}
+                                        onMouseLeave={() => setShowTemplatesDropdown(false)}
+                                        style={{ position: "static" }}
+                                    >
+                                        <Link href={link.href} style={{
+                                            ...desktopLinkStyle,
+                                            color: isActive(link.href) || showTemplatesDropdown ? "#fff" : "rgba(255,255,255,0.65)",
+                                            background: isActive(link.href) || showTemplatesDropdown ? "rgba(255,255,255,0.08)" : "transparent",
+                                            borderBottom: isActive(link.href) || showTemplatesDropdown ? "2px solid #6f9dff" : "2px solid transparent",
+                                        }}>
+                                            {link.label}
+                                        </Link>
+
+                                        {/* MEGA DROPDOWN */}
+                                        {showTemplatesDropdown && (
+                                            <div style={megaDropdownStyle}>
+                                                <div style={megaDropdownContainerStyle}>
+                                                    {/* Left Column: Grid */}
+                                                    <div>
+                                                        <h4 style={megaDropdownTitleStyle}>Resume Templates</h4>
+                                                        <div style={megaDropdownGridStyle}>
+                                                            
+                                                            {/* ATS Friendly */}
+                                                            <Link 
+                                                                href="/templates?category=professional" 
+                                                                onClick={() => {
+                                                                    setShowTemplatesDropdown(false);
+                                                                    handleCategoryClick("professional");
+                                                                }}
+                                                                style={dropdownCardStyle}
+                                                                onMouseEnter={e => {
+                                                                    e.currentTarget.style.background = "rgba(255, 255, 255, 0.03)";
+                                                                    e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.1)";
+                                                                    e.currentTarget.querySelector(".arrow-icon").style.transform = "translateX(4px)";
+                                                                    e.currentTarget.querySelector(".arrow-icon").style.opacity = "1";
+                                                                }}
+                                                                onMouseLeave={e => {
+                                                                    e.currentTarget.style.background = "transparent";
+                                                                    e.currentTarget.style.borderColor = "transparent";
+                                                                    e.currentTarget.querySelector(".arrow-icon").style.transform = "translateX(0)";
+                                                                    e.currentTarget.querySelector(".arrow-icon").style.opacity = "0.5";
+                                                                }}
+                                                            >
+                                                                <div style={iconContainerStyle("#3b82f6")}>
+                                                                    <Target size={18} color="#60a5fa" />
+                                                                </div>
+                                                                <div>
+                                                                    <div style={cardTitleStyle}>
+                                                                        ATS Friendly 
+                                                                        <span className="arrow-icon" style={arrowIconStyle}>→</span>
+                                                                    </div>
+                                                                    <div style={cardDescStyle}>Optimized layouts built to pass screening software.</div>
+                                                                </div>
+                                                            </Link>
+
+                                                            {/* Graduate */}
+                                                            <Link 
+                                                                href="/templates?category=minimalist" 
+                                                                onClick={() => {
+                                                                    setShowTemplatesDropdown(false);
+                                                                    handleCategoryClick("minimalist");
+                                                                }}
+                                                                style={dropdownCardStyle}
+                                                                onMouseEnter={e => {
+                                                                    e.currentTarget.style.background = "rgba(255, 255, 255, 0.03)";
+                                                                    e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.1)";
+                                                                    e.currentTarget.querySelector(".arrow-icon").style.transform = "translateX(4px)";
+                                                                    e.currentTarget.querySelector(".arrow-icon").style.opacity = "1";
+                                                                }}
+                                                                onMouseLeave={e => {
+                                                                    e.currentTarget.style.background = "transparent";
+                                                                    e.currentTarget.style.borderColor = "transparent";
+                                                                    e.currentTarget.querySelector(".arrow-icon").style.transform = "translateX(0)";
+                                                                    e.currentTarget.querySelector(".arrow-icon").style.opacity = "0.5";
+                                                                }}
+                                                            >
+                                                                <div style={iconContainerStyle("#10b981")}>
+                                                                    <FileSignature size={18} color="#34d399" />
+                                                                </div>
+                                                                <div>
+                                                                    <div style={cardTitleStyle}>
+                                                                        Graduate / Starter
+                                                                        <span className="arrow-icon" style={arrowIconStyle}>→</span>
+                                                                    </div>
+                                                                    <div style={cardDescStyle}>Showcase academic milestones and internships.</div>
+                                                                </div>
+                                                            </Link>
+
+                                                            {/* Modern */}
+                                                            <Link 
+                                                                href="/templates?category=creative" 
+                                                                onClick={() => {
+                                                                    setShowTemplatesDropdown(false);
+                                                                    handleCategoryClick("creative");
+                                                                }}
+                                                                style={dropdownCardStyle}
+                                                                onMouseEnter={e => {
+                                                                    e.currentTarget.style.background = "rgba(255, 255, 255, 0.03)";
+                                                                    e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.1)";
+                                                                    e.currentTarget.querySelector(".arrow-icon").style.transform = "translateX(4px)";
+                                                                    e.currentTarget.querySelector(".arrow-icon").style.opacity = "1";
+                                                                }}
+                                                                onMouseLeave={e => {
+                                                                    e.currentTarget.style.background = "transparent";
+                                                                    e.currentTarget.style.borderColor = "transparent";
+                                                                    e.currentTarget.querySelector(".arrow-icon").style.transform = "translateX(0)";
+                                                                    e.currentTarget.querySelector(".arrow-icon").style.opacity = "0.5";
+                                                                }}
+                                                            >
+                                                                <div style={iconContainerStyle("#ec4899")}>
+                                                                    <Palette size={18} color="#f472b6" />
+                                                                </div>
+                                                                <div>
+                                                                    <div style={cardTitleStyle}>
+                                                                        Modern & Creative
+                                                                        <span className="arrow-icon" style={arrowIconStyle}>→</span>
+                                                                    </div>
+                                                                    <div style={cardDescStyle}>Asymmetrical and design-forward layouts.</div>
+                                                                </div>
+                                                            </Link>
+
+                                                            {/* Professional */}
+                                                            <Link 
+                                                                href="/templates?category=professional" 
+                                                                onClick={() => {
+                                                                    setShowTemplatesDropdown(false);
+                                                                    handleCategoryClick("professional");
+                                                                }}
+                                                                style={dropdownCardStyle}
+                                                                onMouseEnter={e => {
+                                                                    e.currentTarget.style.background = "rgba(255, 255, 255, 0.03)";
+                                                                    e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.1)";
+                                                                    e.currentTarget.querySelector(".arrow-icon").style.transform = "translateX(4px)";
+                                                                    e.currentTarget.querySelector(".arrow-icon").style.opacity = "1";
+                                                                }}
+                                                                onMouseLeave={e => {
+                                                                    e.currentTarget.style.background = "transparent";
+                                                                    e.currentTarget.style.borderColor = "transparent";
+                                                                    e.currentTarget.querySelector(".arrow-icon").style.transform = "translateX(0)";
+                                                                    e.currentTarget.querySelector(".arrow-icon").style.opacity = "0.5";
+                                                                }}
+                                                            >
+                                                                <div style={iconContainerStyle("#6366f1")}>
+                                                                    <FileText size={18} color="#818cf8" />
+                                                                </div>
+                                                                <div>
+                                                                    <div style={cardTitleStyle}>
+                                                                        Professional
+                                                                        <span className="arrow-icon" style={arrowIconStyle}>→</span>
+                                                                    </div>
+                                                                    <div style={cardDescStyle}>Recruiter-approved templates for business roles.</div>
+                                                                </div>
+                                                            </Link>
+
+                                                            {/* Simple */}
+                                                            <Link 
+                                                                href="/templates?category=minimalist" 
+                                                                onClick={() => {
+                                                                    setShowTemplatesDropdown(false);
+                                                                    handleCategoryClick("minimalist");
+                                                                }}
+                                                                style={dropdownCardStyle}
+                                                                onMouseEnter={e => {
+                                                                    e.currentTarget.style.background = "rgba(255, 255, 255, 0.03)";
+                                                                    e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.1)";
+                                                                    e.currentTarget.querySelector(".arrow-icon").style.transform = "translateX(4px)";
+                                                                    e.currentTarget.querySelector(".arrow-icon").style.opacity = "1";
+                                                                }}
+                                                                onMouseLeave={e => {
+                                                                    e.currentTarget.style.background = "transparent";
+                                                                    e.currentTarget.style.borderColor = "transparent";
+                                                                    e.currentTarget.querySelector(".arrow-icon").style.transform = "translateX(0)";
+                                                                    e.currentTarget.querySelector(".arrow-icon").style.opacity = "0.5";
+                                                                }}
+                                                            >
+                                                                <div style={iconContainerStyle("#6b7280")}>
+                                                                    <Home size={18} color="#9ca3af" />
+                                                                </div>
+                                                                <div>
+                                                                    <div style={cardTitleStyle}>
+                                                                        Simple & Clean
+                                                                        <span className="arrow-icon" style={arrowIconStyle}>→</span>
+                                                                    </div>
+                                                                    <div style={cardDescStyle}>Clean typography with traditional framing.</div>
+                                                                </div>
+                                                            </Link>
+
+                                                            {/* Tech / Monospace */}
+                                                            <Link 
+                                                                href="/templates?category=tech" 
+                                                                onClick={() => {
+                                                                    setShowTemplatesDropdown(false);
+                                                                    handleCategoryClick("tech");
+                                                                }}
+                                                                style={dropdownCardStyle}
+                                                                onMouseEnter={e => {
+                                                                    e.currentTarget.style.background = "rgba(255, 255, 255, 0.03)";
+                                                                    e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.1)";
+                                                                    e.currentTarget.querySelector(".arrow-icon").style.transform = "translateX(4px)";
+                                                                    e.currentTarget.querySelector(".arrow-icon").style.opacity = "1";
+                                                                }}
+                                                                onMouseLeave={e => {
+                                                                    e.currentTarget.style.background = "transparent";
+                                                                    e.currentTarget.style.borderColor = "transparent";
+                                                                    e.currentTarget.querySelector(".arrow-icon").style.transform = "translateX(0)";
+                                                                    e.currentTarget.querySelector(".arrow-icon").style.opacity = "0.5";
+                                                                }}
+                                                            >
+                                                                <div style={iconContainerStyle("#f59e0b")}>
+                                                                    <Sparkles size={18} color="#fbbf24" />
+                                                                </div>
+                                                                <div>
+                                                                    <div style={cardTitleStyle}>
+                                                                        Developer / Tech
+                                                                        <span className="arrow-icon" style={arrowIconStyle}>→</span>
+                                                                    </div>
+                                                                    <div style={cardDescStyle}>Monospace and terminal formats for coders.</div>
+                                                                </div>
+                                                            </Link>
+
+                                                        </div>
+                                                    </div>
+
+                                                    {/* Right Column: Actions */}
+                                                    <div style={sidebarContainerStyle}>
+                                                        <h4 style={sidebarHeaderStyle}>Quick Builder Access</h4>
+                                                        
+                                                        <Link href="/builder" onClick={() => setShowTemplatesDropdown(false)} style={sidebarLinkCardStyle}
+                                                            onMouseEnter={e => {
+                                                                e.currentTarget.style.background = "rgba(111, 157, 255, 0.06)";
+                                                                e.currentTarget.style.borderColor = "rgba(111, 157, 255, 0.2)";
+                                                            }}
+                                                            onMouseLeave={e => {
+                                                                e.currentTarget.style.background = "rgba(255,255,255,0.02)";
+                                                                e.currentTarget.style.borderColor = "rgba(255,255,255,0.05)";
+                                                            }}
+                                                        >
+                                                            <div style={{ fontWeight: "600", fontSize: "0.95rem", color: "#6f9dff", display: "flex", alignItems: "center", gap: "6px" }}>
+                                                                Resume Builder <ArrowRight size={14} />
+                                                            </div>
+                                                            <div style={{ fontSize: "0.8rem", color: "rgba(255,255,255,0.5)", marginTop: "4px", lineHeight: "1.4" }}>
+                                                                Build powerful resumes in 5 minutes with real-time editing.
+                                                            </div>
+                                                        </Link>
+
+                                                        <Link href="/cover-letter" onClick={() => setShowTemplatesDropdown(false)} style={{ ...sidebarLinkCardStyle, marginTop: "12px" }}
+                                                            onMouseEnter={e => {
+                                                                e.currentTarget.style.background = "rgba(167, 139, 250, 0.06)";
+                                                                e.currentTarget.style.borderColor = "rgba(167, 139, 250, 0.2)";
+                                                            }}
+                                                            onMouseLeave={e => {
+                                                                e.currentTarget.style.background = "rgba(255,255,255,0.02)";
+                                                                e.currentTarget.style.borderColor = "rgba(255,255,255,0.05)";
+                                                            }}
+                                                        >
+                                                            <div style={{ fontWeight: "600", fontSize: "0.95rem", color: "#a78bfa", display: "flex", alignItems: "center", gap: "6px" }}>
+                                                                AI Cover Letter <ArrowRight size={14} />
+                                                            </div>
+                                                            <div style={{ fontSize: "0.8rem", color: "rgba(255,255,255,0.5)", marginTop: "4px", lineHeight: "1.4" }}>
+                                                                Write personalized and targeted cover letters in seconds.
+                                                            </div>
+                                                        </Link>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
+                                );
+                            }
+                            return (
+                                <Link key={link.href} href={link.href} style={{
+                                    ...desktopLinkStyle,
+                                    color: isActive(link.href) ? "#fff" : "rgba(255,255,255,0.65)",
+                                    background: isActive(link.href) ? "rgba(255,255,255,0.08)" : "transparent",
+                                    borderBottom: isActive(link.href) ? "2px solid #6f9dff" : "2px solid transparent",
+                                }}
+                                    onMouseEnter={e => { if (!isActive(link.href)) { e.currentTarget.style.color = "#fff"; e.currentTarget.style.background = "rgba(255,255,255,0.05)"; } }}
+                                    onMouseLeave={e => { if (!isActive(link.href)) { e.currentTarget.style.color = "rgba(255,255,255,0.65)"; e.currentTarget.style.background = "transparent"; } }}
+                                >
+                                    {link.label}
+                                </Link>
+                            );
+                        })}
                         {user && (
                             <Link href="/my-resumes" style={{
                                 ...desktopLinkStyle,
@@ -291,6 +574,18 @@ export default function Navbar() {
                     </div>
                 )}
             </aside>
+            <style>{`
+                @keyframes navSlideDown {
+                    from {
+                        opacity: 0;
+                        transform: translateY(-8px);
+                    }
+                    to {
+                        opacity: 1;
+                        transform: translateY(0);
+                    }
+                }
+            `}</style>
         </>
     );
 }
@@ -353,4 +648,119 @@ const drawerIcons = {
     "/cover-letter": FileSignature,
     "/ats-checker": Target,
     "/ai-tools": Sparkles,
+};
+
+/* Mega Dropdown CSS Styling Constants */
+const megaDropdownStyle = {
+    position: "absolute",
+    top: "64px",
+    left: 0,
+    right: 0,
+    width: "100vw",
+    background: "rgba(5, 5, 8, 0.96)",
+    backdropFilter: "blur(20px)",
+    borderBottom: "1px solid rgba(255, 255, 255, 0.08)",
+    boxShadow: "0 20px 48px rgba(0,0,0,0.85)",
+    zIndex: 999,
+    padding: "36px 0",
+    animation: "navSlideDown 0.24s cubic-bezier(0.16, 1, 0.3, 1)",
+};
+
+const megaDropdownContainerStyle = {
+    maxWidth: "1280px",
+    margin: "0 auto",
+    padding: "0 24px",
+    display: "grid",
+    gridTemplateColumns: "2.4fr 1fr",
+    gap: "48px",
+};
+
+const megaDropdownTitleStyle = {
+    fontSize: "1.05rem",
+    fontWeight: "700",
+    letterSpacing: "0.06em",
+    color: "#a5b4fc",
+    textTransform: "uppercase",
+    marginBottom: "24px",
+};
+
+const megaDropdownGridStyle = {
+    display: "grid",
+    gridTemplateColumns: "1fr 1fr 1fr",
+    gap: "20px",
+};
+
+const dropdownCardStyle = {
+    display: "flex",
+    gap: "14px",
+    padding: "12px",
+    borderRadius: "12px",
+    textDecoration: "none",
+    border: "1px solid transparent",
+    transition: "all 0.2s ease",
+    cursor: "pointer",
+};
+
+const iconContainerStyle = (color) => ({
+    width: "36px",
+    height: "36px",
+    borderRadius: "8px",
+    background: `rgba(${color === "#3b82f6" ? "59,130,246" : color === "#ec4899" ? "236,72,153" : color === "#10b981" ? "16,185,129" : color === "#f59e0b" ? "245,158,11" : color === "#6366f1" ? "99,102,241" : "139,92,246"}, 0.1)`,
+    border: `1px solid rgba(${color === "#3b82f6" ? "59,130,246" : color === "#ec4899" ? "236,72,153" : color === "#10b981" ? "16,185,129" : color === "#f59e0b" ? "245,158,11" : color === "#6366f1" ? "99,102,241" : "139,92,246"}, 0.2)`,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    flexShrink: 0,
+});
+
+const cardTitleStyle = {
+    fontSize: "0.9rem",
+    fontWeight: "600",
+    color: "#ffffff",
+    display: "flex",
+    alignItems: "center",
+    gap: "4px",
+    marginBottom: "4px",
+};
+
+const arrowIconStyle = {
+    fontSize: "0.95rem",
+    color: "#a5b4fc",
+    opacity: "0.5",
+    transition: "all 0.2s ease",
+    display: "inline-block",
+};
+
+const cardDescStyle = {
+    fontSize: "0.78rem",
+    color: "rgba(255,255,255,0.45)",
+    lineHeight: "1.4",
+};
+
+const sidebarContainerStyle = {
+    borderLeft: "1px solid rgba(255,255,255,0.08)",
+    paddingLeft: "48px",
+    display: "flex",
+    flexDirection: "column",
+    gap: "16px",
+};
+
+const sidebarHeaderStyle = {
+    fontSize: "0.82rem",
+    fontWeight: "700",
+    letterSpacing: "0.06em",
+    color: "rgba(255,255,255,0.45)",
+    textTransform: "uppercase",
+    marginBottom: "8px",
+};
+
+const sidebarLinkCardStyle = {
+    background: "rgba(255, 255, 255, 0.02)",
+    border: "1px solid rgba(255, 255, 255, 0.05)",
+    borderRadius: "12px",
+    padding: "16px",
+    textDecoration: "none",
+    transition: "all 0.2s ease",
+    cursor: "pointer",
+    display: "block",
 };
