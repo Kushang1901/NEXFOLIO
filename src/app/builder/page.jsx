@@ -1384,7 +1384,7 @@ ${formData.skills || "Not provided"}
             <footer className="bg-black border-top border-secondary py-4 mt-5">
                 <div className="container">
                     <div className="text-center text-white-50">
-                        <p className="mb-0">&copy; 2026 Nexfolio. All rights reserved.</p>
+                        <p className="mb-0">&copy; 2026 CVGrid. All rights reserved.</p>
                     </div>
                 </div>
             </footer>

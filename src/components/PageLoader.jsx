@@ -180,7 +180,7 @@ export default function PageLoader() {
                             borderRadius: "50%",
                             border: "3px solid rgba(139, 92, 246, 0.15)",
                             borderTopColor: "#8b5cf6",
-                            animation: "nexfolio-spin 0.8s linear infinite",
+                            animation: "cvgrid-spin 0.8s linear infinite",
                         }}
                     />
                     {/* Inner ring */}
@@ -191,7 +191,7 @@ export default function PageLoader() {
                             borderRadius: "50%",
                             border: "2px solid rgba(168, 85, 247, 0.1)",
                             borderTopColor: "#c084fc",
-                            animation: "nexfolio-spin-reverse 1.2s linear infinite",
+                            animation: "cvgrid-spin-reverse 1.2s linear infinite",
                         }}
                     />
                     {/* Center dot */}
@@ -202,7 +202,7 @@ export default function PageLoader() {
                             borderRadius: "50%",
                             background: "#a855f7",
                             boxShadow: "0 0 8px rgba(168, 85, 247, 0.8)",
-                            animation: "nexfolio-pulse 1s ease-in-out infinite",
+                            animation: "cvgrid-pulse 1s ease-in-out infinite",
                         }}
                     />
                 </div>
@@ -210,13 +210,13 @@ export default function PageLoader() {
 
             {/* Keyframe animations injected inline */}
             <style>{`
-                @keyframes nexfolio-spin {
+                @keyframes cvgrid-spin {
                     to { transform: rotate(360deg); }
                 }
-                @keyframes nexfolio-spin-reverse {
+                @keyframes cvgrid-spin-reverse {
                     to { transform: rotate(-360deg); }
                 }
-                @keyframes nexfolio-pulse {
+                @keyframes cvgrid-pulse {
                     0%, 100% { transform: scale(1); opacity: 1; }
                     50% { transform: scale(1.3); opacity: 0.7; }
                 }

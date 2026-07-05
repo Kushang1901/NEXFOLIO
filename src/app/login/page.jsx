@@ -35,7 +35,7 @@ export default function Login() {
     };
 
     // MOCK LOGIN BYPASS
-    const loginWithMockUser = (email = "demo@nexfolio.com", displayName = "Demo User") => {
+    const loginWithMockUser = (email = "demo@cvgrid.in", displayName = "Demo User") => {
         const mockUser = {
             uid: "mock_user_12345",
             email: email,
@@ -415,9 +415,9 @@ export default function Login() {
 
                 {/* Footer */}
                 <footer className="w-full py-8 px-8 flex flex-col md:flex-row justify-between items-center max-w-container-max-width mx-auto gap-4 bg-surface-container-lowest dark:bg-surface-container-lowest border-t border-outline-variant">
-                    <div className="font-label-bold text-label-bold text-on-surface">Nexfolio</div>
+                    <div className="font-label-bold text-label-bold text-on-surface">CVGrid</div>
                     <div className="flex flex-col md:flex-row gap-6 items-center">
-                        <span className="font-body-sm text-body-sm text-tertiary-fixed-dim">© 2026 Nexfolio. All rights reserved.</span>
+                        <span className="font-body-sm text-body-sm text-tertiary-fixed-dim">© 2026 CVGrid. All rights reserved.</span>
                         <div className="flex gap-6">
                             <a className="font-body-sm text-body-sm text-on-surface-variant hover:text-primary transition-colors duration-200 cursor-pointer" href="#">Privacy Policy</a>
                             <a className="font-body-sm text-body-sm text-on-surface-variant hover:text-primary transition-colors duration-200 cursor-pointer" href="#">Terms of Service</a>

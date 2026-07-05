@@ -389,7 +389,7 @@ export default function Profile() {
                                     </div>
 
                                     {/* Identity */}
-                                    <h3 className="fw-bold mb-1">{formData.firstName || formData.lastName ? `${formData.firstName} ${formData.lastName}`.trim() : "Nexfolio Member"}</h3>
+                                    <h3 className="fw-bold mb-1">{formData.firstName || formData.lastName ? `${formData.firstName} ${formData.lastName}`.trim() : "CVGrid Member"}</h3>
                                     <p className="text-white-50 mb-3">{email}</p>
                                     
                                     <div className="d-inline-block badge-provider mb-4">

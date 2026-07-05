@@ -15,11 +15,11 @@ export const metadata = {
     openGraph: {
         title: "Free AI Resume Templates – 18+ ATS-Friendly Designs | CVGrid",
         description: "Browse 18+ free professional resume templates. All ATS-optimized. Pick a design and generate your resume with AI in seconds.",
-        url: "https://nexfolio-ai.vercel.app/templates",
+        url: "https://cvgrid.in/templates",
         type: "website",
         images: [
             {
-                url: "https://nexfolio-ai.vercel.app/logo.png",
+                url: "https://cvgrid.in/logo.png",
                 width: 1200,
                 height: 630,
                 alt: "CVGrid Resume Templates",
@@ -30,7 +30,7 @@ export const metadata = {
         card: "summary_large_image",
         title: "18+ Free ATS-Friendly Resume Templates – CVGrid",
         description: "Classic, Modern, Creative, Executive, Developer, Minimalist and many more. All ATS-optimized. Free to use.",
-        images: ["https://nexfolio-ai.vercel.app/logo.png"],
+        images: ["https://cvgrid.in/logo.png"],
     },
 };
 
@@ -38,8 +38,8 @@ export default function TemplatesLayout({ children }) {
     const jsonLd = {
         "@context": "https://schema.org",
         "@type": "CollectionPage",
-        "@id": "https://nexfolio-ai.vercel.app/templates/#page",
-        "url": "https://nexfolio-ai.vercel.app/templates",
+        "@id": "https://cvgrid.in/templates/#page",
+        "url": "https://cvgrid.in/templates",
         "name": "Free Resume Templates – CVGrid",
         "description": "Browse 18+ free, ATS-friendly resume templates. Choose from Classic, Modern, Creative, Executive, Developer, Minimalist, Elegant and more.",
         "breadcrumb": {
@@ -49,13 +49,13 @@ export default function TemplatesLayout({ children }) {
                     "@type": "ListItem",
                     "position": 1,
                     "name": "Home",
-                    "item": "https://nexfolio-ai.vercel.app",
+                    "item": "https://cvgrid.in",
                 },
                 {
                     "@type": "ListItem",
                     "position": 2,
                     "name": "Resume Templates",
-                    "item": "https://nexfolio-ai.vercel.app/templates",
+                    "item": "https://cvgrid.in/templates",
                 },
             ],
         },

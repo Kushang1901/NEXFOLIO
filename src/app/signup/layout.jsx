@@ -15,7 +15,7 @@ export const metadata = {
     openGraph: {
         title: "Sign Up Free – CVGrid AI Resume Builder",
         description: "Create a free account and start building your professional resume with AI. No credit card required.",
-        url: "https://nexfolio-ai.vercel.app/signup",
+        url: "https://cvgrid.in/signup",
         type: "website",
     },
 };

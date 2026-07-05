@@ -14,11 +14,11 @@ export const metadata = {
     openGraph: {
         title: "AI Cover Letter Generator – Free & Professional | CVGrid",
         description: "Generate a tailored, professional cover letter in seconds using AI. Free, no watermark, download instantly.",
-        url: "https://nexfolio-ai.vercel.app/cover-letter",
+        url: "https://cvgrid.in/cover-letter",
         type: "website",
         images: [
             {
-                url: "https://nexfolio-ai.vercel.app/logo.png",
+                url: "https://cvgrid.in/logo.png",
                 width: 1200,
                 height: 630,
                 alt: "CVGrid AI Cover Letter Generator",
@@ -29,7 +29,7 @@ export const metadata = {
         card: "summary_large_image",
         title: "Free AI Cover Letter Generator – CVGrid",
         description: "Write a professional, personalized cover letter instantly with AI. 100% free.",
-        images: ["https://nexfolio-ai.vercel.app/logo.png"],
+        images: ["https://cvgrid.in/logo.png"],
     },
 };
 
@@ -37,8 +37,8 @@ export default function CoverLetterLayout({ children }) {
     const jsonLd = {
         "@context": "https://schema.org",
         "@type": "WebPage",
-        "@id": "https://nexfolio-ai.vercel.app/cover-letter/#page",
-        "url": "https://nexfolio-ai.vercel.app/cover-letter",
+        "@id": "https://cvgrid.in/cover-letter/#page",
+        "url": "https://cvgrid.in/cover-letter",
         "name": "Free AI Cover Letter Generator – CVGrid",
         "description": "Generate professional, personalized cover letters with AI in seconds. Free to use, no credit card required.",
         "breadcrumb": {
@@ -48,13 +48,13 @@ export default function CoverLetterLayout({ children }) {
                     "@type": "ListItem",
                     "position": 1,
                     "name": "Home",
-                    "item": "https://nexfolio-ai.vercel.app",
+                    "item": "https://cvgrid.in",
                 },
                 {
                     "@type": "ListItem",
                     "position": 2,
                     "name": "AI Cover Letter Generator",
-                    "item": "https://nexfolio-ai.vercel.app/cover-letter",
+                    "item": "https://cvgrid.in/cover-letter",
                 },
             ],
         },
