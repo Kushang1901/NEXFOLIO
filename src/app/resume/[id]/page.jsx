@@ -18,6 +18,22 @@ import NavyEleganceTemplate from "../../../templates/NavyEleganceTemplate";
 import ModernMinimalistTemplate from "../../../templates/ModernMinimalistTemplate";
 import EmeraldTemplate from "../../../templates/EmeraldTemplate";
 import SlateTwoColumnTemplate from "../../../templates/SlateTwoColumnTemplate";
+import SunriseTemplate from "../../../templates/SunriseTemplate";
+import MidnightTemplate from "../../../templates/MidnightTemplate";
+import NordicTemplate from "../../../templates/NordicTemplate";
+import CrimsonTemplate from "../../../templates/CrimsonTemplate";
+import AuroraTemplate from "../../../templates/AuroraTemplate";
+import TimelineTemplate from "../../../templates/TimelineTemplate";
+import CompactATSTemplate from "../../../templates/CompactATSTemplate";
+import GraduateTemplate from "../../../templates/GraduateTemplate";
+import SwissGridTemplate from "../../../templates/SwissGridTemplate";
+import ProductManagerTemplate from "../../../templates/ProductManagerTemplate";
+import DataAnalystTemplate from "../../../templates/DataAnalystTemplate";
+import BentoTemplate from "../../../templates/BentoTemplate";
+import IvyLeagueTemplate from "../../../templates/IvyLeagueTemplate";
+import BlueprintTemplate from "../../../templates/BlueprintTemplate";
+import ConsultantTemplate from "../../../templates/ConsultantTemplate";
+import PortfolioResumeTemplate from "../../../templates/PortfolioResumeTemplate";
 
 import { normalizeResumeData } from "../../../utils/resumeAdapter";
 import { showToast } from "../../../utils/toast";
@@ -166,6 +182,38 @@ export default function PublicResumePage() {
                 return <EmeraldTemplate data={data} />;
             case "slate_two_column":
                 return <SlateTwoColumnTemplate data={data} />;
+            case "sunrise":
+                return <SunriseTemplate data={data} />;
+            case "midnight":
+                return <MidnightTemplate data={data} />;
+            case "nordic":
+                return <NordicTemplate data={data} />;
+            case "crimson":
+                return <CrimsonTemplate data={data} />;
+            case "aurora":
+                return <AuroraTemplate data={data} />;
+            case "timeline":
+                return <TimelineTemplate data={data} />;
+            case "compact_ats":
+                return <CompactATSTemplate data={data} />;
+            case "graduate":
+                return <GraduateTemplate data={data} />;
+            case "swiss_grid":
+                return <SwissGridTemplate data={data} />;
+            case "product_manager":
+                return <ProductManagerTemplate data={data} />;
+            case "data_analyst":
+                return <DataAnalystTemplate data={data} />;
+            case "bento":
+                return <BentoTemplate data={data} />;
+            case "ivy_league":
+                return <IvyLeagueTemplate data={data} />;
+            case "blueprint":
+                return <BlueprintTemplate data={data} />;
+            case "consultant":
+                return <ConsultantTemplate data={data} />;
+            case "portfolio_resume":
+                return <PortfolioResumeTemplate data={data} />;
             default:
                 return <ClassicTemplate data={data} />;
         }

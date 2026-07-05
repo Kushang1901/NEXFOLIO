@@ -469,6 +469,200 @@ export default function TemplateSelection() {
                     </div>
                 </div>
             )
+        },
+        {
+            id: "compact_ats",
+            name: "Compact ATS",
+            category: "professional",
+            tags: ["ATS Friendly", "Font Dense", "No Photo"],
+            desc: "Maximizes page economy with clean vertical hierarchy. Perfect for multi-page reductions.",
+            preview: (
+                <div className="bg-white text-dark p-3 h-100 d-flex flex-column justify-content-between" style={{ fontSize: "10px", borderRadius: "6px", fontFamily: "Arial, sans-serif" }}>
+                    <div>
+                        <h6 className="fw-bold text-uppercase mb-1" style={{ fontSize: "10px", borderBottom: "1px solid #111" }}>John Doe</h6>
+                        <p className="text-muted mb-2" style={{ fontSize: "7px" }}>john@email.com | 9999999999 | LinkedIn</p>
+                        <p className="fw-bold text-uppercase mb-0 text-dark" style={{ fontSize: "8px" }}>Experience</p>
+                        <p className="text-muted mb-0" style={{ fontSize: "7px", lineHeight: "1.1" }}>Software Engineer - TechCorp</p>
+                    </div>
+                    <div>
+                        <p className="fw-bold text-uppercase mb-0 text-dark" style={{ fontSize: "8px" }}>Education</p>
+                        <p className="text-muted mb-0" style={{ fontSize: "7px" }}>B.S. in CS - 2024</p>
+                    </div>
+                </div>
+            )
+        },
+        {
+            id: "graduate",
+            name: "Graduate",
+            category: "minimalist",
+            tags: ["Entry Level", "Internships", "Student"],
+            desc: "Highlights education, coursework, and projects first. Structured for career starters.",
+            preview: (
+                <div className="bg-white text-dark p-3 h-100 d-flex flex-column justify-content-between" style={{ fontSize: "10px", borderRadius: "6px" }}>
+                    <div>
+                        <h6 className="fw-bold mb-1" style={{ fontSize: "11px", color: "#1e3a8a" }}>John Doe</h6>
+                        <p className="text-muted mb-2" style={{ fontSize: "7.5px" }}>john@email.com | portfolio.com</p>
+                        <p className="fw-bold text-uppercase text-secondary mb-1" style={{ fontSize: "8px" }}>Education</p>
+                        <p className="text-muted mb-2" style={{ fontSize: "7px" }}>M.S. Computer Science • GPA 3.9</p>
+                        <p className="fw-bold text-uppercase text-secondary mb-1" style={{ fontSize: "8px" }}>Projects</p>
+                        <p className="text-muted mb-0" style={{ fontSize: "7px" }}>AI Chatbot Application</p>
+                    </div>
+                </div>
+            )
+        },
+        {
+            id: "swiss_grid",
+            name: "Swiss Grid",
+            category: "minimalist",
+            tags: ["Swiss Grid", "High Alignment", "Bold Layout"],
+            desc: "Asymmetrical modern grid inspired by Swiss print design. Uncompromisingly professional.",
+            preview: (
+                <div className="bg-white text-dark p-3 h-100 d-flex flex-column" style={{ fontSize: "10px", borderRadius: "6px", fontFamily: "Helvetica, sans-serif" }}>
+                    <div className="d-flex justify-content-between border-bottom border-2 border-dark pb-2 mb-2">
+                        <h6 className="fw-bold mb-0 text-uppercase" style={{ fontSize: "11px" }}>J. DOE</h6>
+                        <span style={{ fontSize: "7px" }}>SWITZERLAND</span>
+                    </div>
+                    <div className="d-flex flex-grow-1" style={{ fontSize: "7px" }}>
+                        <div style={{ width: "30%", fontWeight: "bold", textTransform: "uppercase" }}>Profile</div>
+                        <div style={{ width: "70%", color: "#333" }} className="ps-2">Asymmetrical structured alignment.</div>
+                    </div>
+                </div>
+            )
+        },
+        {
+            id: "product_manager",
+            name: "Product Manager",
+            category: "professional",
+            tags: ["Impact-focused", "Metrics", "Business"],
+            desc: "Bold headers and clear highlight zones optimized for key metrics and product launches.",
+            preview: (
+                <div className="bg-white text-dark p-3 h-100 d-flex flex-column justify-content-between" style={{ fontSize: "10px", borderRadius: "6px" }}>
+                    <div>
+                        <h6 className="fw-bold mb-0" style={{ fontSize: "11px", color: "#0f172a" }}>John Doe</h6>
+                        <p className="fw-bold mb-2" style={{ fontSize: "7px", color: "#4f46e5" }}>PRODUCT LEADER</p>
+                        <p className="fw-bold text-uppercase mb-1 text-dark" style={{ fontSize: "8px" }}>Impact Summary</p>
+                        <p className="text-muted mb-0" style={{ fontSize: "7px", lineHeight: "1.2" }}>Scaled user engagement by 40% QoQ.</p>
+                    </div>
+                </div>
+            )
+        },
+        {
+            id: "data_analyst",
+            name: "Data Analyst",
+            category: "tech",
+            tags: ["Data Science", "Toolbox", "Sidebar"],
+            desc: "Tailored for analytical professionals. Showcases technical tools, Python/SQL projects, and databases.",
+            preview: (
+                <div className="bg-white text-dark d-flex h-100" style={{ fontSize: "10px", borderRadius: "6px", overflow: "hidden" }}>
+                    <div className="bg-light p-2" style={{ width: "35%", borderRight: "1px solid #e2e8f0" }}>
+                        <h6 className="fw-bold mb-1" style={{ fontSize: "8px", color: "#0891b2" }}>John Doe</h6>
+                        <span className="bg-white border px-1 py-0.5 rounded text-dark d-block text-center mt-2" style={{ fontSize: "5.5px", fontWeight: "bold" }}>SQL / R</span>
+                    </div>
+                    <div className="p-2" style={{ width: "65%" }}>
+                        <p className="fw-bold mb-1" style={{ fontSize: "8px" }}>Analytics Profile</p>
+                        <p className="text-muted mb-0" style={{ fontSize: "7px", lineHeight: "1.2" }}>Built predictive models using python.</p>
+                    </div>
+                </div>
+            )
+        },
+        {
+            id: "bento",
+            name: "Bento Resume",
+            category: "creative",
+            tags: ["Bento Grid", "Dashboard", "Modern UI"],
+            desc: "Inspired by modern dashboard Bento UI grids. Segmented card structure that stands out.",
+            preview: (
+                <div className="bg-light p-2 h-100 d-flex flex-column justify-content-between" style={{ fontSize: "10px", borderRadius: "6px" }}>
+                    <div className="bg-white border rounded p-1 mb-1 d-flex justify-content-between align-items-center">
+                        <span className="fw-bold" style={{ fontSize: "8px" }}>John Doe</span>
+                        <span style={{ fontSize: "6px" }}>Dev</span>
+                    </div>
+                    <div className="d-flex gap-1 mb-1">
+                        <div className="bg-white border rounded p-1 flex-grow-1" style={{ fontSize: "6px" }}>Connect</div>
+                        <div className="bg-white border rounded p-1 flex-grow-1" style={{ fontSize: "6px" }}>Skills</div>
+                    </div>
+                    <div className="bg-white border rounded p-1 flex-grow-1" style={{ fontSize: "6px" }}>About Me profile snippet</div>
+                </div>
+            )
+        },
+        {
+            id: "ivy_league",
+            name: "Ivy League CV",
+            category: "minimalist",
+            tags: ["Academic", "Research CV", "Serif"],
+            desc: "Formal, double-ruled classic layout featuring serif typography suited for fellowships and research.",
+            preview: (
+                <div className="bg-white text-dark p-3 h-100 text-center d-flex flex-column justify-content-between" style={{ fontSize: "10px", borderRadius: "6px", fontFamily: "Georgia, serif" }}>
+                    <div>
+                        <h6 className="fw-normal mb-1" style={{ fontSize: "12px" }}>John Doe</h6>
+                        <hr className="my-1" />
+                        <p className="text-uppercase text-secondary mb-1" style={{ fontSize: "6px", letterSpacing: "1px" }}>Research Appointments</p>
+                        <p className="text-muted mb-0" style={{ fontSize: "7px", fontStyle: "italic" }}>Graduate Research Fellow</p>
+                    </div>
+                </div>
+            )
+        },
+        {
+            id: "blueprint",
+            name: "Blueprint",
+            category: "tech",
+            tags: ["Engineering", "Monospace", "Schematic"],
+            desc: "IDE-inspired layout with clean drafting gridlines. Tailored for software and hardware engineers.",
+            preview: (
+                <div className="p-3 h-100 d-flex flex-column justify-content-between text-dark" style={{ 
+                    fontSize: "10px", 
+                    borderRadius: "6px", 
+                    fontFamily: "monospace",
+                    background: "#fafbfd",
+                    backgroundImage: "radial-gradient(#e2e8f0 1px, transparent 1px)",
+                    backgroundSize: "8px 8px"
+                }}>
+                    <div className="border border-primary p-2">
+                        <h6 className="fw-bold mb-0 text-primary" style={{ fontSize: "8px" }}>SYS.INFO // JOHN</h6>
+                        <span className="text-muted" style={{ fontSize: "6px" }}>ROLE: DEVOPS</span>
+                    </div>
+                    <div className="text-muted" style={{ fontSize: "6.5px" }}>// Implementation history</div>
+                </div>
+            )
+        },
+        {
+            id: "consultant",
+            name: "Consultant",
+            category: "professional",
+            tags: ["Corporate", "Case Studies", "Navy"],
+            desc: "Refined corporate layout with dark navy accents, structured competencies, and strategic milestones.",
+            preview: (
+                <div className="bg-white text-dark h-100 d-flex flex-column" style={{ fontSize: "10px", borderRadius: "6px", overflow: "hidden" }}>
+                    <div className="p-2 border-bottom border-2 border-primary" style={{ borderColor: "#1e3a8a" }}>
+                        <h6 className="fw-bold mb-0 text-uppercase" style={{ fontSize: "10px", color: "#1e3a8a" }}>John Doe</h6>
+                        <p className="text-muted mb-0" style={{ fontSize: "6px" }}>STRATEGY CONSULTING</p>
+                    </div>
+                    <div className="p-2 flex-grow-1 d-flex flex-column justify-content-between">
+                        <div>
+                            <p className="fw-bold text-uppercase mb-1" style={{ fontSize: "7px", color: "#1e3a8a" }}>milestones</p>
+                            <p className="text-muted mb-0" style={{ fontSize: "7px" }}>Delivered $5M cost efficiency.</p>
+                        </div>
+                    </div>
+                </div>
+            )
+        },
+        {
+            id: "portfolio_resume",
+            name: "Portfolio Resume",
+            category: "creative",
+            tags: ["Portfolio First", "GitHub Stats", "Creative Grid"],
+            desc: "Prominent link bars and card project spaces designed for full stack developers and web designers.",
+            preview: (
+                <div className="bg-white text-dark p-3 h-100 d-flex flex-column justify-content-between" style={{ fontSize: "10px", borderRadius: "6px" }}>
+                    <div>
+                        <h6 className="fw-bold mb-0" style={{ fontSize: "10px" }}>John Doe</h6>
+                        <span className="badge text-white px-2 py-0.5 mt-1" style={{ background: "linear-gradient(135deg, #6366f1, #3b82f6)", fontSize: "6px" }}>Developer</span>
+                        <div className="bg-dark text-white rounded p-1 mt-2 text-center" style={{ fontSize: "5.5px" }}>
+                            Portfolio | GitHub
+                        </div>
+                    </div>
+                </div>
+            )
         }
     ];
 
