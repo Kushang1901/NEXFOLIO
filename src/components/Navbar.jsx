@@ -7,7 +7,7 @@ import { auth } from "../firebase";
 import { signOut } from "firebase/auth";
 import { subscribeToAuthChanges } from "../authState";
 import { showToast } from "../utils/toast";
-import { Home, Palette, FileSignature, Target, Sparkles, FileText, X, ArrowRight, LogOut } from "lucide-react";
+import { Home, Palette, FileSignature, Target, Sparkles, FileText, X, ArrowRight, LogOut, ChevronDown } from "lucide-react";
 
 const NAV_LINKS = [
     { label: "Home", href: "/" },
@@ -25,6 +25,7 @@ export default function Navbar() {
     const [photoUrl, setPhotoUrl] = useState("");
     const [menuOpen, setMenuOpen] = useState(false);
     const [showTemplatesDropdown, setShowTemplatesDropdown] = useState(false);
+    const [mobileTemplatesOpen, setMobileTemplatesOpen] = useState(false);
 
     const handleCategoryClick = (category) => {
         if (typeof window !== "undefined") {
@@ -527,6 +528,127 @@ export default function Navbar() {
                 <nav style={{ flex: 1, padding: "8px 0" }}>
                     {NAV_LINKS.map((link) => {
                         const Icon = drawerIcons[link.href];
+                        if (link.label === "Templates") {
+                            return (
+                                <div key={link.href}>
+                                    <div style={{
+                                        display: "flex",
+                                        alignItems: "center",
+                                        justifyContent: "space-between",
+                                        background: isActive(link.href) ? "rgba(111,157,255,0.1)" : "transparent",
+                                        borderLeft: isActive(link.href) ? "3px solid #6f9dff" : "3px solid transparent",
+                                        paddingRight: "16px"
+                                    }}>
+                                        <Link href={link.href} onClick={closeMenu} style={{
+                                            ...drawerLinkStyle,
+                                            borderBottom: "none",
+                                            flexGrow: 1,
+                                            paddingRight: 0,
+                                            borderLeft: "none",
+                                            background: "transparent"
+                                        }}>
+                                            {Icon ? <Icon size={16} /> : null}
+                                            {link.label}
+                                        </Link>
+                                        <button 
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                setMobileTemplatesOpen(!mobileTemplatesOpen);
+                                            }}
+                                            style={{
+                                                background: "rgba(255,255,255,0.05)",
+                                                border: "1px solid rgba(255,255,255,0.1)",
+                                                borderRadius: "6px",
+                                                color: "#fff",
+                                                padding: "4px 8px",
+                                                cursor: "pointer",
+                                                display: "flex",
+                                                alignItems: "center",
+                                                justifyContent: "center"
+                                            }}
+                                        >
+                                            <ChevronDown size={14} style={{
+                                                transform: mobileTemplatesOpen ? "rotate(180deg)" : "rotate(0deg)",
+                                                transition: "transform 0.2s"
+                                            }} />
+                                        </button>
+                                    </div>
+
+                                    {/* Collapsible Sub-menu links */}
+                                    {mobileTemplatesOpen && (
+                                        <div style={{
+                                            background: "rgba(0, 0, 0, 0.25)",
+                                            borderLeft: "2px solid rgba(111,157,255,0.3)",
+                                            marginLeft: "28px",
+                                            marginTop: "4px",
+                                            marginBottom: "8px",
+                                            display: "flex",
+                                            flexDirection: "column",
+                                            gap: "2px"
+                                        }}>
+                                            <Link 
+                                                href="/templates" 
+                                                onClick={closeMenu} 
+                                                style={drawerSubLinkStyle}
+                                                onMouseEnter={e => e.currentTarget.style.color = "#fff"}
+                                                onMouseLeave={e => e.currentTarget.style.color = "rgba(255, 255, 255, 0.65)"}
+                                            >
+                                                All Layouts
+                                            </Link>
+                                            <Link 
+                                                href="/templates?category=professional" 
+                                                onClick={() => {
+                                                    closeMenu();
+                                                    handleCategoryClick("professional");
+                                                }} 
+                                                style={drawerSubLinkStyle}
+                                                onMouseEnter={e => e.currentTarget.style.color = "#fff"}
+                                                onMouseLeave={e => e.currentTarget.style.color = "rgba(255, 255, 255, 0.65)"}
+                                            >
+                                                ATS Friendly
+                                            </Link>
+                                            <Link 
+                                                href="/templates?category=minimalist" 
+                                                onClick={() => {
+                                                    closeMenu();
+                                                    handleCategoryClick("minimalist");
+                                                }} 
+                                                style={drawerSubLinkStyle}
+                                                onMouseEnter={e => e.currentTarget.style.color = "#fff"}
+                                                onMouseLeave={e => e.currentTarget.style.color = "rgba(255, 255, 255, 0.65)"}
+                                            >
+                                                Graduate / Starter
+                                            </Link>
+                                            <Link 
+                                                href="/templates?category=creative" 
+                                                onClick={() => {
+                                                    closeMenu();
+                                                    handleCategoryClick("creative");
+                                                }} 
+                                                style={drawerSubLinkStyle}
+                                                onMouseEnter={e => e.currentTarget.style.color = "#fff"}
+                                                onMouseLeave={e => e.currentTarget.style.color = "rgba(255, 255, 255, 0.65)"}
+                                            >
+                                                Modern & Creative
+                                            </Link>
+                                            <Link 
+                                                href="/templates?category=tech" 
+                                                onClick={() => {
+                                                    closeMenu();
+                                                    handleCategoryClick("tech");
+                                                }} 
+                                                style={drawerSubLinkStyle}
+                                                onMouseEnter={e => e.currentTarget.style.color = "#fff"}
+                                                onMouseLeave={e => e.currentTarget.style.color = "rgba(255, 255, 255, 0.65)"}
+                                            >
+                                                Developer / Tech
+                                            </Link>
+                                        </div>
+                                    )}
+                                </div>
+                            );
+                        }
+                        
                         return (
                             <Link key={link.href} href={link.href} onClick={closeMenu} style={{
                                 ...drawerLinkStyle,
@@ -763,4 +885,12 @@ const sidebarLinkCardStyle = {
     transition: "all 0.2s ease",
     cursor: "pointer",
     display: "block",
+};
+
+const drawerSubLinkStyle = {
+    padding: "8px 16px",
+    textDecoration: "none",
+    fontSize: "0.85rem",
+    color: "rgba(255, 255, 255, 0.65)",
+    transition: "color 0.15s ease",
 };
