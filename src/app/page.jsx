@@ -393,7 +393,7 @@ export default function HomePage() {
                                 Build Your ATS-Friendly Resume Today
                             </h2>
                             <p className="text-white-50 fs-5 mb-4">
-                                Join thousands of job seekers using Nexfolio to land interviews. Start for free now.
+                                Join thousands of job seekers using CVGrid to land interviews. Start for free now.
                             </p>
                              <button
                                 className="btn btn-primary btn-lg px-5 py-3 fw-semibold"
@@ -416,34 +416,34 @@ export default function HomePage() {
                 <div className="container py-4">
                     <div className="text-center mb-5">
                         <h2 className="display-6 fw-bold mb-3">Frequently Asked Questions</h2>
-                        <p className="text-white-50 fs-5">Everything you need to know about Nexfolio's free AI resume builder.</p>
+                        <p className="text-white-50 fs-5">Everything you need to know about CVGrid's free AI resume builder.</p>
                     </div>
                     <div className="row justify-content-center">
                         <div className="col-lg-8">
                             {[
                                 {
-                                    q: "Is Nexfolio really free to use?",
-                                    a: "Yes! Nexfolio is 100% free. You can create a resume, choose from 18+ premium templates, generate AI content, and download your resume as a PDF — all without paying anything or entering a credit card.",
+                                    q: "Is CVGrid really free to use?",
+                                    a: "Yes! CVGrid is 100% free. You can create a resume, choose from 18+ premium templates, generate AI content, and download your resume as a PDF — all without paying anything or entering a credit card.",
                                 },
                                 {
                                     q: "Are the resume templates ATS-friendly?",
-                                    a: "All resume templates on Nexfolio are designed to be ATS (Applicant Tracking System) friendly. They use clean formatting, standard section headings, and readable fonts that pass recruiter screening software.",
+                                    a: "All resume templates on CVGrid are designed to be ATS (Applicant Tracking System) friendly. They use clean formatting, standard section headings, and readable fonts that pass recruiter screening software.",
                                 },
                                 {
                                     q: "How does the AI resume builder work?",
-                                    a: "Nexfolio uses Google Gemini AI to generate professional resume content based on your job role, experience, and skills. Simply enter your details, click generate, review the content, and download your finished resume.",
+                                    a: "CVGrid uses Google Gemini AI to generate professional resume content based on your job role, experience, and skills. Simply enter your details, click generate, review the content, and download your finished resume.",
                                 },
                                 {
                                     q: "Can I download my resume as a PDF?",
                                     a: "Yes! Once you've built your resume, you can download it as a high-quality PDF or PNG image with a single click. No watermarks, no subscriptions — completely free.",
                                 },
                                 {
-                                    q: "Does Nexfolio work for freshers and students?",
-                                    a: "Absolutely. Nexfolio is specifically designed for students, freshers, and entry-level job seekers. The AI helps you write professional resume content even if you have limited work experience.",
+                                    q: "Does CVGrid work for freshers and students?",
+                                    a: "Absolutely. CVGrid is specifically designed for students, freshers, and entry-level job seekers. The AI helps you write professional resume content even if you have limited work experience.",
                                 },
                                 {
                                     q: "How many resume templates are available?",
-                                    a: "Nexfolio offers 18+ professionally designed resume templates including Classic, Modern, Creative, Executive, Developer, Minimalist, Elegant, Navy Elegance, Emerald, Aurora, Midnight, Nordic, Crimson, and more.",
+                                    a: "CVGrid offers 18+ professionally designed resume templates including Classic, Modern, Creative, Executive, Developer, Minimalist, Elegant, Navy Elegance, Emerald, Aurora, Midnight, Nordic, Crimson, and more.",
                                 },
                             ].map((item, i) => (
                                 <details
@@ -479,7 +479,7 @@ export default function HomePage() {
                 <div className="container">
                     <div className="text-center text-white-50">
                         <p className="mb-1">
-                            &copy; 2026 Nexfolio. All rights reserved.
+                            &copy; 2026 CVGrid. All rights reserved.
                         </p>
                         <p className="mb-0">
                             Designed &amp; Developed by{" "}

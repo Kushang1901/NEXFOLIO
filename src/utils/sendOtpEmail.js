@@ -15,9 +15,9 @@ export async function sendOtpEmail(to, otp) {
     }
     try {
         await transporter.sendMail({
-            from: `"Nexfolio" <${process.env.EMAIL_USER}>`,
+            from: `"CVGrid" <${process.env.EMAIL_USER}>`,
             to,
-            subject: "Your Password Reset OTP - Nexfolio",
+            subject: "Your Password Reset OTP - CVGrid",
             html: `
                 <div style="font-family: Arial, sans-serif; padding: 20px; color: #1e2227;">
                     <h2>Password Reset Request 👋</h2>
@@ -28,7 +28,7 @@ export async function sendOtpEmail(to, otp) {
                     <p>This OTP will expire in <b>5 minutes</b>.</p>
                     <p>If you did not request this reset, you can safely ignore this email.</p>
                     <br />
-                    <strong>– Nexfolio Team</strong>
+                    <strong>– CVGrid Team</strong>
                 </div>
             `
         });

@@ -7,10 +7,10 @@ import PageLoader from "../components/PageLoader";
 // SITE CONSTANTS
 // ─────────────────────────────────────────────
 const BASE_URL = "https://nexfolio-ai.vercel.app";
-const SITE_NAME = "Nexfolio";
-const SITE_TITLE = "Free Resume Maker & AI Resume Builder – Nexfolio";
+const SITE_NAME = "CVGrid";
+const SITE_TITLE = "Free Resume Maker & AI Resume Builder – CVGrid";
 const SITE_DESC =
-    "Create a professional, ATS-friendly resume in minutes with Nexfolio's free AI resume builder. Choose from 18+ premium templates, generate AI content, and download as PDF — 100% free, no watermark, no credit card.";
+    "Create a professional, ATS-friendly resume in minutes with CVGrid's free AI resume builder. Choose from 18+ premium templates, generate AI content, and download as PDF — 100% free, no watermark, no credit card.";
 const OG_IMAGE = `${BASE_URL}/og-image.png`;
 const LOGO = `${BASE_URL}/logo.png`;
 
@@ -70,8 +70,8 @@ export const metadata = {
         "free resume builder download PDF",
         "resume builder with AI content generation",
         // Brand
-        "Nexfolio", "Nexfolio resume builder", "Nexfolio AI",
-        "nexfolio.app", "nexfolio free resume",
+        "CVGrid", "CVGrid resume builder", "CVGrid AI",
+        "cvgrid.in", "cvgrid free resume",
         // Templates
         "modern resume template", "professional resume template free",
         "creative resume template", "minimalist resume template",
@@ -133,7 +133,7 @@ export const metadata = {
     // ── Twitter / X Card ──────────────────────
     twitter: {
         card: "summary_large_image",
-        site: "@nexfolio",
+        site: "@cvgrid",
         creator: "@kushangacharya",
         title: SITE_TITLE,
         description:
@@ -237,10 +237,10 @@ export default function RootLayout({ children }) {
                 "@id": `${BASE_URL}/#software`,
                 "name": SITE_NAME,
                 "alternateName": [
-                    "Nexfolio Resume Builder",
+                    "CVGrid Resume Builder",
                     "Free AI Resume Maker",
                     "AI CV Builder",
-                    "Nexfolio AI Resume",
+                    "CVGrid AI Resume",
                 ],
                 "url": BASE_URL,
                 "logo": {
@@ -249,7 +249,7 @@ export default function RootLayout({ children }) {
                     "width": 512,
                     "height": 512,
                 },
-                "description": "Nexfolio is a free AI-powered resume builder that helps students and professionals create ATS-friendly resumes in minutes. Choose from 18+ premium templates, generate AI content, and download as PDF — completely free.",
+                "description": "CVGrid is a free AI-powered resume builder that helps students and professionals create ATS-friendly resumes in minutes. Choose from 18+ premium templates, generate AI content, and download as PDF — completely free.",
                 "applicationCategory": "BusinessApplication",
                 "applicationSubCategory": "Resume Builder",
                 "operatingSystem": "Web Browser",
@@ -262,7 +262,7 @@ export default function RootLayout({ children }) {
                     "priceCurrency": "USD",
                     "availability": "https://schema.org/InStock",
                     "priceValidUntil": "2027-12-31",
-                    "description": "Nexfolio is completely free to use. No credit card required. No watermark.",
+                    "description": "CVGrid is completely free to use. No credit card required. No watermark.",
                 },
                 "aggregateRating": {
                     "@type": "AggregateRating",
@@ -311,7 +311,7 @@ export default function RootLayout({ children }) {
                     "width": 512,
                     "height": 512,
                 },
-                "description": "Nexfolio provides a free AI-powered resume builder with 18+ professional templates for students and job seekers.",
+                "description": "CVGrid provides a free AI-powered resume builder with 18+ professional templates for students and job seekers.",
                 "sameAs": [
                     BASE_URL,
                     "https://github.com/Kushang1901",
@@ -412,7 +412,7 @@ export default function RootLayout({ children }) {
                 "@type": "HowTo",
                 "@id": `${BASE_URL}/#howto`,
                 "name": "How to Build a Free Professional Resume with AI",
-                "description": "Step-by-step guide to creating an ATS-friendly resume using Nexfolio's free AI resume builder in under 5 minutes.",
+                "description": "Step-by-step guide to creating an ATS-friendly resume using CVGrid's free AI resume builder in under 5 minutes.",
                 "totalTime": "PT5M",
                 "estimatedCost": {
                     "@type": "MonetaryAmount",
@@ -420,7 +420,7 @@ export default function RootLayout({ children }) {
                     "value": "0",
                 },
                 "tool": [
-                    { "@type": "HowToTool", "name": "Nexfolio AI Resume Builder" },
+                    { "@type": "HowToTool", "name": "CVGrid AI Resume Builder" },
                     { "@type": "HowToTool", "name": "Web Browser" },
                 ],
                 "step": [
@@ -428,7 +428,7 @@ export default function RootLayout({ children }) {
                         "@type": "HowToStep",
                         "position": 1,
                         "name": "Sign Up for Free",
-                        "text": "Create a free Nexfolio account — no credit card required. Just your email and a password.",
+                        "text": "Create a free CVGrid account — no credit card required. Just your email and a password.",
                         "url": `${BASE_URL}/signup`,
                     },
                     {
@@ -467,7 +467,7 @@ export default function RootLayout({ children }) {
                 "@type": "ItemList",
                 "@id": `${BASE_URL}/#templates`,
                 "name": "Free Professional Resume Templates",
-                "description": "Browse 18+ ATS-friendly resume templates available on Nexfolio, free to use.",
+                "description": "Browse 18+ ATS-friendly resume templates available on CVGrid, free to use.",
                 "numberOfItems": 18,
                 "url": `${BASE_URL}/templates`,
                 "itemListElement": [
@@ -489,10 +489,10 @@ export default function RootLayout({ children }) {
                 "mainEntity": [
                     {
                         "@type": "Question",
-                        "name": "Is Nexfolio really free to use?",
+                        "name": "Is CVGrid really free to use?",
                         "acceptedAnswer": {
                             "@type": "Answer",
-                            "text": "Yes! Nexfolio is 100% free. You can create a resume, choose from 18+ premium templates, generate AI content, and download your resume as a PDF — all without paying anything or entering a credit card.",
+                            "text": "Yes! CVGrid is 100% free. You can create a resume, choose from 18+ premium templates, generate AI content, and download your resume as a PDF — all without paying anything or entering a credit card.",
                         },
                     },
                     {
@@ -500,7 +500,7 @@ export default function RootLayout({ children }) {
                         "name": "Are the resume templates ATS-friendly?",
                         "acceptedAnswer": {
                             "@type": "Answer",
-                            "text": "All resume templates on Nexfolio are designed to be ATS (Applicant Tracking System) friendly. They use clean formatting, standard section headings, and readable fonts that pass recruiter screening software.",
+                            "text": "All resume templates on CVGrid are designed to be ATS (Applicant Tracking System) friendly. They use clean formatting, standard section headings, and readable fonts that pass recruiter screening software.",
                         },
                     },
                     {
@@ -508,7 +508,7 @@ export default function RootLayout({ children }) {
                         "name": "How does the AI resume builder work?",
                         "acceptedAnswer": {
                             "@type": "Answer",
-                            "text": "Nexfolio uses Google Gemini AI to generate professional resume content based on your job role, experience, and skills. Simply enter your details, click generate, review the content, and download your finished resume.",
+                            "text": "CVGrid uses Google Gemini AI to generate professional resume content based on your job role, experience, and skills. Simply enter your details, click generate, review the content, and download your finished resume.",
                         },
                     },
                     {
@@ -521,10 +521,10 @@ export default function RootLayout({ children }) {
                     },
                     {
                         "@type": "Question",
-                        "name": "Does Nexfolio work for freshers and students?",
+                        "name": "Does CVGrid work for freshers and students?",
                         "acceptedAnswer": {
                             "@type": "Answer",
-                            "text": "Absolutely. Nexfolio is specifically designed for students, freshers, and entry-level job seekers. The AI helps you write professional resume content even if you have limited work experience.",
+                            "text": "Absolutely. CVGrid is specifically designed for students, freshers, and entry-level job seekers. The AI helps you write professional resume content even if you have limited work experience.",
                         },
                     },
                     {
@@ -532,23 +532,23 @@ export default function RootLayout({ children }) {
                         "name": "How many resume templates are available?",
                         "acceptedAnswer": {
                             "@type": "Answer",
-                            "text": "Nexfolio offers 18+ professionally designed resume templates including Classic, Modern, Creative, Executive, Developer, Minimalist, Elegant, Navy Elegance, Emerald, Aurora, Midnight, Nordic, Crimson, and more.",
+                            "text": "CVGrid offers 18+ professionally designed resume templates including Classic, Modern, Creative, Executive, Developer, Minimalist, Elegant, Navy Elegance, Emerald, Aurora, Midnight, Nordic, Crimson, and more.",
                         },
                     },
                     {
                         "@type": "Question",
-                        "name": "Is there an ATS checker in Nexfolio?",
+                        "name": "Is there an ATS checker in CVGrid?",
                         "acceptedAnswer": {
                             "@type": "Answer",
-                            "text": "Yes! Nexfolio includes a built-in AI-powered ATS checker that analyzes your resume against a job description and gives you an ATS compatibility score with detailed suggestions to improve your chances.",
+                            "text": "Yes! CVGrid includes a built-in AI-powered ATS checker that analyzes your resume against a job description and gives you an ATS compatibility score with detailed suggestions to improve your chances.",
                         },
                     },
                     {
                         "@type": "Question",
-                        "name": "Can Nexfolio generate a cover letter too?",
+                        "name": "Can CVGrid generate a cover letter too?",
                         "acceptedAnswer": {
                             "@type": "Answer",
-                            "text": "Yes! Nexfolio has a free AI cover letter generator powered by Google Gemini. Just enter your job title, company, and key highlights — and the AI will write a compelling, personalized cover letter in seconds.",
+                            "text": "Yes! CVGrid has a free AI cover letter generator powered by Google Gemini. Just enter your job title, company, and key highlights — and the AI will write a compelling, personalized cover letter in seconds.",
                         },
                     },
                 ],
@@ -628,7 +628,7 @@ export default function RootLayout({ children }) {
                 {/* ── Site Category / Abstract ────────────────── */}
                 <meta name="abstract"        content="Free AI resume builder with 18+ ATS-friendly templates. Build, customize, and download your professional resume as PDF — powered by Google Gemini AI." />
                 <meta name="topic"           content="Resume Builder, AI Resume, Career Tools, Job Search" />
-                <meta name="summary"         content="Nexfolio is a free AI-powered resume builder for students and job seekers." />
+                <meta name="summary"         content="CVGrid is a free AI-powered resume builder for students and job seekers." />
                 <meta name="Classification"  content="Resume Builder" />
                 <meta name="category"        content="Technology, AI Tools, Career" />
                 <meta name="pagename"        content={SITE_TITLE} />

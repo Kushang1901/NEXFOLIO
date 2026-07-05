@@ -1,5 +1,5 @@
 export const metadata = {
-    title: "Free AI Resume Templates – 18+ ATS-Friendly Designs | Nexfolio",
+    title: "Free AI Resume Templates – 18+ ATS-Friendly Designs | CVGrid",
     description: "Browse 18+ free professional resume templates — Classic, Modern, Creative, Executive, Developer, Minimalist, Elegant, Nordic, Aurora, Midnight, Crimson and more. All ATS-optimized and free to download.",
     keywords: [
         "free resume templates", "ATS resume templates", "professional resume templates",
@@ -13,7 +13,7 @@ export const metadata = {
         canonical: "/templates",
     },
     openGraph: {
-        title: "Free AI Resume Templates – 18+ ATS-Friendly Designs | Nexfolio",
+        title: "Free AI Resume Templates – 18+ ATS-Friendly Designs | CVGrid",
         description: "Browse 18+ free professional resume templates. All ATS-optimized. Pick a design and generate your resume with AI in seconds.",
         url: "https://nexfolio-ai.vercel.app/templates",
         type: "website",
@@ -22,13 +22,13 @@ export const metadata = {
                 url: "https://nexfolio-ai.vercel.app/logo.png",
                 width: 1200,
                 height: 630,
-                alt: "Nexfolio Resume Templates",
+                alt: "CVGrid Resume Templates",
             },
         ],
     },
     twitter: {
         card: "summary_large_image",
-        title: "18+ Free ATS-Friendly Resume Templates – Nexfolio",
+        title: "18+ Free ATS-Friendly Resume Templates – CVGrid",
         description: "Classic, Modern, Creative, Executive, Developer, Minimalist and many more. All ATS-optimized. Free to use.",
         images: ["https://nexfolio-ai.vercel.app/logo.png"],
     },
@@ -40,7 +40,7 @@ export default function TemplatesLayout({ children }) {
         "@type": "CollectionPage",
         "@id": "https://nexfolio-ai.vercel.app/templates/#page",
         "url": "https://nexfolio-ai.vercel.app/templates",
-        "name": "Free Resume Templates – Nexfolio",
+        "name": "Free Resume Templates – CVGrid",
         "description": "Browse 18+ free, ATS-friendly resume templates. Choose from Classic, Modern, Creative, Executive, Developer, Minimalist, Elegant and more.",
         "breadcrumb": {
             "@type": "BreadcrumbList",

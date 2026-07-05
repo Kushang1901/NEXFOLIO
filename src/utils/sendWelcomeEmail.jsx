@@ -10,20 +10,20 @@ const transporter = nodemailer.createTransport({
 
 async function sendWelcomeEmail(to, name) {
     await transporter.sendMail({
-        from: `"Nexfolio" <${process.env.EMAIL_USER}>`,
+        from: `"CVGrid" <${process.env.EMAIL_USER}>`,
         to,
-        subject: "Welcome to Nexfolio 🎉",
+        subject: "Welcome to CVGrid 🎉",
         html: `
             <div style="font-family: Arial; padding: 20px">
                 <h2>Welcome ${name || "there"} 👋</h2>
                 <p>
-                    You have successfully joined <b>Nexfolio</b>.
+                    You have successfully joined <b>CVGrid</b>.
                 </p>
                 <p>
                     Start building your professional resume today!
                 </p>
                 <br />
-                <strong>– Nexfolio Team</strong>
+                <strong>– CVGrid Team</strong>
             </div>
         `
     });
