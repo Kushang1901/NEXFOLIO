@@ -26,6 +26,8 @@ export default function Navbar() {
     const [menuOpen, setMenuOpen] = useState(false);
     const [showTemplatesDropdown, setShowTemplatesDropdown] = useState(false);
     const [mobileTemplatesOpen, setMobileTemplatesOpen] = useState(false);
+    const [showAiDropdown, setShowAiDropdown] = useState(false);
+    const [mobileAiOpen, setMobileAiOpen] = useState(false);
 
     const handleCategoryClick = (category) => {
         if (typeof window !== "undefined") {
@@ -391,6 +393,177 @@ export default function Navbar() {
                                     </div>
                                 );
                             }
+                            if (link.label === "AI Tools") {
+                                return (
+                                    <div
+                                        key={link.href}
+                                        onMouseEnter={() => setShowAiDropdown(true)}
+                                        onMouseLeave={() => setShowAiDropdown(false)}
+                                        style={{ position: "static" }}
+                                    >
+                                        <Link href={link.href} style={{
+                                            ...desktopLinkStyle,
+                                            color: isActive(link.href) || showAiDropdown ? "#fff" : "rgba(255,255,255,0.65)",
+                                            background: isActive(link.href) || showAiDropdown ? "rgba(255,255,255,0.08)" : "transparent",
+                                            borderBottom: isActive(link.href) || showAiDropdown ? "2px solid #a78bfa" : "2px solid transparent",
+                                        }}>
+                                            {link.label}
+                                        </Link>
+
+                                        {/* AI TOOLS MEGA DROPDOWN */}
+                                        {showAiDropdown && (
+                                            <div style={aiMegaDropdownStyle}>
+                                                <div style={megaDropdownContainerStyle}>
+                                                    {/* Left Column: Grid */}
+                                                    <div>
+                                                        <h4 style={aiMegaDropdownTitleStyle}>AI Career Suite</h4>
+                                                        <div style={megaDropdownGridStyle}>
+                                                            
+                                                            {/* AI Resume Builder */}
+                                                            <Link 
+                                                                href="/templates" 
+                                                                onClick={() => setShowAiDropdown(false)}
+                                                                style={dropdownCardStyle}
+                                                                onMouseEnter={e => {
+                                                                    e.currentTarget.style.background = "rgba(255, 255, 255, 0.03)";
+                                                                    e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.1)";
+                                                                    e.currentTarget.querySelector(".arrow-icon").style.transform = "translateX(4px)";
+                                                                    e.currentTarget.querySelector(".arrow-icon").style.opacity = "1";
+                                                                }}
+                                                                onMouseLeave={e => {
+                                                                    e.currentTarget.style.background = "transparent";
+                                                                    e.currentTarget.style.borderColor = "transparent";
+                                                                    e.currentTarget.querySelector(".arrow-icon").style.transform = "translateX(0)";
+                                                                    e.currentTarget.querySelector(".arrow-icon").style.opacity = "0.5";
+                                                                }}
+                                                            >
+                                                                <div style={iconContainerStyle("#6366f1")}>
+                                                                    <Sparkles size={18} color="#818cf8" />
+                                                                </div>
+                                                                <div>
+                                                                    <div style={cardTitleStyle}>
+                                                                        AI Resume Builder
+                                                                        <span className="arrow-icon" style={arrowIconStyle}>→</span>
+                                                                    </div>
+                                                                    <div style={cardDescStyle}>Generate profiles, summaries, and achievements with AI.</div>
+                                                                </div>
+                                                            </Link>
+
+                                                            {/* ATS Checker */}
+                                                            <Link 
+                                                                href="/ats-checker" 
+                                                                onClick={() => setShowAiDropdown(false)}
+                                                                style={dropdownCardStyle}
+                                                                onMouseEnter={e => {
+                                                                    e.currentTarget.style.background = "rgba(255, 255, 255, 0.03)";
+                                                                    e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.1)";
+                                                                    e.currentTarget.querySelector(".arrow-icon").style.transform = "translateX(4px)";
+                                                                    e.currentTarget.querySelector(".arrow-icon").style.opacity = "1";
+                                                                }}
+                                                                onMouseLeave={e => {
+                                                                    e.currentTarget.style.background = "transparent";
+                                                                    e.currentTarget.style.borderColor = "transparent";
+                                                                    e.currentTarget.querySelector(".arrow-icon").style.transform = "translateX(0)";
+                                                                    e.currentTarget.querySelector(".arrow-icon").style.opacity = "0.5";
+                                                                }}
+                                                            >
+                                                                <div style={iconContainerStyle("#10b981")}>
+                                                                    <Target size={18} color="#34d399" />
+                                                                </div>
+                                                                <div>
+                                                                    <div style={cardTitleStyle}>
+                                                                        ATS Match Checker
+                                                                        <span className="arrow-icon" style={arrowIconStyle}>→</span>
+                                                                    </div>
+                                                                    <div style={cardDescStyle}>Compare your resume against descriptions and identify keyword gaps.</div>
+                                                                </div>
+                                                            </Link>
+
+                                                            {/* AI Cover Letter */}
+                                                            <Link 
+                                                                href="/cover-letter" 
+                                                                onClick={() => setShowAiDropdown(false)}
+                                                                style={dropdownCardStyle}
+                                                                onMouseEnter={e => {
+                                                                    e.currentTarget.style.background = "rgba(255, 255, 255, 0.03)";
+                                                                    e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.1)";
+                                                                    e.currentTarget.querySelector(".arrow-icon").style.transform = "translateX(4px)";
+                                                                    e.currentTarget.querySelector(".arrow-icon").style.opacity = "1";
+                                                                }}
+                                                                onMouseLeave={e => {
+                                                                    e.currentTarget.style.background = "transparent";
+                                                                    e.currentTarget.style.borderColor = "transparent";
+                                                                    e.currentTarget.querySelector(".arrow-icon").style.transform = "translateX(0)";
+                                                                    e.currentTarget.querySelector(".arrow-icon").style.opacity = "0.5";
+                                                                }}
+                                                            >
+                                                                <div style={iconContainerStyle("#ec4899")}>
+                                                                    <FileSignature size={18} color="#f472b6" />
+                                                                </div>
+                                                                <div>
+                                                                    <div style={cardTitleStyle}>
+                                                                        Cover Letter Writer
+                                                                        <span className="arrow-icon" style={arrowIconStyle}>→</span>
+                                                                    </div>
+                                                                    <div style={cardDescStyle}>Draft high-converting cover letters matching target job specifications.</div>
+                                                                </div>
+                                                            </Link>
+
+                                                            {/* PDF Parser */}
+                                                            <Link 
+                                                                href="/builder" 
+                                                                onClick={() => setShowAiDropdown(false)}
+                                                                style={dropdownCardStyle}
+                                                                onMouseEnter={e => {
+                                                                    e.currentTarget.style.background = "rgba(255, 255, 255, 0.03)";
+                                                                    e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.1)";
+                                                                    e.currentTarget.querySelector(".arrow-icon").style.transform = "translateX(4px)";
+                                                                    e.currentTarget.querySelector(".arrow-icon").style.opacity = "1";
+                                                                }}
+                                                                onMouseLeave={e => {
+                                                                    e.currentTarget.style.background = "transparent";
+                                                                    e.currentTarget.style.borderColor = "transparent";
+                                                                    e.currentTarget.querySelector(".arrow-icon").style.transform = "translateX(0)";
+                                                                    e.currentTarget.querySelector(".arrow-icon").style.opacity = "0.5";
+                                                                }}
+                                                            >
+                                                                <div style={iconContainerStyle("#f59e0b")}>
+                                                                    <FileText size={18} color="#fbbf24" />
+                                                                </div>
+                                                                <div>
+                                                                    <div style={cardTitleStyle}>
+                                                                        Smart PDF Parser
+                                                                        <span className="arrow-icon" style={arrowIconStyle}>→</span>
+                                                                    </div>
+                                                                    <div style={cardDescStyle}>Extract data from your current PDF resume to pre-fill templates.</div>
+                                                                </div>
+                                                            </Link>
+
+                                                        </div>
+                                                    </div>
+
+                                                    {/* Right Column: Actions */}
+                                                    <div style={sidebarContainerStyle}>
+                                                        <h4 style={sidebarHeaderStyle}>Suite Performance</h4>
+                                                        <div style={{
+                                                            background: "rgba(255,255,255,0.02)",
+                                                            border: "1px solid rgba(255,255,255,0.05)",
+                                                            borderRadius: "12px",
+                                                            padding: "16px",
+                                                            fontSize: "0.8rem",
+                                                            color: "rgba(255,255,255,0.6)",
+                                                            lineHeight: "1.5"
+                                                        }}>
+                                                            <strong style={{ color: "#a78bfa", display: "block", marginBottom: "6px" }}>Recruiter-Grade AI</strong>
+                                                            Powered by Gemini models to write professional experience entries without clichés. Completely free.
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
+                                );
+                            }
                             return (
                                 <Link key={link.href} href={link.href} style={{
                                     ...desktopLinkStyle,
@@ -649,6 +822,115 @@ export default function Navbar() {
                             );
                         }
                         
+                        if (link.label === "AI Tools") {
+                            return (
+                                <div key={link.href}>
+                                    <div style={{
+                                        display: "flex",
+                                        alignItems: "center",
+                                        justifyContent: "space-between",
+                                        background: isActive(link.href) ? "rgba(111,157,255,0.1)" : "transparent",
+                                        borderLeft: isActive(link.href) ? "3px solid #6f9dff" : "3px solid transparent",
+                                        paddingRight: "16px"
+                                    }}>
+                                        <Link href={link.href} onClick={closeMenu} style={{
+                                            ...drawerLinkStyle,
+                                            borderBottom: "none",
+                                            flexGrow: 1,
+                                            paddingRight: 0,
+                                            borderLeft: "none",
+                                            background: "transparent"
+                                        }}>
+                                            {Icon ? <Icon size={16} /> : null}
+                                            {link.label}
+                                        </Link>
+                                        <button 
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                setMobileAiOpen(!mobileAiOpen);
+                                            }}
+                                            style={{
+                                                background: "rgba(255,255,255,0.05)",
+                                                border: "1px solid rgba(255,255,255,0.1)",
+                                                borderRadius: "6px",
+                                                color: "#fff",
+                                                padding: "4px 8px",
+                                                cursor: "pointer",
+                                                display: "flex",
+                                                alignItems: "center",
+                                                justifyContent: "center"
+                                            }}
+                                        >
+                                            <ChevronDown size={14} style={{
+                                                transform: mobileAiOpen ? "rotate(180deg)" : "rotate(0deg)",
+                                                transition: "transform 0.2s"
+                                            }} />
+                                        </button>
+                                    </div>
+
+                                    {/* Collapsible AI Sub-menu links */}
+                                    {mobileAiOpen && (
+                                        <div style={{
+                                            background: "rgba(0, 0, 0, 0.25)",
+                                            borderLeft: "2px solid rgba(167, 139, 250, 0.3)",
+                                            marginLeft: "28px",
+                                            marginTop: "4px",
+                                            marginBottom: "8px",
+                                            display: "flex",
+                                            flexDirection: "column",
+                                            gap: "2px"
+                                        }}>
+                                            <Link 
+                                                href="/ai-tools" 
+                                                onClick={closeMenu} 
+                                                style={drawerSubLinkStyle}
+                                                onMouseEnter={e => e.currentTarget.style.color = "#fff"}
+                                                onMouseLeave={e => e.currentTarget.style.color = "rgba(255, 255, 255, 0.65)"}
+                                            >
+                                                AI Hub Overview
+                                            </Link>
+                                            <Link 
+                                                href="/templates" 
+                                                onClick={closeMenu} 
+                                                style={drawerSubLinkStyle}
+                                                onMouseEnter={e => e.currentTarget.style.color = "#fff"}
+                                                onMouseLeave={e => e.currentTarget.style.color = "rgba(255, 255, 255, 0.65)"}
+                                            >
+                                                AI Resume Builder
+                                            </Link>
+                                            <Link 
+                                                href="/ats-checker" 
+                                                onClick={closeMenu} 
+                                                style={drawerSubLinkStyle}
+                                                onMouseEnter={e => e.currentTarget.style.color = "#fff"}
+                                                onMouseLeave={e => e.currentTarget.style.color = "rgba(255, 255, 255, 0.65)"}
+                                            >
+                                                ATS Match Checker
+                                            </Link>
+                                            <Link 
+                                                href="/cover-letter" 
+                                                onClick={closeMenu} 
+                                                style={drawerSubLinkStyle}
+                                                onMouseEnter={e => e.currentTarget.style.color = "#fff"}
+                                                onMouseLeave={e => e.currentTarget.style.color = "rgba(255, 255, 255, 0.65)"}
+                                            >
+                                                Cover Letter Writer
+                                            </Link>
+                                            <Link 
+                                                href="/builder" 
+                                                onClick={closeMenu} 
+                                                style={drawerSubLinkStyle}
+                                                onMouseEnter={e => e.currentTarget.style.color = "#fff"}
+                                                onMouseLeave={e => e.currentTarget.style.color = "rgba(255, 255, 255, 0.65)"}
+                                            >
+                                                Smart PDF Parser
+                                            </Link>
+                                        </div>
+                                    )}
+                                </div>
+                            );
+                        }
+                        
                         return (
                             <Link key={link.href} href={link.href} onClick={closeMenu} style={{
                                 ...drawerLinkStyle,
@@ -893,4 +1175,28 @@ const drawerSubLinkStyle = {
     fontSize: "0.85rem",
     color: "rgba(255, 255, 255, 0.65)",
     transition: "color 0.15s ease",
+};
+
+const aiMegaDropdownStyle = {
+    position: "absolute",
+    top: "64px",
+    left: 0,
+    right: 0,
+    width: "100vw",
+    background: "rgba(5, 5, 8, 0.96)",
+    backdropFilter: "blur(20px)",
+    borderBottom: "1px solid rgba(255, 255, 255, 0.08)",
+    boxShadow: "0 20px 48px rgba(0,0,0,0.85)",
+    zIndex: 999,
+    padding: "36px 0",
+    animation: "navSlideDown 0.24s cubic-bezier(0.16, 1, 0.3, 1)",
+};
+
+const aiMegaDropdownTitleStyle = {
+    fontSize: "1.05rem",
+    fontWeight: "700",
+    letterSpacing: "0.06em",
+    color: "#a78bfa",
+    textTransform: "uppercase",
+    marginBottom: "24px",
 };
