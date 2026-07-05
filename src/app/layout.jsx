@@ -272,6 +272,23 @@ export default function RootLayout({ children }) {
                     "bestRating": "5",
                     "worstRating": "1",
                 },
+                "review": [
+                    {
+                        "@type": "Review",
+                        "author": {
+                            "@type": "Person",
+                            "name": "Sarah Miller"
+                        },
+                        "datePublished": "2024-05-15",
+                        "reviewBody": "This AI resume builder helped me create an ATS-friendly resume in less than 5 minutes. The Gemini AI content writer is exceptionally smart!",
+                        "reviewRating": {
+                            "@type": "Rating",
+                            "ratingValue": "5",
+                            "bestRating": "5",
+                            "worstRating": "1"
+                        }
+                    }
+                ],
                 "featureList": [
                     "AI-powered resume content generation using Google Gemini",
                     "ATS-friendly resume formatting",
@@ -305,12 +322,8 @@ export default function RootLayout({ children }) {
                 "@id": `${BASE_URL}/#organization`,
                 "name": SITE_NAME,
                 "url": BASE_URL,
-                "logo": {
-                    "@type": "ImageObject",
-                    "url": LOGO,
-                    "width": 512,
-                    "height": 512,
-                },
+                "logo": LOGO,
+                "image": LOGO,
                 "description": "CVGrid provides a free AI-powered resume builder with 18+ professional templates for students and job seekers.",
                 "sameAs": [
                     BASE_URL,
@@ -322,6 +335,7 @@ export default function RootLayout({ children }) {
                 "foundingDate": "2024",
                 "contactPoint": {
                     "@type": "ContactPoint",
+                    "telephone": "+91-97242-36385",
                     "contactType": "customer support",
                     "availableLanguage": ["English"],
                 },
