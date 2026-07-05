@@ -12,7 +12,7 @@ const SITE_TITLE = "Free Resume Maker & AI Resume Builder – CVGrid";
 const SITE_DESC =
     "Create a professional, ATS-friendly resume in minutes with CVGrid's free AI resume builder. Choose from 18+ premium templates, generate AI content, and download as PDF — 100% free, no watermark, no credit card.";
 const OG_IMAGE = `${BASE_URL}/og-image.png`;
-const LOGO = `${BASE_URL}/logo.png`;
+const LOGO = `${BASE_URL}/logo.png`;    
 
 // ─────────────────────────────────────────────
 // VIEWPORT (separate export per Next.js 14+)
@@ -344,7 +344,8 @@ export default function RootLayout({ children }) {
                 "@type": "WebSite",
                 "@id": `${BASE_URL}/#website`,
                 "url": BASE_URL,
-                "name": `${SITE_NAME} – Free AI Resume Builder`,
+                "name": "CVGrid",
+                "alternateName": ["CVGrid AI", "CV Grid", "cvgrid.in"],
                 "description": "Build professional ATS-friendly resumes with AI. Free PDF export. 18+ templates.",
                 "publisher": {
                     "@id": `${BASE_URL}/#organization`,
