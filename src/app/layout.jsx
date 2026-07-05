@@ -6,7 +6,7 @@ import PageLoader from "../components/PageLoader";
 // ─────────────────────────────────────────────
 // SITE CONSTANTS
 // ─────────────────────────────────────────────
-const BASE_URL = "https://nexfolio-ai.vercel.app";
+const BASE_URL = "https://cvgrid.in";
 const SITE_NAME = "CVGrid";
 const SITE_TITLE = "Free Resume Maker & AI Resume Builder – CVGrid";
 const SITE_DESC =
