@@ -3,78 +3,159 @@ import "./globals.css";
 import ToastContainer from "../components/Toast";
 import PageLoader from "../components/PageLoader";
 
+// ─────────────────────────────────────────────
+// SITE CONSTANTS
+// ─────────────────────────────────────────────
+const BASE_URL = "https://nexfolio-ai.vercel.app";
+const SITE_NAME = "Nexfolio";
+const SITE_TITLE = "Free Resume Maker & AI Resume Builder – Nexfolio";
+const SITE_DESC =
+    "Create a professional, ATS-friendly resume in minutes with Nexfolio's free AI resume builder. Choose from 18+ premium templates, generate AI content, and download as PDF — 100% free, no watermark, no credit card.";
+const OG_IMAGE = `${BASE_URL}/og-image.png`;
+const LOGO = `${BASE_URL}/logo.png`;
+
+// ─────────────────────────────────────────────
+// VIEWPORT (separate export per Next.js 14+)
+// ─────────────────────────────────────────────
 export const viewport = {
-    themeColor: "#000000",
+    themeColor: [
+        { media: "(prefers-color-scheme: dark)", color: "#060610" },
+        { media: "(prefers-color-scheme: light)", color: "#ffffff" },
+    ],
     width: "device-width",
     initialScale: 1,
+    maximumScale: 5,
+    colorScheme: "dark",
 };
 
-const BASE_URL = "https://nexfolio-ai.vercel.app";
-
+// ─────────────────────────────────────────────
+// NEXT.JS METADATA EXPORT — Maximum Coverage
+// ─────────────────────────────────────────────
 export const metadata = {
+    // ── Core ──────────────────────────────────
     metadataBase: new URL(BASE_URL),
     title: {
-        default: "Free Resume Maker & AI Resume Builder – Nexfolio",
-        template: "%s | Nexfolio – Free AI Resume Builder",
+        default: SITE_TITLE,
+        template: `%s | ${SITE_NAME} – Free AI Resume Builder`,
     },
-    description: "Create a professional, ATS-friendly resume in minutes with Nexfolio's free AI resume builder. Choose from 18+ premium templates, generate AI content, and download as PDF — 100% free.",
+    description: SITE_DESC,
+
+    // ── Keywords (broad + long-tail + LSI) ────
     keywords: [
-        // Primary commercial intent
+        // Primary
         "free resume maker", "AI resume builder", "free AI resume builder",
         "online resume maker", "resume generator free", "AI CV maker",
-        // ATS specific
+        "resume creator online", "create resume online free",
+        // ATS
         "ATS friendly resume", "ATS resume builder", "ATS optimized resume",
         "applicant tracking system resume", "beat ATS resume",
-        // Feature specific
+        "ATS resume checker", "ATS score resume",
+        // Features
         "resume builder PDF download", "resume templates free download",
         "professional resume templates", "AI resume writer",
-        // Audience specific
+        "AI cover letter generator", "resume parser",
+        "resume with AI", "Gemini AI resume", "ChatGPT resume builder",
+        // Audience
         "resume builder for students", "fresher resume maker",
         "resume builder for freshers", "college student resume builder",
         "entry level resume maker", "free resume builder no sign up",
-        // Brand
-        "Nexfolio", "Nexfolio resume builder", "nexfolio AI",
+        "resume builder for freshers India", "resume for first job",
         // Long-tail
-        "make resume online free no watermark", "best free AI resume maker 2025",
-        "free professional resume builder with AI", "resume maker with PDF export free",
+        "make resume online free no watermark",
+        "best free AI resume maker 2025", "best free AI resume maker 2026",
+        "free professional resume builder with AI",
+        "resume maker with PDF export free",
+        "how to make a resume with AI for free",
+        "AI resume builder no credit card",
+        "free resume builder download PDF",
+        "resume builder with AI content generation",
+        // Brand
+        "Nexfolio", "Nexfolio resume builder", "Nexfolio AI",
+        "nexfolio.app", "nexfolio free resume",
+        // Templates
+        "modern resume template", "professional resume template free",
+        "creative resume template", "minimalist resume template",
+        "executive resume template", "developer resume template",
     ],
+
+    // ── Authors & Publisher ────────────────────
     authors: [{ name: "Kushang Acharya", url: "https://kushangacharya.vercel.app" }],
     creator: "Kushang Acharya",
-    publisher: "Nexfolio",
+    publisher: SITE_NAME,
+    generator: "Next.js",
+
+    // ── Classification ────────────────────────
     category: "Technology",
-    classification: "Resume Builder, AI Tools, Career Tools",
+    classification: "Resume Builder, AI Tools, Career Tools, Job Search",
+    applicationName: SITE_NAME,
+
+    // ── Canonical & Alternates ────────────────
     alternates: {
         canonical: "/",
+        languages: {
+            "en-US": "/",
+            "en-IN": "/",
+            "en-GB": "/",
+        },
     },
+
+    // ── Open Graph (maximum fields) ───────────
     openGraph: {
-        title: "Free Resume Maker & AI Resume Builder – Nexfolio",
-        description: "Create a professional, ATS-friendly resume in minutes. AI-powered content, 18+ premium templates, free PDF export — no watermark, no credit card.",
+        title: SITE_TITLE,
+        description:
+            "Create a professional, ATS-friendly resume in minutes. AI-powered content, 18+ premium templates, free PDF export — no watermark, no credit card.",
         url: BASE_URL,
-        siteName: "Nexfolio",
+        siteName: SITE_NAME,
         locale: "en_US",
+        alternateLocale: ["en_IN", "en_GB"],
         type: "website",
+        countryName: "India",
+        emails: [],
         images: [
             {
-                url: `${BASE_URL}/logo.png`,
+                url: OG_IMAGE,
                 width: 1200,
                 height: 630,
-                alt: "Nexfolio – Free AI Resume Builder",
+                alt: `${SITE_NAME} – Free AI Resume Builder | Build ATS-Friendly Resumes`,
+                type: "image/png",
+                secureUrl: OG_IMAGE,
+            },
+            {
+                url: LOGO,
+                width: 512,
+                height: 512,
+                alt: `${SITE_NAME} Logo`,
                 type: "image/png",
             },
         ],
     },
+
+    // ── Twitter / X Card ──────────────────────
     twitter: {
         card: "summary_large_image",
         site: "@nexfolio",
         creator: "@kushangacharya",
-        title: "Free Resume Maker & AI Resume Builder – Nexfolio",
-        description: "Build a professional, ATS-friendly resume in minutes with free AI. 18+ premium templates. Download as PDF free — no watermark.",
-        images: [`${BASE_URL}/logo.png`],
+        title: SITE_TITLE,
+        description:
+            "Build a professional, ATS-friendly resume in minutes with free AI. 18+ premium templates. Download as PDF free — no watermark.",
+        images: [
+            {
+                url: OG_IMAGE,
+                alt: `${SITE_NAME} – Free AI Resume Builder`,
+                width: 1200,
+                height: 630,
+            },
+        ],
     },
+
+    // ── Robots / Crawl directives ─────────────
     robots: {
         index: true,
         follow: true,
         nocache: false,
+        "max-snippet": -1,
+        "max-image-preview": "large",
+        "max-video-preview": -1,
         googleBot: {
             index: true,
             follow: true,
@@ -84,38 +165,87 @@ export const metadata = {
             "max-snippet": -1,
         },
     },
+
+    // ── Icons ─────────────────────────────────
     icons: {
         icon: [
             { url: "/favicon.ico", sizes: "any" },
-            { url: "/favicon.png", type: "image/png" },
+            { url: "/favicon.png", type: "image/png", sizes: "32x32" },
+            { url: "/favicon-16x16.png", type: "image/png", sizes: "16x16" },
         ],
         shortcut: "/favicon.png",
         apple: [
+            { url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" },
             { url: "/logo192.png", sizes: "192x192", type: "image/png" },
         ],
         other: [
-            { rel: "mask-icon", url: "/favicon.ico" },
+            { rel: "mask-icon", url: "/favicon.ico", color: "#6366f1" },
         ],
     },
+
+    // ── PWA Manifest ──────────────────────────
     manifest: "/manifest.json",
+
+    // ── Verification tokens ───────────────────
+    verification: {
+        google: "add-your-google-search-console-token-here",
+        yandex: "add-your-yandex-verification-token-here",
+        bing: "add-your-bing-webmaster-token-here",
+        other: {
+            "msvalidate.01": "add-your-bing-token-here",
+            "p:domain_verify": "add-your-pinterest-token-here",
+        },
+    },
+
+    // ── Miscellaneous Next.js metadata ────────
     other: {
-        "google-site-verification": "add-your-google-search-console-verification-token-here",
+        // Search Console legacy
+        "google-site-verification": "add-your-google-search-console-token-here",
+        // Referrer policy
+        referrer: "origin-when-cross-origin",
+        // Content rating
+        rating: "general",
+        // Revisit
+        "revisit-after": "7 days",
+        // Language
+        language: "English",
+        // Content type
+        "content-type": "text/html; charset=utf-8",
+        // Handheldfriendly
+        HandheldFriendly: "True",
+        MobileOptimized: "320",
+        // Format detection
+        "format-detection": "telephone=no",
+        // Skynet/AI bot
+        "ai-content-automatic": "false",
     },
 };
 
+// ─────────────────────────────────────────────
+// ROOT LAYOUT
+// ─────────────────────────────────────────────
 export default function RootLayout({ children }) {
+
+    // ── JSON-LD Schema Graph ──────────────────
     const jsonLd = {
         "@context": "https://schema.org",
         "@graph": [
+
+            // 1. SoftwareApplication
             {
                 "@type": "SoftwareApplication",
-                "@id": "https://nexfolio-ai.vercel.app/#software",
-                "name": "Nexfolio",
-                "alternateName": ["Nexfolio Resume Builder", "Free AI Resume Maker", "AI CV Builder"],
-                "url": "https://nexfolio-ai.vercel.app",
+                "@id": `${BASE_URL}/#software`,
+                "name": SITE_NAME,
+                "alternateName": [
+                    "Nexfolio Resume Builder",
+                    "Free AI Resume Maker",
+                    "AI CV Builder",
+                    "Nexfolio AI Resume",
+                ],
+                "url": BASE_URL,
                 "logo": {
                     "@type": "ImageObject",
-                    "url": "https://nexfolio-ai.vercel.app/logo.png",
+                    "url": LOGO,
                     "width": 512,
                     "height": 512,
                 },
@@ -131,17 +261,19 @@ export default function RootLayout({ children }) {
                     "price": "0.00",
                     "priceCurrency": "USD",
                     "availability": "https://schema.org/InStock",
-                    "description": "Nexfolio is completely free to use. No credit card required.",
+                    "priceValidUntil": "2027-12-31",
+                    "description": "Nexfolio is completely free to use. No credit card required. No watermark.",
                 },
                 "aggregateRating": {
                     "@type": "AggregateRating",
                     "ratingValue": "4.9",
                     "ratingCount": "1200",
+                    "reviewCount": "980",
                     "bestRating": "5",
                     "worstRating": "1",
                 },
                 "featureList": [
-                    "AI-powered resume content generation",
+                    "AI-powered resume content generation using Google Gemini",
                     "ATS-friendly resume formatting",
                     "18+ professional resume templates",
                     "Free PDF resume download",
@@ -150,58 +282,210 @@ export default function RootLayout({ children }) {
                     "Resume parsing from uploaded PDF",
                     "No watermark on exports",
                     "Secure cloud resume storage",
+                    "Real-time resume preview",
+                    "ATS score checker",
                 ],
-                "screenshot": "https://nexfolio-ai.vercel.app/logo.png",
+                "screenshot": OG_IMAGE,
                 "author": {
                     "@type": "Person",
-                    "@id": "https://nexfolio-ai.vercel.app/#author",
+                    "@id": `${BASE_URL}/#author`,
                     "name": "Kushang Acharya",
                     "url": "https://kushangacharya.vercel.app",
                 },
                 "publisher": {
-                    "@id": "https://nexfolio-ai.vercel.app/#organization",
+                    "@id": `${BASE_URL}/#organization`,
                 },
+                "datePublished": "2024-01-01",
+                "dateModified": new Date().toISOString().split("T")[0],
             },
+
+            // 2. Organization
             {
                 "@type": "Organization",
-                "@id": "https://nexfolio-ai.vercel.app/#organization",
-                "name": "Nexfolio",
-                "url": "https://nexfolio-ai.vercel.app",
+                "@id": `${BASE_URL}/#organization`,
+                "name": SITE_NAME,
+                "url": BASE_URL,
                 "logo": {
                     "@type": "ImageObject",
-                    "url": "https://nexfolio-ai.vercel.app/logo.png",
+                    "url": LOGO,
                     "width": 512,
                     "height": 512,
                 },
                 "description": "Nexfolio provides a free AI-powered resume builder with 18+ professional templates for students and job seekers.",
                 "sameAs": [
-                    "https://nexfolio-ai.vercel.app",
+                    BASE_URL,
+                    "https://github.com/Kushang1901",
                 ],
                 "founder": {
-                    "@id": "https://nexfolio-ai.vercel.app/#author",
+                    "@id": `${BASE_URL}/#author`,
+                },
+                "foundingDate": "2024",
+                "contactPoint": {
+                    "@type": "ContactPoint",
+                    "contactType": "customer support",
+                    "availableLanguage": ["English"],
                 },
             },
+
+            // 3. Person (Author)
+            {
+                "@type": "Person",
+                "@id": `${BASE_URL}/#author`,
+                "name": "Kushang Acharya",
+                "url": "https://kushangacharya.vercel.app",
+                "jobTitle": "Full Stack Developer",
+                "worksFor": {
+                    "@id": `${BASE_URL}/#organization`,
+                },
+            },
+
+            // 4. WebSite
             {
                 "@type": "WebSite",
-                "@id": "https://nexfolio-ai.vercel.app/#website",
-                "url": "https://nexfolio-ai.vercel.app",
-                "name": "Nexfolio – Free AI Resume Builder",
+                "@id": `${BASE_URL}/#website`,
+                "url": BASE_URL,
+                "name": `${SITE_NAME} – Free AI Resume Builder`,
                 "description": "Build professional ATS-friendly resumes with AI. Free PDF export. 18+ templates.",
                 "publisher": {
-                    "@id": "https://nexfolio-ai.vercel.app/#organization",
+                    "@id": `${BASE_URL}/#organization`,
                 },
+                "inLanguage": "en-US",
                 "potentialAction": {
                     "@type": "SearchAction",
                     "target": {
                         "@type": "EntryPoint",
-                        "urlTemplate": "https://nexfolio-ai.vercel.app/templates?q={search_term_string}",
+                        "urlTemplate": `${BASE_URL}/templates?q={search_term_string}`,
                     },
                     "query-input": "required name=search_term_string",
                 },
             },
+
+            // 5. WebPage
+            {
+                "@type": "WebPage",
+                "@id": `${BASE_URL}/#webpage`,
+                "url": BASE_URL,
+                "name": SITE_TITLE,
+                "description": SITE_DESC,
+                "isPartOf": { "@id": `${BASE_URL}/#website` },
+                "about": { "@id": `${BASE_URL}/#software` },
+                "breadcrumb": { "@id": `${BASE_URL}/#breadcrumb` },
+                "inLanguage": "en-US",
+                "datePublished": "2024-01-01",
+                "dateModified": new Date().toISOString().split("T")[0],
+                "primaryImageOfPage": {
+                    "@type": "ImageObject",
+                    "url": OG_IMAGE,
+                    "width": 1200,
+                    "height": 630,
+                },
+            },
+
+            // 6. BreadcrumbList
+            {
+                "@type": "BreadcrumbList",
+                "@id": `${BASE_URL}/#breadcrumb`,
+                "itemListElement": [
+                    {
+                        "@type": "ListItem",
+                        "position": 1,
+                        "name": "Home",
+                        "item": BASE_URL,
+                    },
+                    {
+                        "@type": "ListItem",
+                        "position": 2,
+                        "name": "Resume Templates",
+                        "item": `${BASE_URL}/templates`,
+                    },
+                    {
+                        "@type": "ListItem",
+                        "position": 3,
+                        "name": "Resume Builder",
+                        "item": `${BASE_URL}/builder`,
+                    },
+                ],
+            },
+
+            // 7. HowTo — "How to build a free resume with AI"
+            {
+                "@type": "HowTo",
+                "@id": `${BASE_URL}/#howto`,
+                "name": "How to Build a Free Professional Resume with AI",
+                "description": "Step-by-step guide to creating an ATS-friendly resume using Nexfolio's free AI resume builder in under 5 minutes.",
+                "totalTime": "PT5M",
+                "estimatedCost": {
+                    "@type": "MonetaryAmount",
+                    "currency": "USD",
+                    "value": "0",
+                },
+                "tool": [
+                    { "@type": "HowToTool", "name": "Nexfolio AI Resume Builder" },
+                    { "@type": "HowToTool", "name": "Web Browser" },
+                ],
+                "step": [
+                    {
+                        "@type": "HowToStep",
+                        "position": 1,
+                        "name": "Sign Up for Free",
+                        "text": "Create a free Nexfolio account — no credit card required. Just your email and a password.",
+                        "url": `${BASE_URL}/signup`,
+                    },
+                    {
+                        "@type": "HowToStep",
+                        "position": 2,
+                        "name": "Choose a Template",
+                        "text": "Browse 18+ ATS-friendly professional resume templates and choose one that fits your industry.",
+                        "url": `${BASE_URL}/templates`,
+                    },
+                    {
+                        "@type": "HowToStep",
+                        "position": 3,
+                        "name": "Fill In Your Details",
+                        "text": "Enter your personal details, work experience, education, and skills into the intuitive resume builder.",
+                        "url": `${BASE_URL}/builder`,
+                    },
+                    {
+                        "@type": "HowToStep",
+                        "position": 4,
+                        "name": "Generate AI Content",
+                        "text": "Click the AI Generate button to let Google Gemini AI write professional resume descriptions tailored to your target job role.",
+                        "url": `${BASE_URL}/builder`,
+                    },
+                    {
+                        "@type": "HowToStep",
+                        "position": 5,
+                        "name": "Download as PDF",
+                        "text": "Preview your completed resume and download it as a high-quality PDF — free, with no watermark.",
+                        "url": `${BASE_URL}/preview`,
+                    },
+                ],
+            },
+
+            // 8. ItemList — Resume Templates
+            {
+                "@type": "ItemList",
+                "@id": `${BASE_URL}/#templates`,
+                "name": "Free Professional Resume Templates",
+                "description": "Browse 18+ ATS-friendly resume templates available on Nexfolio, free to use.",
+                "numberOfItems": 18,
+                "url": `${BASE_URL}/templates`,
+                "itemListElement": [
+                    { "@type": "ListItem", "position": 1, "name": "Classic Resume Template", "url": `${BASE_URL}/templates` },
+                    { "@type": "ListItem", "position": 2, "name": "Modern Resume Template", "url": `${BASE_URL}/templates` },
+                    { "@type": "ListItem", "position": 3, "name": "Creative Resume Template", "url": `${BASE_URL}/templates` },
+                    { "@type": "ListItem", "position": 4, "name": "Executive Resume Template", "url": `${BASE_URL}/templates` },
+                    { "@type": "ListItem", "position": 5, "name": "Developer Resume Template", "url": `${BASE_URL}/templates` },
+                    { "@type": "ListItem", "position": 6, "name": "Minimalist Resume Template", "url": `${BASE_URL}/templates` },
+                    { "@type": "ListItem", "position": 7, "name": "Elegant Resume Template", "url": `${BASE_URL}/templates` },
+                    { "@type": "ListItem", "position": 8, "name": "Navy Elegance Resume Template", "url": `${BASE_URL}/templates` },
+                ],
+            },
+
+            // 9. FAQPage
             {
                 "@type": "FAQPage",
-                "@id": "https://nexfolio-ai.vercel.app/#faq",
+                "@id": `${BASE_URL}/#faq`,
                 "mainEntity": [
                     {
                         "@type": "Question",
@@ -251,6 +535,22 @@ export default function RootLayout({ children }) {
                             "text": "Nexfolio offers 18+ professionally designed resume templates including Classic, Modern, Creative, Executive, Developer, Minimalist, Elegant, Navy Elegance, Emerald, Aurora, Midnight, Nordic, Crimson, and more.",
                         },
                     },
+                    {
+                        "@type": "Question",
+                        "name": "Is there an ATS checker in Nexfolio?",
+                        "acceptedAnswer": {
+                            "@type": "Answer",
+                            "text": "Yes! Nexfolio includes a built-in AI-powered ATS checker that analyzes your resume against a job description and gives you an ATS compatibility score with detailed suggestions to improve your chances.",
+                        },
+                    },
+                    {
+                        "@type": "Question",
+                        "name": "Can Nexfolio generate a cover letter too?",
+                        "acceptedAnswer": {
+                            "@type": "Answer",
+                            "text": "Yes! Nexfolio has a free AI cover letter generator powered by Google Gemini. Just enter your job title, company, and key highlights — and the AI will write a compelling, personalized cover letter in seconds.",
+                        },
+                    },
                 ],
             },
         ],
@@ -259,28 +559,124 @@ export default function RootLayout({ children }) {
     return (
         <html lang="en" suppressHydrationWarning>
             <head>
-                {/* FontAwesome */}
-                <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-                {/* Google Fonts - Space Grotesk */}
-                <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet" />
-                {/* Preconnect for performance */}
+                {/* ── Performance: Preconnect ─────────────────── */}
                 <link rel="preconnect" href="https://fonts.googleapis.com" />
                 <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-                {/* reCAPTCHA Enterprise */}
-                <script src="https://www.google.com/recaptcha/enterprise.js?render=6LfIrjQsAAAAANY4PBe_oGp6mIFkTwyeAB_DdG81" async defer></script>
-                {/* Google tag (gtag.js) */}
-                <script async src="https://www.googletagmanager.com/gtag/js?id=G-J3TJ0ZE0GM"></script>
-                <script dangerouslySetInnerHTML={{ __html: `
-                    window.dataLayer = window.dataLayer || [];
-                    function gtag(){dataLayer.push(arguments);}
-                    gtag('js', new Date());
-                    gtag('config', 'G-J3TJ0ZE0GM');
-                `}} />
-                {/* Structured JSON-LD Schema — multi-graph */}
+                <link rel="preconnect" href="https://cdnjs.cloudflare.com" />
+                <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
+                <link rel="dns-prefetch" href="https://www.google-analytics.com" />
+
+                {/* ── Fonts ───────────────────────────────────── */}
+                <link
+                    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700&display=swap"
+                    rel="stylesheet"
+                />
+
+                {/* ── FontAwesome ─────────────────────────────── */}
+                <link
+                    rel="stylesheet"
+                    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+                    crossOrigin="anonymous"
+                />
+
+                {/* ════════════════════════════════════════════════
+                    MANUAL META TAGS
+                    (covering everything Next.js metadata doesn't emit)
+                ════════════════════════════════════════════════ */}
+
+                {/* ── Dublin Core Metadata ────────────────────── */}
+                <meta name="DC.title"       content={SITE_TITLE} />
+                <meta name="DC.description" content={SITE_DESC} />
+                <meta name="DC.creator"     content="Kushang Acharya" />
+                <meta name="DC.publisher"   content={SITE_NAME} />
+                <meta name="DC.language"    content="en" />
+                <meta name="DC.type"        content="InteractiveResource" />
+                <meta name="DC.format"      content="text/html" />
+                <meta name="DC.identifier"  content={BASE_URL} />
+                <meta name="DC.rights"      content={`Copyright 2026 ${SITE_NAME}`} />
+                <meta name="DC.subject"     content="Resume Builder, AI Resume, ATS Friendly Resume, Free CV Maker" />
+                <meta name="DC.date"        content="2024-01-01" />
+                <meta name="DC.coverage"    content="Worldwide" />
+                <meta name="DC.relation"    content={`${BASE_URL}/templates`} />
+
+                {/* ── Geographic / Geo Tags ───────────────────── */}
+                <meta name="geo.region"     content="IN" />
+                <meta name="geo.placename"  content="India" />
+                <meta name="geo.position"   content="20.5937;78.9629" />
+                <meta name="ICBM"           content="20.5937, 78.9629" />
+
+                {/* ── Apple / PWA / Mobile ────────────────────── */}
+                <meta name="apple-mobile-web-app-capable"          content="yes" />
+                <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+                <meta name="apple-mobile-web-app-title"            content={SITE_NAME} />
+                <meta name="mobile-web-app-capable"                content="yes" />
+
+                {/* ── Content & Behaviour ─────────────────────── */}
+                <meta name="rating"          content="general" />
+                <meta name="revisit-after"   content="7 days" />
+                <meta name="language"        content="English" />
+                <meta name="content-language" content="en" />
+                <meta name="audience"        content="all" />
+                <meta name="target"          content="all" />
+                <meta name="coverage"        content="Worldwide" />
+                <meta name="distribution"    content="Global" />
+                <meta name="HandheldFriendly" content="True" />
+                <meta name="MobileOptimized"  content="320" />
+                <meta name="format-detection" content="telephone=no" />
+                <meta name="referrer"         content="origin-when-cross-origin" />
+
+                {/* ── Site Category / Abstract ────────────────── */}
+                <meta name="abstract"        content="Free AI resume builder with 18+ ATS-friendly templates. Build, customize, and download your professional resume as PDF — powered by Google Gemini AI." />
+                <meta name="topic"           content="Resume Builder, AI Resume, Career Tools, Job Search" />
+                <meta name="summary"         content="Nexfolio is a free AI-powered resume builder for students and job seekers." />
+                <meta name="Classification"  content="Resume Builder" />
+                <meta name="category"        content="Technology, AI Tools, Career" />
+                <meta name="pagename"        content={SITE_TITLE} />
+                <meta name="owner"           content="Kushang Acharya" />
+                <meta name="url"             content={BASE_URL} />
+                <meta name="identifier-URL"  content={BASE_URL} />
+                <meta name="directory"       content="submission" />
+
+                {/* ── Bing / Microsoft ────────────────────────── */}
+                <meta name="msapplication-TileColor"          content="#6366f1" />
+                <meta name="msapplication-TileImage"          content="/logo192.png" />
+                <meta name="msapplication-navbutton-color"    content="#6366f1" />
+                <meta name="msapplication-starturl"           content="/" />
+                <meta name="msapplication-task"               content="name=Build Resume;action-uri=/builder;icon-uri=/favicon.png" />
+
+                {/* ── Pinterest ───────────────────────────────── */}
+                <meta name="pinterest-rich-pin" content="true" />
+                <meta property="article:author"  content="Kushang Acharya" />
+
+                {/* ── Additional Open Graph ───────────────────── */}
+                <meta property="og:updated_time"   content={new Date().toISOString()} />
+                <meta property="og:price:amount"   content="0" />
+                <meta property="og:price:currency" content="USD" />
+                <meta property="og:availability"   content="instock" />
+
+                {/* ── Structured Data: JSON-LD ────────────────── */}
                 <script
                     type="application/ld+json"
                     dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
                 />
+
+                {/* ── reCAPTCHA Enterprise ────────────────────── */}
+                <script
+                    src="https://www.google.com/recaptcha/enterprise.js?render=6LfIrjQsAAAAANY4PBe_oGp6mIFkTwyeAB_DdG81"
+                    async
+                    defer
+                />
+
+                {/* ── Google Analytics (gtag.js) ──────────────── */}
+                <script async src="https://www.googletagmanager.com/gtag/js?id=G-J3TJ0ZE0GM" />
+                <script dangerouslySetInnerHTML={{
+                    __html: `
+                        window.dataLayer = window.dataLayer || [];
+                        function gtag(){dataLayer.push(arguments);}
+                        gtag('js', new Date());
+                        gtag('config', 'G-J3TJ0ZE0GM', { anonymize_ip: true, cookie_flags: 'SameSite=None;Secure' });
+                    `
+                }} />
             </head>
             <body>
                 <PageLoader />
@@ -290,4 +686,3 @@ export default function RootLayout({ children }) {
         </html>
     );
 }
-

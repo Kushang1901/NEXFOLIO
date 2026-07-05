@@ -58,113 +58,266 @@ export default function HomePage() {
         <div className="bg-dark text-white min-vh-100">
             <Navbar />
 
-            {/* ═══════ 3D ORB HERO ═══════ */}
-            <header style={{ position:"relative", height:"100vh", display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"flex-start", overflow:"hidden", background:"#09090f", textAlign:"center", padding:"90px 20px 20px" }}>
+            {/* ═══════════════════════════════════════════
+                HERO SECTION — Professional & SEO-Optimised
+            ═══════════════════════════════════════════ */}
+            <header id="hero" style={{ position: "relative", overflow: "hidden", background: "#060610", padding: "55px 0 35px" }}>
 
                 <style>{`
-                    @keyframes rippleOut {
-                        0%   { transform: scaleX(1) scaleY(1); opacity: 0.55; }
-                        100% { transform: scaleX(2.8) scaleY(2.8); opacity: 0; }
+                    /* ── Hero keyframes ── */
+                    @keyframes hFadeUp {
+                        from { opacity: 0; transform: translateY(28px); }
+                        to   { opacity: 1; transform: translateY(0); }
                     }
-                    @keyframes orbFloat {
-                        0%,100% { transform: translateY(0px); }
-                        50%      { transform: translateY(-14px); }
+                    @keyframes hGlow {
+                        0%,100% { opacity: 0.55; }
+                        50%      { opacity: 0.85; }
                     }
-                    @keyframes orbPulse {
-                        0%,100% { box-shadow: 0 0 80px 20px rgba(80,90,255,0.35), 0 0 160px 60px rgba(60,70,220,0.18), inset 0 0 40px rgba(120,140,255,0.12); }
-                        50%      { box-shadow: 0 0 120px 40px rgba(80,90,255,0.55), 0 0 220px 90px rgba(60,70,220,0.3), inset 0 0 60px rgba(120,140,255,0.2); }
+                    @keyframes hGridScroll {
+                        from { background-position: 0 0; }
+                        to   { background-position: 0 60px; }
                     }
-                    @keyframes heroIn {
-                        from { opacity:0; transform: translateY(30px); }
-                        to   { opacity:1; transform: translateY(0); }
+                    @keyframes hBadgePulse {
+                        0%,100% { box-shadow: 0 0 0 0 rgba(99,102,241,0.45); }
+                        50%      { box-shadow: 0 0 0 8px rgba(99,102,241,0); }
                     }
-                    @keyframes specularShimmer {
-                        0%,100% { opacity: 0.8; }
-                        50%      { opacity: 1; }
+                    @keyframes hStarSpin {
+                        0%   { transform: rotate(0deg) scale(1); }
+                        50%  { transform: rotate(10deg) scale(1.15); }
+                        100% { transform: rotate(0deg) scale(1); }
                     }
-                    .hero-orb-wrap { animation: orbFloat 6s ease-in-out infinite; }
-                    .hero-orb      { animation: orbPulse 4s ease-in-out infinite; }
-                    .hero-text     { animation: heroIn 1s ease forwards; }
-                    .ripple-ring   { animation: rippleOut 3.6s ease-out infinite; }
-                    .rr2           { animation-delay: 1.2s; }
-                    .rr3           { animation-delay: 2.4s; }
-                    @media (max-width: 768px) {
-                        .hero-orb { width: 180px !important; height: 180px !important; }
-                        .hero-orb-stage { width: 260px !important; height: 260px !important; }
+
+                    /* ── Hero element styles ── */
+                    .h-fade-1  { animation: hFadeUp 0.7s ease both; animation-delay: 0.05s; }
+                    .h-fade-2  { animation: hFadeUp 0.7s ease both; animation-delay: 0.18s; }
+                    .h-fade-3  { animation: hFadeUp 0.7s ease both; animation-delay: 0.30s; }
+                    .h-fade-4  { animation: hFadeUp 0.7s ease both; animation-delay: 0.42s; }
+                    .h-fade-5  { animation: hFadeUp 0.7s ease both; animation-delay: 0.54s; }
+
+                    .hero-pill {
+                        display: inline-flex; align-items: center; gap: 7px;
+                        background: rgba(255,255,255,0.04);
+                        border: 1px solid rgba(255,255,255,0.10);
+                        border-radius: 999px;
+                        padding: 6px 14px;
+                        font-size: 0.78rem;
+                        font-weight: 600;
+                        color: rgba(255,255,255,0.7);
+                        letter-spacing: 0.04em;
+                        text-transform: uppercase;
+                        animation: hBadgePulse 3s ease-in-out infinite;
                     }
-                    @media (max-height: 700px) {
-                        .hero-orb { width: 180px !important; height: 180px !important; }
-                        .hero-orb-stage { width: 260px !important; height: 260px !important; }
+                    .hero-pill-dot {
+                        width: 7px; height: 7px; border-radius: 50%;
+                        background: #4ade80;
+                        box-shadow: 0 0 8px #4ade80;
+                    }
+
+                    .hero-h1 {
+                        font-size: clamp(2.5rem, 5.5vw, 4.2rem);
+                        font-weight: 800;
+                        line-height: 1.12;
+                        letter-spacing: -0.03em;
+                        color: #fff;
+                    }
+                    .hero-h1 .h1-accent {
+                        background: linear-gradient(135deg, #818cf8 0%, #6366f1 40%, #a78bfa 100%);
+                        -webkit-background-clip: text;
+                        -webkit-text-fill-color: transparent;
+                        background-clip: text;
+                    }
+
+                    .hero-sub {
+                        font-size: clamp(1rem, 2vw, 1.2rem);
+                        color: rgba(200,205,230,0.65);
+                        line-height: 1.75;
+                        max-width: 600px;
+                        margin: 0 auto;
+                    }
+
+                    .hero-cta-primary {
+                        display: inline-flex; align-items: center; gap: 9px;
+                        background: linear-gradient(135deg, #6366f1, #818cf8);
+                        color: #fff;
+                        font-weight: 700;
+                        font-size: 1.05rem;
+                        padding: 14px 32px;
+                        border: none;
+                        border-radius: 10px;
+                        cursor: pointer;
+                        box-shadow: 0 4px 24px rgba(99,102,241,0.45);
+                        transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+                        text-decoration: none;
+                    }
+                    .hero-cta-primary:hover {
+                        transform: translateY(-2px);
+                        box-shadow: 0 8px 32px rgba(99,102,241,0.6);
+                        background: linear-gradient(135deg, #818cf8, #6366f1);
+                        color: #fff;
+                    }
+                    .hero-cta-secondary {
+                        display: inline-flex; align-items: center; gap: 8px;
+                        background: transparent;
+                        color: rgba(255,255,255,0.75);
+                        font-weight: 600;
+                        font-size: 1rem;
+                        padding: 14px 28px;
+                        border: 1px solid rgba(255,255,255,0.15);
+                        border-radius: 10px;
+                        cursor: pointer;
+                        transition: border-color 0.18s ease, color 0.18s ease, background 0.18s ease;
+                        text-decoration: none;
+                    }
+                    .hero-cta-secondary:hover {
+                        border-color: rgba(99,102,241,0.5);
+                        color: #fff;
+                        background: rgba(99,102,241,0.08);
+                    }
+
+                    .hero-trust {
+                        display: flex; align-items: center; justify-content: center;
+                        gap: 6px; flex-wrap: wrap;
+                        font-size: 0.88rem;
+                        color: rgba(200,205,230,0.55);
+                    }
+                    .hero-trust-stars { color: #fbbf24; letter-spacing: 1px; }
+                    .hero-trust-sep { width: 1px; height: 14px; background: rgba(255,255,255,0.15); }
+
+                    .hero-feature-tags {
+                        display: flex; align-items: center; justify-content: center;
+                        flex-wrap: wrap; gap: 10px;
+                    }
+                    .hero-tag {
+                        display: inline-flex; align-items: center; gap: 6px;
+                        background: rgba(99,102,241,0.08);
+                        border: 1px solid rgba(99,102,241,0.22);
+                        border-radius: 8px;
+                        padding: 6px 13px;
+                        font-size: 0.82rem;
+                        font-weight: 600;
+                        color: rgba(180,185,255,0.85);
+                        transition: background 0.15s, border-color 0.15s;
+                    }
+                    .hero-tag:hover {
+                        background: rgba(99,102,241,0.16);
+                        border-color: rgba(99,102,241,0.45);
+                    }
+                    .hero-tag-icon { font-size: 0.75rem; }
+
+                    /* Background mesh / grid */
+                    .hero-bg-grid {
+                        position: absolute; inset: 0; pointer-events: none; z-index: 0;
+                        background-image:
+                            linear-gradient(rgba(99,102,241,0.04) 1px, transparent 1px),
+                            linear-gradient(90deg, rgba(99,102,241,0.04) 1px, transparent 1px);
+                        background-size: 48px 48px;
+                        animation: hGridScroll 12s linear infinite;
+                        mask-image: radial-gradient(ellipse 80% 70% at 50% 0%, black 40%, transparent 100%);
+                    }
+                    .hero-glow-left {
+                        position: absolute; top: -100px; left: -120px;
+                        width: 600px; height: 600px; border-radius: 50%;
+                        background: radial-gradient(circle, rgba(99,102,241,0.18) 0%, transparent 70%);
+                        pointer-events: none; z-index: 0;
+                        animation: hGlow 6s ease-in-out infinite;
+                    }
+                    .hero-glow-right {
+                        position: absolute; bottom: -100px; right: -100px;
+                        width: 500px; height: 500px; border-radius: 50%;
+                        background: radial-gradient(circle, rgba(167,139,250,0.12) 0%, transparent 70%);
+                        pointer-events: none; z-index: 0;
+                        animation: hGlow 8s ease-in-out infinite reverse;
+                    }
+
+                    @media (max-width: 576px) {
+                        .hero-cta-wrap { flex-direction: column; align-items: stretch; }
+                        .hero-cta-primary, .hero-cta-secondary { justify-content: center; }
+                        .hero-trust { font-size: 0.8rem; }
                     }
                 `}</style>
 
-                {/* ── Dark radial bg ── */}
-                <div style={{ position:"absolute", inset:0, background:"radial-gradient(ellipse 70% 55% at 50% 55%, rgba(30,35,120,0.55) 0%, transparent 70%)", pointerEvents:"none" }} />
+                {/* Background elements */}
+                <div className="hero-bg-grid" aria-hidden="true" />
+                <div className="hero-glow-left" aria-hidden="true" />
+                <div className="hero-glow-right" aria-hidden="true" />
 
-                {/* ── Top announcement pill ── */}
+                {/* Content */}
+                <div className="container" style={{ position: "relative", zIndex: 1 }}>
+                    <div className="row justify-content-center text-center">
+                        <div className="col-lg-9 col-xl-8">
 
-                {/* ── Headline ── */}
-                <div className="hero-text" style={{ animationDelay:"0.1s", zIndex:10, marginBottom:"6px" }}>
-                    <h1 style={{ fontSize:"clamp(2.2rem, 5.5vw, 4rem)", fontWeight:"800", lineHeight:1.15, letterSpacing:"-0.03em", color:"#fff", maxWidth:"700px", margin:"0 auto" }}>
-                        Build Your Professional Resume
-                    </h1>
-                </div>
-                <div className="hero-text" style={{ animationDelay:"0.2s", zIndex:10, marginBottom:"15px" }}>
-                    <h2 style={{ fontSize:"clamp(1.4rem, 3.2vw, 2.2rem)", fontWeight:"700", lineHeight:1.2, letterSpacing:"-0.02em", color:"rgba(180,185,230,0.75)", margin:"0 auto", maxWidth:"600px" }}>
-                        with AI Resume Builder
-                    </h2>
-                </div>
+                            {/* Live badge */}
+                            <div className="h-fade-1 mb-4">
+                                <span className="hero-pill">
+                                    <span className="hero-pill-dot" aria-hidden="true" />
+                                    Free · No Credit Card · No Watermark
+                                </span>
+                            </div>
 
-                {/* ══════ 3D ORB + RIPPLE STAGE ══════ */}
-                <div className="hero-orb-stage" style={{ position:"relative", width:"340px", height:"270px", display:"flex", alignItems:"center", justifyContent:"center", zIndex:10 }}>
+                            {/* H1 — primary SEO target */}
+                            <h1 className="hero-h1 h-fade-2 mb-4">
+                                Build a <span className="h1-accent">Professional Resume</span>
+                                <br />with Free AI Resume Builder
+                            </h1>
 
-                    {/* Ripple rings — ellipses on the "floor" plane */}
-                    <div style={{ position:"absolute", bottom:"0px", left:"50%", transform:"translateX(-50%)", width:"200px", height:"60px", zIndex:2, pointerEvents:"none" }}>
-                        {[0,1,2].map(i => (
-                            <div key={i} className={`ripple-ring rr${i+1}`} style={{ position:"absolute", inset:0, borderRadius:"50%", border:"1.5px solid rgba(90,100,255,0.5)", background:"transparent" }} />
-                        ))}
-                    </div>
+                            {/* Sub-headline */}
+                            <p className="hero-sub h-fade-3 mb-5">
+                                Create ATS-friendly resumes in minutes using <strong style={{ color: "rgba(200,205,230,0.85)", fontWeight: 600 }}>Google Gemini AI</strong>. Pick from 18+ premium templates, generate compelling content, and download as PDF — 100% free, forever.
+                            </p>
 
-                    {/* Orb wrapper (floating) */}
-                    <div className="hero-orb-wrap" style={{ position:"relative", zIndex:5 }}>
+                            {/* CTA buttons */}
+                            <div className="hero-cta-wrap h-fade-4 mb-4 d-flex align-items-center justify-content-center gap-3 flex-wrap">
+                                <button
+                                    id="hero-build-resume-btn"
+                                    onClick={handleStartResume}
+                                    className="hero-cta-primary"
+                                    aria-label="Start building your free resume now"
+                                >
+                                    <i className="fas fa-bolt" aria-hidden="true" />
+                                    Build My Resume — Free
+                                </button>
+                                <a
+                                    href="#templates-preview"
+                                    className="hero-cta-secondary"
+                                    aria-label="View resume templates"
+                                >
+                                    <i className="fas fa-th-large" aria-hidden="true" />
+                                    See Templates
+                                </a>
+                            </div>
 
-                        {/* Shadow on floor */}
-                        <div style={{ position:"absolute", bottom:"-30px", left:"50%", transform:"translateX(-50%)", width:"180px", height:"30px", borderRadius:"50%", background:"radial-gradient(ellipse, rgba(40,50,200,0.5) 0%, transparent 70%)", filter:"blur(12px)" }} />
+                            {/* Trust signals */}
+                            <div className="hero-trust h-fade-4 mb-5" aria-label="Social proof">
+                                <span className="hero-trust-stars" aria-label="4.9 out of 5 stars">★★★★★</span>
+                                <span style={{ color: "rgba(255,255,255,0.7)", fontWeight: 600 }}>4.9/5</span>
+                                <div className="hero-trust-sep" aria-hidden="true" />
+                                <span>Trusted by <strong style={{ color: "rgba(255,255,255,0.75)" }}>10,000+</strong> job seekers</span>
+                                <div className="hero-trust-sep" aria-hidden="true" />
+                                <span><i className="fas fa-lock" style={{ fontSize: "0.7rem", marginRight: "3px" }} aria-hidden="true" />Secure &amp; Private</span>
+                            </div>
 
-                        {/* ── The Glass Orb ── */}
-                        <div className="hero-orb" style={{
-                            width:"260px", height:"260px", borderRadius:"50%",
-                            background:"radial-gradient(circle at 35% 28%, rgba(200,210,255,0.18) 0%, rgba(100,115,255,0.95) 28%, rgba(40,55,200,1) 55%, rgba(15,20,100,1) 80%, rgba(5,8,40,1) 100%)",
-                            position:"relative", overflow:"visible"
-                        }}>
-                            {/* Main specular highlight */}
-                            <div style={{ position:"absolute", top:"13%", left:"20%", width:"55px", height:"40px", borderRadius:"50%", background:"radial-gradient(ellipse, rgba(255,255,255,0.95) 0%, rgba(200,210,255,0.5) 50%, transparent 100%)", filter:"blur(4px)", animation:"specularShimmer 4s ease-in-out infinite" }} />
-                            {/* Secondary small flare */}
-                            <div style={{ position:"absolute", top:"22%", left:"28%", width:"18px", height:"14px", borderRadius:"50%", background:"rgba(255,255,255,0.85)", filter:"blur(2px)" }} />
-                            {/* Core glow inside */}
-                            <div style={{ position:"absolute", top:"30%", left:"25%", width:"90px", height:"90px", borderRadius:"50%", background:"radial-gradient(circle, rgba(130,150,255,0.5) 0%, transparent 70%)", filter:"blur(10px)" }} />
-                            {/* Bottom rim reflection */}
-                            <div style={{ position:"absolute", bottom:"8%", right:"12%", width:"40px", height:"20px", borderRadius:"50%", background:"rgba(80,100,255,0.3)", filter:"blur(5px)", transform:"rotate(-20deg)" }} />
-                            {/* Equator gloss ring */}
-                            <div style={{ position:"absolute", top:"42%", left:"5%", right:"5%", height:"12px", borderRadius:"50%", background:"linear-gradient(90deg, transparent, rgba(180,200,255,0.12), rgba(255,255,255,0.08), rgba(180,200,255,0.12), transparent)", filter:"blur(2px)" }} />
+                            {/* Feature tags */}
+                            <div className="hero-feature-tags h-fade-5" aria-label="Key features">
+                                {[
+                                    { icon: "fa-robot",      label: "AI Content Writer"       },
+                                    { icon: "fa-check-double", label: "ATS Optimized"          },
+                                    { icon: "fa-file-pdf",   label: "Free PDF Export"          },
+                                    { icon: "fa-layer-group", label: "18+ Templates"           },
+                                    { icon: "fa-envelope",   label: "AI Cover Letter"          },
+                                ].map(({ icon, label }) => (
+                                    <span key={label} className="hero-tag">
+                                        <i className={`fas ${icon} hero-tag-icon`} aria-hidden="true" />
+                                        {label}
+                                    </span>
+                                ))}
+                            </div>
+
                         </div>
-
                     </div>
                 </div>
-
-                {/* ── CTA below orb ── */}
-                <div className="hero-text" style={{ animationDelay:"0.35s", marginTop:"20px", zIndex:10 }}>
-                    <button
-                        onClick={handleStartResume}
-                        style={{ padding:"14px 36px", background:"rgba(255,255,255,0.06)", border:"1px solid rgba(255,255,255,0.18)", borderRadius:"10px", color:"rgba(255,255,255,0.9)", fontWeight:"700", fontSize:"1rem", cursor:"pointer", backdropFilter:"blur(10px)", transition:"all 0.2s", letterSpacing:"-0.01em" }}
-                        onMouseEnter={e => { e.currentTarget.style.background="rgba(99,102,241,0.25)"; e.currentTarget.style.borderColor="rgba(99,102,241,0.6)"; e.currentTarget.style.color="#fff"; }}
-                        onMouseLeave={e => { e.currentTarget.style.background="rgba(255,255,255,0.06)"; e.currentTarget.style.borderColor="rgba(255,255,255,0.18)"; e.currentTarget.style.color="rgba(255,255,255,0.9)"; }}
-                    >
-                        Build Resume Now
-                    </button>
-                </div>
-
             </header>
+
+
 
 
             {/* Features Section */}
