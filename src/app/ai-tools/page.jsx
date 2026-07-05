@@ -342,9 +342,9 @@ export default function AIToolsHub() {
                     <div className="flex flex-col md:flex-row gap-6 items-center">
                         <span className="text-sm text-tertiary-fixed-dim">© 2026 CVGrid. All rights reserved.</span>
                         <div className="flex gap-6">
-                            <a className="text-sm text-on-surface-variant hover:text-primary transition-colors duration-200 cursor-pointer" href="#">Privacy Policy</a>
-                            <a className="text-sm text-on-surface-variant hover:text-primary transition-colors duration-200 cursor-pointer" href="#">Terms of Service</a>
-                            <a className="text-sm text-on-surface-variant hover:text-primary transition-colors duration-200 cursor-pointer" href="#">Contact Support</a>
+                            <Link className="text-sm text-on-surface-variant hover:text-primary transition-colors duration-200" href="/privacy">Privacy Policy</Link>
+                            <Link className="text-sm text-on-surface-variant hover:text-primary transition-colors duration-200" href="/terms">Terms of Service</Link>
+                            <Link className="text-sm text-on-surface-variant hover:text-primary transition-colors duration-200" href="/contact">Contact Support</Link>
                         </div>
                     </div>
                 </footer>

@@ -523,9 +523,9 @@ export default function Signup() {
                         © 2026 CVGrid. All rights reserved.
                     </div>
                     <div className="flex gap-6 font-body-sm text-body-sm text-on-surface-variant">
-                        <a className="hover:text-primary transition-colors duration-200 cursor-pointer" href="#">Privacy Policy</a>
-                        <a className="hover:text-primary transition-colors duration-200 cursor-pointer" href="#">Terms of Service</a>
-                        <a className="hover:text-primary transition-colors duration-200 cursor-pointer" href="#">Contact Support</a>
+                        <Link className="hover:text-primary transition-colors duration-200 cursor-pointer" href="/privacy">Privacy Policy</Link>
+                        <Link className="hover:text-primary transition-colors duration-200 cursor-pointer" href="/terms">Terms of Service</Link>
+                        <Link className="hover:text-primary transition-colors duration-200 cursor-pointer" href="/contact">Contact Support</Link>
                     </div>
                 </footer>
             </div>

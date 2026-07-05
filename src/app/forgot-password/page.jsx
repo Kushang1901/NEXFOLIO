@@ -473,9 +473,9 @@ export default function ForgotPassword() {
                     <div className="flex flex-col md:flex-row gap-6 items-center">
                         <span className="font-body-sm text-body-sm text-tertiary-fixed-dim">© 2026 CVGrid. All rights reserved.</span>
                         <div className="flex gap-6">
-                            <a className="font-body-sm text-body-sm text-on-surface-variant hover:text-primary transition-colors duration-200 cursor-pointer" href="#">Privacy Policy</a>
-                            <a className="font-body-sm text-body-sm text-on-surface-variant hover:text-primary transition-colors duration-200 cursor-pointer" href="#">Terms of Service</a>
-                            <a className="font-body-sm text-body-sm text-on-surface-variant hover:text-primary transition-colors duration-200 cursor-pointer" href="#">Contact Support</a>
+                            <Link className="font-body-sm text-body-sm text-on-surface-variant hover:text-primary transition-colors duration-200 cursor-pointer" href="/privacy">Privacy Policy</Link>
+                            <Link className="font-body-sm text-body-sm text-on-surface-variant hover:text-primary transition-colors duration-200 cursor-pointer" href="/terms">Terms of Service</Link>
+                            <Link className="font-body-sm text-body-sm text-on-surface-variant hover:text-primary transition-colors duration-200 cursor-pointer" href="/contact">Contact Support</Link>
                         </div>
                     </div>
                 </footer>

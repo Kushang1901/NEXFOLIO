@@ -276,14 +276,14 @@ export default function HomePage() {
                                     <i className="fas fa-bolt" aria-hidden="true" />
                                     Build My Resume — Free
                                 </button>
-                                <a
-                                    href="#templates-preview"
+                                <Link
+                                    href="/templates"
                                     className="hero-cta-secondary"
                                     aria-label="View resume templates"
                                 >
                                     <i className="fas fa-th-large" aria-hidden="true" />
                                     See Templates
-                                </a>
+                                </Link>
                             </div>
 
                             {/* Trust signals */}
