@@ -64,7 +64,26 @@ export async function initDb() {
             ALTER TABLE resumes ADD COLUMN IF NOT EXISTS shareable_link VARCHAR(500) DEFAULT NULL;
         `;
 
-        console.log("✅ Database initialized successfully (users and resumes tables checked/created/migrated)");
+        // Create cookie_consents table
+        await sql`
+            CREATE TABLE IF NOT EXISTS cookie_consents (
+                id SERIAL PRIMARY KEY,
+                consent_id VARCHAR(100) UNIQUE NOT NULL,
+                user_email VARCHAR(255),
+                consent_status VARCHAR(50) NOT NULL,
+                user_agent TEXT,
+                ip_address VARCHAR(100),
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            );
+        `;
+
+        // Create index on user_email for performance optimization
+        await sql`
+            CREATE INDEX IF NOT EXISTS idx_cookie_consents_email ON cookie_consents(user_email);
+        `;
+
+        console.log("✅ Database initialized successfully (users, resumes, and cookie_consents tables checked/created/migrated)");
     } catch (error) {
         console.error("❌ Database initialization failed:", error);
         throw error;

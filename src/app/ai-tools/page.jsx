@@ -50,8 +50,8 @@ export default function AIToolsHub() {
 
     const tools = [
         {
-            title: "Gemini AI Resume Builder",
-            description: "Generate highly professional summaries, work experience bullet points, and customized skills based on your target job description. Powered by Google Gemini AI.",
+            title: "AI Resume Builder",
+            description: "Generate highly professional summaries, work experience bullet points, and customized skills based on your target job description. Powered by advanced AI.",
             details: [
                 "Tailored summaries & content",
                 "18+ ATS-optimized templates",

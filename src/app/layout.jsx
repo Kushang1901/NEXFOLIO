@@ -2,6 +2,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "./globals.css";
 import ToastContainer from "../components/Toast";
 import PageLoader from "../components/PageLoader";
+import CookieConsent from "../components/CookieConsent";
 
 // ─────────────────────────────────────────────
 // SITE CONSTANTS
@@ -54,7 +55,7 @@ export const metadata = {
         "resume builder PDF download", "resume templates free download",
         "professional resume templates", "AI resume writer",
         "AI cover letter generator", "resume parser",
-        "resume with AI", "Gemini AI resume", "ChatGPT resume builder",
+        "resume with AI", "AI resume builder", "automated resume builder",
         // Audience
         "resume builder for students", "fresher resume maker",
         "resume builder for freshers", "college student resume builder",
@@ -280,7 +281,7 @@ export default function RootLayout({ children }) {
                             "name": "Sarah Miller"
                         },
                         "datePublished": "2024-05-15",
-                        "reviewBody": "This AI resume builder helped me create an ATS-friendly resume in less than 5 minutes. The Gemini AI content writer is exceptionally smart!",
+                        "reviewBody": "This AI resume builder helped me create an ATS-friendly resume in less than 5 minutes. The AI content writer is exceptionally smart!",
                         "reviewRating": {
                             "@type": "Rating",
                             "ratingValue": "5",
@@ -290,7 +291,7 @@ export default function RootLayout({ children }) {
                     }
                 ],
                 "featureList": [
-                    "AI-powered resume content generation using Google Gemini",
+                    "AI-powered resume content generation",
                     "ATS-friendly resume formatting",
                     "18+ professional resume templates",
                     "Free PDF resume download",
@@ -464,7 +465,7 @@ export default function RootLayout({ children }) {
                         "@type": "HowToStep",
                         "position": 4,
                         "name": "Generate AI Content",
-                        "text": "Click the AI Generate button to let Google Gemini AI write professional resume descriptions tailored to your target job role.",
+                        "text": "Click the AI Generate button to let our AI writer write professional resume descriptions tailored to your target job role.",
                         "url": `${BASE_URL}/builder`,
                     },
                     {
@@ -523,7 +524,7 @@ export default function RootLayout({ children }) {
                         "name": "How does the AI resume builder work?",
                         "acceptedAnswer": {
                             "@type": "Answer",
-                            "text": "CVGrid uses Google Gemini AI to generate professional resume content based on your job role, experience, and skills. Simply enter your details, click generate, review the content, and download your finished resume.",
+                            "text": "CVGrid uses advanced AI models to generate professional resume content based on your job role, experience, and skills. Simply enter your details, click generate, review the content, and download your finished resume.",
                         },
                     },
                     {
@@ -563,7 +564,7 @@ export default function RootLayout({ children }) {
                         "name": "Can CVGrid generate a cover letter too?",
                         "acceptedAnswer": {
                             "@type": "Answer",
-                            "text": "Yes! CVGrid has a free AI cover letter generator powered by Google Gemini. Just enter your job title, company, and key highlights — and the AI will write a compelling, personalized cover letter in seconds.",
+                            "text": "Yes! CVGrid has a free AI cover letter generator. Just enter your job title, company, and key highlights — and the AI will write a compelling, personalized cover letter in seconds.",
                         },
                     },
                 ],
@@ -641,7 +642,7 @@ export default function RootLayout({ children }) {
                 <meta name="referrer"         content="origin-when-cross-origin" />
 
                 {/* ── Site Category / Abstract ────────────────── */}
-                <meta name="abstract"        content="Free AI resume builder with 18+ ATS-friendly templates. Build, customize, and download your professional resume as PDF — powered by Google Gemini AI." />
+                <meta name="abstract"        content="Free AI resume builder with 18+ ATS-friendly templates. Build, customize, and download your professional resume as PDF — powered by advanced AI." />
                 <meta name="topic"           content="Resume Builder, AI Resume, Career Tools, Job Search" />
                 <meta name="summary"         content="CVGrid is a free AI-powered resume builder for students and job seekers." />
                 <meta name="Classification"  content="Resume Builder" />
@@ -683,11 +684,31 @@ export default function RootLayout({ children }) {
                 />
 
                 {/* ── Google Analytics (gtag.js) ──────────────── */}
-                <script async src="https://www.googletagmanager.com/gtag/js?id=G-J3TJ0ZE0GM" />
                 <script dangerouslySetInnerHTML={{
                     __html: `
                         window.dataLayer = window.dataLayer || [];
                         function gtag(){dataLayer.push(arguments);}
+                        
+                        var savedConsent = null;
+                        try {
+                            savedConsent = localStorage.getItem("cookie-consent-status");
+                        } catch(e) {}
+                        if (!savedConsent) {
+                            var match = document.cookie.match(new RegExp('(^| )cookie-consent-status=([^;]+)'));
+                            if (match) savedConsent = match[2];
+                        }
+                        
+                        gtag('consent', 'default', {
+                            'analytics_storage': savedConsent === 'accepted' ? 'granted' : 'denied',
+                            'ad_storage': 'denied',
+                            'ad_user_data': 'denied',
+                            'ad_personalization': 'denied'
+                        });
+                    `
+                }} />
+                <script async src="https://www.googletagmanager.com/gtag/js?id=G-J3TJ0ZE0GM" />
+                <script dangerouslySetInnerHTML={{
+                    __html: `
                         gtag('js', new Date());
                         gtag('config', 'G-J3TJ0ZE0GM', { anonymize_ip: true, cookie_flags: 'SameSite=None;Secure' });
                     `
@@ -697,6 +718,7 @@ export default function RootLayout({ children }) {
                 <PageLoader />
                 <ToastContainer />
                 {children}
+                <CookieConsent />
             </body>
         </html>
     );

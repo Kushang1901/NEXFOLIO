@@ -262,7 +262,7 @@ export default function HomePage() {
 
                             {/* Sub-headline */}
                             <p className="hero-sub h-fade-3 mb-5">
-                                Create ATS-friendly resumes in minutes using <strong style={{ color: "rgba(200,205,230,0.85)", fontWeight: 600 }}>Google Gemini AI</strong>. Pick from 18+ premium templates, generate compelling content, and download as PDF — 100% free, forever.
+                                Create ATS-friendly resumes in minutes using <strong style={{ color: "rgba(200,205,230,0.85)", fontWeight: 600 }}>advanced AI models</strong>. Pick from 18+ premium templates, generate compelling content, and download as PDF — 100% free, forever.
                             </p>
 
                             {/* CTA buttons */}
@@ -431,7 +431,7 @@ export default function HomePage() {
                                 },
                                 {
                                     q: "How does the AI resume builder work?",
-                                    a: "CVGrid uses Google Gemini AI to generate professional resume content based on your job role, experience, and skills. Simply enter your details, click generate, review the content, and download your finished resume.",
+                                    a: "CVGrid uses advanced AI models to generate professional resume content based on your job role, experience, and skills. Simply enter your details, click generate, review the content, and download your finished resume.",
                                 },
                                 {
                                     q: "Can I download my resume as a PDF?",

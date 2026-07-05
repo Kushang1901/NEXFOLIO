@@ -40,7 +40,7 @@ export default function ResumeBuilder() {
         "Brainstorming compelling impact statements...",
         "Aligning achievements with ATS recommendations...",
         "Structuring education & work history...",
-        "Polishing content phrasing with Gemini AI...",
+        "Polishing content phrasing with our AI writer...",
         "Formatting layout & applying design tokens...",
         "Preparing final resume document preview..."
     ];
@@ -566,7 +566,7 @@ ${formData.skills || "Not provided"}
                                     </div>
                                     <h3 className="h5 fw-bold mb-2">Import from Existing Resume</h3>
                                     <p className="text-white-50 small mb-3">
-                                        Upload your PDF resume, and Gemini AI will pre-fill the form fields below.
+                                        Upload your PDF resume, and our AI will pre-fill the form fields below.
                                     </p>
                                     <div className="d-flex justify-content-center">
                                         <input
