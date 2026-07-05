@@ -13,7 +13,7 @@ export default function robots() {
                 crawlDelay: 0,
             },
         ],
-        sitemap: "https://nexfolio-ai.vercel.app/sitemap.xml",
-        host: "https://nexfolio-ai.vercel.app",
+        sitemap: "https://cvgrid.in/sitemap.xml",
+        host: "https://cvgrid.in",
     };
 }

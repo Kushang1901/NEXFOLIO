@@ -1,5 +1,5 @@
 export default function sitemap() {
-    const baseUrl = "https://nexfolio-ai.vercel.app";
+    const baseUrl = "https://cvgrid.in";
     const today = new Date().toISOString().split("T")[0];
 
     return [
