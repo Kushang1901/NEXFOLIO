@@ -13,6 +13,37 @@ export default function HomePage() {
     const [showAuthModal, setShowAuthModal] = useState(false);
     const [countdown, setCountdown] = useState(3);
 
+    // Typewriter effect state
+    const phrases = ["Professional Resume", "ATS-Friendly CV", "Job-Winning Profile", "Standout Portfolio"];
+    const [typewriterIndex, setTypewriterIndex] = useState(0);
+    const [typewriterText, setTypewriterText] = useState("Professional Resume");
+    const [isTypewriterDeleting, setIsTypewriterDeleting] = useState(false);
+
+    useEffect(() => {
+        let timer;
+        const currentPhrase = phrases[typewriterIndex];
+        const speed = isTypewriterDeleting ? 40 : 80;
+
+        if (isTypewriterDeleting) {
+            timer = setTimeout(() => {
+                setTypewriterText(prev => prev.slice(0, -1));
+            }, speed);
+        } else {
+            timer = setTimeout(() => {
+                setTypewriterText(currentPhrase.slice(0, typewriterText.length + 1));
+            }, speed);
+        }
+
+        if (!isTypewriterDeleting && typewriterText === currentPhrase) {
+            timer = setTimeout(() => setIsTypewriterDeleting(true), 2200);
+        } else if (isTypewriterDeleting && typewriterText === "") {
+            setIsTypewriterDeleting(false);
+            setTypewriterIndex(prev => (prev + 1) % phrases.length);
+        }
+
+        return () => clearTimeout(timer);
+    }, [typewriterText, isTypewriterDeleting, typewriterIndex]);
+
     useEffect(() => {
         const unsubscribe = subscribeToAuthChanges((loggedUser) => {
             setUser(loggedUser);
@@ -86,6 +117,10 @@ export default function HomePage() {
                         50%  { transform: rotate(10deg) scale(1.15); }
                         100% { transform: rotate(0deg) scale(1); }
                     }
+                    @keyframes cursorBlink {
+                        0%, 100% { opacity: 1; }
+                        50% { opacity: 0; }
+                    }
 
                     /* ── Hero element styles ── */
                     .h-fade-1  { animation: hFadeUp 0.7s ease both; animation-delay: 0.05s; }
@@ -125,6 +160,12 @@ export default function HomePage() {
                         -webkit-background-clip: text;
                         -webkit-text-fill-color: transparent;
                         background-clip: text;
+                    }
+                    .typewriter-cursor {
+                        animation: cursorBlink 0.8s infinite;
+                        color: #818cf8;
+                        margin-left: 4px;
+                        font-weight: 300;
                     }
 
                     .hero-sub {
@@ -488,7 +529,7 @@ export default function HomePage() {
 
                             {/* H1 — primary SEO target */}
                             <h1 className="hero-h1 h-fade-2 mb-4">
-                                Build a <span className="h1-accent">Professional Resume</span>
+                                Build a <span className="h1-accent">{typewriterText}</span><span className="typewriter-cursor">|</span>
                                 <br />with Free AI Resume Builder
                             </h1>
 
