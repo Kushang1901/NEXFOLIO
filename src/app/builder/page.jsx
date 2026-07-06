@@ -7,6 +7,63 @@ import { getRecaptchaToken } from "../../utils/recaptcha";
 import { subscribeToAuthChanges } from "../../authState";
 import { showToast } from "../../utils/toast";
 
+/* ================= PARSE / SERIALIZE HELPERS ================= */
+const parseProjectsText = (text) => {
+    if (!text) return [];
+    const lines = text.split("\n");
+    const list = [];
+    let currentProj = null;
+    for (let line of lines) {
+        const trimmed = line.trim();
+        if (!trimmed) continue;
+        if (trimmed.startsWith("-") || trimmed.startsWith("•") || trimmed.startsWith("*")) {
+            if (currentProj) {
+                currentProj.description += (currentProj.description ? "\n" : "") + trimmed;
+            }
+        } else {
+            if (currentProj) list.push(currentProj);
+            currentProj = { title: trimmed, description: "" };
+        }
+    }
+    if (currentProj) list.push(currentProj);
+    return list;
+};
+
+const serializeProjectsList = (list) => {
+    return list.map(p => {
+        const title = p.title.trim();
+        const desc = p.description.trim().split("\n").map(line => {
+            const l = line.trim();
+            if (!l) return "";
+            if (l.startsWith("-") || l.startsWith("•") || l.startsWith("*")) return l;
+            return `- ${l}`;
+        }).filter(Boolean).join("\n");
+        return `${title}\n${desc}`;
+    }).filter(Boolean).join("\n\n");
+};
+
+const parseAchievementsText = (text) => {
+    if (!text) return [];
+    return text.split("\n").map(l => l.trim().replace(/^[•\-\*\s]+/, "")).filter(Boolean);
+};
+
+const serializeAchievementsList = (list) => {
+    return list.map(item => {
+        const cleaned = item.trim();
+        if (!cleaned) return "";
+        return `• ${cleaned}`;
+    }).filter(Boolean).join("\n");
+};
+
+const parseSkillsText = (text) => {
+    if (!text) return [];
+    return text.split(",").map(s => s.trim()).filter(Boolean);
+};
+
+const serializeSkillsList = (list) => {
+    return list.join(", ");
+};
+
 export default function ResumeBuilder() {
     const router = useRouter();
 
@@ -126,6 +183,152 @@ export default function ResumeBuilder() {
         achievements: "",
         skills: ""
     });
+
+    /* ================= TAGS & LISTS STATE BUFFERS ================= */
+    const POPULAR_SKILLS = [
+        "React.js", "Next.js", "JavaScript", "HTML5/CSS3", "Python", "Java", 
+        "Node.js", "Express.js", "MongoDB", "SQL", "PostgreSQL", "Git & GitHub", 
+        "Docker", "REST APIs", "TypeScript", "AWS", "Machine Learning", "C++",
+        "TailwindCSS", "Redux", "GraphQL", "Figma"
+    ];
+    const [skillsList, setSkillsList] = useState([]);
+    const [skillInput, setSkillInput] = useState("");
+    const [projectsList, setProjectsList] = useState([]);
+    const [achievementsList, setAchievementsList] = useState([]);
+
+    // Keep buffers in sync with formData loaded from DB/sessionStorage
+    useEffect(() => {
+        if (formData.projects !== undefined) {
+            const parsed = parseProjectsText(formData.projects);
+            if (serializeProjectsList(parsed) !== formData.projects) {
+                setProjectsList(parsed);
+            }
+        }
+    }, [formData.projects]);
+
+    useEffect(() => {
+        if (formData.achievements !== undefined) {
+            const parsed = parseAchievementsText(formData.achievements);
+            if (serializeAchievementsList(parsed) !== formData.achievements) {
+                setAchievementsList(parsed);
+            }
+        }
+    }, [formData.achievements]);
+
+    useEffect(() => {
+        if (formData.skills !== undefined) {
+            const parsed = parseSkillsText(formData.skills);
+            if (serializeSkillsList(parsed) !== formData.skills) {
+                setSkillsList(parsed);
+            }
+        }
+    }, [formData.skills]);
+
+    /* ================= STATE CONTROLS ================= */
+    const handleAddSkill = (skill) => {
+        const cleaned = skill.trim();
+        if (!cleaned) return;
+        if (skillsList.includes(cleaned)) {
+            setSkillInput("");
+            return;
+        }
+        const updated = [...skillsList, cleaned];
+        setSkillsList(updated);
+        setSkillInput("");
+        
+        const serialized = updated.join(", ");
+        setFormData(prev => {
+            const upd = { ...prev, skills: serialized };
+            sessionStorage.setItem("resumeData", JSON.stringify(upd));
+            return upd;
+        });
+    };
+
+    const handleRemoveSkill = (skill) => {
+        const updated = skillsList.filter(s => s !== skill);
+        setSkillsList(updated);
+        
+        const serialized = updated.join(", ");
+        setFormData(prev => {
+            const upd = { ...prev, skills: serialized };
+            sessionStorage.setItem("resumeData", JSON.stringify(upd));
+            return upd;
+        });
+    };
+
+    const handleAddProject = () => {
+        const updated = [...projectsList, { title: "", description: "" }];
+        setProjectsList(updated);
+        
+        const serialized = serializeProjectsList(updated);
+        setFormData(prev => {
+            const upd = { ...prev, projects: serialized };
+            sessionStorage.setItem("resumeData", JSON.stringify(upd));
+            return upd;
+        });
+    };
+
+    const handleUpdateProject = (index, field, value) => {
+        const updated = [...projectsList];
+        updated[index] = { ...updated[index], [field]: value };
+        setProjectsList(updated);
+        
+        const serialized = serializeProjectsList(updated);
+        setFormData(prev => {
+            const upd = { ...prev, projects: serialized };
+            sessionStorage.setItem("resumeData", JSON.stringify(upd));
+            return upd;
+        });
+    };
+
+    const handleRemoveProject = (index) => {
+        const updated = projectsList.filter((_, idx) => idx !== index);
+        setProjectsList(updated);
+        
+        const serialized = serializeProjectsList(updated);
+        setFormData(prev => {
+            const upd = { ...prev, projects: serialized };
+            sessionStorage.setItem("resumeData", JSON.stringify(upd));
+            return upd;
+        });
+    };
+
+    const handleAddAchievement = () => {
+        const updated = [...achievementsList, ""];
+        setAchievementsList(updated);
+        
+        const serialized = serializeAchievementsList(updated);
+        setFormData(prev => {
+            const upd = { ...prev, achievements: serialized };
+            sessionStorage.setItem("resumeData", JSON.stringify(upd));
+            return upd;
+        });
+    };
+
+    const handleUpdateAchievement = (index, value) => {
+        const updated = [...achievementsList];
+        updated[index] = value;
+        setAchievementsList(updated);
+        
+        const serialized = serializeAchievementsList(updated);
+        setFormData(prev => {
+            const upd = { ...prev, achievements: serialized };
+            sessionStorage.setItem("resumeData", JSON.stringify(upd));
+            return upd;
+        });
+    };
+
+    const handleRemoveAchievement = (index) => {
+        const updated = achievementsList.filter((_, idx) => idx !== index);
+        setAchievementsList(updated);
+        
+        const serialized = serializeAchievementsList(updated);
+        setFormData(prev => {
+            const upd = { ...prev, achievements: serialized };
+            sessionStorage.setItem("resumeData", JSON.stringify(upd));
+            return upd;
+        });
+    };
 
     const loadResumeFromDb = async (email, id) => {
         try {
@@ -1160,205 +1363,206 @@ ${formData.skills || "Not provided"}
 
                                 {/* PROJECTS */}
                                 <div className="mb-4">
-                                    <label htmlFor="projects" className="form-label fw-semibold">
-                                        Projects
+                                    <label className="form-label fw-semibold text-white d-flex justify-content-between align-items-center">
+                                        <span>Projects</span>
+                                        <button
+                                            type="button"
+                                            onClick={handleAddProject}
+                                            className="btn btn-sm btn-outline-primary d-flex align-items-center gap-1"
+                                            style={{ borderRadius: "6px" }}
+                                            suppressHydrationWarning
+                                        >
+                                            + Add Project
+                                        </button>
                                     </label>
-                                    <textarea
-                                        className="form-control bg-dark text-white border-secondary"
-                                        id="projects"
-                                        name="projects"
-                                        value={formData.projects}
-                                        onChange={handleChange}
-                                        rows="4"
-                                        placeholder="E-commerce Platform&#10;- Built a full-stack application using React and Node.js&#10;- Implemented payment gateway integration"
-                                        suppressHydrationWarning
-                                    ></textarea>
+
+                                    {projectsList.length === 0 ? (
+                                        <div className="text-center py-4 bg-dark border-secondary mb-3" style={{ borderRadius: "12px", border: "1px dashed rgba(255,255,255,0.1)" }}>
+                                            <p className="text-white-50 small mb-0">No projects added yet. Click "+ Add Project" to showcase your work.</p>
+                                        </div>
+                                    ) : (
+                                        <div className="d-flex flex-column gap-3 mb-3">
+                                            {projectsList.map((proj, idx) => (
+                                                <div 
+                                                    key={idx} 
+                                                    className="p-3 bg-dark border-secondary position-relative animate-fade-in"
+                                                    style={{ borderRadius: "12px", border: "1px solid rgba(255,255,255,0.08)" }}
+                                                >
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => handleRemoveProject(idx)}
+                                                        className="position-absolute border-0 bg-transparent text-danger"
+                                                        style={{ top: "12px", right: "12px", opacity: 0.7 }}
+                                                        title="Remove Project"
+                                                    >
+                                                        <i className="fas fa-trash-alt"></i>
+                                                    </button>
+
+                                                    <div className="row g-3">
+                                                        <div className="col-12 col-md-10">
+                                                            <label className="form-label small text-white-50 fw-semibold">Project Name / Title</label>
+                                                            <input
+                                                                type="text"
+                                                                className="form-control bg-black text-white border-secondary"
+                                                                placeholder="e.g. SoundWave E-Commerce Website"
+                                                                value={proj.title}
+                                                                onChange={(e) => handleUpdateProject(idx, "title", e.target.value)}
+                                                                style={{ borderRadius: "8px", height: "38px" }}
+                                                            />
+                                                        </div>
+                                                        <div className="col-12">
+                                                            <label className="form-label small text-white-50 fw-semibold d-flex justify-content-between">
+                                                                <span>Project Details / Responsibilities</span>
+                                                                <span className="text-muted small">One point per line</span>
+                                                            </label>
+                                                            <textarea
+                                                                className="form-control bg-black text-white border-secondary"
+                                                                rows="3"
+                                                                placeholder="- Built a fully responsive online store with modern UI&#10;- Implemented secure checkout flow"
+                                                                value={proj.description}
+                                                                onChange={(e) => handleUpdateProject(idx, "description", e.target.value)}
+                                                                style={{ borderRadius: "8px", fontSize: "0.9rem" }}
+                                                            ></textarea>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    )}
                                 </div>
 
                                 {/* ACHIEVEMENTS / CERTIFICATIONS */}
                                 <div className="mb-4">
-                                    <label className="form-label fw-semibold">
-                                        Achievements / Certifications (Optional)
-                                    </label>
-                                    <textarea
-                                        name="achievements"
-                                        rows="4"
-                                        className="form-control bg-dark text-white border-secondary"
-                                        placeholder="• AWS Certified Developer
-• Google Data Analytics Certificate
-• Employee of the Month"
-                                        value={formData.achievements}
-                                        onChange={handleChange}
-                                        suppressHydrationWarning
-                                    />
-                                </div>
-
-
-                                {/* JOB EXPERIENCE */}
-                                <div className="mb-4 pb-3 border-bottom border-secondary">
-                                    <div className="form-check mb-3">
-                                        <input
-                                            className="form-check-input"
-                                            type="checkbox"
-                                            id="hasExperience"
-                                            checked={formData.hasExperience}
-                                            onChange={(e) => setFormData(p => ({ ...p, hasExperience: e.target.checked }))}
+                                    <label className="form-label fw-semibold text-white d-flex justify-content-between align-items-center">
+                                        <span>Achievements / Certifications (Optional)</span>
+                                        <button
+                                            type="button"
+                                            onClick={handleAddAchievement}
+                                            className="btn btn-sm btn-outline-primary d-flex align-items-center gap-1"
+                                            style={{ borderRadius: "6px" }}
                                             suppressHydrationWarning
-                                        />
-                                        <label className="form-check-label fw-semibold" htmlFor="hasExperience">
-                                            I have Job experience
-                                        </label>
-                                    </div>
+                                        >
+                                            + Add Achievement
+                                        </button>
+                                    </label>
 
-                                    {formData.hasExperience && (
-                                        <>
-                                            <div className="row">
-                                                <div className="col-md-6 mb-3">
-                                                    <label htmlFor="expCompany" className="form-label fw-semibold">
-                                                        Company Name
-                                                    </label>
+                                    {achievementsList.length === 0 ? (
+                                        <div className="text-center py-4 bg-dark border-secondary mb-3" style={{ borderRadius: "12px", border: "1px dashed rgba(255,255,255,0.1)" }}>
+                                            <p className="text-white-50 small mb-0">No achievements added yet. Click "+ Add Achievement".</p>
+                                        </div>
+                                    ) : (
+                                        <div className="d-flex flex-column gap-2 mb-3">
+                                            {achievementsList.map((ach, idx) => (
+                                                <div 
+                                                    key={idx} 
+                                                    className="d-flex align-items-center gap-2 bg-dark border-secondary p-2 animate-fade-in"
+                                                    style={{ borderRadius: "10px", border: "1px solid rgba(255,255,255,0.06)" }}
+                                                >
                                                     <input
                                                         type="text"
-                                                        className="form-control bg-dark text-white border-secondary"
-                                                        id="expCompany"
-                                                        value={formData.experience.company || ""}
-                                                        onChange={(e) => handleNestedChange("experience", "company", e.target.value)}
-                                                        placeholder="Google LLC"
-                                                        suppressHydrationWarning
+                                                        className="form-control bg-black text-white border-secondary flex-grow-1"
+                                                        placeholder="e.g. AWS Certified Developer"
+                                                        value={ach}
+                                                        onChange={(e) => handleUpdateAchievement(idx, e.target.value)}
+                                                        style={{ borderRadius: "8px", height: "38px" }}
                                                     />
-                                                </div>
-                                                <div className="col-md-6 mb-3">
-                                                    <label htmlFor="expLocation" className="form-label fw-semibold">
-                                                        City & State
-                                                    </label>
-                                                    <input
-                                                        type="text"
-                                                        className="form-control bg-dark text-white border-secondary"
-                                                        id="expLocation"
-                                                        value={formData.experience.location || ""}
-                                                        onChange={(e) => handleNestedChange("experience", "location", e.target.value)}
-                                                        placeholder="San Francisco, CA"
-                                                        suppressHydrationWarning
-                                                    />
-                                                </div>
-                                            </div>
-
-                                            <div className="row">
-                                                <div className="col-md-6 mb-3">
-                                                    <label htmlFor="expRole" className="form-label fw-semibold">
-                                                        Position / Role
-                                                    </label>
-                                                    <input
-                                                        type="text"
-                                                        className="form-control bg-dark text-white border-secondary"
-                                                        id="expRole"
-                                                        value={formData.experience.role || ""}
-                                                        onChange={(e) => handleNestedChange("experience", "role", e.target.value)}
-                                                        placeholder="Senior Software Engineer"
-                                                        suppressHydrationWarning
-                                                    />
-                                                </div>
-                                                <div className="col-md-6 mb-3">
-                                                    <label htmlFor="expSalary" className="form-label fw-semibold">
-                                                        Salary per Annum
-                                                    </label>
-                                                    <input
-                                                        type="text"
-                                                        className="form-control bg-dark text-white border-secondary"
-                                                        id="expSalary"
-                                                        value={formData.experience.salary || ""}
-                                                        onChange={(e) => handleNestedChange("experience", "salary", e.target.value)}
-                                                        placeholder="e.g. $120,000 / 12 LPA"
-                                                        suppressHydrationWarning
-                                                    />
-                                                </div>
-                                            </div>
-
-                                            <div className="form-check mb-3">
-                                                <input
-                                                    className="form-check-input"
-                                                    type="checkbox"
-                                                    id="expOngoing"
-                                                    checked={formData.experience.ongoing || false}
-                                                    onChange={(e) => handleNestedChange("experience", "ongoing", e.target.checked)}
-                                                    suppressHydrationWarning
-                                                />
-                                                <label className="form-check-label text-white-50" htmlFor="expOngoing">
-                                                    Ongoing Job
-                                                </label>
-                                            </div>
-
-                                            <div className="row mb-3">
-                                                <div className="col-md-6 mb-3 mb-md-0">
-                                                    <label htmlFor="expStart" className="form-label fw-semibold">
-                                                        Start Year
-                                                    </label>
-                                                    <select
-                                                        className="form-select bg-dark text-white border-secondary"
-                                                        id="expStart"
-                                                        value={formData.experience.startYear || ""}
-                                                        onChange={(e) => handleNestedChange("experience", "startYear", e.target.value)}
-                                                        suppressHydrationWarning
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => handleRemoveAchievement(idx)}
+                                                        className="btn btn-outline-danger p-2 d-flex align-items-center justify-content-center"
+                                                        style={{ borderRadius: "8px", width: "38px", height: "38px" }}
+                                                        title="Remove Achievement"
                                                     >
-                                                        <option value="">Select Year</option>
-                                                        {getYears().map(y => <option key={y} value={y}>{y}</option>)}
-                                                    </select>
+                                                        <i className="fas fa-trash-alt"></i>
+                                                    </button>
                                                 </div>
-                                                {!formData.experience.ongoing && (
-                                                    <div className="col-md-6">
-                                                        <label htmlFor="expEnd" className="form-label fw-semibold">
-                                                            End Year
-                                                        </label>
-                                                        <select
-                                                            className="form-select bg-dark text-white border-secondary"
-                                                            id="expEnd"
-                                                            value={formData.experience.endYear || ""}
-                                                            onChange={(e) => handleNestedChange("experience", "endYear", e.target.value)}
-                                                            suppressHydrationWarning
-                                                        >
-                                                            <option value="">Select Year</option>
-                                                            {formData.experience.startYear &&
-                                                                getYears(MAX_YEAR).filter(y => y >= formData.experience.startYear)
-                                                                    .map(y => <option key={y} value={y}>{y}</option>)}
-                                                        </select>
-                                                    </div>
-                                                )}
-                                            </div>
-
-                                            <div className="mb-3">
-                                                <label htmlFor="expDescription" className="form-label fw-semibold">
-                                                    Responsibilities / Description
-                                                </label>
-                                                <textarea
-                                                    className="form-control bg-dark text-white border-secondary"
-                                                    id="expDescription"
-                                                    value={formData.experience.description || ""}
-                                                    onChange={(e) => handleNestedChange("experience", "description", e.target.value)}
-                                                    rows="4"
-                                                    placeholder="Describe your role and key achievements..."
-                                                    suppressHydrationWarning
-                                                ></textarea>
-                                            </div>
-                                        </>
+                                            ))}
+                                        </div>
                                     )}
                                 </div>
 
                                 {/* SKILLS */}
                                 <div className="mb-5">
-                                    <label htmlFor="skills" className="form-label fw-semibold">
-                                        Skills
+                                    <label className="form-label fw-semibold text-white d-flex justify-content-between align-items-center">
+                                        <span>Skills</span>
+                                        <span className="text-white-50 small">Add relevant skills</span>
                                     </label>
-                                    <textarea
-                                        className="form-control bg-dark text-white border-secondary"
-                                        id="skills"
-                                        name="skills"
-                                        value={formData.skills}
-                                        onChange={handleChange}
-                                        rows="2"
-                                        placeholder="JavaScript, React, Node.js, Python, SQL, MongoDB"
-                                        suppressHydrationWarning
-                                    ></textarea>
-                                    <small className="text-white-50">Separate skills with commas</small>
+                                    
+                                    {/* Active Skills Pills */}
+                                    <div className="d-flex flex-wrap gap-2 mb-3 p-3 bg-dark border-secondary" style={{ borderRadius: "12px", minHeight: "60px", border: "1px solid rgba(255,255,255,0.08)" }}>
+                                        {skillsList.length === 0 ? (
+                                            <span className="text-white-50 small my-auto">No skills added yet. Click suggestions below or type your own.</span>
+                                        ) : (
+                                            skillsList.map((skill, index) => (
+                                                <span 
+                                                    key={index} 
+                                                    className="badge text-white d-flex align-items-center gap-1.5 px-3 py-2 animate-fade-in"
+                                                    style={{ borderRadius: "20px", fontSize: "0.9rem", background: "rgba(99, 102, 241, 0.15)", border: "1px solid rgba(99, 102, 241, 0.3)" }}
+                                                >
+                                                    {skill}
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => handleRemoveSkill(skill)}
+                                                        className="border-0 bg-transparent text-white-50 p-0"
+                                                        style={{ fontSize: "0.9rem", lineHeight: 1, cursor: "pointer" }}
+                                                    >
+                                                        &times;
+                                                    </button>
+                                                </span>
+                                            ))
+                                        )}
+                                    </div>
+
+                                    {/* Skill input field */}
+                                    <div className="d-flex gap-2 mb-3">
+                                        <input
+                                            type="text"
+                                            className="form-control bg-black text-white border-secondary"
+                                            placeholder="Type a skill (e.g. Docker) and press Enter"
+                                            value={skillInput}
+                                            onChange={(e) => setSkillInput(e.target.value)}
+                                            onKeyDown={(e) => {
+                                                if (e.key === "Enter") {
+                                                    e.preventDefault();
+                                                    handleAddSkill(skillInput);
+                                                }
+                                            }}
+                                            style={{ borderRadius: "8px", height: "42px" }}
+                                        />
+                                        <button
+                                            type="button"
+                                            onClick={() => handleAddSkill(skillInput)}
+                                            className="btn btn-primary px-4"
+                                            style={{ borderRadius: "8px" }}
+                                        >
+                                            Add
+                                        </button>
+                                    </div>
+
+                                    {/* Suggested/Popular Skills */}
+                                    <div className="mb-2">
+                                        <small className="text-white-50 d-block mb-2 fw-semibold">Popular Skills Suggestions:</small>
+                                        <div className="d-flex flex-wrap gap-1.5">
+                                            {POPULAR_SKILLS.filter(s => !skillsList.includes(s)).slice(0, 12).map(skill => (
+                                                <button
+                                                    key={skill}
+                                                    type="button"
+                                                    onClick={() => handleAddSkill(skill)}
+                                                    className="btn btn-sm px-2.5 py-1"
+                                                    style={{
+                                                        background: "rgba(255, 255, 255, 0.03)",
+                                                        border: "1px solid rgba(255, 255, 255, 0.06)",
+                                                        color: "rgba(255, 255, 255, 0.65)",
+                                                        borderRadius: "20px",
+                                                        fontSize: "0.8rem",
+                                                        transition: "all 0.2s ease"
+                                                    }}
+                                                >
+                                                    + {skill}
+                                                </button>
+                                            ))}
+                                        </div>
+                                    </div>
                                 </div>
 
                                 <div className="text-center">
