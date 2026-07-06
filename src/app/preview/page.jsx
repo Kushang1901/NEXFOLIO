@@ -308,6 +308,118 @@ export default function Preview() {
         }
     };
 
+    const downloadAsDOCX = async () => {
+        setIsDownloading(true);
+        setDownloadType("docx");
+        try {
+            await new Promise((resolve) => setTimeout(resolve, 800));
+            const resumeElement = document.getElementById("resume-preview");
+            if (!resumeElement) return;
+
+            let htmlContent = resumeElement.innerHTML;
+            
+            // Convert relative image sources to absolute URLs for Word compatibility
+            const tempDiv = document.createElement("div");
+            tempDiv.innerHTML = htmlContent;
+            const images = tempDiv.getElementsByTagName("img");
+            for (let i = 0; i < images.length; i++) {
+                const src = images[i].getAttribute("src");
+                if (src && src.startsWith("/")) {
+                    images[i].setAttribute("src", window.location.origin + src);
+                }
+            }
+            htmlContent = tempDiv.innerHTML;
+
+            // Extract all styles active on the page
+            let styles = "";
+            const styleSheets = document.styleSheets;
+            for (let i = 0; i < styleSheets.length; i++) {
+                try {
+                    const rules = styleSheets[i].cssRules || styleSheets[i].rules;
+                    if (rules) {
+                        for (let j = 0; j < rules.length; j++) {
+                            styles += rules[j].cssText;
+                        }
+                    }
+                } catch (e) {
+                    // Ignore cross-origin stylesheet access errors
+                }
+            }
+
+            // Word-specific overrides
+            const docxStyles = `
+                ${styles}
+                @page Section1 {
+                    size: 210mm 297mm;
+                    margin: 0mm;
+                }
+                div.Section1 {
+                    page: Section1;
+                    width: 210mm;
+                    min-height: 297mm;
+                    background-color: #ffffff;
+                    color: #000000;
+                }
+                body {
+                    background-color: #ffffff;
+                }
+                .no-print { display: none !important; }
+            `;
+
+            // Wrap in Microsoft Word Office HTML namespaces
+            const docHtml = `
+                <html xmlns:o='urn:schemas-microsoft-com:office:office' 
+                      xmlns:w='urn:schemas-microsoft-com:office:word' 
+                      xmlns='http://www.w3.org/TR/REC-html40'>
+                <head>
+                    <meta charset="utf-8">
+                    <title>${resumeData?.fullName || "Resume"}</title>
+                    <!--[if gte mso 9]>
+                    <xml>
+                        <w:WordDocument>
+                            <w:View>Print</w:View>
+                            <w:Zoom>100</w:Zoom>
+                            <w:DoNotOptimizeForBrowser/>
+                        </w:WordDocument>
+                    </xml>
+                    <![endif]-->
+                    <style>
+                        ${docxStyles}
+                    </style>
+                </head>
+                <body>
+                    <div class="Section1">
+                        ${htmlContent}
+                    </div>
+                </body>
+                </html>
+            `;
+
+            // Microsoft Word MIME type
+            const blob = new Blob(['\ufeff' + docHtml], {
+                type: "application/msword"
+            });
+
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement("a");
+            link.href = url;
+            link.download = `${resumeData?.fullName ? resumeData.fullName.replace(/\s+/g, "_") : "Resume"}.doc`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+
+            setShowDownloadModal(false);
+            showToast("Resume downloaded as editable Word file successfully!", "success");
+        } catch (err) {
+            console.error("DOCX download error:", err);
+            showToast("Failed to download as Word file. Please try again.", "error");
+        } finally {
+            setIsDownloading(false);
+            setDownloadType(null);
+        }
+    };
+
     const handleTogglePublic = async (e) => {
         const checked = e.target.checked;
         setIsSharingLoading(true);
@@ -1053,9 +1165,9 @@ export default function Preview() {
                     alignItems: "center",
                     justifyContent: "center"
                 }} className="no-print">
-                    <div className="card text-center p-5 text-white animate-fade-in" style={{
-                        maxWidth: "500px",
-                        width: "90%",
+                    <div className="card text-center p-4 p-md-5 text-white animate-fade-in" style={{
+                        maxWidth: "680px",
+                        width: "95%",
                         background: "linear-gradient(145deg, #1c2027 0%, #11141a 100%)",
                         borderRadius: "20px",
                         border: "1px solid rgba(142, 144, 160, 0.25)",
@@ -1065,7 +1177,7 @@ export default function Preview() {
                             <button 
                                 onClick={() => setShowDownloadModal(false)}
                                 className="btn-close btn-close-white position-absolute"
-                                style={{ top: "-25px", right: "-25px" }}
+                                style={{ top: "-15px", right: "-15px" }}
                                 aria-label="Close"
                             ></button>
                             
@@ -1075,36 +1187,56 @@ export default function Preview() {
                             </p>
                             
                             <div className="row g-3">
-                                <div className="col-6">
+                                <div className="col-12 col-md-4">
                                     <button 
                                         onClick={downloadAsPNG}
-                                        className="btn btn-outline-info w-100 p-4 d-flex flex-column align-items-center justify-content-center"
+                                        className="btn btn-outline-info w-100 p-3.5 d-flex flex-column align-items-center justify-content-center"
                                         style={{
                                             borderRadius: "16px",
                                             borderWidth: "1.5px",
                                             transition: "all 0.2s ease",
-                                            background: "rgba(13, 202, 240, 0.05)"
+                                            background: "rgba(13, 202, 240, 0.05)",
+                                            height: "100%"
                                         }}
                                     >
                                         <i className="fas fa-file-image fa-2x mb-3 text-info"></i>
-                                        <span className="fw-bold fs-5 mb-1">PNG Image</span>
+                                        <span className="fw-bold fs-6 mb-1 text-white">PNG Image</span>
                                         <span className="text-white-50 small" style={{ fontSize: "0.75rem" }}>Best for sharing</span>
                                     </button>
                                 </div>
-                                <div className="col-6">
+                                <div className="col-12 col-md-4">
                                     <button 
                                         onClick={downloadAsPDF}
-                                        className="btn btn-outline-primary w-100 p-4 d-flex flex-column align-items-center justify-content-center"
+                                        className="btn btn-outline-primary w-100 p-3.5 d-flex flex-column align-items-center justify-content-center"
                                         style={{
                                             borderRadius: "16px",
                                             borderWidth: "1.5px",
                                             transition: "all 0.2s ease",
-                                            background: "rgba(13, 110, 253, 0.05)"
+                                            background: "rgba(13, 110, 253, 0.05)",
+                                            height: "100%"
                                         }}
                                     >
                                         <i className="fas fa-file-pdf fa-2x mb-3 text-primary"></i>
-                                        <span className="fw-bold fs-5 mb-1">PDF File</span>
+                                        <span className="fw-bold fs-6 mb-1 text-white">PDF File</span>
                                         <span className="text-white-50 small" style={{ fontSize: "0.75rem" }}>Best for printing/ATS</span>
+                                    </button>
+                                </div>
+                                <div className="col-12 col-md-4">
+                                    <button 
+                                        onClick={downloadAsDOCX}
+                                        className="btn btn-outline-indigo w-100 p-3.5 d-flex flex-column align-items-center justify-content-center"
+                                        style={{
+                                            borderRadius: "16px",
+                                            borderWidth: "1.5px",
+                                            transition: "all 0.2s ease",
+                                            background: "rgba(99, 102, 241, 0.05)",
+                                            borderColor: "rgba(99, 102, 241, 0.4)",
+                                            height: "100%"
+                                        }}
+                                    >
+                                        <i className="fas fa-file-word fa-2x mb-3 text-indigo" style={{ color: "#818cf8" }}></i>
+                                        <span className="fw-bold fs-6 mb-1 text-white">Word File</span>
+                                        <span className="text-white-50 small" style={{ fontSize: "0.75rem" }}>100% Editable Doc</span>
                                     </button>
                                 </div>
                             </div>
@@ -1150,12 +1282,14 @@ export default function Preview() {
                                 <i className="fas fa-circle-notch fa-spin text-primary" style={{ fontSize: "3rem" }}></i>
                             </div>
                             <h4 className="fw-bold mb-3">
-                                {downloadType === "png" ? "Generating Image" : "Compiling PDF"}
+                                {downloadType === "png" ? "Generating Image" : (downloadType === "docx" ? "Creating Word Document" : "Compiling PDF")}
                             </h4>
                             <p className="text-white-50 mb-0">
                                 {downloadType === "png" 
                                     ? "Converting your resume layouts to high-res PNG..." 
-                                    : "Optimizing structure and creating print-ready PDF..."}
+                                    : (downloadType === "docx"
+                                        ? "Formatting and downloading editable Word Document..."
+                                        : "Optimizing structure and creating print-ready PDF...")}
                             </p>
                         </div>
                     </div>
