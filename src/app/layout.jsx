@@ -173,6 +173,7 @@ export const metadata = {
             { url: "/favicon.ico", sizes: "any" },
             { url: "/favicon.png", type: "image/png", sizes: "32x32" },
             { url: "/favicon-16x16.png", type: "image/png", sizes: "16x16" },
+            { url: "/favicon-48x48.png", type: "image/png", sizes: "48x48" },
         ],
         shortcut: "/favicon.png",
         apple: [
