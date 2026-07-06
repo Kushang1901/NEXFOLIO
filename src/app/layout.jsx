@@ -3,6 +3,7 @@ import "./globals.css";
 import ToastContainer from "../components/Toast";
 import PageLoader from "../components/PageLoader";
 import CookieConsent from "../components/CookieConsent";
+import BackToTop from "../components/BackToTop";
 
 // ─────────────────────────────────────────────
 // SITE CONSTANTS
@@ -717,6 +718,7 @@ export default function RootLayout({ children }) {
                 <ToastContainer />
                 {children}
                 <CookieConsent />
+                <BackToTop />
             </body>
         </html>
     );
