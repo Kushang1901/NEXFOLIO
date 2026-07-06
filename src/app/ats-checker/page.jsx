@@ -2,7 +2,7 @@
 
 import React, { useState, useRef } from "react";
 import Navbar from "../../components/Navbar";
-import { ListChecks, KeyRound, LayoutTemplate, Type, FileText, HardDrive, Sparkles, CheckCircle, UploadCloud, Target, Lightbulb } from "lucide-react";
+import { ListChecks, KeyRound, LayoutTemplate, Type, FileText, HardDrive, Sparkles, CheckCircle, UploadCloud, Target, Lightbulb, AlertTriangle, XCircle, Check } from "lucide-react";
 
 const TIPS = [
     { Icon: ListChecks,     color: "#6366f1", title: "Use Standard Section Headings",          desc: "ATS bots look for keywords like 'Experience', 'Education', 'Skills'. Avoid creative names like 'My Journey'." },
@@ -73,25 +73,28 @@ export default function ATSCheckerPage() {
     };
 
     const statusIcon = (status) => {
-        if (status === "pass") return { icon: "✓", color: "#22c55e", bg: "rgba(34,197,94,0.1)", border: "rgba(34,197,94,0.25)" };
-        if (status === "warn") return { icon: "⚠", color: "#f59e0b", bg: "rgba(245,158,11,0.1)", border: "rgba(245,158,11,0.25)" };
-        return { icon: "✗", color: "#ef4444", bg: "rgba(239,68,68,0.1)", border: "rgba(239,68,68,0.25)" };
+        if (status === "pass") return { icon: <Check size={14} className="text-success" />, bg: "rgba(34,197,94,0.08)", border: "rgba(34,197,94,0.2)" };
+        if (status === "warn") return { icon: <AlertTriangle size={14} className="text-warning" />, bg: "rgba(245,158,11,0.08)", border: "rgba(245,158,11,0.2)" };
+        return { icon: <XCircle size={14} className="text-danger" />, bg: "rgba(239,68,68,0.08)", border: "rgba(239,68,68,0.2)" };
     };
 
     const circumference = 2 * Math.PI * 54;
 
     return (
-        <div style={{ minHeight: "100vh", background: "#000", color: "#fff" }}>
+        <div style={{ minHeight: "100vh", background: "#060610", color: "#fff", position: "relative", overflowX: "hidden" }}>
+            {/* Background Spotlights */}
+            <div className="bg-glow-spot-1" aria-hidden="true"></div>
+            <div className="bg-glow-spot-2" aria-hidden="true"></div>
+
             <Navbar />
 
             {/* Hero */}
-            <section style={{ background: "linear-gradient(160deg, #0a0a1a 0%, #000 60%)", padding: "80px 24px 60px", textAlign: "center", position: "relative", overflow: "hidden" }}>
-                <div style={{ position: "absolute", top: "-80px", left: "50%", transform: "translateX(-50%)", width: "600px", height: "600px", background: "radial-gradient(circle, rgba(99,102,241,0.12) 0%, transparent 70%)", pointerEvents: "none" }} />
-                <div style={{ maxWidth: "720px", margin: "0 auto", position: "relative" }}>
+            <section style={{ padding: "80px 24px 40px", textAlign: "center", position: "relative", zIndex: 10 }}>
+                <div style={{ maxWidth: "720px", margin: "0 auto" }}>
                     <div style={{ display: "inline-flex", alignItems: "center", gap: "8px", background: "rgba(99,102,241,0.12)", border: "1px solid rgba(99,102,241,0.3)", borderRadius: "999px", padding: "6px 18px", fontSize: "0.8rem", color: "#a5b4fc", fontWeight: "600", letterSpacing: "0.06em", textTransform: "uppercase", marginBottom: "24px" }}>
-                        <Sparkles size={13} color="#a5b4fc" /> AI-Powered
+                        <Sparkles size={13} color="#a5b4fc" /> AI-Powered Analysis
                     </div>
-                    <h1 style={{ fontSize: "clamp(2rem, 5vw, 3.2rem)", fontWeight: "800", lineHeight: "1.15", marginBottom: "20px", letterSpacing: "-0.02em" }}>
+                    <h1 style={{ fontSize: "clamp(2.2rem, 5vw, 3.5rem)", fontWeight: "800", lineHeight: "1.15", marginBottom: "20px", letterSpacing: "-0.02em" }}>
                         Free ATS Resume Checker
                     </h1>
                     <p style={{ fontSize: "1.1rem", color: "rgba(255,255,255,0.6)", lineHeight: "1.7", marginBottom: "0" }}>
@@ -102,181 +105,175 @@ export default function ATSCheckerPage() {
             </section>
 
             {/* Main Tool */}
-            <section style={{ maxWidth: "960px", margin: "0 auto", padding: "48px 24px" }}>
-                <div style={{ display: "grid", gridTemplateColumns: result ? "1fr 1fr" : "1fr", gap: "32px", alignItems: "start" }}>
+            <section style={{ maxWidth: "1200px", margin: "0 auto", padding: "20px 24px 72px", position: "relative", zIndex: 10 }}>
+                <div className="glass-panel-custom p-4 p-md-5">
+                    <div style={{ display: "grid", gridTemplateColumns: result ? "1fr 1fr" : "1fr", gap: "40px", alignItems: "start" }}>
 
-                    {/* Left: Upload Panel */}
-                    <div>
-                        {/* Drop Zone */}
-                        <div
-                            onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
-                            onDragLeave={() => setIsDragging(false)}
-                            onDrop={handleDrop}
-                            onClick={() => fileRef.current?.click()}
-                            style={{
-                                border: `2px dashed ${isDragging ? "#6366f1" : file ? "#22c55e" : "rgba(255,255,255,0.15)"}`,
-                                borderRadius: "16px",
-                                padding: "48px 24px",
-                                textAlign: "center",
-                                cursor: "pointer",
-                                background: isDragging ? "rgba(99,102,241,0.06)" : file ? "rgba(34,197,94,0.04)" : "rgba(255,255,255,0.02)",
-                                transition: "all 0.2s ease",
-                                marginBottom: "24px",
-                            }}
-                        >
-                            <input ref={fileRef} type="file" accept=".pdf,.doc,.docx" style={{ display: "none" }} onChange={handleFileChange} />
-                            <div style={{ display: "flex", justifyContent: "center", marginBottom: "16px" }}>
+                        {/* Left: Upload Panel */}
+                        <div>
+                            {/* Drop Zone */}
+                            <div
+                                onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
+                                onDragLeave={() => setIsDragging(false)}
+                                onDrop={handleDrop}
+                                onClick={() => fileRef.current?.click()}
+                                className="builder-import-zone mb-4"
+                                style={{
+                                    border: `1.5px dashed ${isDragging ? "#6366f1" : file ? "#22c55e" : "rgba(99, 102, 241, 0.3)"}`,
+                                    background: isDragging ? "rgba(99, 102, 241, 0.08)" : file ? "rgba(34, 197, 94, 0.04)" : "rgba(99, 102, 241, 0.02)",
+                                }}
+                            >
+                                <input ref={fileRef} type="file" accept=".pdf,.doc,.docx" style={{ display: "none" }} onChange={handleFileChange} />
+                                <div style={{ display: "flex", justifyContent: "center", marginBottom: "16px" }}>
+                                    {file ? (
+                                        <div className="import-icon-container" style={{ background: "rgba(34,197,94,0.1)", borderColor: "rgba(34,197,94,0.2)" }}>
+                                            <CheckCircle size={30} color="#22c55e" />
+                                        </div>
+                                    ) : (
+                                        <div className="import-icon-container">
+                                            <UploadCloud size={30} className="text-indigo" />
+                                        </div>
+                                    )}
+                                </div>
                                 {file ? (
-                                    <CheckCircle size={44} color="#22c55e" />
+                                    <>
+                                        <p style={{ color: "#22c55e", fontWeight: "700", fontSize: "1.05rem", marginBottom: "6px" }}>{file.name}</p>
+                                        <p className="text-white-50 small mb-0">Click or drag new file to change</p>
+                                    </>
                                 ) : (
-                                    <UploadCloud size={44} color="rgba(255,255,255,0.4)" />
+                                    <>
+                                        <p className="text-white fw-bold fs-5 mb-2">Drop your resume here or click to upload</p>
+                                        <p className="text-white-50 small mb-0">Supports PDF, DOC, or DOCX up to 5MB</p>
+                                    </>
                                 )}
                             </div>
-                            {file ? (
-                                <>
-                                    <p style={{ color: "#22c55e", fontWeight: "700", fontSize: "1rem", marginBottom: "6px" }}>{file.name}</p>
-                                    <p style={{ color: "rgba(255,255,255,0.4)", fontSize: "0.85rem" }}>Click to change file</p>
-                                </>
-                            ) : (
-                                <>
-                                    <p style={{ fontWeight: "600", fontSize: "1rem", marginBottom: "8px" }}>Drop your resume here</p>
-                                    <p style={{ color: "rgba(255,255,255,0.4)", fontSize: "0.85rem", marginBottom: "0" }}>PDF, DOC, or DOCX · Max 5MB</p>
-                                </>
-                            )}
-                        </div>
 
-                        {/* Job Description */}
-                        <div style={{ marginBottom: "24px" }}>
-                            <label style={{ display: "block", fontWeight: "600", fontSize: "0.9rem", marginBottom: "10px", color: "rgba(255,255,255,0.8)" }}>
-                                Paste Job Description <span style={{ color: "rgba(255,255,255,0.35)", fontWeight: "400" }}>(optional — improves keyword match)</span>
-                            </label>
-                            <textarea
-                                value={jobDesc}
-                                onChange={e => setJobDesc(e.target.value)}
-                                placeholder="Paste the job description here to check keyword match..."
-                                rows={5}
+                            {/* Job Description */}
+                            <div className="mb-4">
+                                <label className="form-label text-white fw-bold mb-2 small d-block">
+                                    Paste Job Description <span className="text-white-50 fw-normal">(optional — improves keyword match)</span>
+                                </label>
+                                <textarea
+                                    value={jobDesc}
+                                    onChange={e => setJobDesc(e.target.value)}
+                                    placeholder="Paste the target job description here to check keyword match..."
+                                    rows={5}
+                                    className="form-control glass-input-custom"
+                                />
+                            </div>
+
+                            <button
+                                onClick={handleAnalyze}
+                                disabled={!file || loading}
+                                className="btn btn-lg btn-gradient-premium w-100 py-3"
                                 style={{
-                                    width: "100%", background: "rgba(255,255,255,0.04)",
-                                    border: "1px solid rgba(255,255,255,0.12)", borderRadius: "12px",
-                                    color: "#fff", padding: "14px 16px", fontSize: "0.9rem",
-                                    resize: "vertical", outline: "none", fontFamily: "inherit",
-                                    lineHeight: "1.6", transition: "border-color 0.2s",
-                                    boxSizing: "border-box",
+                                    display: "flex",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                    gap: "10px"
                                 }}
-                                onFocus={e => e.target.style.borderColor = "rgba(99,102,241,0.5)"}
-                                onBlur={e => e.target.style.borderColor = "rgba(255,255,255,0.12)"}
-                            />
+                            >
+                                {loading ? (
+                                    <>
+                                        <span style={{ display: "inline-block", width: "18px", height: "18px", border: "2px solid rgba(255,255,255,0.3)", borderTopColor: "#fff", borderRadius: "50%", animation: "spin 0.8s linear infinite" }} />
+                                        Analyzing Resume...
+                                    </>
+                                ) : (
+                                    <>
+                                        <Target size={18} /> Check ATS Score
+                                    </>
+                                )}
+                            </button>
+                            <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
                         </div>
 
-                        <button
-                            onClick={handleAnalyze}
-                            disabled={!file || loading}
-                            style={{
-                                width: "100%", padding: "15px",
-                                background: !file ? "rgba(255,255,255,0.06)" : "linear-gradient(135deg, #6366f1, #4f46e5)",
-                                border: "none", borderRadius: "12px", color: "#fff",
-                                fontWeight: "700", fontSize: "1rem", cursor: file ? "pointer" : "not-allowed",
-                                boxShadow: file ? "0 4px 20px rgba(99,102,241,0.35)" : "none",
-                                transition: "all 0.2s ease",
-                                display: "flex", alignItems: "center", justifyContent: "center", gap: "10px",
-                            }}
-                        >
-                            {loading ? (
-                                <>
-                                    <span style={{ display: "inline-block", width: "18px", height: "18px", border: "2px solid rgba(255,255,255,0.3)", borderTopColor: "#fff", borderRadius: "50%", animation: "spin 0.8s linear infinite" }} />
-                                    Analyzing Resume...
-                                </>
-                            ) : (
-                                <>
-                                    <Target size={18} /> Check ATS Score
-                                </>
-                            )}
-                        </button>
-                        <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
-                    </div>
+                        {/* Right: Results */}
+                        {result && (
+                            <div style={{ animation: "fadeUp 0.4s ease" }}>
+                                <style>{`@keyframes fadeUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }`}</style>
 
-                    {/* Right: Results */}
-                    {result && (
-                        <div style={{ animation: "fadeUp 0.4s ease" }}>
-                            <style>{`@keyframes fadeUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }`}</style>
-
-                            {/* Score Ring */}
-                            <div style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: "16px", padding: "28px 24px", marginBottom: "20px", textAlign: "center" }}>
-                                <svg width="130" height="130" viewBox="0 0 130 130" style={{ transform: "rotate(-90deg)" }}>
-                                    <circle cx="65" cy="65" r="54" fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="10" />
-                                    <circle cx="65" cy="65" r="54" fill="none"
-                                        stroke={scoreColor(result.score)} strokeWidth="10"
-                                        strokeLinecap="round"
-                                        strokeDasharray={circumference}
-                                        strokeDashoffset={circumference - (result.score / 100) * circumference}
-                                        style={{ transition: "stroke-dashoffset 1s ease" }}
-                                    />
-                                </svg>
-                                <div style={{ marginTop: "-74px", marginBottom: "16px" }}>
-                                    <div style={{ fontSize: "2.2rem", fontWeight: "800", color: scoreColor(result.score) }}>{result.score}</div>
-                                    <div style={{ fontSize: "0.8rem", color: "rgba(255,255,255,0.4)", fontWeight: "500" }}>ATS Score</div>
+                                {/* Score Ring */}
+                                <div className="p-4 text-center mb-4" style={{ background: "rgba(15, 18, 32, 0.4)", border: "1px solid rgba(255, 255, 255, 0.06)", borderRadius: "16px" }}>
+                                    <div style={{ position: "relative", width: "130px", height: "130px", margin: "0 auto 20px" }}>
+                                        <svg width="130" height="130" viewBox="0 0 130 130" style={{ transform: "rotate(-90deg)" }}>
+                                            <circle cx="65" cy="65" r="54" fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="10" />
+                                            <circle cx="65" cy="65" r="54" fill="none"
+                                                stroke={scoreColor(result.score)} strokeWidth="10"
+                                                strokeLinecap="round"
+                                                strokeDasharray={circumference}
+                                                strokeDashoffset={circumference - (result.score / 100) * circumference}
+                                                style={{ transition: "stroke-dashoffset 1s ease" }}
+                                            />
+                                        </svg>
+                                        <div style={{ position: "absolute", top: 0, left: 0, width: "130px", height: "130px", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
+                                            <div style={{ fontSize: "2.4rem", fontWeight: "800", color: scoreColor(result.score), lineHeight: 1 }}>{result.score}</div>
+                                            <div style={{ fontSize: "0.72rem", color: "rgba(255,255,255,0.4)", fontWeight: "700", marginTop: "2px", letterSpacing: "0.05em" }}>ATS SCORE</div>
+                                        </div>
+                                    </div>
+                                    <div className="fw-semibold" style={{ fontSize: "0.95rem", color: "rgba(255,255,255,0.85)", lineHeight: "1.5" }}>
+                                        {result.score >= 80 ? "🟢 Great — your resume should pass most ATS filters." : result.score >= 60 ? "🟡 Fair — a few fixes will significantly improve your score." : "🔴 Needs work — ATS may reject this resume automatically."}
+                                    </div>
                                 </div>
-                                <div style={{ fontSize: "0.9rem", color: "rgba(255,255,255,0.6)", lineHeight: "1.5" }}>
-                                    {result.score >= 80 ? "🟢 Great — your resume should pass most ATS filters." : result.score >= 60 ? "🟡 Fair — a few fixes will significantly improve your score." : "🔴 Needs work — ATS may reject this resume automatically."}
-                                </div>
-                            </div>
 
-                            {/* Section Checks */}
-                            <div style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: "16px", padding: "20px 24px", marginBottom: "20px" }}>
-                                <h3 style={{ fontSize: "0.9rem", fontWeight: "700", color: "rgba(255,255,255,0.5)", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: "16px" }}>Section Analysis</h3>
-                                <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-                                    {result.sections.map((s, i) => {
-                                        const st = statusIcon(s.status);
-                                        return (
-                                            <div key={i} style={{ display: "flex", alignItems: "flex-start", gap: "12px", padding: "10px 14px", background: st.bg, border: `1px solid ${st.border}`, borderRadius: "10px" }}>
-                                                <span style={{ width: "22px", height: "22px", borderRadius: "50%", background: st.color, color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "11px", fontWeight: "700", flexShrink: 0, marginTop: "1px" }}>{st.icon}</span>
-                                                <div>
-                                                    <div style={{ fontWeight: "600", fontSize: "0.88rem", color: "#fff", marginBottom: "2px" }}>{s.label}</div>
-                                                    <div style={{ fontSize: "0.8rem", color: "rgba(255,255,255,0.5)" }}>{s.detail}</div>
+                                {/* Section Checks */}
+                                <div className="p-4 mb-4" style={{ background: "rgba(15, 18, 32, 0.4)", border: "1px solid rgba(255, 255, 255, 0.06)", borderRadius: "16px" }}>
+                                    <h3 style={{ fontSize: "0.85rem", fontWeight: "700", color: "rgba(255,255,255,0.45)", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: "18px" }}>Section Analysis</h3>
+                                    <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+                                        {result.sections.map((s, i) => {
+                                            const st = statusIcon(s.status);
+                                            return (
+                                                <div key={i} style={{ display: "flex", alignItems: "center", gap: "14px", padding: "12px 16px", background: st.bg, border: `1px solid ${st.border}`, borderRadius: "12px" }}>
+                                                    <span style={{ width: "26px", height: "26px", borderRadius: "50%", background: "rgba(255, 255, 255, 0.03)", border: `1px solid ${st.border}`, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                                                        {st.icon}
+                                                    </span>
+                                                    <div>
+                                                        <div style={{ fontWeight: "700", fontSize: "0.9rem", color: "#fff", marginBottom: "1px" }}>{s.label}</div>
+                                                        <div style={{ fontSize: "0.78rem", color: "rgba(255,255,255,0.45)" }}>{s.detail}</div>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                        );
-                                    })}
+                                            );
+                                        })}
+                                    </div>
+                                </div>
+
+                                {/* Improvements */}
+                                <div className="p-4" style={{ background: "rgba(99,102,241,0.05)", border: "1px solid rgba(99,102,241,0.15)", borderLeft: "4px solid #6366f1", borderRadius: "16px" }}>
+                                    <h3 style={{ fontSize: "0.85rem", fontWeight: "700", color: "#a5b4fc", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: "16px", display: "flex", alignItems: "center", gap: "8px" }}>
+                                        <Lightbulb size={16} /> Top Improvements
+                                    </h3>
+                                    <ul style={{ margin: 0, padding: 0, listStyle: "none", display: "flex", flexDirection: "column", gap: "10px" }}>
+                                        {result.improvements.map((tip, i) => (
+                                            <li key={i} style={{ display: "flex", gap: "10px", fontSize: "0.88rem", color: "rgba(200,205,230,0.8)", lineHeight: "1.5" }}>
+                                                <span style={{ color: "#818cf8", fontWeight: "700", flexShrink: 0 }}>{i + 1}.</span>
+                                                {tip}
+                                            </li>
+                                        ))}
+                                    </ul>
                                 </div>
                             </div>
-
-                            {/* Improvements */}
-                            <div style={{ background: "rgba(99,102,241,0.06)", border: "1px solid rgba(99,102,241,0.2)", borderRadius: "16px", padding: "20px 24px" }}>
-                                <h3 style={{ fontSize: "0.9rem", fontWeight: "700", color: "#a5b4fc", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: "14px", display: "flex", alignItems: "center", gap: "8px" }}>
-                                    <Lightbulb size={18} /> Top Improvements
-                                </h3>
-                                <ul style={{ margin: 0, padding: 0, listStyle: "none", display: "flex", flexDirection: "column", gap: "10px" }}>
-                                    {result.improvements.map((tip, i) => (
-                                        <li key={i} style={{ display: "flex", gap: "10px", fontSize: "0.88rem", color: "rgba(255,255,255,0.75)", lineHeight: "1.5" }}>
-                                            <span style={{ color: "#6366f1", fontWeight: "700", flexShrink: 0 }}>{i + 1}.</span>
-                                            {tip}
-                                        </li>
-                                    ))}
-                                </ul>
-                            </div>
-                        </div>
-                    )}
+                        )}
+                    </div>
                 </div>
             </section>
 
             {/* Tips Section */}
-            <section style={{ background: "rgba(255,255,255,0.015)", borderTop: "1px solid rgba(255,255,255,0.07)", padding: "72px 24px" }}>
-                <div style={{ maxWidth: "960px", margin: "0 auto" }}>
-                    <div style={{ textAlign: "center", marginBottom: "48px" }}>
-                        <h2 style={{ fontSize: "clamp(1.6rem, 3vw, 2.2rem)", fontWeight: "800", marginBottom: "12px" }}>How to Make Your Resume ATS-Proof</h2>
+            <section style={{ background: "rgba(255,255,255,0.01)", borderTop: "1px solid rgba(255,255,255,0.05)", padding: "80px 24px" }}>
+                <div style={{ maxWidth: "1100px", margin: "0 auto" }}>
+                    <div style={{ textAlign: "center", marginBottom: "50px" }}>
+                        <h2 style={{ fontSize: "clamp(1.8rem, 3vw, 2.4rem)", fontWeight: "800", marginBottom: "12px" }}>How to Make Your Resume ATS-Proof</h2>
                         <p style={{ color: "rgba(255,255,255,0.5)", fontSize: "1rem" }}>Follow these best practices to maximize your ATS score.</p>
                     </div>
-                    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "20px" }}>
+                    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "24px" }}>
                         {TIPS.map((tip, i) => (
-                            <div key={i} style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: "14px", padding: "24px", transition: "border-color 0.2s, transform 0.2s" }}
-                                onMouseEnter={e => { e.currentTarget.style.borderColor = `${tip.color}55`; e.currentTarget.style.transform = "translateY(-3px)"; }}
-                                onMouseLeave={e => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.08)"; e.currentTarget.style.transform = "translateY(0)"; }}
+                            <div key={i} style={{ background: "rgba(15, 18, 32, 0.4)", border: "1px solid rgba(255, 255, 255, 0.06)", borderRadius: "16px", padding: "28px 24px", transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)" }}
+                                onMouseEnter={e => { e.currentTarget.style.borderColor = `${tip.color}66`; e.currentTarget.style.transform = "translateY(-4px)"; e.currentTarget.style.boxShadow = `0 10px 30px ${tip.color}0a`; }}
+                                onMouseLeave={e => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.06)"; e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "none"; }}
                             >
-                                <div style={{ width: "44px", height: "44px", borderRadius: "12px", background: `${tip.color}18`, border: `1px solid ${tip.color}35`, display: "flex", alignItems: "center", justifyContent: "center", marginBottom: "16px" }}>
-                                    <tip.Icon size={22} color={tip.color} strokeWidth={1.8} />
+                                <div style={{ width: "46px", height: "46px", borderRadius: "12px", background: `${tip.color}15`, border: `1px solid ${tip.color}25`, display: "flex", alignItems: "center", justifyContent: "center", marginBottom: "20px" }}>
+                                    <tip.Icon size={20} color={tip.color} strokeWidth={1.8} />
                                 </div>
-                                <h3 style={{ fontSize: "0.97rem", fontWeight: "700", marginBottom: "8px", color: "#fff" }}>{tip.title}</h3>
-                                <p style={{ fontSize: "0.86rem", color: "rgba(255,255,255,0.5)", lineHeight: "1.65", margin: 0 }}>{tip.desc}</p>
+                                <h3 style={{ fontSize: "1rem", fontWeight: "700", marginBottom: "10px", color: "#fff" }}>{tip.title}</h3>
+                                <p style={{ fontSize: "0.85rem", color: "rgba(255,255,255,0.45)", lineHeight: "1.65", margin: 0 }}>{tip.desc}</p>
                             </div>
                         ))}
                     </div>
@@ -284,18 +281,135 @@ export default function ATSCheckerPage() {
             </section>
 
             {/* CTA */}
-            <section style={{ padding: "72px 24px", textAlign: "center", background: "#000" }}>
+            <section style={{ padding: "80px 24px", textAlign: "center", background: "#060610", borderTop: "1px solid rgba(255,255,255,0.05)" }}>
                 <div style={{ maxWidth: "560px", margin: "0 auto" }}>
-                    <h2 style={{ fontSize: "clamp(1.6rem, 3vw, 2rem)", fontWeight: "800", marginBottom: "16px" }}>Ready to Build an ATS-Friendly Resume?</h2>
-                    <p style={{ color: "rgba(255,255,255,0.5)", marginBottom: "32px", fontSize: "1rem", lineHeight: "1.7" }}>Use our free AI resume builder to create a perfectly formatted, keyword-optimized resume in minutes.</p>
-                    <a href="/templates" style={{ display: "inline-block", padding: "14px 40px", background: "linear-gradient(135deg, #6366f1, #4f46e5)", borderRadius: "12px", color: "#fff", textDecoration: "none", fontWeight: "700", fontSize: "1rem", boxShadow: "0 4px 20px rgba(99,102,241,0.35)", transition: "opacity 0.2s" }}
-                        onMouseEnter={e => e.currentTarget.style.opacity = "0.85"}
-                        onMouseLeave={e => e.currentTarget.style.opacity = "1"}
-                    >
+                    <h2 style={{ fontSize: "clamp(1.8rem, 3vw, 2.2rem)", fontWeight: "800", marginBottom: "16px" }}>Ready to Build an ATS-Friendly Resume?</h2>
+                    <p style={{ color: "rgba(255,255,255,0.5)", marginBottom: "35px", fontSize: "1rem", lineHeight: "1.7" }}>Use our free AI resume builder to create a perfectly formatted, keyword-optimized resume in minutes.</p>
+                    <a href="/templates" className="btn btn-lg btn-gradient-premium px-5 py-3">
                         Build Your Resume Free →
                     </a>
                 </div>
             </section>
+
+            {/* Custom Embedded Styles */}
+            <style>{`
+                .bg-glow-spot-1 {
+                    position: absolute;
+                    top: -5%;
+                    left: -5%;
+                    width: 700px;
+                    height: 700px;
+                    background: radial-gradient(circle, rgba(99, 102, 241, 0.06) 0%, rgba(99, 102, 241, 0) 70%);
+                    z-index: 1;
+                    pointer-events: none;
+                }
+                .bg-glow-spot-2 {
+                    position: absolute;
+                    bottom: 5%;
+                    right: -5%;
+                    width: 700px;
+                    height: 700px;
+                    background: radial-gradient(circle, rgba(6, 182, 212, 0.04) 0%, rgba(6, 182, 212, 0) 70%);
+                    z-index: 1;
+                    pointer-events: none;
+                }
+                .glass-panel-custom {
+                    background: rgba(15, 18, 32, 0.6);
+                    border: 1px solid rgba(255, 255, 255, 0.08);
+                    backdrop-filter: blur(16px);
+                    border-radius: 24px;
+                    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.55);
+                    z-index: 2;
+                }
+                .glass-input-custom {
+                    background-color: rgba(11, 13, 23, 0.85) !important;
+                    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+                    color: #fff !important;
+                    transition: all 0.2s ease !important;
+                    border-radius: 12px !important;
+                    padding: 14px 16px !important;
+                }
+                .glass-input-custom:focus {
+                    border-color: rgba(99, 102, 241, 0.45) !important;
+                    box-shadow: 0 0 12px rgba(99, 102, 241, 0.2) !important;
+                    background-color: rgba(11, 13, 23, 0.95) !important;
+                }
+                .btn-gradient-premium {
+                    background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%) !important;
+                    border: none !important;
+                    color: #fff !important;
+                    border-radius: 12px !important;
+                    font-weight: 700 !important;
+                    box-shadow: 0 4px 15px rgba(99, 102, 241, 0.25) !important;
+                    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+                    text-decoration: none;
+                }
+                .btn-gradient-premium:hover:not(:disabled) {
+                    background: linear-gradient(135deg, #4f46e5 0%, #4338ca 100%) !important;
+                    box-shadow: 0 6px 22px rgba(99, 102, 241, 0.35) !important;
+                    transform: translateY(-2px) !important;
+                    color: #fff !important;
+                }
+                .btn-gradient-premium:disabled {
+                    opacity: 0.65 !important;
+                    cursor: not-allowed !important;
+                }
+                .builder-import-zone {
+                    background: rgba(99, 102, 241, 0.02) !important;
+                    border: 1.5px dashed rgba(99, 102, 241, 0.3) !important;
+                    border-radius: 20px !important;
+                    padding: 42px 24px !important;
+                    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+                    position: relative;
+                    overflow: hidden;
+                    cursor: pointer;
+                }
+                .builder-import-zone::before {
+                    content: '';
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background: radial-gradient(circle at center, rgba(99, 102, 241, 0.04) 0%, transparent 70%);
+                    pointer-events: none;
+                    z-index: 1;
+                }
+                .builder-import-zone:hover {
+                    border-color: rgba(99, 102, 241, 0.65) !important;
+                    background: rgba(99, 102, 241, 0.05) !important;
+                    box-shadow: 0 8px 32px rgba(99, 102, 241, 0.08) !important;
+                    transform: translateY(-1px);
+                }
+                .import-icon-container {
+                    width: 64px;
+                    height: 64px;
+                    background: rgba(99, 102, 241, 0.08);
+                    border: 1px solid rgba(99, 102, 241, 0.2);
+                    border-radius: 50%;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    transition: all 0.3s ease;
+                }
+                .builder-import-zone:hover .import-icon-container {
+                    transform: scale(1.08) rotate(3deg);
+                    background: rgba(99, 102, 241, 0.12);
+                    border-color: rgba(99, 102, 241, 0.3);
+                }
+                .text-indigo {
+                    color: #818cf8 !important;
+                }
+                .text-success {
+                    color: #22c55e !important;
+                }
+                .text-warning {
+                    color: #f59e0b !important;
+                }
+                .text-danger {
+                    color: #ef4444 !important;
+                }
+            `}</style>
         </div>
     );
 }
