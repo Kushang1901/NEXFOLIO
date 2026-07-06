@@ -329,6 +329,143 @@ export default function HomePage() {
                         line-height: 1.6;
                         color: rgba(255, 255, 255, 0.55);
                     }
+                    
+                    /* ── CTA Section ── */
+                    .cta-section-container {
+                        background: radial-gradient(circle at bottom, #111424 0%, #06070c 100%);
+                        border-top: 1px solid rgba(255, 255, 255, 0.05);
+                        position: relative;
+                        overflow: hidden;
+                    }
+                    .cta-glow {
+                        position: absolute;
+                        bottom: -150px;
+                        left: 50%;
+                        transform: translateX(-50%);
+                        width: 600px;
+                        height: 400px;
+                        background: radial-gradient(ellipse, rgba(99, 102, 241, 0.15) 0%, rgba(99, 102, 241, 0) 70%);
+                        pointer-events: none;
+                        z-index: 1;
+                    }
+                    .btn-cta-premium {
+                        background: linear-gradient(135deg, #6366f1, #818cf8);
+                        color: #fff;
+                        font-weight: 700;
+                        font-size: 1.1rem;
+                        padding: 16px 42px;
+                        border: none;
+                        border-radius: 12px;
+                        cursor: pointer;
+                        box-shadow: 0 4px 24px rgba(99, 102, 241, 0.45);
+                        transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+                        display: inline-flex;
+                        align-items: center;
+                        gap: 10px;
+                        text-decoration: none;
+                    }
+                    .btn-cta-premium:hover {
+                        transform: translateY(-3px);
+                        box-shadow: 0 8px 32px rgba(99, 102, 241, 0.6);
+                        background: linear-gradient(135deg, #818cf8, #6366f1);
+                        color: #fff;
+                    }
+                    
+                    /* ── FAQ Section ── */
+                    .faq-section-container {
+                        background: radial-gradient(circle at top, #0c0e18 0%, #06060c 100%);
+                        border-top: 1px solid rgba(255, 255, 255, 0.05);
+                        position: relative;
+                        overflow: hidden;
+                    }
+                    .faq-glow {
+                        position: absolute;
+                        top: -150px;
+                        left: 50%;
+                        transform: translateX(-50%);
+                        width: 700px;
+                        height: 450px;
+                        background: radial-gradient(ellipse, rgba(167, 139, 250, 0.08) 0%, rgba(167, 139, 250, 0) 70%);
+                        pointer-events: none;
+                        z-index: 1;
+                    }
+                    .faq-details-custom {
+                        background: rgba(255, 255, 255, 0.02);
+                        border: 1px solid rgba(255, 255, 255, 0.06);
+                        border-radius: 14px;
+                        margin-bottom: 16px;
+                        overflow: hidden;
+                        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                        backdrop-filter: blur(12px);
+                    }
+                    .faq-details-custom:hover {
+                        background: rgba(255, 255, 255, 0.04);
+                        border-color: rgba(99, 102, 241, 0.3);
+                        box-shadow: 0 4px 20px rgba(99, 102, 241, 0.08);
+                    }
+                    .faq-details-custom[open] {
+                        background: rgba(99, 102, 241, 0.04);
+                        border-color: rgba(99, 102, 241, 0.4);
+                        box-shadow: 0 8px 30px rgba(99, 102, 241, 0.12);
+                    }
+                    .faq-summary-custom {
+                        padding: 20px 24px;
+                        font-weight: 600;
+                        font-size: 1.05rem;
+                        color: #ffffff;
+                        list-style: none;
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: center;
+                        cursor: pointer;
+                        user-select: none;
+                        transition: color 0.2s ease;
+                    }
+                    .faq-summary-custom::-webkit-details-marker {
+                        display: none;
+                    }
+                    .faq-summary-custom:hover {
+                        color: #cbd5e1;
+                    }
+                    .faq-details-custom[open] .faq-summary-custom {
+                        color: #818cf8;
+                    }
+                    .faq-icon-toggle {
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        width: 28px;
+                        height: 28px;
+                        border-radius: 50%;
+                        background: rgba(255, 255, 255, 0.05);
+                        border: 1px solid rgba(255, 255, 255, 0.08);
+                        color: rgba(255, 255, 255, 0.6);
+                        font-size: 1.25rem;
+                        font-weight: 400;
+                        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                        flex-shrink: 0;
+                    }
+                    .faq-details-custom:hover .faq-icon-toggle {
+                        border-color: rgba(99, 102, 241, 0.4);
+                        color: #818cf8;
+                    }
+                    .faq-details-custom[open] .faq-icon-toggle {
+                        background: #6366f1;
+                        border-color: #6366f1;
+                        color: #ffffff;
+                        transform: rotate(45deg);
+                    }
+                    .faq-answer-custom {
+                        padding: 0 24px 20px;
+                        font-size: 0.95rem;
+                        line-height: 1.65;
+                        color: rgba(255, 255, 255, 0.65);
+                        animation: faqFadeIn 0.3s ease-out;
+                    }
+                    @keyframes faqFadeIn {
+                        from { opacity: 0; transform: translateY(-8px); }
+                        to { opacity: 1; transform: translateY(0); }
+                    }
                 `}</style>
 
                 {/* Background elements */}
@@ -468,26 +605,23 @@ export default function HomePage() {
             </section>
 
             {/* CTA Section */}
-            <section className="py-5 bg-black">
-                <div className="container py-5">
+            <section className="cta-section-container py-5 position-relative">
+                <div className="cta-glow" aria-hidden="true" />
+                
+                <div className="container py-5 position-relative" style={{ zIndex: 5 }}>
                     <div className="row justify-content-center text-center">
-                        <div className="col-lg-6">
-                            <h2 className="display-5 fw-bold mb-4">
+                        <div className="col-lg-8">
+                            <h2 className="display-5 fw-bold mb-4 text-white">
                                 Build Your ATS-Friendly Resume Today
                             </h2>
-                            <p className="text-white-50 fs-5 mb-4">
+                            <p className="text-white-50 fs-5 mb-5 mx-auto" style={{ maxWidth: "600px" }}>
                                 Join thousands of job seekers using CVGrid to land interviews. Start for free now.
                             </p>
-                             <button
-                                className="btn btn-primary btn-lg px-5 py-3 fw-semibold"
-                                style={{
-                                    fontSize: "1.1rem",
-                                    borderRadius: "8px",
-                                    boxShadow: "0 4px 15px rgba(13, 110, 253, 0.4)"
-                                }}
+                            <button
+                                className="btn-cta-premium"
                                 onClick={handleStartResume}
                             >
-                                Get Started Free
+                                <i className="fas fa-bolt" aria-hidden="true" /> Get Started Free
                             </button>
                         </div>
                     </div>
@@ -495,14 +629,16 @@ export default function HomePage() {
             </section>
 
             {/* FAQ Section — matches FAQPage JSON-LD for Google Featured Snippets */}
-            <section className="py-5 bg-dark" id="faq">
-                <div className="container py-4">
+            <section className="faq-section-container py-5" id="faq">
+                <div className="faq-glow" aria-hidden="true" />
+                
+                <div className="container py-5 position-relative" style={{ zIndex: 5 }}>
                     <div className="text-center mb-5">
-                        <h2 className="display-6 fw-bold mb-3">Frequently Asked Questions</h2>
+                        <h2 className="display-5 fw-bold mb-3 feature-gradient-title">Frequently Asked Questions</h2>
                         <p className="text-white-50 fs-5">Everything you need to know about CVGrid's free AI resume builder.</p>
                     </div>
                     <div className="row justify-content-center">
-                        <div className="col-lg-8">
+                        <div className="col-lg-8 col-xl-7">
                             {[
                                 {
                                     q: "Is CVGrid really free to use?",
@@ -531,25 +667,15 @@ export default function HomePage() {
                             ].map((item, i) => (
                                 <details
                                     key={i}
-                                    className="mb-3"
-                                    style={{
-                                        background: "rgba(255,255,255,0.04)",
-                                        border: "1px solid rgba(255,255,255,0.1)",
-                                        borderRadius: "10px",
-                                        padding: "1rem 1.25rem",
-                                        cursor: "pointer",
-                                    }}
+                                    className="faq-details-custom"
                                 >
-                                    <summary
-                                        className="fw-semibold text-white"
-                                        style={{ fontSize: "1rem", listStyle: "none", display: "flex", justifyContent: "space-between", alignItems: "center" }}
-                                    >
-                                        {item.q}
-                                        <span className="text-primary ms-3" style={{ fontSize: "1.25rem", flexShrink: 0 }}>+</span>
+                                    <summary className="faq-summary-custom">
+                                        <span>{item.q}</span>
+                                        <span className="faq-icon-toggle" aria-hidden="true">+</span>
                                     </summary>
-                                    <p className="text-white-50 mb-0 mt-3" style={{ fontSize: "0.97rem", lineHeight: "1.65" }}>
+                                    <div className="faq-answer-custom">
                                         {item.a}
-                                    </p>
+                                    </div>
                                 </details>
                             ))}
                         </div>
