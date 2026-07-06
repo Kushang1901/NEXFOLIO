@@ -1,54 +1,59 @@
 export const normalizeResumeData = (raw) => {
+    if (!raw) return {};
+
+    const basics = raw.basics || {};
+    const links = basics.links || {};
+
     return {
         basics: {
-            name: raw.fullName || "",
-            role: raw.role || "",
-            email: raw.email || "",
-            phone: raw.phone || "",
-            photo: raw.profilePhoto
-                ? (raw.profilePhoto.startsWith("http")
-                    ? `/api/image-proxy?url=${encodeURIComponent(raw.profilePhoto)}`
-                    : raw.profilePhoto)
+            name: raw.fullName || basics.name || "",
+            role: raw.role || basics.role || "",
+            email: raw.email || basics.email || "",
+            phone: raw.phone || basics.phone || "",
+            photo: (raw.profilePhoto || basics.photo)
+                ? ((raw.profilePhoto || basics.photo).startsWith("http")
+                    ? `/api/image-proxy?url=${encodeURIComponent(raw.profilePhoto || basics.photo)}`
+                    : (raw.profilePhoto || basics.photo))
                 : "",
             links: {
-                portfolio: raw.portfolio || "",
-                linkedin: raw.linkedin || "",
-                github: raw.github || ""
+                portfolio: raw.portfolio || links.portfolio || "",
+                linkedin: raw.linkedin || links.linkedin || "",
+                github: raw.github || links.github || ""
             }
         },
 
-        summary: raw.professionalSummary || "",
+        summary: raw.professionalSummary || raw.summary || "",
 
         education: [
-            raw.graduation
+            (raw.graduation && typeof raw.graduation === "object")
                 ? {
                     level: "Graduation",
-                    course: raw.graduation.course,
+                    course: raw.graduation.course || "",
                     start: [raw.graduation.startMonth, raw.graduation.startYear].filter(Boolean).join(" "),
                     end: [raw.graduation.endMonth, raw.graduation.endYear].filter(Boolean).join(" ")
                 }
-                : null,
+                : (typeof raw.graduation === "string" ? { level: "Graduation", course: raw.graduation, start: "", end: "" } : null),
 
-            raw.hasPostGraduation
+            (raw.hasPostGraduation && raw.postGraduation && typeof raw.postGraduation === "object")
                 ? {
                     level: "Post Graduation",
-                    course: raw.postGraduation.course,
+                    course: raw.postGraduation.course || "",
                     start: [raw.postGraduation.startMonth, raw.postGraduation.startYear].filter(Boolean).join(" "),
                     end: [raw.postGraduation.endMonth, raw.postGraduation.endYear].filter(Boolean).join(" ")
                 }
-                : null,
+                : (typeof raw.postGraduation === "string" ? { level: "Post Graduation", course: raw.postGraduation, start: "", end: "" } : null),
 
-            raw.hasPhd
+            (raw.hasPhd && raw.phd && typeof raw.phd === "object")
                 ? {
                     level: "PhD",
-                    course: raw.phd.course,
+                    course: raw.phd.course || "",
                     start: [raw.phd.startMonth, raw.phd.startYear].filter(Boolean).join(" "),
                     end: [raw.phd.endMonth, raw.phd.endYear].filter(Boolean).join(" ")
                 }
-                : null
+                : (typeof raw.phd === "string" ? { level: "PhD", course: raw.phd, start: "", end: "" } : null)
         ].filter(Boolean),
 
-        experience: raw.hasExperience && raw.experience
+        experience: (raw.hasExperience && raw.experience && typeof raw.experience === "object")
             ? {
                 company: raw.experience.company || "",
                 location: raw.experience.location || "",
@@ -59,9 +64,9 @@ export const normalizeResumeData = (raw) => {
                 end: raw.experience.ongoing ? "Present" : [raw.experience.endMonth, raw.experience.endYear].filter(Boolean).join(" "),
                 description: raw.experience.description || ""
             }
-            : (typeof raw.experience === "string" ? raw.experience : null),
+            : (typeof raw.experience === "string" ? raw.experience : (Array.isArray(raw.experience) ? raw.experience : null)),
 
-        internship: raw.hasInternship && raw.internship
+        internship: (raw.hasInternship && raw.internship && typeof raw.internship === "object")
             ? {
                 field: raw.internship.field || "",
                 company: raw.internship.company || "",
@@ -69,13 +74,15 @@ export const normalizeResumeData = (raw) => {
                 start: [raw.internship.startMonth, raw.internship.startYear].filter(Boolean).join(" "),
                 end: raw.internship.ongoing ? "Present" : [raw.internship.endMonth, raw.internship.endYear].filter(Boolean).join(" ")
             }
-            : null,
+            : (typeof raw.internship === "string" ? raw.internship : null),
 
         projects: raw.projects || "",
         achievements: raw.achievements || "",
 
         skills: raw.skills
-            ? raw.skills.split(",").map((s) => s.trim())
+            ? (typeof raw.skills === "string"
+                ? raw.skills.split(",").map((s) => s.trim()).filter(Boolean)
+                : (Array.isArray(raw.skills) ? raw.skills : []))
             : []
     };
 };

@@ -698,19 +698,24 @@ ${formData.skills || "Not provided"}
 
             if (!res.ok) {
                 const errData = await res.json().catch(() => ({}));
+                console.error("❌ AI API response was not OK:", errData);
                 throw new Error(errData.error || "AI generation failed");
             }
 
+            console.log("✅ AI API response succeeded:", res.status);
             const data = await res.json();
+            console.log("📄 AI Generated data result size:", data.result?.length || 0);
 
             sessionStorage.setItem("aiOutput", data.result);
-            router.push("/preview");
+            console.log("➡️ Navigating to /preview via window.location.href");
+            window.location.href = resumeId ? `/preview?id=${resumeId}` : "/preview";
 
         } catch (err) {
-            console.error(err);
+            console.error("🔥 handleSubmit caught error:", err);
             showToast(err.message || "AI generation failed. Please try again.", "error");
         } finally {
             setIsLoading(false);
+            console.log("🏁 AI generation process finished.");
         }
     };
 
