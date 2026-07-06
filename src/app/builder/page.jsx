@@ -199,30 +199,30 @@ export default function ResumeBuilder() {
     // Keep buffers in sync with formData loaded from DB/sessionStorage
     useEffect(() => {
         if (formData.projects !== undefined) {
-            const parsed = parseProjectsText(formData.projects);
-            if (serializeProjectsList(parsed) !== formData.projects) {
+            if (serializeProjectsList(projectsList) !== formData.projects) {
+                const parsed = parseProjectsText(formData.projects);
                 setProjectsList(parsed);
             }
         }
-    }, [formData.projects]);
+    }, [formData.projects, projectsList]);
 
     useEffect(() => {
         if (formData.achievements !== undefined) {
-            const parsed = parseAchievementsText(formData.achievements);
-            if (serializeAchievementsList(parsed) !== formData.achievements) {
+            if (serializeAchievementsList(achievementsList) !== formData.achievements) {
+                const parsed = parseAchievementsText(formData.achievements);
                 setAchievementsList(parsed);
             }
         }
-    }, [formData.achievements]);
+    }, [formData.achievements, achievementsList]);
 
     useEffect(() => {
         if (formData.skills !== undefined) {
-            const parsed = parseSkillsText(formData.skills);
-            if (serializeSkillsList(parsed) !== formData.skills) {
+            if (serializeSkillsList(skillsList) !== formData.skills) {
+                const parsed = parseSkillsText(formData.skills);
                 setSkillsList(parsed);
             }
         }
-    }, [formData.skills]);
+    }, [formData.skills, skillsList]);
 
     /* ================= STATE CONTROLS ================= */
     const handleAddSkill = (skill) => {
@@ -716,16 +716,17 @@ ${formData.skills || "Not provided"}
 
     /* ================= UI ================= */
     return (
-        <div className="bg-dark text-white min-vh-100">
+        <div className="builder-page-container text-white min-vh-100 position-relative">
+            {/* Background Spotlights */}
+            <div className="bg-glow-spot-1" aria-hidden="true"></div>
+            <div className="bg-glow-spot-2" aria-hidden="true"></div>
+
             <Navbar />
 
-            <div className="container py-5">
+            <div className="container-fluid px-md-5 py-4 position-relative" style={{ zIndex: 5 }}>
                 <div className="row justify-content-center">
-                    <div className="col-lg-8">
-                        <div className="bg-black border border-secondary p-5" style={{
-                            borderRadius: '12px',
-                            boxShadow: '0 4px 20px rgba(0, 0, 0, 0.5)'
-                        }}>
+                    <div className="col-xl-11 col-xxl-10">
+                        <div className="glass-panel-custom p-4 p-md-5">
                             <div className="d-flex flex-column flex-md-row justify-content-between align-items-center mb-5 gap-3 border-bottom border-secondary pb-4">
                                 <div className="text-center text-md-start">
                                     <h1 className="display-6 fw-bold mb-1 text-white">
@@ -758,17 +759,13 @@ ${formData.skills || "Not provided"}
                             </div>
 
                             {/* PDF IMPORT AREA */}
-                            <div className="card bg-dark border-secondary mb-5" style={{
-                                borderRadius: '12px',
-                                border: '1px dashed rgba(13, 110, 253, 0.4)',
-                                background: 'linear-gradient(145deg, rgba(28, 32, 39, 0.6) 0%, rgba(17, 20, 26, 0.6) 100%)'
-                            }}>
-                                <div className="card-body p-4 text-center">
-                                    <div className="mb-3">
-                                        <i className="fas fa-file-invoice text-primary" style={{ fontSize: "2.5rem" }}></i>
+                            <div className="builder-import-zone mb-5">
+                                <div className="text-center">
+                                    <div className="import-icon-container mb-3 mx-auto">
+                                        <i className="fas fa-file-invoice text-indigo" style={{ fontSize: "2rem" }}></i>
                                     </div>
-                                    <h3 className="h5 fw-bold mb-2">Import from Existing Resume</h3>
-                                    <p className="text-white-50 small mb-3">
+                                    <h3 className="h5 fw-bold mb-2 text-white">Import from Existing Resume</h3>
+                                    <p className="text-white-50 small mb-4 px-3" style={{ maxWidth: "450px", margin: "0 auto" }}>
                                         Upload your PDF resume, and our AI will pre-fill the form fields below.
                                     </p>
                                     <div className="d-flex justify-content-center">
@@ -782,7 +779,7 @@ ${formData.skills || "Not provided"}
                                         />
                                         <label
                                             htmlFor="pdf-resume-import"
-                                            className={`btn ${isImporting ? 'btn-secondary' : 'btn-outline-primary'} px-4 py-2 fw-semibold d-flex align-items-center gap-2`}
+                                            className={`btn-upload-premium ${isImporting ? 'disabled' : ''} px-4 py-2 fw-semibold d-flex align-items-center gap-2`}
                                             style={{ cursor: isImporting || isLoading ? 'not-allowed' : 'pointer' }}
                                         >
                                             {isImporting ? (
@@ -1385,14 +1382,13 @@ ${formData.skills || "Not provided"}
                                             {projectsList.map((proj, idx) => (
                                                 <div 
                                                     key={idx} 
-                                                    className="p-3 bg-dark border-secondary position-relative animate-fade-in"
-                                                    style={{ borderRadius: "12px", border: "1px solid rgba(255,255,255,0.08)" }}
+                                                    className="builder-project-card position-relative mb-3 animate-fade-in"
                                                 >
                                                     <button
                                                         type="button"
                                                         onClick={() => handleRemoveProject(idx)}
-                                                        className="position-absolute border-0 bg-transparent text-danger"
-                                                        style={{ top: "12px", right: "12px", opacity: 0.7 }}
+                                                        className="position-absolute btn-remove-item"
+                                                        style={{ top: "16px", right: "16px" }}
                                                         title="Remove Project"
                                                     >
                                                         <i className="fas fa-trash-alt"></i>
@@ -1455,8 +1451,7 @@ ${formData.skills || "Not provided"}
                                             {achievementsList.map((ach, idx) => (
                                                 <div 
                                                     key={idx} 
-                                                    className="d-flex align-items-center gap-2 bg-dark border-secondary p-2 animate-fade-in"
-                                                    style={{ borderRadius: "10px", border: "1px solid rgba(255,255,255,0.06)" }}
+                                                    className="builder-achievement-item animate-fade-in"
                                                 >
                                                     <input
                                                         type="text"
@@ -1469,8 +1464,8 @@ ${formData.skills || "Not provided"}
                                                     <button
                                                         type="button"
                                                         onClick={() => handleRemoveAchievement(idx)}
-                                                        className="btn btn-outline-danger p-2 d-flex align-items-center justify-content-center"
-                                                        style={{ borderRadius: "8px", width: "38px", height: "38px" }}
+                                                        className="btn btn-remove-item p-2 d-flex align-items-center justify-content-center"
+                                                        style={{ width: "38px", height: "38px" }}
                                                         title="Remove Achievement"
                                                     >
                                                         <i className="fas fa-trash-alt"></i>
@@ -1717,6 +1712,187 @@ ${formData.skills || "Not provided"}
                     </div>
                 </div>
             )}
+
+            <style>{`
+                .builder-page-container {
+                    background: radial-gradient(circle at top, #111424 0%, #06070c 100%);
+                    position: relative;
+                    overflow-x: hidden;
+                }
+                .bg-glow-spot-1 {
+                    position: absolute;
+                    top: -10%;
+                    left: -5%;
+                    width: 700px;
+                    height: 700px;
+                    background: radial-gradient(circle, rgba(99, 102, 241, 0.08) 0%, rgba(99, 102, 241, 0) 70%);
+                    z-index: 1;
+                    pointer-events: none;
+                }
+                .bg-glow-spot-2 {
+                    position: absolute;
+                    bottom: 5%;
+                    right: -5%;
+                    width: 700px;
+                    height: 700px;
+                    background: radial-gradient(circle, rgba(6, 182, 212, 0.05) 0%, rgba(6, 182, 212, 0) 70%);
+                    z-index: 1;
+                    pointer-events: none;
+                }
+                .glass-panel-custom {
+                    background: rgba(15, 18, 32, 0.65);
+                    border: 1px solid rgba(255, 255, 255, 0.08);
+                    backdrop-filter: blur(16px);
+                    border-radius: 24px;
+                    box-shadow: 0 15px 45px rgba(0, 0, 0, 0.5);
+                    z-index: 2;
+                }
+                .glass-panel-custom .form-control,
+                .glass-panel-custom .form-select {
+                    background-color: rgba(11, 13, 23, 0.85) !important;
+                    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+                    color: #fff !important;
+                    transition: all 0.2s ease !important;
+                }
+                .glass-panel-custom .form-control:focus,
+                .glass-panel-custom .form-select:focus {
+                    border-color: rgba(99, 102, 241, 0.5) !important;
+                    box-shadow: 0 0 10px rgba(99, 102, 241, 0.25) !important;
+                    background-color: rgba(11, 13, 23, 0.95) !important;
+                }
+                
+                /* Project Cards */
+                .builder-project-card {
+                    background: rgba(15, 18, 32, 0.45) !important;
+                    border: 1px solid rgba(255, 255, 255, 0.06) !important;
+                    border-left: 4px solid #6366f1 !important;
+                    border-radius: 14px !important;
+                    padding: 24px !important;
+                    position: relative;
+                    transition: all 0.3s ease;
+                }
+                .builder-project-card:hover {
+                    border-color: rgba(99, 102, 241, 0.3) !important;
+                    background: rgba(15, 18, 32, 0.6) !important;
+                    box-shadow: 0 8px 30px rgba(99, 102, 241, 0.06);
+                }
+                .btn-remove-item {
+                    color: rgba(255, 255, 255, 0.35) !important;
+                    font-size: 1.15rem;
+                    transition: all 0.2s ease;
+                    background: none;
+                    border: none;
+                    outline: none;
+                }
+                .btn-remove-item:hover {
+                    color: rgba(239, 68, 68, 1) !important;
+                    transform: scale(1.15);
+                }
+                
+                /* Achievements List */
+                .builder-achievement-item {
+                    background: rgba(15, 18, 32, 0.35) !important;
+                    border: 1px solid rgba(255, 255, 255, 0.06) !important;
+                    border-radius: 10px !important;
+                    padding: 8px 12px !important;
+                    display: flex !important;
+                    align-items: center !important;
+                    gap: 12px !important;
+                    transition: all 0.2s ease !important;
+                }
+                .builder-achievement-item:hover {
+                    border-color: rgba(255, 255, 255, 0.12) !important;
+                    background: rgba(15, 18, 32, 0.5) !important;
+                }
+                
+                .btn-gradient-premium {
+                    background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+                    border: none;
+                    color: #fff;
+                    border-radius: 10px;
+                    font-weight: 600;
+                    padding: 14px 28px;
+                    box-shadow: 0 4px 14px rgba(99, 102, 241, 0.25);
+                    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+                }
+                .btn-gradient-premium:hover:not(:disabled) {
+                    background: linear-gradient(135deg, #4f46e5 0%, #4338ca 100%);
+                    box-shadow: 0 6px 20px rgba(99, 102, 241, 0.35);
+                    transform: translateY(-2px);
+                    color: #fff;
+                }
+                
+                /* Import Area styling */
+                .builder-import-zone {
+                    background: rgba(99, 102, 241, 0.03) !important;
+                    border: 1px dashed rgba(99, 102, 241, 0.35) !important;
+                    border-radius: 20px !important;
+                    padding: 35px 24px !important;
+                    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+                    position: relative;
+                    overflow: hidden;
+                }
+                .builder-import-zone::before {
+                    content: '';
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background: radial-gradient(circle at center, rgba(99, 102, 241, 0.05) 0%, transparent 70%);
+                    pointer-events: none;
+                    z-index: 1;
+                }
+                .builder-import-zone:hover {
+                    border-color: rgba(99, 102, 241, 0.6) !important;
+                    background: rgba(99, 102, 241, 0.06) !important;
+                    box-shadow: 0 8px 32px rgba(99, 102, 241, 0.08) !important;
+                    transform: translateY(-2px);
+                }
+                .import-icon-container {
+                    width: 70px;
+                    height: 70px;
+                    background: rgba(99, 102, 241, 0.1);
+                    border: 1px solid rgba(99, 102, 241, 0.2);
+                    border-radius: 50%;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    transition: all 0.3s ease;
+                }
+                .builder-import-zone:hover .import-icon-container {
+                    transform: scale(1.1) rotate(5deg);
+                    background: rgba(99, 102, 241, 0.15);
+                    border-color: rgba(99, 102, 241, 0.35);
+                }
+                .text-indigo {
+                    color: #818cf8 !important;
+                }
+                
+                .btn-upload-premium {
+                    background: rgba(99, 102, 241, 0.1) !important;
+                    border: 1px solid rgba(99, 102, 241, 0.4) !important;
+                    color: #fff !important;
+                    border-radius: 12px !important;
+                    font-weight: 600 !important;
+                    transition: all 0.2s ease !important;
+                    display: inline-flex !important;
+                    align-items: center !important;
+                    justify-content: center !important;
+                    gap: 8px !important;
+                }
+                .btn-upload-premium:hover:not(.disabled) {
+                    background: rgba(99, 102, 241, 0.25) !important;
+                    border-color: rgba(99, 102, 241, 0.7) !important;
+                    transform: translateY(-1px);
+                    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.2) !important;
+                }
+                .btn-upload-premium.disabled {
+                    opacity: 0.6 !important;
+                    background: rgba(255, 255, 255, 0.05) !important;
+                    border-color: rgba(255, 255, 255, 0.1) !important;
+                }
+            `}</style>
         </div>
     );
 }
