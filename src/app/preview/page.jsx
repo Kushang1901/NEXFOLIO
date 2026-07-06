@@ -5,7 +5,8 @@ import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 import Link from "next/link";
 import Navbar from "../../components/Navbar";
-import { FileQuestion, ChevronRight, Home } from "lucide-react";
+import { FileQuestion, ChevronRight, Home, LayoutGrid, Check, Search, Sparkles, X, SlidersHorizontal, Loader2 } from "lucide-react";
+import { templateList } from "../../templates/templatesData";
 
 import ClassicTemplate from "../../templates/ClassicTemplate";
 import ModernTemplate from "../../templates/ModernTemplate";
@@ -61,6 +62,61 @@ export default function Preview() {
     const [showShareModal, setShowShareModal] = useState(false);
     const [isSharingLoading, setIsSharingLoading] = useState(false);
     const [userEmail, setUserEmail] = useState("");
+
+    // Template Selector States
+    const [showTemplateModal, setShowTemplateModal] = useState(false);
+    const [isChangingTemplate, setIsChangingTemplate] = useState(false);
+    const [templateSearchQuery, setTemplateSearchQuery] = useState("");
+    const [templateSelectedCategory, setTemplateSelectedCategory] = useState("all");
+    const [templateLoadingText, setTemplateLoadingText] = useState("Applying template...");
+
+    const saveTemplateChange = async (newTemplateId) => {
+        setIsChangingTemplate(true);
+        setShowTemplateModal(false);
+
+        const selectedTplName = templateList.find(t => t.id === newTemplateId)?.name || "New Layout";
+        setTemplateLoadingText(`Applying ${selectedTplName} template...`);
+
+        const timers = [
+            setTimeout(() => setTemplateLoadingText("Reformatting section components..."), 350),
+            setTimeout(() => setTemplateLoadingText("Polishing typography grid..."), 700),
+            setTimeout(() => setTemplateLoadingText("Finalizing preview render..."), 1000)
+        ];
+
+        await new Promise((resolve) => setTimeout(resolve, 1300));
+        timers.forEach(t => clearTimeout(t));
+
+        setSelectedTemplate(newTemplateId);
+        sessionStorage.setItem("selectedTemplate", newTemplateId);
+
+        if (userEmail && resumeId && resumeData) {
+            try {
+                const response = await fetch("/api/resumes", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        email: userEmail,
+                        id: resumeId,
+                        resumeName: resumeData.fullName ? `${resumeData.fullName}'s Resume` : "My Resume",
+                        resumeData: resumeData,
+                        selectedTemplate: newTemplateId,
+                        isPublic: isPublic,
+                        shareableLink: shareableLink
+                    })
+                });
+                if (!response.ok) {
+                    throw new Error("Failed to save template selection.");
+                }
+                showToast("Template updated successfully!", "success");
+            } catch (err) {
+                console.error("Error saving template change:", err);
+                showToast("Template changed locally, but failed to sync online.", "warning");
+            }
+        } else {
+            showToast("Template changed successfully!", "success");
+        }
+        setIsChangingTemplate(false);
+    };
 
     const fetchSharingStatus = async (id, email) => {
         try {
@@ -435,68 +491,389 @@ export default function Preview() {
 
     /* ================= UI ================= */
     return (
-        <div className="bg-dark text-white min-vh-100">
+        <div className="preview-page-container text-white min-vh-100">
+            {/* Background Spotlights */}
+            <div className="bg-glow-spot-1 no-print"></div>
+            <div className="bg-glow-spot-2 no-print"></div>
+
             <Navbar />
 
-            <div className="container py-5">
-                <div className="d-flex justify-content-end align-items-center gap-3 mb-4 no-print flex-wrap">
-                    <div className="d-flex align-items-center gap-2">
-                        <label htmlFor="lang-selector" className="text-white-50 small mb-0 me-1 fw-semibold d-none d-md-inline">
-                            <i className="fas fa-language"></i> Language:
-                        </label>
-                        <select
-                            id="lang-selector"
-                            className="form-select form-select-sm bg-dark text-white border-secondary py-2 px-3"
-                            style={{ width: "150px", borderRadius: "8px" }}
-                            value={activeLanguage}
-                            onChange={(e) => handleTranslate(e.target.value)}
-                            disabled={isTranslating}
-                        >
-                            <option value="original">Original (English)</option>
-                            <option value="Spanish">Español (Spanish)</option>
-                            <option value="French">Français (French)</option>
-                            <option value="German">Deutsch (German)</option>
-                            <option value="Japanese">日本語 (Japanese)</option>
-                            <option value="Chinese">中文 (Chinese)</option>
-                            <option value="Hindi">हिन्दी (Hindi)</option>
-                            <option value="Arabic">العربية (Arabic)</option>
-                            <option value="Portuguese">Português (Portuguese)</option>
-                            <option value="Italian">Italiano (Italian)</option>
-                        </select>
+            <div className="container py-5 position-relative" style={{ zIndex: 5 }}>
+                {/* Custom Floating Control Toolbar */}
+                <div className="control-bar-wrapper no-print mb-4">
+                    <div className="control-bar d-flex justify-content-between align-items-center flex-wrap gap-4">
+                        <div className="control-bar-left">
+                            <h4 className="mb-1 fw-bold d-flex align-items-center gap-2 text-white">
+                                <LayoutGrid size={22} className="text-indigo" />
+                                Resume Preview
+                            </h4>
+                            <p className="text-white-50 mb-0 small fw-semibold">
+                                Selected Layout: <span className="text-indigo font-monospace">{templateList.find(t => t.id === selectedTemplate)?.name || selectedTemplate}</span>
+                            </p>
+                        </div>
+                        
+                        <div className="control-bar-actions d-flex align-items-center gap-2.5 flex-wrap">
+                            <div className="d-flex align-items-center gap-2 me-2">
+                                <label htmlFor="lang-selector" className="text-white-50 small mb-0 me-1 fw-semibold d-none d-md-inline">
+                                    <i className="fas fa-language"></i> Lang:
+                                </label>
+                                <select
+                                    id="lang-selector"
+                                    className="form-select form-select-sm bg-dark-custom text-white border-glass py-2 px-3"
+                                    style={{ width: "160px", borderRadius: "8px", cursor: "pointer" }}
+                                    value={activeLanguage}
+                                    onChange={(e) => handleTranslate(e.target.value)}
+                                    disabled={isTranslating}
+                                >
+                                    <option value="original">Original (English)</option>
+                                    <option value="Spanish">Español (Spanish)</option>
+                                    <option value="French">Français (French)</option>
+                                    <option value="German">Deutsch (German)</option>
+                                    <option value="Japanese">日本語 (Japanese)</option>
+                                    <option value="Chinese">中文 (Chinese)</option>
+                                    <option value="Hindi">हिन्दी (Hindi)</option>
+                                    <option value="Arabic">العربية (Arabic)</option>
+                                    <option value="Portuguese">Português (Portuguese)</option>
+                                    <option value="Italian">Italiano (Italian)</option>
+                                </select>
+                            </div>
+                            
+                            <button onClick={() => setShowTemplateModal(true)} className="btn btn-glass d-flex align-items-center gap-2 px-3 py-2" suppressHydrationWarning>
+                                <SlidersHorizontal size={14} className="text-indigo" /> Change Template
+                            </button>
+                            
+                            <button onClick={handleEdit} className="btn btn-glass d-flex align-items-center gap-2 px-3 py-2" suppressHydrationWarning>
+                                <i className="fas fa-pen text-indigo"></i> Edit
+                            </button>
+                            
+                            {resumeId && (
+                                <button onClick={() => setShowShareModal(true)} className="btn btn-glass btn-glass-info d-flex align-items-center gap-2 px-3 py-2" suppressHydrationWarning>
+                                    <i className="fas fa-share-alt"></i> Share
+                                </button>
+                            )}
+                            
+                            <button onClick={handleDownload} className="btn btn-gradient d-flex align-items-center gap-2 px-3.5 py-2" suppressHydrationWarning>
+                                <i className="fas fa-download"></i> Download Resume
+                            </button>
+                        </div>
                     </div>
-
-                    <button onClick={handleEdit} className="btn btn-outline-light d-flex align-items-center gap-2 px-3 py-2" style={{ borderRadius: "8px" }} suppressHydrationWarning>
-                        <i className="fas fa-pen"></i> Edit
-                    </button>
-                    {resumeId && (
-                        <button onClick={() => setShowShareModal(true)} className="btn btn-outline-info d-flex align-items-center gap-2 px-3 py-2" style={{ borderRadius: "8px" }} suppressHydrationWarning>
-                            <i className="fas fa-share-alt"></i> Share
-                        </button>
-                    )}
-                    <button onClick={handleDownload} className="btn btn-primary d-flex align-items-center gap-2 px-3 py-2" style={{ borderRadius: "8px" }} suppressHydrationWarning>
-                        <i className="fas fa-download"></i> Download Resume
-                    </button>
                 </div>
 
-                <div className="w-100 overflow-auto py-3 d-flex justify-content-center no-print">
-                    <div
-                        id="resume-preview"
-                        className="bg-white text-dark"
-                        style={{
-                            width: "210mm",
-                            minHeight: "297mm",
-                            boxShadow: "0 8px 30px rgba(0,0,0,0.5)",
-                            boxSizing: "border-box",
-                            position: "relative",
-                            overflow: "hidden"
-                        }}
-                    >
-                        {renderTemplate()}
+                {/* Print layout helper */}
+                <div className="text-center mb-2 no-print">
+                    <span className="badge text-white-50 px-3 py-2 border-glass bg-dark-custom" style={{ fontSize: "0.8rem", borderRadius: "20px" }}>
+                        <i className="fas fa-print me-2 text-indigo"></i> Standard A4 Print Dimensions (210mm × 297mm)
+                    </span>
+                </div>
+
+                {/* Viewport for the A4 sheet */}
+                <div className="preview-viewport-container d-flex justify-content-center py-2 no-print">
+                    <div className="preview-viewport-shadow">
+                        <div
+                            id="resume-preview"
+                            className="bg-white text-dark"
+                            style={{
+                                width: "210mm",
+                                minHeight: "297mm",
+                                boxSizing: "border-box",
+                                position: "relative",
+                                overflow: "hidden"
+                            }}
+                        >
+                            {renderTemplate()}
+                        </div>
                     </div>
                 </div>
             </div>
 
             <style>{`
+                .preview-page-container {
+                    background: radial-gradient(circle at top, #111424 0%, #06070c 100%);
+                    position: relative;
+                    overflow-x: hidden;
+                }
+                .bg-glow-spot-1 {
+                    position: absolute;
+                    top: -15%;
+                    left: 5%;
+                    width: 600px;
+                    height: 600px;
+                    background: radial-gradient(circle, rgba(99, 102, 241, 0.12) 0%, rgba(99, 102, 241, 0) 70%);
+                    z-index: 1;
+                    pointer-events: none;
+                }
+                .bg-glow-spot-2 {
+                    position: absolute;
+                    bottom: 5%;
+                    right: 5%;
+                    width: 700px;
+                    height: 700px;
+                    background: radial-gradient(circle, rgba(6, 182, 212, 0.08) 0%, rgba(6, 182, 212, 0) 70%);
+                    z-index: 1;
+                    pointer-events: none;
+                }
+                .control-bar-wrapper {
+                    background: rgba(15, 18, 32, 0.65);
+                    border: 1px solid rgba(255, 255, 255, 0.08);
+                    backdrop-filter: blur(16px);
+                    border-radius: 18px;
+                    padding: 18px 24px;
+                    box-shadow: 0 12px 36px rgba(0, 0, 0, 0.45);
+                    position: relative;
+                    z-index: 10;
+                }
+                .bg-dark-custom {
+                    background-color: rgba(11, 13, 23, 0.85) !important;
+                }
+                .border-glass {
+                    border: 1px solid rgba(255, 255, 255, 0.08);
+                }
+                .btn-glass {
+                    background: rgba(255, 255, 255, 0.04);
+                    border: 1px solid rgba(255, 255, 255, 0.08);
+                    color: #cbd5e1;
+                    border-radius: 10px;
+                    font-weight: 500;
+                    font-size: 0.88rem;
+                    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+                }
+                .btn-glass:hover {
+                    background: rgba(255, 255, 255, 0.09);
+                    border-color: rgba(255, 255, 255, 0.2);
+                    color: #fff;
+                    transform: translateY(-2px);
+                }
+                .btn-glass-info {
+                    color: #22d3ee;
+                    border-color: rgba(34, 211, 238, 0.15);
+                }
+                .btn-glass-info:hover {
+                    background: rgba(34, 211, 238, 0.1);
+                    border-color: rgba(34, 211, 238, 0.3);
+                    color: #22d3ee;
+                }
+                .btn-gradient {
+                    background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+                    border: none;
+                    color: #fff;
+                    border-radius: 10px;
+                    font-weight: 600;
+                    font-size: 0.88rem;
+                    box-shadow: 0 4px 14px rgba(99, 102, 241, 0.25);
+                    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+                }
+                .btn-gradient:hover {
+                    background: linear-gradient(135deg, #4f46e5 0%, #4338ca 100%);
+                    box-shadow: 0 6px 20px rgba(99, 102, 241, 0.35);
+                    transform: translateY(-2px);
+                    color: #fff;
+                }
+                .preview-viewport-shadow {
+                    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.7), 0 0 50px rgba(99, 102, 241, 0.1);
+                    border-radius: 6px;
+                    border: 1px solid rgba(255, 255, 255, 0.06);
+                    overflow: hidden;
+                    transition: all 0.3s ease;
+                }
+                .preview-viewport-shadow:hover {
+                    transform: translateY(-2px);
+                    box-shadow: 0 35px 90px rgba(0, 0, 0, 0.8), 0 0 60px rgba(99, 102, 241, 0.15);
+                }
+                
+                /* Template Selector Modal Styles */
+                .template-modal-backdrop {
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background-color: rgba(6, 8, 15, 0.85);
+                    backdrop-filter: blur(12px);
+                    z-index: 9999;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    overflow: hidden;
+                }
+                .template-modal-container {
+                    background: linear-gradient(145deg, #121522 0%, #0a0b12 100%);
+                    border: 1px solid rgba(255, 255, 255, 0.08);
+                    border-radius: 24px;
+                    width: 92%;
+                    max-width: 1100px;
+                    height: 85vh;
+                    display: flex;
+                    flex-direction: column;
+                    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6);
+                    animation: modalFadeUp 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+                }
+                .template-modal-header {
+                    padding: 24px 32px 16px;
+                    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+                    display: flex;
+                    flex-direction: column;
+                    gap: 16px;
+                }
+                .template-modal-body {
+                    padding: 24px 32px;
+                    overflow-y: auto;
+                    flex-grow: 1;
+                }
+                .template-grid {
+                    display: grid;
+                    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+                    gap: 24px;
+                }
+                .template-selector-card {
+                    background: rgba(22, 26, 46, 0.6);
+                    border: 1px solid rgba(255, 255, 255, 0.06);
+                    border-radius: 14px;
+                    overflow: hidden;
+                    cursor: pointer;
+                    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+                    display: flex;
+                    flex-direction: column;
+                    height: 310px;
+                    position: relative;
+                }
+                .template-selector-card:hover {
+                    transform: translateY(-4px);
+                    border-color: rgba(99, 102, 241, 0.45);
+                    background: rgba(26, 30, 54, 0.7);
+                    box-shadow: 0 12px 24px rgba(99, 102, 241, 0.12);
+                }
+                .template-selector-card.active {
+                    border-color: #6366f1;
+                    background: rgba(99, 102, 241, 0.08);
+                    box-shadow: 0 0 20px rgba(99, 102, 241, 0.2);
+                }
+                .tpl-preview-box {
+                    height: 165px;
+                    overflow: hidden;
+                    position: relative;
+                    background: rgba(0, 0, 0, 0.35);
+                    border-radius: 13px 13px 0 0;
+                    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                }
+                .tpl-preview-scale {
+                    width: 210px;
+                    height: 297px;
+                    position: absolute;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%, -50%) scale(0.52);
+                    transform-origin: center center;
+                    box-shadow: 0 4px 15px rgba(0,0,0,0.6);
+                    border-radius: 4px;
+                    overflow: hidden;
+                }
+                .tpl-details-box {
+                    padding: 14px;
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: space-between;
+                    flex-grow: 1;
+                }
+                .tpl-title {
+                    font-size: 0.95rem;
+                    font-weight: 700;
+                    margin-bottom: 4px;
+                    color: #fff;
+                }
+                .tpl-desc {
+                    font-size: 0.75rem;
+                    color: rgba(255, 255, 255, 0.45);
+                    line-height: 1.3;
+                    margin-bottom: 8px;
+                    display: -webkit-box;
+                    -webkit-line-clamp: 2;
+                    -webkit-box-orient: vertical;
+                    overflow: hidden;
+                    height: 32px;
+                }
+                .active-badge {
+                    position: absolute;
+                    top: 10px;
+                    right: 10px;
+                    background: linear-gradient(135deg, #6366f1, #4f46e5);
+                    color: #fff;
+                    font-size: 0.65rem;
+                    font-weight: 700;
+                    padding: 3px 8px;
+                    border-radius: 20px;
+                    display: flex;
+                    align-items: center;
+                    gap: 4px;
+                    box-shadow: 0 2px 8px rgba(99, 102, 241, 0.4);
+                    z-index: 5;
+                }
+                .bg-glass-tag {
+                    background: rgba(255, 255, 255, 0.05);
+                    border: 1px solid rgba(255, 255, 255, 0.05);
+                    color: rgba(255, 255, 255, 0.5);
+                    font-size: 0.62rem;
+                    padding: 1.5px 5px;
+                    border-radius: 4px;
+                }
+                
+                /* Transition Loader Overlay */
+                .template-transition-loader {
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background-color: rgba(5, 7, 12, 0.85);
+                    backdrop-filter: blur(16px);
+                    z-index: 10100;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                }
+                .loader-card {
+                    max-width: 440px;
+                    width: 90%;
+                    background: linear-gradient(145deg, #141727 0%, #0d0f1a 100%);
+                    border-radius: 24px;
+                    border: 1px solid rgba(99, 102, 241, 0.2);
+                    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.65);
+                    padding: 32px;
+                }
+                .spinner-wrapper {
+                    position: relative;
+                    display: inline-flex;
+                    align-items: center;
+                    justify-content: center;
+                }
+                .spinner-icon {
+                    color: #6366f1;
+                    animation: spin 1.2s linear infinite;
+                }
+                .pulse-sparkle {
+                    position: absolute;
+                    color: #a5b4fc;
+                    animation: pulse 1.8s ease-in-out infinite;
+                }
+                .text-glow {
+                    text-shadow: 0 0 10px rgba(99, 102, 241, 0.5);
+                }
+                
+                /* Animations */
+                @keyframes modalFadeUp {
+                    from { opacity: 0; transform: translateY(30px); }
+                    to { opacity: 1; transform: translateY(0); }
+                }
+                @keyframes spin {
+                    from { transform: rotate(0deg); }
+                    to { transform: rotate(360deg); }
+                }
+                @keyframes pulse {
+                    0%, 100% { opacity: 0.3; transform: scale(0.9); }
+                    50% { opacity: 1; transform: scale(1.1); }
+                }
                 @media print {
                     .no-print {
                         display: none !important;
@@ -516,6 +893,151 @@ export default function Preview() {
                 }
             `}</style>
 
+            {/* TEMPLATE PICKER MODAL */}
+            {showTemplateModal && (
+                <div className="template-modal-backdrop no-print">
+                    <div className="template-modal-container">
+                        {/* Header */}
+                        <div className="template-modal-header">
+                            <div className="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h4 className="fw-bold mb-1 d-flex align-items-center gap-2 text-white">
+                                        <Sparkles size={20} className="text-indigo" />
+                                        Choose Resume Template
+                                    </h4>
+                                    <p className="text-white-50 mb-0 small">
+                                        Select a layout to instantly format your professional details. Click any card to apply.
+                                    </p>
+                                </div>
+                                <button 
+                                    onClick={() => setShowTemplateModal(false)}
+                                    className="btn btn-glass d-flex align-items-center justify-content-center p-0 rounded-circle"
+                                    style={{ width: "36px", height: "36px" }}
+                                >
+                                    <X size={18} />
+                                </button>
+                            </div>
+                            
+                            {/* Search and Tabs */}
+                            <div className="d-flex justify-content-between align-items-center flex-wrap gap-3 mt-1">
+                                <div className="d-flex flex-wrap gap-2">
+                                    {[
+                                        { id: "all", label: "All Layouts" },
+                                        { id: "professional", label: "Professional" },
+                                        { id: "minimalist", label: "Minimalist" },
+                                        { id: "creative", label: "Creative" },
+                                        { id: "tech", label: "Tech / Code" }
+                                    ].map((cat) => (
+                                        <button
+                                            key={cat.id}
+                                            onClick={() => setTemplateSelectedCategory(cat.id)}
+                                            className={`btn btn-sm px-3 py-1.5 ${templateSelectedCategory === cat.id ? 'btn-gradient' : 'btn-glass'}`}
+                                            style={{ fontSize: "0.82rem" }}
+                                        >
+                                            {cat.label}
+                                        </button>
+                                    ))}
+                                </div>
+                                
+                                <div className="position-relative" style={{ width: "260px" }}>
+                                    <Search className="position-absolute" size={14} style={{ left: "12px", top: "50%", transform: "translateY(-50%)", color: "rgba(255,255,255,0.4)" }} />
+                                    <input 
+                                        type="text" 
+                                        className="form-control form-control-sm bg-dark-custom text-white border-glass py-2 px-3 ps-5"
+                                        placeholder="Search templates..."
+                                        style={{ fontSize: "0.85rem", borderRadius: "10px" }}
+                                        value={templateSearchQuery}
+                                        onChange={(e) => setTemplateSearchQuery(e.target.value)}
+                                    />
+                                    {templateSearchQuery && (
+                                        <button 
+                                            onClick={() => setTemplateSearchQuery("")}
+                                            className="position-absolute btn-link text-white-50 border-0 bg-transparent"
+                                            style={{ right: "12px", top: "50%", transform: "translateY(-50%)" }}
+                                        >
+                                            <X size={12} />
+                                        </button>
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        {/* Body / Grid */}
+                        <div className="template-modal-body">
+                            {templateList.filter(tpl => {
+                                const matchesCategory = templateSelectedCategory === "all" || tpl.category === templateSelectedCategory || (templateSelectedCategory === "tech" && tpl.category === "tech");
+                                const matchesSearch = tpl.name.toLowerCase().includes(templateSearchQuery.toLowerCase()) || 
+                                                      tpl.tags.some(t => t.toLowerCase().includes(templateSearchQuery.toLowerCase())) ||
+                                                      tpl.desc.toLowerCase().includes(templateSearchQuery.toLowerCase());
+                                return matchesCategory && matchesSearch;
+                            }).length === 0 ? (
+                                <div className="text-center py-5">
+                                    <FileQuestion size={48} className="text-white-50 mb-3" />
+                                    <h5>No matching templates found</h5>
+                                    <p className="text-white-50 small">Try widening your search keywords or switching categories.</p>
+                                </div>
+                            ) : (
+                                <div className="template-grid">
+                                    {templateList.filter(tpl => {
+                                        const matchesCategory = templateSelectedCategory === "all" || tpl.category === templateSelectedCategory || (templateSelectedCategory === "tech" && tpl.category === "tech");
+                                        const matchesSearch = tpl.name.toLowerCase().includes(templateSearchQuery.toLowerCase()) || 
+                                                              tpl.tags.some(t => t.toLowerCase().includes(templateSearchQuery.toLowerCase())) ||
+                                                              tpl.desc.toLowerCase().includes(templateSearchQuery.toLowerCase());
+                                        return matchesCategory && matchesSearch;
+                                    }).map((tpl) => (
+                                        <div 
+                                            key={tpl.id}
+                                            onClick={() => saveTemplateChange(tpl.id)}
+                                            className={`template-selector-card ${selectedTemplate === tpl.id ? 'active' : ''}`}
+                                        >
+                                            {selectedTemplate === tpl.id && (
+                                                <div className="active-badge">
+                                                    <Check size={11} /> Active
+                                                </div>
+                                            )}
+                                            
+                                            <div className="tpl-preview-box">
+                                                <div className="tpl-preview-scale">
+                                                    {tpl.preview}
+                                                </div>
+                                            </div>
+                                            
+                                            <div className="tpl-details-box">
+                                                <div>
+                                                    <div className="tpl-title">{tpl.name}</div>
+                                                    <div className="tpl-desc">{tpl.desc}</div>
+                                                </div>
+                                                <div className="d-flex flex-wrap gap-1 mt-auto">
+                                                    {tpl.tags.map((tag, idx) => (
+                                                        <span key={idx} className="badge bg-glass-tag">{tag}</span>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* TEMPLATE CHANGE PROGRESS LOADER */}
+            {isChangingTemplate && (
+                <div className="template-transition-loader no-print">
+                    <div className="loader-card text-center">
+                        <div className="mb-4 spinner-wrapper">
+                            <Loader2 className="spinner-icon" size={48} />
+                            <Sparkles className="pulse-sparkle" size={24} />
+                        </div>
+                        <h4 className="fw-bold mb-2 text-glow">Applying Design</h4>
+                        <p className="text-white-50 mb-0 font-monospace small">
+                            {templateLoadingText}
+                        </p>
+                    </div>
+                </div>
+            )}
+
             {/* DOWNLOAD FORMAT MODAL */}
             {showDownloadModal && !isDownloading && (
                 <div style={{
@@ -530,7 +1052,7 @@ export default function Preview() {
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center"
-                }}>
+                }} className="no-print">
                     <div className="card text-center p-5 text-white animate-fade-in" style={{
                         maxWidth: "500px",
                         width: "90%",
@@ -614,7 +1136,7 @@ export default function Preview() {
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center"
-                }}>
+                }} className="no-print">
                     <div className="card text-center p-5 text-white animate-fade-in" style={{
                         maxWidth: "400px",
                         width: "90%",
@@ -654,7 +1176,7 @@ export default function Preview() {
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center"
-                }}>
+                }} className="no-print">
                     <div className="card text-center p-5 text-white animate-fade-in" style={{
                         maxWidth: "400px",
                         width: "90%",
@@ -677,6 +1199,7 @@ export default function Preview() {
                     </div>
                 </div>
             )}
+            
             {/* SHARE MODAL */}
             {showShareModal && (
                 <div style={{
@@ -691,7 +1214,7 @@ export default function Preview() {
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center"
-                }}>
+                }} className="no-print">
                     <div className="card p-5 text-white animate-fade-in" style={{
                         maxWidth: "550px",
                         width: "90%",
