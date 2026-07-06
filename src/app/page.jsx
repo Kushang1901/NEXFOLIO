@@ -234,6 +234,101 @@ export default function HomePage() {
                         .hero-cta-primary, .hero-cta-secondary { justify-content: center; }
                         .hero-trust { font-size: 0.8rem; }
                     }
+
+                    /* ── Features Section ── */
+                    .features-section-container {
+                        background: radial-gradient(circle at center, #0e111d 0%, #060610 100%);
+                        position: relative;
+                        overflow: hidden;
+                    }
+                    .features-glow {
+                        position: absolute;
+                        top: 50%;
+                        left: 50%;
+                        transform: translate(-50%, -50%);
+                        width: 800px;
+                        height: 800px;
+                        background: radial-gradient(circle, rgba(99, 102, 241, 0.05) 0%, rgba(99, 102, 241, 0) 70%);
+                        pointer-events: none;
+                        z-index: 1;
+                    }
+                    .feature-gradient-title {
+                        background: linear-gradient(135deg, #ffffff 30%, #a5b4fc 100%);
+                        -webkit-background-clip: text;
+                        -webkit-text-fill-color: transparent;
+                        background-clip: text;
+                    }
+                    .feature-card-custom {
+                        background: rgba(15, 18, 36, 0.45);
+                        border: 1px solid rgba(255, 255, 255, 0.06);
+                        backdrop-filter: blur(16px);
+                        border-radius: 20px;
+                        padding: 32px 28px;
+                        height: 100%;
+                        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                        position: relative;
+                        overflow: hidden;
+                        display: flex;
+                        flex-direction: column;
+                        align-items: center;
+                        text-align: center;
+                        z-index: 2;
+                    }
+                    .feature-card-custom::before {
+                        content: '';
+                        position: absolute;
+                        top: 0;
+                        left: 0;
+                        right: 0;
+                        bottom: 0;
+                        border-radius: 20px;
+                        padding: 1.5px;
+                        background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.01));
+                        -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+                        -webkit-mask-composite: xor;
+                        mask-composite: exclude;
+                        pointer-events: none;
+                        transition: all 0.3s ease;
+                    }
+                    .feature-card-custom:hover {
+                        transform: translateY(-6px);
+                        background: rgba(20, 24, 48, 0.65);
+                        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), 0 0 30px rgba(99, 102, 241, 0.15);
+                    }
+                    .feature-card-custom:hover::before {
+                        background: linear-gradient(135deg, #6366f1, #a78bfa);
+                    }
+                    .feature-icon-badge {
+                        width: 60px;
+                        height: 60px;
+                        border-radius: 16px;
+                        background: rgba(99, 102, 241, 0.08);
+                        border: 1px solid rgba(99, 102, 241, 0.2);
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        margin-bottom: 24px;
+                        color: #818cf8;
+                        transition: all 0.3s ease;
+                    }
+                    .feature-card-custom:hover .feature-icon-badge {
+                        background: linear-gradient(135deg, #6366f1, #818cf8);
+                        color: #ffffff;
+                        transform: scale(1.1) rotate(4deg);
+                        box-shadow: 0 8px 20px rgba(99, 102, 241, 0.3);
+                    }
+                    .feature-title-text {
+                        font-size: 1.25rem;
+                        font-weight: 700;
+                        color: #ffffff;
+                        margin-bottom: 14px;
+                        letter-spacing: -0.01em;
+                    }
+                    .feature-desc-text {
+                        font-size: 0.95rem;
+                        line-height: 1.6;
+                        color: rgba(255, 255, 255, 0.55);
+                    }
                 `}</style>
 
                 {/* Background elements */}
@@ -321,63 +416,51 @@ export default function HomePage() {
 
 
             {/* Features Section */}
-            <section className="py-5 bg-dark">
-                <div className="container py-5">
+            <section className="features-section-container py-5 position-relative">
+                <div className="features-glow" aria-hidden="true" />
+                
+                <div className="container py-5 position-relative" style={{ zIndex: 5 }}>
                     <div className="text-center mb-5">
-                        <h2 className="display-6 fw-bold mb-3">The Best Free AI Resume Maker for Job Seekers</h2>
-                        <p className="text-white-50 max-w-2xl mx-auto fs-5">
+                        <h2 className="display-5 fw-bold mb-3 feature-gradient-title">The Best Free AI Resume Maker for Job Seekers</h2>
+                        <p className="text-white-50 max-w-2xl mx-auto fs-5" style={{ maxWidth: "700px" }}>
                             Empower your job application process with smart builder tools tailored to pass recruitment screens.
                         </p>
                     </div>
-                    <div className="row g-4">
+                    
+                    <div className="row g-4 justify-content-center">
                         <div className="col-md-4">
-                            <div
-                                className="card bg-black border-secondary h-100"
-                                style={{
-                                    borderRadius: '12px',
-                                    boxShadow: '0 4px 20px rgba(0, 0, 0, 0.5)'
-                                }}
-                            >
-                                <div className="card-body p-4 text-center">
-                                    <h3 className="h5 fw-bold mb-3">AI-Powered Resume Writer</h3>
-                                    <p className="text-white-50 mb-0">
-                                        Leverage advanced artificial intelligence to instantly draft compelling experience descriptions and bullet points that match your target role.
-                                    </p>
+                            <div className="feature-card-custom">
+                                <div className="feature-icon-badge">
+                                    <i className="fas fa-robot fa-2x"></i>
                                 </div>
+                                <h3 className="feature-title-text">AI-Powered Resume Writer</h3>
+                                <p className="feature-desc-text mb-0">
+                                    Leverage advanced artificial intelligence to instantly draft compelling experience descriptions and bullet points that match your target role.
+                                </p>
                             </div>
                         </div>
 
                         <div className="col-md-4">
-                            <div
-                                className="card bg-black border-secondary h-100"
-                                style={{
-                                    borderRadius: '12px',
-                                    boxShadow: '0 4px 20px rgba(0, 0, 0, 0.5)'
-                                }}
-                            >
-                                <div className="card-body p-4 text-center">
-                                    <h3 className="h5 fw-bold mb-3">ATS-Friendly Resume Builder</h3>
-                                    <p className="text-white-50 mb-0">
-                                        Build beautiful, job-winning resumes in minutes using our intuitive interface and templates engineered to be fully scan-readable.
-                                    </p>
+                            <div className="feature-card-custom">
+                                <div className="feature-icon-badge">
+                                    <i className="fas fa-check-double fa-2x"></i>
                                 </div>
+                                <h3 className="feature-title-text">ATS-Friendly Resume Builder</h3>
+                                <p className="feature-desc-text mb-0">
+                                    Build beautiful, job-winning resumes in minutes using our intuitive interface and templates engineered to be fully scan-readable.
+                                </p>
                             </div>
                         </div>
 
                         <div className="col-md-4">
-                            <div
-                                className="card bg-black border-secondary h-100"
-                                style={{
-                                    borderRadius: '12px',
-                                    boxShadow: '0 4px 20px rgba(0, 0, 0, 0.5)'
-                                }}
-                            >
-                                <div className="card-body p-4 text-center">
-                                    <h3 className="h5 fw-bold mb-3">Free PDF & PNG Exports</h3>
-                                    <p className="text-white-50 mb-0">
-                                        Export your polished CV as a clean, professionally formatted PDF or high-res PNG image that maintains exact styling across all tracking systems.
-                                    </p>
+                            <div className="feature-card-custom">
+                                <div className="feature-icon-badge">
+                                    <i className="fas fa-file-pdf fa-2x"></i>
                                 </div>
+                                <h3 className="feature-title-text">Free PDF & PNG Exports</h3>
+                                <p className="feature-desc-text mb-0">
+                                    Export your polished CV as a clean, professionally formatted PDF or high-res PNG image that maintains exact styling across all tracking systems.
+                                </p>
                             </div>
                         </div>
                     </div>
