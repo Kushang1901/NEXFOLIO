@@ -3,13 +3,13 @@ export default function robots() {
         rules: [
             {
                 userAgent: "*",
-                allow: ["/", "/templates", "/cover-letter", "/signup", "/login"],
+                allow: ["/"],
                 disallow: ["/builder", "/preview", "/profile", "/api/", "/_next/", "/resume/"],
             },
             {
                 userAgent: "Googlebot",
-                allow: ["/", "/templates", "/cover-letter", "/signup", "/login"],
-                disallow: ["/builder", "/preview", "/profile", "/api/"],
+                allow: ["/"],
+                disallow: ["/builder", "/preview", "/profile", "/api/", "/_next/", "/resume/"],
                 crawlDelay: 0,
             },
         ],
@@ -17,3 +17,4 @@ export default function robots() {
         host: "https://cvgrid.in",
     };
 }
+

@@ -16,12 +16,6 @@ export default function sitemap() {
             priority: 0.95,
         },
         {
-            url: `${baseUrl}/builder`,
-            lastModified: today,
-            changeFrequency: "monthly",
-            priority: 0.85,
-        },
-        {
             url: `${baseUrl}/cover-letter`,
             lastModified: today,
             changeFrequency: "monthly",
