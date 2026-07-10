@@ -16,12 +16,15 @@ export async function POST(request) {
         }
 
         // Verify reCAPTCHA
-        const recaptchaResult = await verifyRecaptcha(recaptchaToken, "GENERATE_RESUME");
-        if (!recaptchaResult.success) {
-            return NextResponse.json(
-                { error: `reCAPTCHA verification failed: ${recaptchaResult.reason || "Bot activity detected."}` },
-                { status: 403 }
-            );
+        const isApp = request.headers.get("x-app-request") === "true";
+        if (!isApp) {
+            const recaptchaResult = await verifyRecaptcha(recaptchaToken, "GENERATE_RESUME");
+            if (!recaptchaResult.success) {
+                return NextResponse.json(
+                    { error: `reCAPTCHA verification failed: ${recaptchaResult.reason || "Bot activity detected."}` },
+                    { status: 403 }
+                );
+            }
         }
 
         if (!apiKey) {
