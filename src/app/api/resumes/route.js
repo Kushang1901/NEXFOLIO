@@ -1,6 +1,16 @@
 import { NextResponse } from "next/server";
 import { getDb } from "../../../lib/db";
 
+const corsHeaders = {
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Methods": "GET, POST, DELETE, OPTIONS",
+    "Access-Control-Allow-Headers": "Content-Type, Authorization, Accept",
+};
+
+export async function OPTIONS() {
+    return new NextResponse(null, { headers: corsHeaders });
+}
+
 export async function GET(request) {
     try {
         const { searchParams } = new URL(request.url);
@@ -23,7 +33,7 @@ export async function GET(request) {
             if (resumes.length === 0) {
                 return NextResponse.json(
                     { error: "Resume not found" },
-                    { status: 404 }
+                    { status: 404, headers: corsHeaders }
                 );
             }
 
@@ -33,17 +43,17 @@ export async function GET(request) {
             if (!resume.isPublic && resume.userEmail !== email) {
                 return NextResponse.json(
                     { error: "Unauthorized" },
-                    { status: 401 }
+                    { status: 401, headers: corsHeaders }
                 );
             }
 
-            return NextResponse.json(resume);
+            return NextResponse.json(resume, { headers: corsHeaders });
         } else {
             // If listing all, email is required
             if (!email) {
                 return NextResponse.json(
                     { error: "Email is required" },
-                    { status: 400 }
+                    { status: 400, headers: corsHeaders }
                 );
             }
 
@@ -57,13 +67,13 @@ export async function GET(request) {
                 ORDER BY updated_at DESC
             `;
 
-            return NextResponse.json(resumes);
+            return NextResponse.json(resumes, { headers: corsHeaders });
         }
     } catch (err) {
         console.error("❌ Resumes GET Route Error:", err);
         return NextResponse.json(
             { error: "Server error" },
-            { status: 500 }
+            { status: 500, headers: corsHeaders }
         );
     }
 }
@@ -75,14 +85,14 @@ export async function POST(request) {
         if (!email) {
             return NextResponse.json(
                 { error: "Email is required" },
-                { status: 400 }
+                { status: 400, headers: corsHeaders }
             );
         }
 
         if (!resumeData) {
             return NextResponse.json(
                 { error: "Resume data is required" },
-                { status: 400 }
+                { status: 400, headers: corsHeaders }
             );
         }
 
@@ -105,14 +115,14 @@ export async function POST(request) {
             if (result.length === 0) {
                 return NextResponse.json(
                     { error: "Resume not found or unauthorized" },
-                    { status: 404 }
+                    { status: 404, headers: corsHeaders }
                 );
             }
 
             return NextResponse.json({
                 message: "Resume updated successfully",
                 id: result[0].id
-            });
+            }, { headers: corsHeaders });
         } else {
             // Insert new resume
             const result = await db`
@@ -124,13 +134,13 @@ export async function POST(request) {
             return NextResponse.json({
                 message: "Resume created successfully",
                 id: result[0].id
-            }, { status: 201 });
+            }, { status: 201, headers: corsHeaders });
         }
     } catch (err) {
         console.error("❌ Resumes POST Route Error:", err);
         return NextResponse.json(
             { error: "Server error", details: err.message },
-            { status: 500 }
+            { status: 500, headers: corsHeaders }
         );
     }
 }
@@ -144,7 +154,7 @@ export async function DELETE(request) {
         if (!email || !id) {
             return NextResponse.json(
                 { error: "Email and ID are required" },
-                { status: 400 }
+                { status: 400, headers: corsHeaders }
             );
         }
 
@@ -158,16 +168,16 @@ export async function DELETE(request) {
         if (result.length === 0) {
             return NextResponse.json(
                 { error: "Resume not found or unauthorized" },
-                { status: 404 }
+                { status: 404, headers: corsHeaders }
             );
         }
 
-        return NextResponse.json({ message: "Resume deleted successfully" });
+        return NextResponse.json({ message: "Resume deleted successfully" }, { headers: corsHeaders });
     } catch (err) {
         console.error("❌ Resumes DELETE Route Error:", err);
         return NextResponse.json(
             { error: "Server error" },
-            { status: 500 }
+            { status: 500, headers: corsHeaders }
         );
     }
 }
