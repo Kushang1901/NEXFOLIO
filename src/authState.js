@@ -4,6 +4,31 @@ import { auth } from "./firebase";
 export function subscribeToAuthChanges(callback) {
     const checkMockUser = () => {
         if (typeof window !== "undefined") {
+            try {
+                const params = new URLSearchParams(window.location.search);
+                const autoEmail = params.get("autologin_email");
+                const autoName = params.get("autologin_name") || "App User";
+                
+                if (autoEmail) {
+                    const mockUser = {
+                        uid: "mock_user_12345",
+                        email: autoEmail,
+                        displayName: autoName,
+                        photoURL: null,
+                        emailVerified: true
+                    };
+                    localStorage.setItem("mock_user", JSON.stringify(mockUser));
+                    
+                    // Remove autologin params from the URL cleanly
+                    const url = new URL(window.location.href);
+                    url.searchParams.delete("autologin_email");
+                    url.searchParams.delete("autologin_name");
+                    window.history.replaceState({}, document.title, url.pathname + url.search);
+                }
+            } catch (e) {
+                console.error("Autologin check failed:", e);
+            }
+
             const localUserJson = localStorage.getItem("mock_user");
             if (localUserJson) {
                 try {
