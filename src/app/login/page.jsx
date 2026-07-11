@@ -57,15 +57,6 @@ export default function Login() {
         e.preventDefault();
         setLoading(true);
         try {
-            // Verify that the user exists in PostgreSQL Neon Database before authentication
-            const checkRes = await fetch(`/api/user?email=${encodeURIComponent(formData.email)}`);
-            if (!checkRes.ok) {
-                showToast("Account does not exist. Please sign up first!");
-                router.push("/signup");
-                setLoading(false);
-                return;
-            }
-
             try {
                 await signInWithEmailAndPassword(auth, formData.email, formData.password);
             } catch (firebaseError) {

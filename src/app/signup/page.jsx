@@ -24,6 +24,7 @@ export default function Signup() {
     const [loading, setLoading] = useState(false);
     const [tailwindLoaded, setTailwindLoaded] = useState(false);
     const apiCallingRef = React.useRef(new Set());
+    const isGoogleSignupRef = React.useRef(false);
 
     useEffect(() => {
         if (typeof window !== "undefined" && window.tailwind) {
@@ -42,6 +43,7 @@ export default function Signup() {
     useEffect(() => {
         const unsubscribe = subscribeToAuthChanges(async (user) => {
             if (user) {
+                if (isGoogleSignupRef.current) return;
                 if (apiCallingRef.current.has(user.email)) return;
                 apiCallingRef.current.add(user.email);
 
@@ -76,12 +78,13 @@ export default function Signup() {
 
                     // 🔴 ALREADY REGISTERED USER
                     if (!data.isNewUser) {
-                        showToast("You already have an account. Please login.", "info");
-                        router.push("/login");
+                        showToast("Welcome back!", "success");
+                        router.push("/builder");
                         return;
                     }
 
                     // 🟢 NEW USER
+                    showToast("Signup successful!");
                     router.push("/builder");
                 } catch (err) {
                     console.error("Google signup redirect error:", err);
@@ -117,18 +120,14 @@ export default function Signup() {
         setLoading(true);
         const [firstName, ...lastNameParts] = formData.fullName.trim().split(" ");
         const lastName = lastNameParts.join(" ") || "User";
+
+        // Prevent the listener from handling this email while manual signup is running
+        apiCallingRef.current.add(formData.email);
+
         try {
             const { createUserWithEmailAndPassword, updateProfile } = await import("firebase/auth");
             const result = await createUserWithEmailAndPassword(auth, formData.email, formData.password);
             await updateProfile(result.user, { displayName: formData.fullName });
-            
-            // If already processing/signup occurred, skip duplicate API call
-            if (apiCallingRef.current.has(formData.email)) {
-                showToast("Signup successful!");
-                router.push("/builder");
-                return;
-            }
-            apiCallingRef.current.add(formData.email);
 
             try {
                 // Call the local backend signup API to register in Neon PostgreSQL
@@ -151,6 +150,13 @@ export default function Signup() {
                     throw new Error(errData.error || "Server error during signup");
                 }
 
+                const data = await response.json();
+                if (!data.isNewUser) {
+                    showToast("Welcome back!", "success");
+                    router.push("/builder");
+                    return;
+                }
+
                 showToast("Signup successful!");
                 router.push("/builder");
             } finally {
@@ -158,8 +164,15 @@ export default function Signup() {
             }
         } catch (err) {
             console.error("Firebase Signup Error:", err);
-            // Fallback to mock session so signup succeeds regardless of Firebase setup
-            signupWithMockUser(formData.email, formData.fullName || "Demo User");
+            apiCallingRef.current.delete(formData.email);
+
+            if (err.code === "auth/email-already-in-use") {
+                showToast("You already have an account. Please login.", "info");
+                router.push("/login");
+            } else {
+                // Fallback to mock session so signup succeeds regardless of Firebase setup
+                signupWithMockUser(formData.email, formData.fullName || "Demo User");
+            }
         } finally {
             setLoading(false);
         }
@@ -167,6 +180,7 @@ export default function Signup() {
     // GOOGLE SIGNUP HANDLER
     const handleGoogleSignup = async () => {
         try {
+            isGoogleSignupRef.current = true;
             const result = await signInWithPopup(auth, googleProvider);
             if (result.user) {
                 const user = result.user;
@@ -200,6 +214,13 @@ export default function Signup() {
                         throw new Error(errData.error || "Server error during signup");
                     }
 
+                    const data = await response.json();
+                    if (!data.isNewUser) {
+                        showToast("Welcome back!", "success");
+                        router.push("/builder");
+                        return;
+                    }
+
                     showToast("Signup successful!");
                     router.push("/builder");
                 } finally {
@@ -209,6 +230,8 @@ export default function Signup() {
         } catch (err) {
             console.error("Firebase Signup Error:", err);
             showToast("Google signup failed: " + (err.message || err));
+        } finally {
+            isGoogleSignupRef.current = false;
         }
     };
     // FLOATING PARTICLES EFFECT FOR SIGNUP PAGE

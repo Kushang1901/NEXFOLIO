@@ -50,19 +50,82 @@ export function verifyLocalToken(token) {
     }
 }
 
+// Cache for certificates to avoid fetching them on every request
+let googleCertificatesCache = null;
+let googleCertificatesExpiry = 0;
+
+async function getGoogleCertificates() {
+    if (googleCertificatesCache && Date.now() < googleCertificatesExpiry) {
+        return googleCertificatesCache;
+    }
+
+    try {
+        const res = await fetch("https://www.googleapis.com/robot/v1/metadata/x509/securetoken-system@system.gserviceaccount.com");
+        if (!res.ok) throw new Error("Failed to fetch Google public keys");
+        
+        const cacheControl = res.headers.get("cache-control");
+        let maxAge = 3600; // default 1 hour cache
+        if (cacheControl) {
+            const match = cacheControl.match(/max-age=(\d+)/);
+            if (match) maxAge = parseInt(match[1], 10);
+        }
+
+        const keys = await res.json();
+        googleCertificatesCache = keys;
+        googleCertificatesExpiry = Date.now() + (maxAge * 1000);
+        return keys;
+    } catch (err) {
+        console.error("Error fetching Google public keys:", err);
+        return null;
+    }
+}
+
 /**
  * Verifies a Google Firebase ID Token.
  */
 export async function verifyFirebaseToken(token) {
     try {
-        const res = await fetch(`https://oauth2.googleapis.com/tokeninfo?id_token=${token}`);
-        if (!res.ok) return null;
+        const [headerB64, bodyB64, signatureB64] = token.split(".");
+        if (!headerB64 || !bodyB64 || !signatureB64) return null;
 
-        const data = await res.json();
-        // Verify audience matches the Firebase Project ID
-        if (data.aud !== "resumecraft-e16fe") return null;
+        const header = JSON.parse(Buffer.from(headerB64, "base64url").toString("utf8"));
+        const body = JSON.parse(Buffer.from(bodyB64, "base64url").toString("utf8"));
 
-        return { email: data.email };
+        // 1. Verify standard claims
+        if (body.iss !== `https://securetoken.google.com/resumecraft-e16fe`) {
+            console.error("Firebase token check error: Invalid issuer:", body.iss);
+            return null;
+        }
+        if (body.aud !== "resumecraft-e16fe") {
+            console.error("Firebase token check error: Invalid audience:", body.aud);
+            return null;
+        }
+        if (body.exp && Date.now() / 1000 > body.exp) {
+            console.error("Firebase token check error: Token expired");
+            return null;
+        }
+
+        // 2. Fetch Google certificates and find the one matching the kid in the header
+        const certs = await getGoogleCertificates();
+        if (!certs) return null;
+
+        const cert = certs[header.kid];
+        if (!cert) {
+            console.error("Firebase token check error: Certificate not found for kid:", header.kid);
+            return null;
+        }
+
+        // 3. Verify the signature using Node's crypto verify
+        const verifier = crypto.createVerify("RSA-SHA256");
+        verifier.update(`${headerB64}.${bodyB64}`);
+        const verified = verifier.verify(cert, signatureB64, "base64url");
+
+        if (!verified) {
+            console.error("Firebase token check error: Signature verification failed");
+            return null;
+        }
+
+        return { email: body.email };
     } catch (err) {
         console.error("Firebase token check error:", err);
         return null;
