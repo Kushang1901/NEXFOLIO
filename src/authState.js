@@ -1,6 +1,39 @@
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "./firebase";
 
+// Global client-side Fetch interceptor to automatically inject Authorization token
+if (typeof window !== "undefined" && !window.__fetchInterceptorAttached) {
+    window.__fetchInterceptorAttached = true;
+    const originalFetch = window.fetch;
+    window.fetch = async function (url, options = {}) {
+        const urlStr = url.toString();
+        const isTargetApi = urlStr.includes("/api/resumes") || urlStr.includes("/api/user");
+        
+        if (isTargetApi) {
+            options.headers = options.headers || {};
+            try {
+                // 1. Check if mock user is logged in (credentials fallback session)
+                const mockUserStr = localStorage.getItem("mock_user");
+                if (mockUserStr) {
+                    const mockUser = JSON.parse(mockUserStr);
+                    if (mockUser.token) {
+                        options.headers["Authorization"] = `Bearer ${mockUser.token}`;
+                    }
+                } else if (auth.currentUser) {
+                    // 2. Check if Firebase user is logged in
+                    const token = await auth.currentUser.getIdToken();
+                    if (token) {
+                        options.headers["Authorization"] = `Bearer ${token}`;
+                    }
+                }
+            } catch (err) {
+                console.warn("Fetch auth interceptor error:", err);
+            }
+        }
+        return originalFetch(url, options);
+    };
+}
+
 export function subscribeToAuthChanges(callback) {
     const checkMockUser = () => {
         if (typeof window !== "undefined") {

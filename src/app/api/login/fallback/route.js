@@ -43,12 +43,17 @@ export async function POST(request) {
             );
         }
 
+        // Generate signed token for local authentication sessions
+        const { generateLocalToken } = await import("../../../../utils/authHelper");
+        const token = generateLocalToken({ email: email });
+
         // Return user details for mock login bypass
         return NextResponse.json({
             message: "Login fallback validation successful",
             firstName: user.firstName,
             lastName: user.lastName,
-            email: email
+            email: email,
+            token: token
         });
 
     } catch (err) {

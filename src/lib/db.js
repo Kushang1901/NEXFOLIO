@@ -38,6 +38,9 @@ export async function initDb() {
         await sql`
             ALTER TABLE users ADD COLUMN IF NOT EXISTS otp_expiry TIMESTAMP;
         `;
+        await sql`
+            ALTER TABLE users ADD COLUMN IF NOT EXISTS date_of_birth VARCHAR(50);
+        `;
         
         // Create resumes table
         await sql`

@@ -3,21 +3,20 @@ import { getDb } from "../../../lib/db";
 
 export async function GET(request) {
     try {
-        const { searchParams } = new URL(request.url);
-        const email = searchParams.get("email");
-
-        if (!email) {
+        const { verifyAuth } = await import("../../../utils/authHelper");
+        const authedEmail = await verifyAuth(request);
+        if (!authedEmail) {
             return NextResponse.json(
-                { error: "Email is required" },
-                { status: 400 }
+                { error: "Unauthorized access: Invalid or missing token" },
+                { status: 401 }
             );
         }
 
         const db = await getDb();
         const users = await db`
-            SELECT first_name AS "firstName", last_name AS "lastName", photo_url AS "photoUrl"
+            SELECT first_name AS "firstName", last_name AS "lastName", photo_url AS "photoUrl", date_of_birth AS "dateOfBirth"
             FROM users
-            WHERE email = ${email}
+            WHERE email = ${authedEmail}
         `;
 
         if (users.length === 0) {
@@ -39,22 +38,25 @@ export async function GET(request) {
 
 export async function POST(request) {
     try {
-        const { email, firstName, lastName, photoUrl } = await request.json();
-
-        if (!email) {
+        const { verifyAuth } = await import("../../../utils/authHelper");
+        const authedEmail = await verifyAuth(request);
+        if (!authedEmail) {
             return NextResponse.json(
-                { error: "Email is required" },
-                { status: 400 }
+                { error: "Unauthorized access: Invalid or missing token" },
+                { status: 401 }
             );
         }
+
+        const { firstName, lastName, photoUrl, dateOfBirth } = await request.json();
 
         const db = await getDb();
         await db`
             UPDATE users
             SET first_name = ${firstName || null},
                 last_name = ${lastName || null},
-                photo_url = ${photoUrl || null}
-            WHERE email = ${email}
+                photo_url = ${photoUrl || null},
+                date_of_birth = ${dateOfBirth || null}
+            WHERE email = ${authedEmail}
         `;
 
         return NextResponse.json({ message: "Profile updated successfully" });
@@ -69,20 +71,19 @@ export async function POST(request) {
 
 export async function DELETE(request) {
     try {
-        const { searchParams } = new URL(request.url);
-        const email = searchParams.get("email");
-
-        if (!email) {
+        const { verifyAuth } = await import("../../../utils/authHelper");
+        const authedEmail = await verifyAuth(request);
+        if (!authedEmail) {
             return NextResponse.json(
-                { error: "Email is required" },
-                { status: 400 }
+                { error: "Unauthorized access: Invalid or missing token" },
+                { status: 401 }
             );
         }
 
         const db = await getDb();
         await db`
             DELETE FROM users
-            WHERE email = ${email}
+            WHERE email = ${authedEmail}
         `;
 
         return NextResponse.json({ message: "User deleted successfully from database" });

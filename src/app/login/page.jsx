@@ -35,13 +35,14 @@ export default function Login() {
     };
 
     // MOCK LOGIN BYPASS
-    const loginWithMockUser = (email = "demo@cvgrid.in", displayName = "Demo User") => {
+    const loginWithMockUser = (email = "demo@cvgrid.in", displayName = "Demo User", token = null) => {
         const mockUser = {
             uid: "mock_user_12345",
             email: email,
             displayName: displayName,
             photoURL: null,
-            emailVerified: true
+            emailVerified: true,
+            token: token
         };
         if (typeof window !== "undefined") {
             localStorage.setItem("mock_user", JSON.stringify(mockUser));
@@ -79,7 +80,7 @@ export default function Login() {
 
                 if (fallbackRes.ok) {
                     const fallbackData = await fallbackRes.json();
-                    loginWithMockUser(formData.email, `${fallbackData.firstName || ""} ${fallbackData.lastName || ""}`.trim());
+                    loginWithMockUser(formData.email, `${fallbackData.firstName || ""} ${fallbackData.lastName || ""}`.trim(), fallbackData.token);
                     return;
                 } else {
                     const fallbackData = await fallbackRes.json().catch(() => ({}));

@@ -1,0 +1,97 @@
+import crypto from "crypto";
+
+const JWT_SECRET = process.env.JWT_SECRET || "cvgrid-super-secret-key-123456";
+
+/**
+ * Generates a signed HS256 JWT for direct database fallback sessions.
+ * Requires no external libraries.
+ */
+export function generateLocalToken(payload) {
+    const header = Buffer.from(JSON.stringify({ alg: "HS256", typ: "JWT" })).toString("base64url");
+    const body = Buffer.from(JSON.stringify({
+        ...payload,
+        exp: Math.floor(Date.now() / 1000) + (7 * 24 * 60 * 60) // 7 days expiry
+    })).toString("base64url");
+    const signature = crypto
+        .createHmac("sha256", JWT_SECRET)
+        .update(`${header}.${body}`)
+        .digest("base64url");
+
+    return `${header}.${body}.${signature}`;
+}
+
+/**
+ * Verifies our local custom fallback JWT.
+ */
+export function verifyLocalToken(token) {
+    try {
+        const [header, body, signature] = token.split(".");
+        if (!header || !body || !signature) return null;
+
+        const expectedSignature = crypto
+            .createHmac("sha256", JWT_SECRET)
+            .update(`${header}.${body}`)
+            .digest("base64url");
+
+        if (signature !== expectedSignature) {
+            return null;
+        }
+
+        const decoded = JSON.parse(Buffer.from(body, "base64url").toString("utf8"));
+        
+        // Check expiry
+        if (decoded.exp && Date.now() / 1000 > decoded.exp) {
+            return null;
+        }
+
+        return decoded;
+    } catch {
+        return null;
+    }
+}
+
+/**
+ * Verifies a Google Firebase ID Token.
+ */
+export async function verifyFirebaseToken(token) {
+    try {
+        const res = await fetch(`https://oauth2.googleapis.com/tokeninfo?id_token=${token}`);
+        if (!res.ok) return null;
+
+        const data = await res.json();
+        // Verify audience matches the Firebase Project ID
+        if (data.aud !== "resumecraft-e16fe") return null;
+
+        return { email: data.email };
+    } catch (err) {
+        console.error("Firebase token check error:", err);
+        return null;
+    }
+}
+
+/**
+ * Authenticates a request. Returns the user's verified email, or null.
+ */
+export async function verifyAuth(request) {
+    const authHeader = request.headers.get("authorization");
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+        return null;
+    }
+
+    const token = authHeader.split(" ")[1];
+    if (!token) return null;
+
+    // 1. Try to verify as our custom local JWT fallback first (extremely fast)
+    const localUser = verifyLocalToken(token);
+    if (localUser && localUser.email) {
+        return localUser.email;
+    }
+
+    // 2. Try to verify as a Google Firebase ID Token
+    const firebaseUser = await verifyFirebaseToken(token);
+    if (firebaseUser && firebaseUser.email) {
+        return firebaseUser.email;
+    }
+
+    return null;
+}
