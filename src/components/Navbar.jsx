@@ -555,7 +555,7 @@ export default function Navbar() {
                                                             lineHeight: "1.5"
                                                         }}>
                                                             <strong style={{ color: "#a78bfa", display: "block", marginBottom: "6px" }}>Recruiter-Grade AI</strong>
-                                                            Powered by Gemini models to write professional experience entries without clichés. Completely free.
+                                                            Powered by CVGrid AI models to write professional experience entries without clichés. Completely free.
                                                         </div>
                                                     </div>
                                                 </div>

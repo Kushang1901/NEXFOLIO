@@ -3,14 +3,25 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 
 const apiKey = process.env.GEMINI_API_KEY;
 
+const corsHeaders = {
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Methods": "POST, GET, OPTIONS",
+    "Access-Control-Allow-Headers": "Content-Type, Authorization, Accept, x-app-request",
+};
+
+export async function OPTIONS() {
+    return new NextResponse(null, { headers: corsHeaders });
+}
+
 export async function POST(request) {
     try {
+        console.log("📥 Next.js /api/parse: Received resume parsing request");
         const { fileBase64 } = await request.json();
 
         if (!fileBase64) {
             return NextResponse.json(
                 { error: "fileBase64 is required" },
-                { status: 400 }
+                { status: 400, headers: corsHeaders }
             );
         }
 
@@ -18,7 +29,7 @@ export async function POST(request) {
             console.error("❌ GEMINI_API_KEY is missing on server environment");
             return NextResponse.json(
                 { error: "AI configuration error on the server" },
-                { status: 500 }
+                { status: 500, headers: corsHeaders }
             );
         }
 
@@ -132,13 +143,13 @@ Strict requirements:
         }
 
         const parsedJson = JSON.parse(result.response.text().trim());
-        return NextResponse.json(parsedJson);
+        return NextResponse.json(parsedJson, { headers: corsHeaders });
 
     } catch (err) {
         console.error("🔥 Gemini API Parse Error:", err);
         return NextResponse.json(
             { error: "Failed to parse resume", details: err.message },
-            { status: 500 }
+            { status: 500, headers: corsHeaders }
         );
     }
 }
