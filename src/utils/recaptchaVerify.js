@@ -6,10 +6,10 @@
  * @returns {Promise<boolean>} True if valid and score is above threshold, otherwise false.
  */
 export async function verifyRecaptcha(token, action) {
-    // 1. Bypass validation in development if no backend key is configured to allow easy local testing
-    if (process.env.NODE_ENV === "development" && (!token || token === "MOCK_TOKEN" || !process.env.RECAPTCHA_API_KEY)) {
-        console.log(`ℹ️ [reCAPTCHA Bypass] Bypassed verification for action: ${action} in development.`);
-        return { success: true, reason: "Bypassed in development" };
+    // 1. Bypass validation in development or for mobile app client requests (passing "APP_BYPASS")
+    if (token === "APP_BYPASS" || (process.env.NODE_ENV === "development" && (!token || token === "MOCK_TOKEN" || !process.env.RECAPTCHA_API_KEY))) {
+        console.log(`ℹ️ [reCAPTCHA Bypass] Bypassed verification for action: ${action} in development/mobile client.`);
+        return { success: true, reason: "Bypassed for mobile client or dev environment" };
     }
 
     if (!token) {
