@@ -61,7 +61,7 @@ async function getGoogleCertificates() {
 
     try {
         const res = await fetch(
-            "https://www.googleapis.com/robot/v1/metadata/x509/securetoken-system@system.gserviceaccount.com",
+            "https://www.googleapis.com/robot/v1/metadata/x509/securetoken@system.gserviceaccount.com",
             { cache: "no-store" }
         );
         if (!res.ok) throw new Error("Failed to fetch Google public keys");
