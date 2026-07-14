@@ -38,8 +38,8 @@ export async function POST(request) {
 
         // 1. CREATE RAZORPAY ORDER ACTION
         if (action === "create_order") {
-            const keyId = process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || "rzp_test_SsUweEky8qbyAL";
-            const keySecret = process.env.RAZORPAY_KEY_SECRET || "rkpHwK2w8V4TTQkzWtTlsYRq";
+            const keyId = process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || "rzp_live_TDTM6sBKdckc4Y";
+            const keySecret = process.env.RAZORPAY_KEY_SECRET || "2xD6xcUPm4hJQ77v7oZBK7l4";
 
             const authString = Buffer.from(`${keyId}:${keySecret}`).toString("base64");
 
@@ -84,7 +84,7 @@ export async function POST(request) {
                 );
             }
 
-            const keySecret = process.env.RAZORPAY_KEY_SECRET || "rkpHwK2w8V4TTQkzWtTlsYRq";
+            const keySecret = process.env.RAZORPAY_KEY_SECRET || "2xD6xcUPm4hJQ77v7oZBK7l4";
 
             // Verify the Razorpay signature
             const hmac = crypto.createHmac("sha256", keySecret);
