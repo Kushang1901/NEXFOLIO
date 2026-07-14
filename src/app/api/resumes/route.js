@@ -27,6 +27,7 @@ export async function GET(request) {
                 SELECT id, user_email AS "userEmail", resume_name AS "resumeName", 
                        resume_data AS "resumeData", selected_template AS "selectedTemplate", 
                        is_public AS "isPublic", shareable_link AS "shareableLink",
+                       is_paid AS "isPaid",
                        created_at AS "createdAt", updated_at AS "updatedAt"
                 FROM resumes
                 WHERE id = ${id}

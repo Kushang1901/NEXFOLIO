@@ -45,6 +45,7 @@ export default function PublicResumePage() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [isDownloading, setIsDownloading] = useState(false);
+    const [isPaid, setIsPaid] = useState(false);
 
     useEffect(() => {
         if (!id) return;
@@ -67,6 +68,7 @@ export default function PublicResumePage() {
                 if (data.selectedTemplate) {
                     setSelectedTemplate(data.selectedTemplate);
                 }
+                setIsPaid(data.isPaid || false);
             } catch (err) {
                 console.error("Error fetching public resume:", err);
                 setError(err.message);
@@ -268,9 +270,47 @@ export default function PublicResumePage() {
                     style={{
                         borderRadius: "12px",
                         boxShadow: "0 8px 30px rgba(0,0,0,0.5)",
-                        maxWidth: "850px"
+                        maxWidth: "850px",
+                        position: "relative",
+                        overflow: "hidden"
                     }}
                 >
+                    {/* Watermark Overlay for Unpaid Resume */}
+                    {!isPaid && (
+                        <div className="watermark-overlay" style={{
+                            position: "absolute",
+                            top: 0,
+                            left: 0,
+                            width: "100%",
+                            height: "100%",
+                            pointerEvents: "none",
+                            zIndex: 99,
+                            display: "flex",
+                            flexDirection: "column",
+                            justifyContent: "space-between",
+                            padding: "120px 0",
+                            boxSizing: "border-box",
+                            overflow: "hidden"
+                        }}>
+                            {Array.from({ length: 5 }).map((_, idx) => (
+                                <div key={idx} style={{
+                                    fontSize: "90px",
+                                    color: "rgba(128, 128, 128, 0.11)",
+                                    fontWeight: "900",
+                                    transform: "rotate(-30deg) scale(1.1)",
+                                    textAlign: "center",
+                                    whiteSpace: "nowrap",
+                                    width: "100%",
+                                    userSelect: "none",
+                                    fontFamily: "'Inter', 'Helvetica Neue', Arial, sans-serif",
+                                    letterSpacing: "10px",
+                                    margin: "40px 0"
+                                }}>
+                                    CVGRID
+                                </div>
+                            ))}
+                        </div>
+                    )}
                     {renderTemplate()}
                 </div>
             </div>

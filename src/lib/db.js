@@ -66,6 +66,11 @@ export async function initDb() {
         await sql`
             ALTER TABLE resumes ADD COLUMN IF NOT EXISTS shareable_link VARCHAR(500) DEFAULT NULL;
         `;
+        
+        // Add payment status column if it doesn't exist
+        await sql`
+            ALTER TABLE resumes ADD COLUMN IF NOT EXISTS is_paid BOOLEAN DEFAULT FALSE;
+        `;
 
         // Create cookie_consents table
         await sql`

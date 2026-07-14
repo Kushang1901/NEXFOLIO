@@ -60,7 +60,10 @@ async function getGoogleCertificates() {
     }
 
     try {
-        const res = await fetch("https://www.googleapis.com/robot/v1/metadata/x509/securetoken-system@system.gserviceaccount.com");
+        const res = await fetch(
+            "https://www.googleapis.com/robot/v1/metadata/x509/securetoken-system@system.gserviceaccount.com",
+            { cache: "no-store" }
+        );
         if (!res.ok) throw new Error("Failed to fetch Google public keys");
         
         const cacheControl = res.headers.get("cache-control");

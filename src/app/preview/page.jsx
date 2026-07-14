@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 import Link from "next/link";
+import Script from "next/script";
 import Navbar from "../../components/Navbar";
 import { FileQuestion, ChevronRight, Home, LayoutGrid, Check, Search, Sparkles, X, SlidersHorizontal, Loader2 } from "lucide-react";
 import { templateList } from "../../templates/templatesData";
@@ -50,6 +51,7 @@ export default function Preview() {
     const [showDownloadModal, setShowDownloadModal] = useState(false);
     const [downloadType, setDownloadType] = useState(null); // 'png' or 'pdf'
     const [isDownloading, setIsDownloading] = useState(false);
+    const [isPaid, setIsPaid] = useState(false);
 
     const [activeLanguage, setActiveLanguage] = useState("original");
     const [translatedResumeData, setTranslatedResumeData] = useState(null);
@@ -150,6 +152,7 @@ export default function Preview() {
                     }
                     setResumeId(data.id);
                     sessionStorage.setItem("resumeId", data.id);
+                    setIsPaid(data.isPaid || false);
                 }
             } catch (err) {
                 console.error("Error loading resume in preview:", err);
@@ -174,9 +177,7 @@ export default function Preview() {
                 const targetId = id || savedId;
                 if (targetId) {
                     await fetchSharingStatus(targetId, loggedUser.email);
-                    if (id) {
-                        await loadResume(loggedUser.email, id);
-                    }
+                    await loadResume(loggedUser.email, targetId);
                 }
             }
         });
@@ -228,6 +229,90 @@ export default function Preview() {
 
     const handleDownload = () => {
         setShowDownloadModal(true);
+    };
+
+    const handleRazorpayPayment = async () => {
+        if (!resumeId || !userEmail) {
+            showToast("You must be logged in to purchase premium features.", "error");
+            return;
+        }
+
+        try {
+            // 1. Create order on the backend
+            const response = await fetch("/api/payments", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    action: "create_order",
+                    resumeId: resumeId
+                })
+            });
+
+            if (!response.ok) {
+                const errData = await response.json();
+                throw new Error(errData.error || "Failed to create order");
+            }
+
+            const { orderId, amount, currency } = await response.json();
+
+            // 2. Open Razorpay checkout
+            const options = {
+                key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || "rzp_test_SsUweEky8qbyAL",
+                amount: amount,
+                currency: currency,
+                name: "CVGrid Premium",
+                description: "Unlock Clean Resume (Watermark-free, PNG, DOCX)",
+                order_id: orderId,
+                handler: async function (response) {
+                    try {
+                        setIsDownloading(true);
+                        // 3. Verify payment on backend
+                        const verifyRes = await fetch("/api/payments", {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({
+                                action: "verify_payment",
+                                resumeId: resumeId,
+                                razorpayPaymentId: response.razorpay_payment_id,
+                                razorpayOrderId: response.razorpay_order_id,
+                                razorpaySignature: response.razorpay_signature
+                            })
+                        });
+
+                        const verifyData = await verifyRes.json();
+                        if (verifyRes.ok && verifyData.success) {
+                            setIsPaid(true);
+                            showToast("Payment Successful! Premium unlocked.", "success");
+                        } else {
+                            throw new Error(verifyData.error || "Payment verification failed");
+                        }
+                    } catch (err) {
+                        console.error("Verification Error:", err);
+                        showToast(err.message || "Payment verification failed. Please contact support.", "error");
+                    } finally {
+                        setIsDownloading(false);
+                    }
+                },
+                prefill: {
+                    email: userEmail
+                },
+                theme: {
+                    color: "#6366f1"
+                },
+                modal: {
+                    ondismiss: function () {
+                        showToast("Payment cancelled.", "warning");
+                    }
+                }
+            };
+
+            const rzp = new window.Razorpay(options);
+            rzp.open();
+
+        } catch (err) {
+            console.error("Razorpay error:", err);
+            showToast(err.message || "Could not launch payment gateway.", "error");
+        }
     };
 
     const downloadAsPNG = async () => {
@@ -604,6 +689,8 @@ export default function Preview() {
     /* ================= UI ================= */
     return (
         <div className="preview-page-container text-white min-vh-100">
+            <Script src="https://checkout.razorpay.com/v1/checkout.js" strategy="lazyOnload" />
+            
             {/* Background Spotlights */}
             <div className="bg-glow-spot-1 no-print"></div>
             <div className="bg-glow-spot-2 no-print"></div>
@@ -692,6 +779,42 @@ export default function Preview() {
                                 overflow: "hidden"
                             }}
                         >
+                            {/* Watermark Overlay for Unpaid Resume */}
+                            {!isPaid && (
+                                <div className="watermark-overlay" style={{
+                                    position: "absolute",
+                                    top: 0,
+                                    left: 0,
+                                    width: "100%",
+                                    height: "100%",
+                                    pointerEvents: "none",
+                                    zIndex: 99,
+                                    display: "flex",
+                                    flexDirection: "column",
+                                    justifyContent: "space-between",
+                                    padding: "120px 0",
+                                    boxSizing: "border-box",
+                                    overflow: "hidden"
+                                }}>
+                                    {Array.from({ length: 5 }).map((_, idx) => (
+                                        <div key={idx} style={{
+                                            fontSize: "90px",
+                                            color: "rgba(128, 128, 128, 0.11)",
+                                            fontWeight: "900",
+                                            transform: "rotate(-30deg) scale(1.1)",
+                                            textAlign: "center",
+                                            whiteSpace: "nowrap",
+                                            width: "100%",
+                                            userSelect: "none",
+                                            fontFamily: "'Inter', 'Helvetica Neue', Arial, sans-serif",
+                                            letterSpacing: "10px",
+                                            margin: "40px 0"
+                                        }}>
+                                            CVGRID
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
                             {renderTemplate()}
                         </div>
                     </div>
@@ -1165,92 +1288,205 @@ export default function Preview() {
                     alignItems: "center",
                     justifyContent: "center"
                 }} className="no-print">
-                    <div className="card text-center p-4 p-md-5 text-white animate-fade-in" style={{
-                        maxWidth: "680px",
-                        width: "95%",
-                        background: "linear-gradient(145deg, #1c2027 0%, #11141a 100%)",
-                        borderRadius: "20px",
-                        border: "1px solid rgba(142, 144, 160, 0.25)",
-                        boxShadow: "0 15px 35px rgba(0, 0, 0, 0.6)"
-                    }}>
-                        <div className="card-body position-relative p-0">
-                            <button 
-                                onClick={() => setShowDownloadModal(false)}
-                                className="btn-close btn-close-white position-absolute"
-                                style={{ top: "-15px", right: "-15px" }}
-                                aria-label="Close"
-                            ></button>
-                            
-                            <h3 className="fw-bold mb-3" style={{ letterSpacing: "-0.01em" }}>Choose Export Format</h3>
-                            <p className="text-white-50 mb-4" style={{ fontSize: "0.95rem" }}>
-                                Select your preferred file format to download your resume.
-                            </p>
-                            
-                            <div className="row g-3">
-                                <div className="col-12 col-md-4">
-                                    <button 
-                                        onClick={downloadAsPNG}
-                                        className="btn btn-outline-info w-100 p-3.5 d-flex flex-column align-items-center justify-content-center"
-                                        style={{
-                                            borderRadius: "16px",
-                                            borderWidth: "1.5px",
-                                            transition: "all 0.2s ease",
-                                            background: "rgba(13, 202, 240, 0.05)",
-                                            height: "100%"
-                                        }}
-                                    >
-                                        <i className="fas fa-file-image fa-2x mb-3 text-info"></i>
-                                        <span className="fw-bold fs-6 mb-1 text-white">PNG Image</span>
-                                        <span className="text-white-50 small" style={{ fontSize: "0.75rem" }}>Best for sharing</span>
-                                    </button>
-                                </div>
-                                <div className="col-12 col-md-4">
-                                    <button 
-                                        onClick={downloadAsPDF}
-                                        className="btn btn-outline-primary w-100 p-3.5 d-flex flex-column align-items-center justify-content-center"
-                                        style={{
-                                            borderRadius: "16px",
-                                            borderWidth: "1.5px",
-                                            transition: "all 0.2s ease",
-                                            background: "rgba(13, 110, 253, 0.05)",
-                                            height: "100%"
-                                        }}
-                                    >
-                                        <i className="fas fa-file-pdf fa-2x mb-3 text-primary"></i>
-                                        <span className="fw-bold fs-6 mb-1 text-white">PDF File</span>
-                                        <span className="text-white-50 small" style={{ fontSize: "0.75rem" }}>Best for printing/ATS</span>
-                                    </button>
-                                </div>
-                                <div className="col-12 col-md-4">
-                                    <button 
-                                        onClick={downloadAsDOCX}
-                                        className="btn btn-outline-indigo w-100 p-3.5 d-flex flex-column align-items-center justify-content-center"
-                                        style={{
-                                            borderRadius: "16px",
-                                            borderWidth: "1.5px",
-                                            transition: "all 0.2s ease",
-                                            background: "rgba(99, 102, 241, 0.05)",
-                                            borderColor: "rgba(99, 102, 241, 0.4)",
-                                            height: "100%"
-                                        }}
-                                    >
-                                        <i className="fas fa-file-word fa-2x mb-3 text-indigo" style={{ color: "#818cf8" }}></i>
-                                        <span className="fw-bold fs-6 mb-1 text-white">Word File</span>
-                                        <span className="text-white-50 small" style={{ fontSize: "0.75rem" }}>100% Editable Doc</span>
-                                    </button>
-                                </div>
-                            </div>
-                            
-                            <div className="mt-4">
+                    
+                    {!isPaid ? (
+                        /* COMPARISON MODAL FOR UNPAID */
+                        <div className="card p-4 p-md-5 text-white animate-fade-in" style={{
+                            maxWidth: "700px",
+                            width: "95%",
+                            background: "linear-gradient(145deg, #1c2027 0%, #11141a 100%)",
+                            borderRadius: "24px",
+                            border: "1px solid rgba(255, 255, 255, 0.08)",
+                            boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.5)"
+                        }}>
+                            <div className="card-body position-relative p-0 text-center">
                                 <button 
                                     onClick={() => setShowDownloadModal(false)}
-                                    className="btn btn-link text-white-50 text-decoration-none"
-                                >
-                                    Cancel
-                                </button>
+                                    className="btn-close btn-close-white position-absolute"
+                                    style={{ top: "-20px", right: "-20px" }}
+                                    aria-label="Close"
+                                ></button>
+
+                                <h3 className="fw-bold mb-1 text-white" style={{ fontSize: "1.75rem", letterSpacing: "-0.02em" }}>Download Your Resume</h3>
+                                <p className="text-white-50 mb-4" style={{ fontSize: "0.95rem" }}>
+                                    How would you like to export your resume?
+                                </p>
+
+                                <div className="row g-4 text-start">
+                                    {/* FREE COLUMN */}
+                                    <div className="col-12 col-md-6">
+                                        <div className="h-100 p-4 d-flex flex-column justify-content-between" style={{
+                                            background: "rgba(255, 255, 255, 0.02)",
+                                            border: "1px solid rgba(255, 255, 255, 0.05)",
+                                            borderRadius: "18px"
+                                        }}>
+                                            <div>
+                                                <h4 className="fw-bold fs-5 text-white mb-3 d-flex align-items-center gap-2">
+                                                    <span>🆓</span> Free Download
+                                                </h4>
+                                                <ul className="list-unstyled d-flex flex-column gap-2 mb-4 text-white-50" style={{ fontSize: "0.9rem" }}>
+                                                    <li className="d-flex align-items-center gap-2 text-white-50">
+                                                        <i className="fas fa-check text-success"></i> PDF Format
+                                                    </li>
+                                                    <li className="d-flex align-items-center gap-2 text-white-50">
+                                                        <i className="fas fa-check text-success"></i> Ready to Use
+                                                    </li>
+                                                    <li className="d-flex align-items-center gap-2" style={{ color: "rgba(239, 68, 68, 0.8)" }}>
+                                                        <i className="fas fa-times"></i> CVGrid Watermark
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                            <button 
+                                                onClick={downloadAsPDF}
+                                                className="btn btn-outline-light w-100 py-2.5 fw-semibold"
+                                                style={{ borderRadius: "10px", border: "1px solid rgba(255, 255, 255, 0.15)" }}
+                                            >
+                                                Download Free
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    {/* PREMIUM COLUMN */}
+                                    <div className="col-12 col-md-6">
+                                        <div className="h-100 p-4 d-flex flex-column justify-content-between position-relative" style={{
+                                            background: "linear-gradient(135deg, rgba(99, 102, 241, 0.08) 0%, rgba(13, 202, 240, 0.04) 100%)",
+                                            border: "1px solid rgba(99, 102, 241, 0.25)",
+                                            borderRadius: "18px"
+                                        }}>
+                                            <div className="position-absolute" style={{ top: "-12px", right: "20px" }}>
+                                                <span className="badge bg-indigo text-white px-2.5 py-1 text-uppercase fw-bold" style={{ fontSize: "0.65rem", borderRadius: "8px", letterSpacing: "0.05em", background: "#6366f1" }}>RECOMMENDED</span>
+                                            </div>
+                                            <div>
+                                                <h4 className="fw-bold fs-5 text-white mb-3 d-flex align-items-center gap-2">
+                                                    <span>⭐</span> Premium Export <span className="text-info fs-6 fw-normal ms-auto">₹150</span>
+                                                </h4>
+                                                <ul className="list-unstyled d-flex flex-column gap-2 mb-4" style={{ fontSize: "0.9rem" }}>
+                                                    <li className="d-flex align-items-center gap-2 text-white">
+                                                        <i className="fas fa-check text-success"></i> No Watermark
+                                                    </li>
+                                                    <li className="d-flex align-items-center gap-2 text-white">
+                                                        <i className="fas fa-check text-success"></i> Clean Professional PDF
+                                                    </li>
+                                                    <li className="d-flex align-items-center gap-2 text-white">
+                                                        <i className="fas fa-check text-success"></i> Word (.docx) & PNG downloads
+                                                    </li>
+                                                    <li className="d-flex align-items-center gap-2 text-white">
+                                                        <i className="fas fa-check text-success"></i> Unlimited Downloads
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                            <button 
+                                                onClick={handleRazorpayPayment}
+                                                className="btn w-100 py-2.5 fw-bold btn-gradient"
+                                                style={{ borderRadius: "10px" }}
+                                            >
+                                                Buy Premium
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="mt-4">
+                                    <button 
+                                        onClick={() => setShowDownloadModal(false)}
+                                        className="btn btn-link text-white-50 text-decoration-none small"
+                                    >
+                                        Cancel
+                                    </button>
+                                </div>
                             </div>
                         </div>
-                    </div>
+                    ) : (
+                        /* ORIGINAL UNLOCKED MODAL FOR PAID */
+                        <div className="card text-center p-4 p-md-5 text-white animate-fade-in" style={{
+                            maxWidth: "680px",
+                            width: "95%",
+                            background: "linear-gradient(145deg, #1c2027 0%, #11141a 100%)",
+                            borderRadius: "20px",
+                            border: "1px solid rgba(142, 144, 160, 0.25)",
+                            boxShadow: "0 15px 35px rgba(0, 0, 0, 0.6)"
+                        }}>
+                            <div className="card-body position-relative p-0">
+                                <button 
+                                    onClick={() => setShowDownloadModal(false)}
+                                    className="btn-close btn-close-white position-absolute"
+                                    style={{ top: "-15px", right: "-15px" }}
+                                    aria-label="Close"
+                                ></button>
+                                
+                                <h3 className="fw-bold mb-3 d-flex align-items-center justify-content-center gap-2" style={{ letterSpacing: "-0.01em" }}>
+                                    <span className="text-warning">👑</span> Choose Export Format
+                                </h3>
+                                <p className="text-white-50 mb-4" style={{ fontSize: "0.95rem" }}>
+                                    Premium feature unlocked! Download your clean, watermark-free resume.
+                                </p>
+                                
+                                <div className="row g-3">
+                                    <div className="col-12 col-md-4">
+                                        <button 
+                                            onClick={downloadAsPNG}
+                                            className="btn btn-outline-info w-100 p-3.5 d-flex flex-column align-items-center justify-content-center"
+                                            style={{
+                                                borderRadius: "16px",
+                                                borderWidth: "1.5px",
+                                                transition: "all 0.2s ease",
+                                                background: "rgba(13, 202, 240, 0.05)",
+                                                height: "100%"
+                                            }}
+                                        >
+                                            <i className="fas fa-file-image fa-2x mb-3 text-info"></i>
+                                            <span className="fw-bold fs-6 mb-1 text-white">PNG Image</span>
+                                            <span className="text-white-50 small" style={{ fontSize: "0.75rem" }}>Best for sharing</span>
+                                        </button>
+                                    </div>
+                                    <div className="col-12 col-md-4">
+                                        <button 
+                                            onClick={downloadAsPDF}
+                                            className="btn btn-outline-primary w-100 p-3.5 d-flex flex-column align-items-center justify-content-center"
+                                            style={{
+                                                borderRadius: "16px",
+                                                borderWidth: "1.5px",
+                                                transition: "all 0.2s ease",
+                                                background: "rgba(13, 110, 253, 0.05)",
+                                                height: "100%"
+                                            }}
+                                        >
+                                            <i className="fas fa-file-pdf fa-2x mb-3 text-primary"></i>
+                                            <span className="fw-bold fs-6 mb-1 text-white">PDF File</span>
+                                            <span className="text-white-50 small" style={{ fontSize: "0.75rem" }}>Best for printing/ATS</span>
+                                        </button>
+                                    </div>
+                                    <div className="col-12 col-md-4">
+                                        <button 
+                                            onClick={downloadAsDOCX}
+                                            className="btn btn-outline-indigo w-100 p-3.5 d-flex flex-column align-items-center justify-content-center"
+                                            style={{
+                                                borderRadius: "16px",
+                                                borderWidth: "1.5px",
+                                                transition: "all 0.2s ease",
+                                                background: "rgba(99, 102, 241, 0.05)",
+                                                borderColor: "rgba(99, 102, 241, 0.4)",
+                                                height: "100%"
+                                            }}
+                                        >
+                                            <i className="fas fa-file-word fa-2x mb-3 text-indigo" style={{ color: "#818cf8" }}></i>
+                                            <span className="fw-bold fs-6 mb-1 text-white">Word File</span>
+                                            <span className="text-white-50 small" style={{ fontSize: "0.75rem" }}>100% Editable Doc</span>
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                <div className="mt-4">
+                                    <button 
+                                        onClick={() => setShowDownloadModal(false)}
+                                        className="btn btn-link text-white-50 text-decoration-none"
+                                    >
+                                        Close
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    )}
                 </div>
             )}
 
