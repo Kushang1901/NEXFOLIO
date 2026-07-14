@@ -46,6 +46,7 @@ export default function PublicResumePage() {
     const [error, setError] = useState(null);
     const [isDownloading, setIsDownloading] = useState(false);
     const [isPaid, setIsPaid] = useState(false);
+    const [showWatermark, setShowWatermark] = useState(false);
 
     useEffect(() => {
         if (!id) return;
@@ -90,8 +91,11 @@ export default function PublicResumePage() {
 
     const downloadAsPDF = async () => {
         setIsDownloading(true);
+        if (!isPaid) {
+            setShowWatermark(true);
+            await new Promise((resolve) => setTimeout(resolve, 150));
+        }
         try {
-            await new Promise((resolve) => setTimeout(resolve, 800));
             const resume = document.getElementById("resume-preview");
             if (!resume) return;
 
@@ -114,6 +118,7 @@ export default function PublicResumePage() {
             showToast("Failed to download as PDF. Please try again.", "error");
         } finally {
             setIsDownloading(false);
+            setShowWatermark(false);
         }
     };
 
@@ -276,7 +281,7 @@ export default function PublicResumePage() {
                     }}
                 >
                     {/* Watermark Overlay for Unpaid Resume */}
-                    {!isPaid && (
+                    {!isPaid && showWatermark && (
                         <div className="watermark-overlay" style={{
                             position: "absolute",
                             top: 0,

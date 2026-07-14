@@ -52,6 +52,7 @@ export default function Preview() {
     const [downloadType, setDownloadType] = useState(null); // 'png' or 'pdf'
     const [isDownloading, setIsDownloading] = useState(false);
     const [isPaid, setIsPaid] = useState(false);
+    const [showWatermark, setShowWatermark] = useState(false);
 
     const [activeLanguage, setActiveLanguage] = useState("original");
     const [translatedResumeData, setTranslatedResumeData] = useState(null);
@@ -349,8 +350,15 @@ export default function Preview() {
     const downloadAsPDF = async () => {
         setIsDownloading(true);
         setDownloadType("pdf");
+        
+        // If not paid, temporarily show the watermark for PDF generation
+        if (!isPaid) {
+            setShowWatermark(true);
+            // Wait for React to re-render the DOM with the watermark before capturing
+            await new Promise((resolve) => setTimeout(resolve, 150));
+        }
+
         try {
-            await new Promise((resolve) => setTimeout(resolve, 800));
             const resume = document.getElementById("resume-preview");
             if (!resume) return;
 
@@ -390,6 +398,7 @@ export default function Preview() {
         } finally {
             setIsDownloading(false);
             setDownloadType(null);
+            setShowWatermark(false); // Hide the watermark again
         }
     };
 
@@ -780,7 +789,7 @@ export default function Preview() {
                             }}
                         >
                             {/* Watermark Overlay for Unpaid Resume */}
-                            {!isPaid && (
+                            {!isPaid && showWatermark && (
                                 <div className="watermark-overlay" style={{
                                     position: "absolute",
                                     top: 0,
