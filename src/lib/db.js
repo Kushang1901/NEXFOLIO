@@ -86,12 +86,21 @@ export async function initDb() {
             );
         `;
 
-        // Create index on user_email for performance optimization
+        // Create payments table
         await sql`
-            CREATE INDEX IF NOT EXISTS idx_cookie_consents_email ON cookie_consents(user_email);
+            CREATE TABLE IF NOT EXISTS payments (
+                id SERIAL PRIMARY KEY,
+                resume_id INT NOT NULL REFERENCES resumes(id) ON DELETE CASCADE,
+                user_id INT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+                payment_status VARCHAR(50) DEFAULT 'paid',
+                payment_id VARCHAR(255) UNIQUE NOT NULL,
+                order_id VARCHAR(255) UNIQUE NOT NULL,
+                amount NUMERIC(10, 2) DEFAULT 150.00,
+                paid_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            );
         `;
 
-        console.log("✅ Database initialized successfully (users, resumes, and cookie_consents tables checked/created/migrated)");
+        console.log("✅ Database initialized successfully (users, resumes, cookie_consents, and payments tables checked/created/migrated)");
     } catch (error) {
         console.error("❌ Database initialization failed:", error);
         throw error;

@@ -115,6 +115,25 @@ export async function POST(request) {
                 );
             }
 
+            try {
+                // Record the payment details in the payments table
+                const userResult = await db`
+                    SELECT id FROM users WHERE email = ${authedEmail}
+                `;
+                const userId = userResult[0]?.id;
+
+                if (userId) {
+                    await db`
+                        INSERT INTO payments (resume_id, user_id, payment_status, payment_id, order_id, amount)
+                        VALUES (${resumeId}, ${userId}, 'paid', ${razorpayPaymentId}, ${razorpayOrderId}, 150.00)
+                        ON CONFLICT (payment_id) DO NOTHING
+                    `;
+                }
+            } catch (payErr) {
+                console.error("⚠️ Failed to record payment details in database:", payErr);
+                // We don't fail the request here, since the resume is already marked paid
+            }
+
             return NextResponse.json({
                 success: true,
                 message: "Payment successfully verified and resume upgraded to premium!"
