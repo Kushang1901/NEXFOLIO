@@ -53,6 +53,8 @@ export default function Preview() {
     const [isDownloading, setIsDownloading] = useState(false);
     const [isPaid, setIsPaid] = useState(false);
     const [showWatermark, setShowWatermark] = useState(false);
+    const [scale, setScale] = useState(1);
+    const [parentHeight, setParentHeight] = useState("auto");
 
     const [activeLanguage, setActiveLanguage] = useState("original");
     const [translatedResumeData, setTranslatedResumeData] = useState(null);
@@ -186,6 +188,44 @@ export default function Preview() {
             if (typeof unsubscribe === "function") unsubscribe();
         };
     }, []);
+
+    // Dynamic Scaling Effect for Mobile Preview
+    useEffect(() => {
+        const previewEl = document.getElementById("resume-preview");
+        const containerEl = document.querySelector(".preview-viewport-container");
+        
+        if (!previewEl || !containerEl) return;
+
+        const updateScale = () => {
+            const containerWidth = containerEl.clientWidth;
+            const targetWidth = 794; // 210mm in pixels (approx)
+            
+            let newScale = 1;
+            if (containerWidth < targetWidth) {
+                newScale = Math.max(0.1, (containerWidth - 24) / targetWidth);
+            }
+            
+            setScale(newScale);
+            
+            // Calculate height based on scale
+            const previewHeight = previewEl.scrollHeight || previewEl.offsetHeight || 1123;
+            setParentHeight(`${previewHeight * newScale}px`);
+        };
+
+        const resizeObserver = new ResizeObserver(() => {
+            updateScale();
+        });
+
+        resizeObserver.observe(containerEl);
+        resizeObserver.observe(previewEl);
+
+        const timer = setTimeout(updateScale, 150);
+
+        return () => {
+            resizeObserver.disconnect();
+            clearTimeout(timer);
+        };
+    }, [selectedTemplate, activeLanguage, resumeData]);
 
     const handleTranslate = async (lang) => {
         if (lang === "original") {
@@ -746,23 +786,26 @@ export default function Preview() {
                                 </select>
                             </div>
                             
-                            <button onClick={() => setShowTemplateModal(true)} className="btn btn-glass d-flex align-items-center gap-2 px-3 py-2" suppressHydrationWarning>
-                                <SlidersHorizontal size={14} className="text-indigo" /> Change Template
-                            </button>
-                            
-                            <button onClick={handleEdit} className="btn btn-glass d-flex align-items-center gap-2 px-3 py-2" suppressHydrationWarning>
-                                <i className="fas fa-pen text-indigo"></i> Edit
-                            </button>
-                            
-                            {resumeId && (
-                                <button onClick={() => setShowShareModal(true)} className="btn btn-glass btn-glass-info d-flex align-items-center gap-2 px-3 py-2" suppressHydrationWarning>
-                                    <i className="fas fa-share-alt"></i> Share
+                            {/* Desktop Action Buttons */}
+                            <div className="d-none d-md-flex align-items-center gap-2.5">
+                                <button onClick={() => setShowTemplateModal(true)} className="btn btn-glass d-flex align-items-center gap-2 px-3 py-2" suppressHydrationWarning>
+                                    <SlidersHorizontal size={14} className="text-indigo" /> Change Template
                                 </button>
-                            )}
-                            
-                            <button onClick={handleDownload} className="btn btn-gradient d-flex align-items-center gap-2 px-3.5 py-2" suppressHydrationWarning>
-                                <i className="fas fa-download"></i> Download Resume
-                            </button>
+                                
+                                <button onClick={handleEdit} className="btn btn-glass d-flex align-items-center gap-2 px-3 py-2" suppressHydrationWarning>
+                                    <i className="fas fa-pen text-indigo"></i> Edit
+                                </button>
+                                
+                                {resumeId && (
+                                    <button onClick={() => setShowShareModal(true)} className="btn btn-glass btn-glass-info d-flex align-items-center gap-2 px-3 py-2" suppressHydrationWarning>
+                                        <i className="fas fa-share-alt"></i> Share
+                                    </button>
+                                )}
+                                
+                                <button onClick={handleDownload} className="btn btn-gradient d-flex align-items-center gap-2 px-3.5 py-2" suppressHydrationWarning>
+                                    <i className="fas fa-download"></i> Download Resume
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -776,15 +819,28 @@ export default function Preview() {
 
                 {/* Viewport for the A4 sheet */}
                 <div className="preview-viewport-container d-flex justify-content-center py-2 no-print">
-                    <div className="preview-viewport-shadow">
+                    <div 
+                        className="preview-viewport-shadow"
+                        style={{
+                            width: `${794 * scale}px`,
+                            height: parentHeight,
+                            overflow: "hidden",
+                            position: "relative",
+                            transition: "width 0.15s ease, height 0.15s ease"
+                        }}
+                    >
                         <div
                             id="resume-preview"
                             className="bg-white text-dark"
                             style={{
-                                width: "210mm",
-                                minHeight: "297mm",
+                                width: "794px",
+                                minHeight: "1123px",
                                 boxSizing: "border-box",
-                                position: "relative",
+                                position: "absolute",
+                                top: 0,
+                                left: 0,
+                                transform: `scale(${scale})`,
+                                transformOrigin: "top left",
                                 overflow: "hidden"
                             }}
                         >
@@ -828,6 +884,31 @@ export default function Preview() {
                         </div>
                     </div>
                 </div>
+            </div>
+
+            {/* Mobile Sticky Bottom Action Bar */}
+            <div className="mobile-sticky-bottom-bar d-flex d-md-none no-print">
+                <button onClick={() => setShowTemplateModal(true)} className="mobile-action-btn" suppressHydrationWarning>
+                    <SlidersHorizontal size={18} className="text-indigo" />
+                    <span>Template</span>
+                </button>
+                
+                <button onClick={handleEdit} className="mobile-action-btn" suppressHydrationWarning>
+                    <i className="fas fa-pen text-indigo" style={{ fontSize: "16px" }}></i>
+                    <span>Edit</span>
+                </button>
+                
+                {resumeId && (
+                    <button onClick={() => setShowShareModal(true)} className="mobile-action-btn" suppressHydrationWarning>
+                        <i className="fas fa-share-alt text-info" style={{ fontSize: "16px" }}></i>
+                        <span>Share</span>
+                    </button>
+                )}
+                
+                <button onClick={handleDownload} className="mobile-action-btn primary-cta" suppressHydrationWarning>
+                    <i className="fas fa-download" style={{ fontSize: "15px" }}></i>
+                    <span>Download</span>
+                </button>
             </div>
 
             <style>{`
@@ -1118,6 +1199,114 @@ export default function Preview() {
                     0%, 100% { opacity: 0.3; transform: scale(0.9); }
                     50% { opacity: 1; transform: scale(1.1); }
                 }
+
+                /* Mobile Sticky Bottom Bar Styles */
+                .mobile-sticky-bottom-bar {
+                    position: fixed;
+                    bottom: 0;
+                    left: 0;
+                    right: 0;
+                    height: 72px;
+                    background: rgba(11, 13, 23, 0.85);
+                    backdrop-filter: blur(16px);
+                    border-top: 1px solid rgba(255, 255, 255, 0.08);
+                    box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.5);
+                    z-index: 1000;
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-around;
+                    padding: 0 12px;
+                }
+                .mobile-action-btn {
+                    background: transparent;
+                    border: none;
+                    color: #cbd5e1;
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    justify-content: center;
+                    gap: 6px;
+                    font-size: 0.75rem;
+                    font-weight: 500;
+                    flex: 1;
+                    height: 100%;
+                    transition: all 0.2s ease;
+                }
+                .mobile-action-btn:active {
+                    color: #fff;
+                    transform: scale(0.95);
+                }
+                .mobile-action-btn i, .mobile-action-btn svg {
+                    font-size: 1.1rem;
+                }
+                .mobile-action-btn.primary-cta {
+                    background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+                    color: #fff;
+                    border-radius: 12px;
+                    height: 52px;
+                    margin: 0 6px;
+                    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+                    flex: 1.3;
+                    gap: 4px;
+                }
+                .mobile-action-btn.primary-cta i {
+                    font-size: 1rem;
+                }
+
+                @media (max-width: 767.98px) {
+                    .preview-page-container {
+                        padding-bottom: 88px;
+                    }
+                    .control-bar-wrapper {
+                        padding: 14px 16px;
+                        border-radius: 12px;
+                    }
+                    .control-bar-left h4 {
+                        font-size: 1.1rem !important;
+                    }
+                }
+
+                /* Responsive Template Modal Grid */
+                @media (max-width: 575.98px) {
+                    .template-modal-header {
+                        padding: 16px 16px 12px !important;
+                        gap: 12px !important;
+                    }
+                    .template-modal-body {
+                        padding: 16px !important;
+                    }
+                    .template-grid {
+                        grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)) !important;
+                        gap: 12px !important;
+                    }
+                    .template-selector-card {
+                        height: 200px !important;
+                    }
+                    .tpl-preview-box {
+                        height: 110px !important;
+                    }
+                    .tpl-preview-scale {
+                        transform: translate(-50%, -50%) scale(0.4) !important;
+                    }
+                    .tpl-details-box {
+                        padding: 10px !important;
+                    }
+                    .tpl-title {
+                        font-size: 0.8rem !important;
+                        white-space: nowrap;
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                    }
+                    .tpl-desc {
+                        display: none !important;
+                    }
+                    .template-modal-container {
+                        width: 96% !important;
+                        height: 90vh !important;
+                        border-radius: 16px !important;
+                    }
+                }
+
                 @media print {
                     .no-print {
                         display: none !important;
@@ -1312,7 +1501,7 @@ export default function Preview() {
                                 <button 
                                     onClick={() => setShowDownloadModal(false)}
                                     className="btn-close btn-close-white position-absolute"
-                                    style={{ top: "-20px", right: "-20px" }}
+                                    style={{ top: "10px", right: "10px", zIndex: 10 }}
                                     aria-label="Close"
                                 ></button>
 
@@ -1419,7 +1608,7 @@ export default function Preview() {
                                 <button 
                                     onClick={() => setShowDownloadModal(false)}
                                     className="btn-close btn-close-white position-absolute"
-                                    style={{ top: "-15px", right: "-15px" }}
+                                    style={{ top: "10px", right: "10px", zIndex: 10 }}
                                     aria-label="Close"
                                 ></button>
                                 
@@ -1606,7 +1795,7 @@ export default function Preview() {
                             <button 
                                 onClick={() => setShowShareModal(false)}
                                 className="btn-close btn-close-white position-absolute"
-                                style={{ top: "-25px", right: "-25px" }}
+                                style={{ top: "10px", right: "10px", zIndex: 10 }}
                                 aria-label="Close"
                             ></button>
                             
