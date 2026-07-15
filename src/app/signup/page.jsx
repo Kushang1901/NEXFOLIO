@@ -7,6 +7,7 @@ import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged } from
 import { app } from "../../firebase";
 import { getRecaptchaToken } from "../../utils/recaptcha";
 import Navbar from "../../components/Navbar";
+import Footer from "../../components/Footer";
 import { subscribeToAuthChanges } from "../../authState";
 import Script from "next/script";
 import { showToast } from "../../utils/toast";
@@ -539,18 +540,7 @@ export default function Signup() {
                     </div>
                 </main>
 
-                {/* Footer */}
-                <footer className="w-full py-8 px-8 flex flex-col md:flex-row justify-between items-center max-w-container-max-width mx-auto gap-4 bg-surface-container-lowest dark:bg-surface-container-lowest border-t border-outline-variant">
-                    <div className="font-label-bold text-label-bold text-on-surface">CVGrid</div>
-                    <div className="font-body-sm text-body-sm text-tertiary-fixed-dim">
-                        © 2026 CVGrid. All rights reserved.
-                    </div>
-                    <div className="flex gap-6 font-body-sm text-body-sm text-on-surface-variant">
-                        <Link className="hover:text-primary transition-colors duration-200 cursor-pointer" href="/privacy">Privacy Policy</Link>
-                        <Link className="hover:text-primary transition-colors duration-200 cursor-pointer" href="/terms">Terms of Service</Link>
-                        <Link className="hover:text-primary transition-colors duration-200 cursor-pointer" href="/contact">Contact Support</Link>
-                    </div>
-                </footer>
+                <Footer />
             </div>
         </>
     );

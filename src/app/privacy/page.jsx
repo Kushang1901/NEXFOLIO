@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import Navbar from "../../components/Navbar";
+import Footer from "../../components/Footer";
 import Script from "next/script";
 import { Shield, Eye, Lock, FileText, ArrowLeft, Cpu } from "lucide-react";
 
@@ -181,18 +182,7 @@ export default function PrivacyPolicy() {
                     </div>
                 </main>
 
-                {/* Footer */}
-                <footer className="w-full py-8 px-8 flex flex-col md:flex-row justify-between items-center max-w-7xl mx-auto gap-4 border-t border-outline-variant bg-surface-container-lowest">
-                    <div className="font-label-bold text-label-bold text-on-surface font-semibold">CVGrid</div>
-                    <div className="flex flex-col md:flex-row gap-6 items-center">
-                        <span className="text-sm text-tertiary-fixed-dim">© 2026 CVGrid. All rights reserved.</span>
-                        <div className="flex gap-6">
-                            <Link className="text-sm text-on-surface-variant hover:text-primary transition-colors duration-200" href="/privacy">Privacy Policy</Link>
-                            <Link className="text-sm text-on-surface-variant hover:text-primary transition-colors duration-200" href="/terms">Terms of Service</Link>
-                            <Link className="text-sm text-on-surface-variant hover:text-primary transition-colors duration-200" href="/contact">Contact Support</Link>
-                        </div>
-                    </div>
-                </footer>
+                <Footer />
             </div>
         </>
     );

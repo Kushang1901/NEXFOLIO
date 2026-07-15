@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Navbar from "../../components/Navbar";
+import Footer from "../../components/Footer";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Script from "next/script";
@@ -467,18 +468,7 @@ export default function ForgotPassword() {
                     </div>
                 </main>
 
-                {/* Footer */}
-                <footer className="w-full py-8 px-8 flex flex-col md:flex-row justify-between items-center max-w-container-max-width mx-auto gap-4 bg-surface-container-lowest dark:bg-surface-container-lowest border-t border-outline-variant">
-                    <div className="font-label-bold text-label-bold text-on-surface">CVGrid</div>
-                    <div className="flex flex-col md:flex-row gap-6 items-center">
-                        <span className="font-body-sm text-body-sm text-tertiary-fixed-dim">© 2026 CVGrid. All rights reserved.</span>
-                        <div className="flex gap-6">
-                            <Link className="font-body-sm text-body-sm text-on-surface-variant hover:text-primary transition-colors duration-200 cursor-pointer" href="/privacy">Privacy Policy</Link>
-                            <Link className="font-body-sm text-body-sm text-on-surface-variant hover:text-primary transition-colors duration-200 cursor-pointer" href="/terms">Terms of Service</Link>
-                            <Link className="font-body-sm text-body-sm text-on-surface-variant hover:text-primary transition-colors duration-200 cursor-pointer" href="/contact">Contact Support</Link>
-                        </div>
-                    </div>
-                </footer>
+                <Footer />
             </div>
         </>
     );

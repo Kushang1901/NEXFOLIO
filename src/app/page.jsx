@@ -1,8 +1,10 @@
 "use client";
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
 import Link from "next/link";
+import Script from "next/script";
 import { useRouter } from "next/navigation";
 import { subscribeToAuthChanges } from "../authState";
 
@@ -12,12 +14,19 @@ export default function HomePage() {
     const [loadingAuth, setLoadingAuth] = useState(true);
     const [showAuthModal, setShowAuthModal] = useState(false);
     const [countdown, setCountdown] = useState(3);
+    const [tailwindLoaded, setTailwindLoaded] = useState(false);
 
     // Typewriter effect state
-    const phrases = ["Professional Resume", "ATS-Friendly CV", "Job-Winning Profile", "Standout Portfolio"];
+    const phrases = ["Career", "ATS Resume", "Job Search", "Professional CV"];
     const [typewriterIndex, setTypewriterIndex] = useState(0);
-    const [typewriterText, setTypewriterText] = useState("Professional Resume");
+    const [typewriterText, setTypewriterText] = useState("Career");
     const [isTypewriterDeleting, setIsTypewriterDeleting] = useState(false);
+
+    useEffect(() => {
+        if (typeof window !== "undefined" && window.tailwind) {
+            setTailwindLoaded(true);
+        }
+    }, []);
 
     useEffect(() => {
         let timer;
@@ -57,7 +66,7 @@ export default function HomePage() {
                 }
             }
         });
-        return () => unsubscribe();
+        return () => { if (typeof unsubscribe === "function") unsubscribe(); };
     }, [router]);
 
     const triggerAuthPopup = () => {
@@ -86,657 +95,413 @@ export default function HomePage() {
     };
 
     return (
-        <div className="bg-dark text-white min-vh-100">
-            <Navbar />
+        <>
+            <Script
+                src="https://cdn.tailwindcss.com?plugins=forms,container-queries"
+                strategy="afterInteractive"
+                onLoad={() => setTailwindLoaded(true)}
+            />
+            <Script id="tailwind-config" strategy="afterInteractive" dangerouslySetInnerHTML={{ __html: `
+                window.tailwind = window.tailwind || {};
+                window.tailwind.config = {
+                    darkMode: "class",
+                    theme: {
+                        extend: {
+                            "colors": {
+                                "surface-dim": "#12121d",
+                                "on-secondary-container": "#a8afff",
+                                "secondary-fixed": "#e0e0ff",
+                                "secondary": "#bdc2ff",
+                                "on-primary": "#1000a9",
+                                "on-tertiary-container": "#400071",
+                                "surface-container-highest": "#343440",
+                                "error-container": "#93000a",
+                                "surface": "#12121d",
+                                "primary": "#c0c1ff",
+                                "surface-tint": "#c0c1ff",
+                                "inverse-surface": "#e4e0f1",
+                                "tertiary-fixed": "#f0dbff",
+                                "inverse-primary": "#494bd6",
+                                "error": "#ffb4ab",
+                                "on-tertiary": "#490080",
+                                "surface-container-high": "#292935",
+                                "background": "#12121d",
+                                "on-background": "#e4e0f1",
+                                "on-secondary": "#131e8c",
+                                "on-surface-variant": "#c7c4d7",
+                                "outline-variant": "#464554",
+                                "on-primary-container": "#0d0096",
+                                "secondary-container": "#2f3aa3",
+                                "surface-card": "#11111E",
+                                "on-secondary-fixed": "#000767",
+                                "on-error": "#690005",
+                                "surface-container-low": "#1b1a26",
+                                "on-primary-fixed-variant": "#2f2ebe",
+                                "outline": "#908fa0",
+                                "on-tertiary-fixed-variant": "#6900b3",
+                                "inverse-on-surface": "#302f3b",
+                                "on-primary-fixed": "#07006c",
+                                "on-secondary-fixed-variant": "#2f3aa3",
+                                "tertiary-container": "#b76dff",
+                                "glow-blue": "rgba(99, 102, 241, 0.4)",
+                                "primary-fixed": "#e1e0ff",
+                                "surface-variant": "#343440",
+                                "secondary-fixed-dim": "#bdc2ff",
+                                "surface-bright": "#393844",
+                                "tertiary": "#ddb7ff",
+                                "surface-container-lowest": "#0d0d18",
+                                "ai-gradient-start": "#6366F1",
+                                "on-surface": "#e4e0f1",
+                                "ai-gradient-end": "#A855F7",
+                                "surface-container": "#1f1e2a",
+                                "primary-fixed-dim": "#c0c1ff",
+                                "on-tertiary-fixed": "#2c0051",
+                                "tertiary-fixed-dim": "#ddb7ff",
+                                "primary-container": "#8083ff",
+                                "on-error-container": "#ffdad6",
+                                "glass-stroke": "rgba(255, 255, 255, 0.1)"
+                            },
+                            "borderRadius": {
+                                "DEFAULT": "0.25rem",
+                                "lg": "0.5rem",
+                                "xl": "0.75rem",
+                                "full": "9999px"
+                            },
+                            "spacing": {
+                                "container-max": "1280px",
+                                "stack-sm": "8px",
+                                "section-gap": "120px",
+                                "margin-mobile": "16px",
+                                "stack-lg": "32px",
+                                "stack-md": "16px",
+                                "gutter": "24px"
+                            },
+                            "fontFamily": {
+                                "body-md": ["Inter"],
+                                "label-sm": ["Inter"],
+                                "headline-lg": ["Space Grotesk"],
+                                "headline-md": ["Space Grotesk"],
+                                "display-lg-mobile": ["Space Grotesk"],
+                                "display-lg": ["Space Grotesk"],
+                                "label-md": ["Inter"],
+                                "body-lg": ["Inter"]
+                            }
+                        },
+                    },
+                }
+            ` }} />
+            <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@300;400;600;700&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+            
+            <style>{`
+                body {
+                    background-color: #12121d !important;
+                    color: #e4e0f1 !important;
+                    overflow-x: hidden;
+                }
+                .ai-gradient-text {
+                    background: linear-gradient(135deg, #6366F1 0%, #A855F7 100%);
+                    -webkit-background-clip: text;
+                    -webkit-text-fill-color: transparent;
+                }
+                .ai-gradient-bg {
+                    background: linear-gradient(135deg, #6366F1 0%, #A855F7 100%);
+                }
+                .glass-card {
+                    background: rgba(17, 17, 30, 0.7);
+                    backdrop-filter: blur(12px);
+                    border: 1px solid rgba(255, 255, 255, 0.1);
+                }
+                .glow-hover:hover {
+                    box-shadow: 0 0 25px rgba(99, 102, 241, 0.3);
+                }
+                @keyframes float {
+                    0%, 100% { transform: translateY(0) rotate(0deg); }
+                    50% { transform: translateY(-15px) rotate(1deg); }
+                }
+                .float-ui {
+                    animation: float 6s infinite ease-in-out;
+                }
+                .gradient-blur {
+                    background: radial-gradient(circle, rgba(99, 102, 241, 0.15) 0%, transparent 70%);
+                    filter: blur(40px);
+                }
+                .typewriter-cursor {
+                    animation: cursorBlink 0.8s infinite;
+                }
+                @keyframes cursorBlink {
+                    0%, 100% { opacity: 1; }
+                    50% { opacity: 0; }
+                }
+                details[open] summary .faq-icon-toggle {
+                    transform: rotate(45deg);
+                }
+                .faq-icon-toggle {
+                    transition: transform 0.2s ease;
+                }
+                .grid-bg {
+                    background-image: 
+                        linear-gradient(rgba(255, 255, 255, 0.015) 1px, transparent 1px),
+                        linear-gradient(90deg, rgba(255, 255, 255, 0.015) 1px, transparent 1px);
+                    background-size: 50px 50px;
+                    background-position: center center;
+                }
+            `}</style>
 
-            {/* ═══════════════════════════════════════════
-                HERO SECTION — Professional & SEO-Optimised
-            ═══════════════════════════════════════════ */}
-            <header id="hero" style={{ position: "relative", overflow: "hidden", background: "#060610", padding: "55px 0 35px" }}>
+            <div className="bg-[#12121d] text-[#e4e0f1] min-h-screen" style={{ opacity: tailwindLoaded ? 1 : 0, transition: "opacity 0.25s ease-in" }}>
+                <Navbar />
 
-                <style>{`
-                    /* ── Hero keyframes ── */
-                    @keyframes hFadeUp {
-                        from { opacity: 0; transform: translateY(28px); }
-                        to   { opacity: 1; transform: translateY(0); }
-                    }
-                    @keyframes hGlow {
-                        0%,100% { opacity: 0.55; }
-                        50%      { opacity: 0.85; }
-                    }
-                    @keyframes hGridScroll {
-                        from { background-position: 0 0; }
-                        to   { background-position: 0 60px; }
-                    }
-                    @keyframes hBadgePulse {
-                        0%,100% { box-shadow: 0 0 0 0 rgba(99,102,241,0.45); }
-                        50%      { box-shadow: 0 0 0 8px rgba(99,102,241,0); }
-                    }
-                    @keyframes hStarSpin {
-                        0%   { transform: rotate(0deg) scale(1); }
-                        50%  { transform: rotate(10deg) scale(1.15); }
-                        100% { transform: rotate(0deg) scale(1); }
-                    }
-                    @keyframes cursorBlink {
-                        0%, 100% { opacity: 1; }
-                        50% { opacity: 0; }
-                    }
+                <main className="relative">
+                    {/* Hero Section: Editorial Layout */}
+                    <section className="relative min-h-[calc(100vh-64px)] lg:h-[calc(100vh-64px)] flex items-center px-4 md:px-8 pt-6 pb-6 lg:py-0 overflow-hidden grid-bg">
+                        {/* Background Elements */}
+                        <div className="absolute top-1/4 -right-20 w-[600px] h-[600px] gradient-blur rounded-full opacity-60 pointer-events-none"></div>
+                        <div className="absolute bottom-1/4 -left-20 w-[400px] h-[400px] gradient-blur rounded-full opacity-40 pointer-events-none"></div>
+                        
+                        <div className="max-w-[1280px] mx-auto w-full grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+                            
+                            {/* Content Left */}
+                            <div className="lg:col-span-7 z-10">
+                                <div className="flex items-center gap-4 mb-4">
+                                    <div className="flex -space-x-3">
+                                        <div className="w-8 h-8 rounded-full border-2 border-[#12121d] bg-[#1f1e2a] flex items-center justify-center text-[10px] font-bold">JD</div>
+                                        <div className="w-8 h-8 rounded-full border-2 border-[#12121d] bg-indigo-500/20 flex items-center justify-center text-[10px] font-bold">MK</div>
+                                        <div className="w-8 h-8 rounded-full border-2 border-[#12121d] bg-purple-500/20 flex items-center justify-center text-[10px] font-bold">AS</div>
+                                    </div>
+                                    <div className="flex flex-col">
+                                        <div className="flex text-yellow-400">
+                                            <span className="material-symbols-outlined text-[14px]" style={{ fontVariationSettings: "'FILL' 1" }}>star</span>
+                                            <span className="material-symbols-outlined text-[14px]" style={{ fontVariationSettings: "'FILL' 1" }}>star</span>
+                                            <span className="material-symbols-outlined text-[14px]" style={{ fontVariationSettings: "'FILL' 1" }}>star</span>
+                                            <span className="material-symbols-outlined text-[14px]" style={{ fontVariationSettings: "'FILL' 1" }}>star</span>
+                                            <span className="material-symbols-outlined text-[14px]" style={{ fontVariationSettings: "'FILL' 1" }}>star</span>
+                                        </div>
+                                        <span className="text-[11px] font-semibold text-[#c7c4d7] uppercase tracking-widest">Trusted by 10k+ Seekers</span>
+                                    </div>
+                                </div>
 
-                    /* ── Hero element styles ── */
-                    .h-fade-1  { animation: hFadeUp 0.7s ease both; animation-delay: 0.05s; }
-                    .h-fade-2  { animation: hFadeUp 0.7s ease both; animation-delay: 0.18s; }
-                    .h-fade-3  { animation: hFadeUp 0.7s ease both; animation-delay: 0.30s; }
-                    .h-fade-4  { animation: hFadeUp 0.7s ease both; animation-delay: 0.42s; }
-                    .h-fade-5  { animation: hFadeUp 0.7s ease both; animation-delay: 0.54s; }
+                                <h1 className="text-[40px] md:text-[60px] leading-[1.05] mb-4 font-bold tracking-tight text-white" style={{ fontFamily: "Space Grotesk, sans-serif" }}>
+                                    The <span className="font-light italic">Future</span> of your <br/>
+                                    <span className="font-bold ai-gradient-text">{typewriterText}</span> starts here.
+                                </h1>
+                                
+                                <p className="text-base md:text-lg text-[#c7c4d7] mb-6 max-w-[580px]" style={{ fontFamily: "Inter, sans-serif" }}>
+                                    Engineered for modern recruitment. Use our neural-powered engine to generate ATS-proof resumes that recruiters actually want to read.
+                                </p>
 
-                    .hero-pill {
-                        display: inline-flex; align-items: center; gap: 7px;
-                        background: rgba(255,255,255,0.04);
-                        border: 1px solid rgba(255,255,255,0.10);
-                        border-radius: 999px;
-                        padding: 6px 14px;
-                        font-size: 0.78rem;
-                        font-weight: 600;
-                        color: rgba(255,255,255,0.7);
-                        letter-spacing: 0.04em;
-                        text-transform: uppercase;
-                        animation: hBadgePulse 3s ease-in-out infinite;
-                    }
-                    .hero-pill-dot {
-                        width: 7px; height: 7px; border-radius: 50%;
-                        background: #4ade80;
-                        box-shadow: 0 0 8px #4ade80;
-                    }
+                                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-6">
+                                    <button 
+                                        onClick={handleStartResume}
+                                        className="ai-gradient-bg text-white font-bold px-6 py-3 rounded-xl flex items-center justify-center gap-2 group glow-hover transition-all active:scale-95 border-0"
+                                    >
+                                        <span className="text-base">Build My Resume</span>
+                                        <span className="material-symbols-outlined text-[20px] transition-transform group-hover:translate-x-1">trending_flat</span>
+                                    </button>
+                                    <div className="flex items-center gap-4 px-6 py-2 border-l border-[rgba(255,255,255,0.1)]">
+                                        <span className="material-symbols-outlined text-[#c0c1ff]">verified</span>
+                                        <span className="text-sm text-[#c7c4d7] leading-tight">Free PDF Export<br/>(with watermark)</span>
+                                    </div>
+                                </div>
 
-                    .hero-h1 {
-                        font-size: clamp(2.5rem, 5.5vw, 4.2rem);
-                        font-weight: 800;
-                        line-height: 1.12;
-                        letter-spacing: -0.03em;
-                        color: #fff;
-                    }
-                    .hero-h1 .h1-accent {
-                        background: linear-gradient(135deg, #818cf8 0%, #6366f1 40%, #a78bfa 100%);
-                        -webkit-background-clip: text;
-                        -webkit-text-fill-color: transparent;
-                        background-clip: text;
-                    }
-                    .typewriter-cursor {
-                        animation: cursorBlink 0.8s infinite;
-                        color: #818cf8;
-                        margin-left: 4px;
-                        font-weight: 300;
-                    }
+                                <div className="mt-6 flex flex-wrap gap-8 opacity-60 grayscale hover:grayscale-0 transition-all">
+                                    <div className="flex items-center gap-2"><span className="font-bold text-lg tracking-tighter" style={{ fontFamily: "Space Grotesk, sans-serif" }}>FORBES</span></div>
+                                    <div className="flex items-center gap-2"><span className="font-bold text-lg tracking-tighter" style={{ fontFamily: "Space Grotesk, sans-serif" }}>WIRED</span></div>
+                                    <div className="flex items-center gap-2"><span className="font-bold text-lg tracking-tighter" style={{ fontFamily: "Space Grotesk, sans-serif" }}>TECHCRUNCH</span></div>
+                                </div>
+                            </div>
 
-                    .hero-sub {
-                        font-size: clamp(1rem, 2vw, 1.2rem);
-                        color: rgba(200,205,230,0.65);
-                        line-height: 1.75;
-                        max-width: 600px;
-                        margin: 0 auto;
-                    }
+                            {/* Visual Right */}
+                            <div className="lg:col-span-5 relative h-full flex items-center justify-center lg:justify-end">
+                                <div className="relative w-full max-w-[480px]">
+                                    {/* Abstract UI Mockup */}
+                                    <div className="float-ui glass-card rounded-2xl p-6 border-indigo-500/30 shadow-2xl relative z-20">
+                                        <div className="flex items-center justify-between mb-8">
+                                            <div className="flex gap-1.5">
+                                                <div className="w-2.5 h-2.5 rounded-full bg-red-500/50"></div>
+                                                <div className="w-2.5 h-2.5 rounded-full bg-yellow-500/50"></div>
+                                                <div className="w-2.5 h-2.5 rounded-full bg-green-500/50"></div>
+                                            </div>
+                                            <div className="px-3 py-1 rounded-full bg-[#c0c1ff]/10 text-[#c0c1ff] text-[10px] font-bold uppercase tracking-wider">AI Optimizer active</div>
+                                        </div>
+                                        <div className="space-y-4">
+                                            <div className="h-4 w-3/4 bg-white/5 rounded-full"></div>
+                                            <div className="h-32 w-full bg-white/5 rounded-xl border border-dashed border-white/10 flex items-center justify-center">
+                                                <span className="material-symbols-outlined text-[#c0c1ff]/40 text-4xl">auto_awesome</span>
+                                            </div>
+                                            <div className="space-y-2">
+                                                <div className="h-3 w-full bg-white/5 rounded-full"></div>
+                                                <div className="h-3 w-5/6 bg-white/5 rounded-full"></div>
+                                                <div className="h-3 w-4/6 bg-white/5 rounded-full"></div>
+                                            </div>
+                                            <div className="pt-4 flex justify-end">
+                                                <div className="h-8 w-24 ai-gradient-bg rounded-lg opacity-80"></div>
+                                            </div>
+                                        </div>
+                                    </div>
 
-                    .hero-cta-primary {
-                        display: inline-flex; align-items: center; gap: 9px;
-                        background: linear-gradient(135deg, #6366f1, #818cf8);
-                        color: #fff;
-                        font-weight: 700;
-                        font-size: 1.05rem;
-                        padding: 14px 32px;
-                        border: none;
-                        border-radius: 10px;
-                        cursor: pointer;
-                        box-shadow: 0 4px 24px rgba(99,102,241,0.45);
-                        transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
-                        text-decoration: none;
-                    }
-                    .hero-cta-primary:hover {
-                        transform: translateY(-2px);
-                        box-shadow: 0 8px 32px rgba(99,102,241,0.6);
-                        background: linear-gradient(135deg, #818cf8, #6366f1);
-                        color: #fff;
-                    }
-                    .hero-cta-secondary {
-                        display: inline-flex; align-items: center; gap: 8px;
-                        background: transparent;
-                        color: rgba(255,255,255,0.75);
-                        font-weight: 600;
-                        font-size: 1rem;
-                        padding: 14px 28px;
-                        border: 1px solid rgba(255,255,255,0.15);
-                        border-radius: 10px;
-                        cursor: pointer;
-                        transition: border-color 0.18s ease, color 0.18s ease, background 0.18s ease;
-                        text-decoration: none;
-                    }
-                    .hero-cta-secondary:hover {
-                        border-color: rgba(99,102,241,0.5);
-                        color: #fff;
-                        background: rgba(99,102,241,0.08);
-                    }
+                                    {/* Secondary floating element */}
+                                    <div className="absolute -bottom-8 -left-12 float-ui z-30 glass-card p-4 rounded-xl border-purple-500/20 shadow-xl hidden md:block" style={{ animationDelay: "-3s" }}>
+                                        <div className="flex items-center gap-3">
+                                            <div className="w-10 h-10 rounded-full bg-green-500/20 flex items-center justify-center">
+                                                <span className="material-symbols-outlined text-green-400 text-xl">check_circle</span>
+                                            </div>
+                                            <div>
+                                                <div className="text-[12px] font-bold">ATS Score: 98%</div>
+                                                <div className="text-[10px] text-[#c7c4d7]">Highly compatible</div>
+                                            </div>
+                                        </div>
+                                    </div>
 
-                    .hero-trust {
-                        display: flex; align-items: center; justify-content: center;
-                        gap: 6px; flex-wrap: wrap;
-                        font-size: 0.88rem;
-                        color: rgba(200,205,230,0.55);
-                    }
-                    .hero-trust-stars { color: #fbbf24; letter-spacing: 1px; }
-                    .hero-trust-sep { width: 1px; height: 14px; background: rgba(255,255,255,0.15); }
+                                    {/* Floating AI Skills match badge - Top Right */}
+                                    <div className="absolute -top-10 -right-6 float-ui z-30 glass-card px-4 py-3 rounded-xl border-indigo-500/20 shadow-lg hidden md:block" style={{ animationDelay: "-1.5s" }}>
+                                        <div className="flex items-center gap-2">
+                                            <div className="w-2.5 h-2.5 rounded-full bg-purple-500 animate-ping"></div>
+                                            <div className="text-[11px] font-bold text-[#c0c1ff] uppercase tracking-wider">AI Skill Match: 95%</div>
+                                        </div>
+                                    </div>
 
-                    .hero-feature-tags {
-                        display: flex; align-items: center; justify-content: center;
-                        flex-wrap: wrap; gap: 10px;
-                    }
-                    .hero-tag {
-                        display: inline-flex; align-items: center; gap: 6px;
-                        background: rgba(99,102,241,0.08);
-                        border: 1px solid rgba(99,102,241,0.22);
-                        border-radius: 8px;
-                        padding: 6px 13px;
-                        font-size: 0.82rem;
-                        font-weight: 600;
-                        color: rgba(180,185,255,0.85);
-                        transition: background 0.15s, border-color 0.15s;
-                    }
-                    .hero-tag:hover {
-                        background: rgba(99,102,241,0.16);
-                        border-color: rgba(99,102,241,0.45);
-                    }
-                    .hero-tag-icon { font-size: 0.75rem; }
+                                    {/* Floating PDF download toast - Left */}
+                                    <div className="absolute top-1/4 -left-20 float-ui z-30 glass-card px-3 py-2 rounded-xl border-white/10 shadow-lg hidden md:block" style={{ animationDelay: "-4.5s" }}>
+                                        <div className="flex items-center gap-2">
+                                            <span className="material-symbols-outlined text-red-400 text-sm">picture_as_pdf</span>
+                                            <span className="text-[11px] font-semibold text-[#e4e0f1]">Format: PDF / Docx</span>
+                                        </div>
+                                    </div>
 
-                    /* Background mesh / grid */
-                    .hero-bg-grid {
-                        position: absolute; inset: 0; pointer-events: none; z-index: 0;
-                        background-image:
-                            linear-gradient(rgba(99,102,241,0.04) 1px, transparent 1px),
-                            linear-gradient(90deg, rgba(99,102,241,0.04) 1px, transparent 1px);
-                        background-size: 48px 48px;
-                        animation: hGridScroll 12s linear infinite;
-                        mask-image: radial-gradient(ellipse 80% 70% at 50% 0%, black 40%, transparent 100%);
-                    }
-                    .hero-glow-left {
-                        position: absolute; top: -100px; left: -120px;
-                        width: 600px; height: 600px; border-radius: 50%;
-                        background: radial-gradient(circle, rgba(99,102,241,0.18) 0%, transparent 70%);
-                        pointer-events: none; z-index: 0;
-                        animation: hGlow 6s ease-in-out infinite;
-                    }
-                    .hero-glow-right {
-                        position: absolute; bottom: -100px; right: -100px;
-                        width: 500px; height: 500px; border-radius: 50%;
-                        background: radial-gradient(circle, rgba(167,139,250,0.12) 0%, transparent 70%);
-                        pointer-events: none; z-index: 0;
-                        animation: hGlow 8s ease-in-out infinite reverse;
-                    }
+                                    {/* Decorative circles */}
+                                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] border border-[#c0c1ff]/10 rounded-full -z-10"></div>
+                                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[140%] h-[140%] border border-[#c0c1ff]/5 rounded-full -z-10"></div>
+                                </div>
+                            </div>
 
-                    @media (max-width: 576px) {
-                        .hero-cta-wrap { flex-direction: column; align-items: stretch; }
-                        .hero-cta-primary, .hero-cta-secondary { justify-content: center; }
-                        .hero-trust { font-size: 0.8rem; }
-                    }
+                        </div>
+                    </section>
 
-                    /* ── Features Section ── */
-                    .features-section-container {
-                        background: radial-gradient(circle at center, #0e111d 0%, #060610 100%);
-                        position: relative;
-                        overflow: hidden;
-                    }
-                    .features-glow {
-                        position: absolute;
-                        top: 50%;
-                        left: 50%;
-                        transform: translate(-50%, -50%);
-                        width: 800px;
-                        height: 800px;
-                        background: radial-gradient(circle, rgba(99, 102, 241, 0.05) 0%, rgba(99, 102, 241, 0) 70%);
-                        pointer-events: none;
-                        z-index: 1;
-                    }
-                    .feature-gradient-title {
-                        background: linear-gradient(135deg, #ffffff 30%, #a5b4fc 100%);
-                        -webkit-background-clip: text;
-                        -webkit-text-fill-color: transparent;
-                        background-clip: text;
-                    }
-                    .feature-card-custom {
-                        background: rgba(15, 18, 36, 0.45);
-                        border: 1px solid rgba(255, 255, 255, 0.06);
-                        backdrop-filter: blur(16px);
-                        border-radius: 20px;
-                        padding: 32px 28px;
-                        height: 100%;
-                        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-                        position: relative;
-                        overflow: hidden;
-                        display: flex;
-                        flex-direction: column;
-                        align-items: center;
-                        text-align: center;
-                        z-index: 2;
-                    }
-                    .feature-card-custom::before {
-                        content: '';
-                        position: absolute;
-                        top: 0;
-                        left: 0;
-                        right: 0;
-                        bottom: 0;
-                        border-radius: 20px;
-                        padding: 1.5px;
-                        background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.01));
-                        -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-                        -webkit-mask-composite: xor;
-                        mask-composite: exclude;
-                        pointer-events: none;
-                        transition: all 0.3s ease;
-                    }
-                    .feature-card-custom:hover {
-                        transform: translateY(-6px);
-                        background: rgba(20, 24, 48, 0.65);
-                        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), 0 0 30px rgba(99, 102, 241, 0.15);
-                    }
-                    .feature-card-custom:hover::before {
-                        background: linear-gradient(135deg, #6366f1, #a78bfa);
-                    }
-                    .feature-icon-badge {
-                        width: 60px;
-                        height: 60px;
-                        border-radius: 16px;
-                        background: rgba(99, 102, 241, 0.08);
-                        border: 1px solid rgba(99, 102, 241, 0.2);
-                        display: flex;
-                        align-items: center;
-                        justify-content: center;
-                        margin-bottom: 24px;
-                        color: #818cf8;
-                        transition: all 0.3s ease;
-                    }
-                    .feature-card-custom:hover .feature-icon-badge {
-                        background: linear-gradient(135deg, #6366f1, #818cf8);
-                        color: #ffffff;
-                        transform: scale(1.1) rotate(4deg);
-                        box-shadow: 0 8px 20px rgba(99, 102, 241, 0.3);
-                    }
-                    .feature-title-text {
-                        font-size: 1.25rem;
-                        font-weight: 700;
-                        color: #ffffff;
-                        margin-bottom: 14px;
-                        letter-spacing: -0.01em;
-                    }
-                    .feature-desc-text {
-                        font-size: 0.95rem;
-                        line-height: 1.6;
-                        color: rgba(255, 255, 255, 0.55);
-                    }
-                    
-                    /* ── CTA Section ── */
-                    .cta-section-container {
-                        background: radial-gradient(circle at bottom, #111424 0%, #06070c 100%);
-                        border-top: 1px solid rgba(255, 255, 255, 0.05);
-                        position: relative;
-                        overflow: hidden;
-                    }
-                    .cta-glow {
-                        position: absolute;
-                        bottom: -150px;
-                        left: 50%;
-                        transform: translateX(-50%);
-                        width: 600px;
-                        height: 400px;
-                        background: radial-gradient(ellipse, rgba(99, 102, 241, 0.15) 0%, rgba(99, 102, 241, 0) 70%);
-                        pointer-events: none;
-                        z-index: 1;
-                    }
-                    .btn-cta-premium {
-                        background: linear-gradient(135deg, #6366f1, #818cf8);
-                        color: #fff;
-                        font-weight: 700;
-                        font-size: 1.1rem;
-                        padding: 16px 42px;
-                        border: none;
-                        border-radius: 12px;
-                        cursor: pointer;
-                        box-shadow: 0 4px 24px rgba(99, 102, 241, 0.45);
-                        transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-                        display: inline-flex;
-                        align-items: center;
-                        gap: 10px;
-                        text-decoration: none;
-                    }
-                    .btn-cta-premium:hover {
-                        transform: translateY(-3px);
-                        box-shadow: 0 8px 32px rgba(99, 102, 241, 0.6);
-                        background: linear-gradient(135deg, #818cf8, #6366f1);
-                        color: #fff;
-                    }
-                    
-                    /* ── FAQ Section ── */
-                    .faq-section-container {
-                        background: radial-gradient(circle at top, #0c0e18 0%, #06060c 100%);
-                        border-top: 1px solid rgba(255, 255, 255, 0.05);
-                        position: relative;
-                        overflow: hidden;
-                    }
-                    .faq-glow {
-                        position: absolute;
-                        top: -150px;
-                        left: 50%;
-                        transform: translateX(-50%);
-                        width: 700px;
-                        height: 450px;
-                        background: radial-gradient(ellipse, rgba(167, 139, 250, 0.08) 0%, rgba(167, 139, 250, 0) 70%);
-                        pointer-events: none;
-                        z-index: 1;
-                    }
-                    .faq-details-custom {
-                        background: rgba(255, 255, 255, 0.02);
-                        border: 1px solid rgba(255, 255, 255, 0.06);
-                        border-radius: 14px;
-                        margin-bottom: 16px;
-                        overflow: hidden;
-                        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-                        backdrop-filter: blur(12px);
-                    }
-                    .faq-details-custom:hover {
-                        background: rgba(255, 255, 255, 0.04);
-                        border-color: rgba(99, 102, 241, 0.3);
-                        box-shadow: 0 4px 20px rgba(99, 102, 241, 0.08);
-                    }
-                    .faq-details-custom[open] {
-                        background: rgba(99, 102, 241, 0.04);
-                        border-color: rgba(99, 102, 241, 0.4);
-                        box-shadow: 0 8px 30px rgba(99, 102, 241, 0.12);
-                    }
-                    .faq-summary-custom {
-                        padding: 20px 24px;
-                        font-weight: 600;
-                        font-size: 1.05rem;
-                        color: #ffffff;
-                        list-style: none;
-                        display: flex;
-                        justify-content: space-between;
-                        align-items: center;
-                        cursor: pointer;
-                        user-select: none;
-                        transition: color 0.2s ease;
-                    }
-                    .faq-summary-custom::-webkit-details-marker {
-                        display: none;
-                    }
-                    .faq-summary-custom:hover {
-                        color: #cbd5e1;
-                    }
-                    .faq-details-custom[open] .faq-summary-custom {
-                        color: #818cf8;
-                    }
-                    .faq-icon-toggle {
-                        display: flex;
-                        align-items: center;
-                        justify-content: center;
-                        width: 28px;
-                        height: 28px;
-                        border-radius: 50%;
-                        background: rgba(255, 255, 255, 0.05);
-                        border: 1px solid rgba(255, 255, 255, 0.08);
-                        color: rgba(255, 255, 255, 0.6);
-                        font-size: 1.25rem;
-                        font-weight: 400;
-                        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-                        flex-shrink: 0;
-                    }
-                    .faq-details-custom:hover .faq-icon-toggle {
-                        border-color: rgba(99, 102, 241, 0.4);
-                        color: #818cf8;
-                    }
-                    .faq-details-custom[open] .faq-icon-toggle {
-                        background: #6366f1;
-                        border-color: #6366f1;
-                        color: #ffffff;
-                        transform: rotate(45deg);
-                    }
-                    .faq-answer-custom {
-                        padding: 0 24px 20px;
-                        font-size: 0.95rem;
-                        line-height: 1.65;
-                        color: rgba(255, 255, 255, 0.65);
-                        animation: faqFadeIn 0.3s ease-out;
-                    }
-                    @keyframes faqFadeIn {
-                        from { opacity: 0; transform: translateY(-8px); }
-                        to { opacity: 1; transform: translateY(0); }
-                    }
-                `}</style>
-
-                {/* Background elements */}
-                <div className="hero-bg-grid" aria-hidden="true" />
-                <div className="hero-glow-left" aria-hidden="true" />
-                <div className="hero-glow-right" aria-hidden="true" />
-
-                {/* Content */}
-                <div className="container" style={{ position: "relative", zIndex: 1 }}>
-                    <div className="row justify-content-center text-center">
-                        <div className="col-lg-9 col-xl-8">
-
-                            {/* H1 — primary SEO target */}
-                            <h1 className="hero-h1 h-fade-2 mb-4">
-                                Build a <span className="h1-accent">{typewriterText}</span><span className="typewriter-cursor">|</span>
-                                <br />with Free AI Resume Builder
-                            </h1>
-
-                            {/* Sub-headline */}
-                            <p className="hero-sub h-fade-3 mb-5">
-                                Create ATS-friendly resumes in minutes using <strong style={{ color: "rgba(200,205,230,0.85)", fontWeight: 600 }}>advanced AI models</strong>. Pick from 18+ premium templates, generate compelling content, and download as PDF — 100% pure and professional.
-                            </p>
-
-                            {/* CTA buttons */}
-                            <div className="hero-cta-wrap h-fade-4 mb-4 d-flex align-items-center justify-content-center gap-3 flex-wrap">
-                                <button
-                                    id="hero-build-resume-btn"
-                                    onClick={handleStartResume}
-                                    className="hero-cta-primary"
-                                    aria-label="Start building your free resume now"
-                                >
-                                    <i className="fas fa-bolt" aria-hidden="true" />
-                                    Build My Resume — Free
+                    {/* Bento Features */}
+                    <section className="px-4 md:px-8 py-24 max-w-[1280px] mx-auto">
+                        <div className="text-center mb-16">
+                            <h2 className="text-3xl md:text-5xl font-bold mb-4 text-white" style={{ fontFamily: "Space Grotesk, sans-serif" }}>Precision Tools for Professionals</h2>
+                            <p className="text-base md:text-lg text-[#c7c4d7] max-w-2xl mx-auto" style={{ fontFamily: "Inter, sans-serif" }}>Our toolkit is designed to bypass filters and get your profile in front of hiring managers.</p>
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                            
+                            {/* Card 1 */}
+                            <div className="glass-card p-8 rounded-2xl flex flex-col items-start gap-4 hover:border-[#c0c1ff] transition-all group cursor-default">
+                                <div className="p-4 rounded-xl bg-[#c0c1ff]/10 text-[#c0c1ff]">
+                                    <span className="material-symbols-outlined text-[32px]">psychology</span>
+                                </div>
+                                <h3 className="text-2xl font-bold text-white" style={{ fontFamily: "Space Grotesk, sans-serif" }}>AI Resume Writer</h3>
+                                <p className="text-[#c7c4d7] leading-relaxed" style={{ fontFamily: "Inter, sans-serif" }}>
+                                    Generate impactful summaries and action-oriented bullet points using models trained on successful job applications.
+                                </p>
+                                <button onClick={handleStartResume} className="mt-4 flex items-center gap-2 text-[#c0c1ff] font-semibold bg-transparent border-0 p-0 group-hover:gap-4 transition-all" style={{ fontFamily: "Inter, sans-serif" }}>
+                                    Start Writing <span className="material-symbols-outlined text-[18px]">east</span>
                                 </button>
-                                <Link
-                                    href="/templates"
-                                    className="hero-cta-secondary"
-                                    aria-label="View resume templates"
-                                >
-                                    <i className="fas fa-th-large" aria-hidden="true" />
-                                    See Templates
+                            </div>
+
+                            {/* Card 2 */}
+                            <div className="glass-card p-8 rounded-2xl flex flex-col items-start gap-4 border-indigo-500/20 hover:border-[#c0c1ff] transition-all group cursor-default">
+                                <div className="p-4 rounded-xl bg-[#c0c1ff]/10 text-[#c0c1ff]">
+                                    <span className="material-symbols-outlined text-[32px]">fact_check</span>
+                                </div>
+                                <h3 className="text-2xl font-bold text-white" style={{ fontFamily: "Space Grotesk, sans-serif" }}>ATS Optimization</h3>
+                                <p className="text-[#c7c4d7] leading-relaxed" style={{ fontFamily: "Inter, sans-serif" }}>
+                                    Every template is tested against leading recruitment software to ensure your content is never garbled or ignored.
+                                </p>
+                                <Link href="/ats-checker" className="mt-4 flex items-center gap-2 text-[#c0c1ff] font-semibold group-hover:gap-4 transition-all text-decoration-none" style={{ fontFamily: "Inter, sans-serif" }}>
+                                    Scan My CV <span className="material-symbols-outlined text-[18px]">east</span>
                                 </Link>
                             </div>
 
-                            {/* Trust signals */}
-                            <div className="hero-trust h-fade-4 mb-5" aria-label="Social proof">
-                                <span className="hero-trust-stars" aria-label="4.9 out of 5 stars">★★★★★</span>
-                                <span style={{ color: "rgba(255,255,255,0.7)", fontWeight: 600 }}>4.9/5</span>
-                                <div className="hero-trust-sep" aria-hidden="true" />
-                                <span>Trusted by <strong style={{ color: "rgba(255,255,255,0.75)" }}>10,000+</strong> job seekers</span>
-                                <div className="hero-trust-sep" aria-hidden="true" />
-                                <span><i className="fas fa-lock" style={{ fontSize: "0.7rem", marginRight: "3px" }} aria-hidden="true" />Secure &amp; Private</span>
-                            </div>
-
-                            {/* Feature tags */}
-                            <div className="hero-feature-tags h-fade-5" aria-label="Key features">
-                                {[
-                                    { icon: "fa-robot", label: "AI Content Writer" },
-                                    { icon: "fa-check-double", label: "ATS Optimized" },
-                                    { icon: "fa-file-pdf", label: "Free PDF Export" },
-                                    { icon: "fa-layer-group", label: "18+ Templates" },
-                                    { icon: "fa-envelope", label: "AI Cover Letter" },
-                                ].map(({ icon, label }) => (
-                                    <span key={label} className="hero-tag">
-                                        <i className={`fas ${icon} hero-tag-icon`} aria-hidden="true" />
-                                        {label}
-                                    </span>
-                                ))}
-                            </div>
-
-                        </div>
-                    </div>
-                </div>
-            </header>
-
-
-
-
-            {/* Features Section */}
-            <section className="features-section-container py-5 position-relative">
-                <div className="features-glow" aria-hidden="true" />
-
-                <div className="container py-5 position-relative" style={{ zIndex: 5 }}>
-                    <div className="text-center mb-5">
-                        <h2 className="display-5 fw-bold mb-3 feature-gradient-title">The Best Free AI Resume Maker for Job Seekers</h2>
-                        <p className="text-white-50 max-w-2xl mx-auto fs-5" style={{ maxWidth: "700px" }}>
-                            Empower your job application process with smart builder tools tailored to pass recruitment screens.
-                        </p>
-                    </div>
-
-                    <div className="row g-4 justify-content-center">
-                        <div className="col-md-4">
-                            <div className="feature-card-custom">
-                                <div className="feature-icon-badge">
-                                    <i className="fas fa-robot fa-2x"></i>
+                            {/* Card 3 */}
+                            <div className="glass-card p-8 rounded-2xl flex flex-col items-start gap-4 hover:border-[#c0c1ff] transition-all group cursor-default">
+                                <div className="p-4 rounded-xl bg-[#c0c1ff]/10 text-[#c0c1ff]">
+                                    <span className="material-symbols-outlined text-[32px]">download</span>
                                 </div>
-                                <h3 className="feature-title-text">AI-Powered Resume Writer</h3>
-                                <p className="feature-desc-text mb-0">
-                                    Leverage advanced artificial intelligence to instantly draft compelling experience descriptions and bullet points that match your target role.
+                                <h3 className="text-2xl font-bold text-white" style={{ fontFamily: "Space Grotesk, sans-serif" }}>Export &amp; Share</h3>
+                                <p className="text-[#c7c4d7] leading-relaxed" style={{ fontFamily: "Inter, sans-serif" }}>
+                                    Download pixel-perfect PDFs or generate a private link to share your live portfolio directly with employers.
                                 </p>
+                                <Link href="/templates" className="mt-4 flex items-center gap-2 text-[#c0c1ff] font-semibold group-hover:gap-4 transition-all text-decoration-none" style={{ fontFamily: "Inter, sans-serif" }}>
+                                    View Formats <span className="material-symbols-outlined text-[18px]">east</span>
+                                </Link>
                             </div>
-                        </div>
 
-                        <div className="col-md-4">
-                            <div className="feature-card-custom">
-                                <div className="feature-icon-badge">
-                                    <i className="fas fa-check-double fa-2x"></i>
+                        </div>
+                    </section>
+
+                    {/* Final CTA Section */}
+                    <section className="px-4 md:px-8 py-16">
+                        <div className="max-w-[1280px] mx-auto ai-gradient-bg rounded-[32px] p-12 md:p-20 relative overflow-hidden text-center md:text-left">
+                            <div className="absolute right-0 top-0 w-full h-full bg-black/20 backdrop-blur-[2px] -z-0"></div>
+                            <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-12">
+                                <div className="max-w-2xl">
+                                    <h2 className="text-3xl md:text-5xl font-bold mb-6 text-white" style={{ fontFamily: "Space Grotesk, sans-serif" }}>Ready to land your dream interview?</h2>
+                                    <p className="text-white/80 text-lg md:text-xl mb-0" style={{ fontFamily: "Inter, sans-serif" }}>
+                                        Join 10,000+ job seekers who leveled up their career with CVGrid. Create your resume now.
+                                    </p>
                                 </div>
-                                <h3 className="feature-title-text">ATS-Friendly Resume Builder</h3>
-                                <p className="feature-desc-text mb-0">
-                                    Build beautiful, job-winning resumes in minutes using our intuitive interface and templates engineered to be fully scan-readable.
-                                </p>
-                            </div>
-                        </div>
-
-                        <div className="col-md-4">
-                            <div className="feature-card-custom">
-                                <div className="feature-icon-badge">
-                                    <i className="fas fa-file-pdf fa-2x"></i>
+                                <div className="flex flex-col items-center gap-6">
+                                    <button 
+                                        onClick={handleStartResume}
+                                        className="bg-white text-[#12121d] font-bold text-lg px-12 py-5 rounded-2xl shadow-2xl hover:scale-105 transition-all active:scale-95 border-0"
+                                    >
+                                        Get Started Now
+                                    </button>
+                                    <div className="flex items-center gap-2 text-white/70 text-sm">
+                                        <span className="material-symbols-outlined text-[18px]">lock</span>
+                                        No credit card required
+                                    </div>
                                 </div>
-                                <h3 className="feature-title-text">Free PDF & PNG Exports</h3>
-                                <p className="feature-desc-text mb-0">
-                                    Export your polished CV as a clean, professionally formatted PDF or high-res PNG image that maintains exact styling across all tracking systems.
-                                </p>
                             </div>
                         </div>
-                    </div>
-                </div>
-            </section>
+                    </section>
 
-            {/* CTA Section */}
-            <section className="cta-section-container py-5 position-relative">
-                <div className="cta-glow" aria-hidden="true" />
-
-                <div className="container py-5 position-relative" style={{ zIndex: 5 }}>
-                    <div className="row justify-content-center text-center">
-                        <div className="col-lg-8">
-                            <h2 className="display-5 fw-bold mb-4 text-white">
-                                Build Your ATS-Friendly Resume Today
-                            </h2>
-                            <p className="text-white-50 fs-5 mb-5 mx-auto" style={{ maxWidth: "600px" }}>
-                                Join thousands of job seekers using CVGrid to land interviews. Start for free now.
-                            </p>
-                            <button
-                                className="btn-cta-premium"
-                                onClick={handleStartResume}
-                            >
-                                <i className="fas fa-bolt" aria-hidden="true" /> Get Started Free
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            {/* FAQ Section — matches FAQPage JSON-LD for Google Featured Snippets */}
-            <section className="faq-section-container py-5" id="faq">
-                <div className="faq-glow" aria-hidden="true" />
-
-                <div className="container py-5 position-relative" style={{ zIndex: 5 }}>
-                    <div className="text-center mb-5">
-                        <h2 className="display-5 fw-bold mb-3 feature-gradient-title">Frequently Asked Questions</h2>
-                        <p className="text-white-50 fs-5">Everything you need to know about CVGrid's free AI resume builder.</p>
-                    </div>
-                    <div className="row justify-content-center">
-                        <div className="col-lg-8 col-xl-7">
+                    {/* FAQ Section */}
+                    <section className="px-4 md:px-8 py-16 max-w-3xl mx-auto" id="faq">
+                        <h2 className="text-3xl md:text-5xl font-bold mb-12 text-center text-white" style={{ fontFamily: "Space Grotesk, sans-serif" }}>FAQs</h2>
+                        <div className="space-y-4">
                             {[
                                 {
-                                    q: "Is CVGrid really free to use?",
-                                    a: "Yes! CVGrid is 100% free. You can create a resume, choose from 18+ premium templates, generate AI content, and download your resume as a PDF — all without paying anything or entering a credit card.",
+                                    q: "Is CVGrid free to use?",
+                                    a: "Yes! CVGrid offers a generous free tier. You can create your resume, choose from our templates, and download your CV with a subtle watermark. We offer a premium upgrade (INR 150) for completely watermark-free premium downloads (PDF, DOCX, PNG).",
                                 },
                                 {
                                     q: "Are the resume templates ATS-friendly?",
-                                    a: "All resume templates on CVGrid are designed to be ATS (Applicant Tracking System) friendly. They use clean formatting, standard section headings, and readable fonts that pass recruiter screening software.",
+                                    a: "Absolutely. All resume templates on CVGrid are rigorously tested against leading Applicant Tracking Systems (ATS) to ensure your content parses perfectly and is never scrambled or ignored by recruiters.",
+                                },
+                                {
+                                    q: "Will recruiters know I used AI?",
+                                    a: "No. Our AI model is fine-tuned to write professional, impact-driven sentences that sound natural. It helps rephrase and optimize your real experience to highlight key achievements.",
                                 },
                                 {
                                     q: "How does the AI resume builder work?",
-                                    a: "CVGrid uses advanced AI models to generate professional resume content based on your job role, experience, and skills. Simply enter your details, click generate, review the content, and download your finished resume.",
+                                    a: "Simply input your professional details, click the 'Generate AI Content' helper, and our AI will draft descriptions, executive summaries, and action-oriented bullet points matching your industry and target job description.",
                                 },
                                 {
                                     q: "Can I download my resume as a PDF?",
-                                    a: "Yes! Once you've built your resume, you can download it as a high-quality PDF or PNG image with a single click. No watermarks, no subscriptions — completely free.",
+                                    a: "Yes. Once you're done editing, you can immediately download your CV as a high-quality PDF, Word document (.docx), or high-res PNG image. Free downloads contain a watermark; premium exports are clean.",
                                 },
                                 {
                                     q: "Does CVGrid work for freshers and students?",
-                                    a: "Absolutely. CVGrid is specifically designed for students, freshers, and entry-level job seekers. The AI helps you write professional resume content even if you have limited work experience.",
-                                },
-                                {
-                                    q: "How many resume templates are available?",
-                                    a: "CVGrid offers 18+ professionally designed resume templates including Classic, Modern, Creative, Executive, Developer, Minimalist, Elegant, Navy Elegance, Emerald, Aurora, Midnight, Nordic, Crimson, and more.",
+                                    a: "Yes. The builder has custom sections for internships, projects, and achievements. The AI writer is optimized to highlight transferable skills, making it perfect for students and career switchers.",
                                 },
                             ].map((item, i) => (
-                                <details
-                                    key={i}
-                                    className="faq-details-custom"
-                                >
-                                    <summary className="faq-summary-custom">
-                                        <span>{item.q}</span>
-                                        <span className="faq-icon-toggle" aria-hidden="true">+</span>
+                                <details key={i} className="group glass-card rounded-2xl overflow-hidden border border-[rgba(255,255,255,0.1)] transition-all">
+                                    <summary className="flex justify-between items-center p-6 cursor-pointer list-none">
+                                        <span className="font-semibold text-white text-base md:text-lg" style={{ fontFamily: "Inter, sans-serif" }}>{item.q}</span>
+                                        <span className="material-symbols-outlined faq-icon-toggle text-[#c0c1ff]">expand_more</span>
                                     </summary>
-                                    <div className="faq-answer-custom">
+                                    <div className="p-6 pt-0 text-[#c7c4d7] border-t border-[rgba(255,255,255,0.1)]/30 text-sm md:text-base leading-relaxed" style={{ fontFamily: "Inter, sans-serif" }}>
                                         {item.a}
                                     </div>
                                 </details>
                             ))}
                         </div>
-                    </div>
-                </div>
-            </section>
+                    </section>
+                </main>
 
-            {/* Footer */}
-            <footer className="bg-black border-top border-secondary py-4">
-                <div className="container">
-                    <div className="text-center text-white-50">
-                        <p className="mb-1">
-                            &copy; 2026 CVGrid. All rights reserved.
-                        </p>
-                        <p className="mb-0">
-                            Designed &amp; Developed by{" "}
-                            <a
-                                href="https://kushangacharya.vercel.app"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="text-info fw-semibold text-decoration-none"
-                            >
-                                Kushang Acharya
-                            </a>
-                        </p>
-                    </div>
-                </div>
-            </footer>
+                <Footer />
+            </div>
 
             {/* AUTH REQUIRED MODAL */}
             {showAuthModal && (
@@ -764,13 +529,13 @@ export default function HomePage() {
                     }}>
                         <div className="card-body">
                             <div className="mb-4">
-                                <i className="fas fa-lock text-primary" style={{ fontSize: "3rem" }}></i>
+                                <i className="fas fa-lock text-[#c0c1ff]" style={{ fontSize: "3rem" }}></i>
                             </div>
                             <h3 className="fw-bold mb-3" style={{ letterSpacing: "-0.01em" }}>Sign Up First</h3>
                             <p className="text-white-50 mb-4" style={{ fontSize: "1.05rem", lineHeight: "1.5" }}>
                                 You have to sign up first to create your professional resume.
                             </p>
-                            <div className="d-flex align-items-center justify-content-center gap-2 text-primary fw-semibold">
+                            <div className="d-flex align-items-center justify-content-center gap-2 text-[#c0c1ff] fw-semibold">
                                 <i className="fas fa-sync fa-spin"></i>
                                 <span>Redirecting you to Sign Up in {countdown}s...</span>
                             </div>
@@ -778,7 +543,6 @@ export default function HomePage() {
                     </div>
                 </div>
             )}
-
-        </div>
+        </>
     );
 }
