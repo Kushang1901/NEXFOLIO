@@ -11,7 +11,7 @@ export const metadata = {
     openGraph: {
         title: "Log In – CVGrid Free AI Resume Builder",
         description: "Access your CVGrid account to manage and download your professional AI-generated resumes.",
-        url: "https://nexfolio-ai.vercel.app/login",
+        url: "https://cvgrid.in/login",
         type: "website",
     },
 };

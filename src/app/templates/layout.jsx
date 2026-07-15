@@ -1,20 +1,20 @@
 export const metadata = {
-    title: "Free AI Resume Templates – 18+ ATS-Friendly Designs | CVGrid",
-    description: "Browse 18+ free professional resume templates — Classic, Modern, Creative, Executive, Developer, Minimalist, Elegant, Nordic, Aurora, Midnight, Crimson and more. All ATS-optimized and free to download.",
+    title: "ATS Resume Templates – 18+ Free & Premium Designs | CVGrid",
+    description: "Browse 18+ professional resume templates — Classic, Modern, Creative, Executive, Developer, Minimalist, Elegant, Nordic, Aurora, and more. All ATS-optimized with free and premium options.",
     keywords: [
         "free resume templates", "ATS resume templates", "professional resume templates",
         "modern resume template", "classic resume template", "creative resume template",
         "executive resume template", "developer resume template", "minimalist resume template",
         "elegant resume template", "navy resume template", "emerald resume template",
         "AI resume template", "free CV template", "resume layout free download",
-        "best resume templates 2025", "resume designs free",
+        "best resume templates 2026", "resume designs free",
     ],
     alternates: {
         canonical: "/templates",
     },
     openGraph: {
-        title: "Free AI Resume Templates – 18+ ATS-Friendly Designs | CVGrid",
-        description: "Browse 18+ free professional resume templates. All ATS-optimized. Pick a design and generate your resume with AI in seconds.",
+        title: "ATS Resume Templates – 18+ Free & Premium Designs | CVGrid",
+        description: "Browse 18+ professional resume templates. All ATS-optimized. Pick a design and generate your resume with AI in seconds. Free and premium options available.",
         url: "https://cvgrid.in/templates",
         type: "website",
         images: [
@@ -28,8 +28,8 @@ export const metadata = {
     },
     twitter: {
         card: "summary_large_image",
-        title: "18+ Free ATS-Friendly Resume Templates – CVGrid",
-        description: "Classic, Modern, Creative, Executive, Developer, Minimalist and many more. All ATS-optimized. Free to use.",
+        title: "18+ Professional ATS Resume Templates – CVGrid",
+        description: "Classic, Modern, Creative, Executive, Developer, Minimalist and many more. All ATS-optimized. Free & premium templates.",
         images: ["https://cvgrid.in/logo.png"],
     },
 };
@@ -40,8 +40,8 @@ export default function TemplatesLayout({ children }) {
         "@type": "CollectionPage",
         "@id": "https://cvgrid.in/templates/#page",
         "url": "https://cvgrid.in/templates",
-        "name": "Free Resume Templates – CVGrid",
-        "description": "Browse 18+ free, ATS-friendly resume templates. Choose from Classic, Modern, Creative, Executive, Developer, Minimalist, Elegant and more.",
+        "name": "ATS Resume Templates – CVGrid",
+        "description": "Browse 18+ professional, ATS-friendly resume templates. Choose from Classic, Modern, Creative, Executive, Developer, Minimalist, Elegant and more. Free and premium tiers available.",
         "breadcrumb": {
             "@type": "BreadcrumbList",
             "itemListElement": [

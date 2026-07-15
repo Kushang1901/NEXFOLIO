@@ -10,9 +10,9 @@ import BackToTop from "../components/BackToTop";
 // ─────────────────────────────────────────────
 const BASE_URL = "https://cvgrid.in";
 const SITE_NAME = "CVGrid";
-const SITE_TITLE = "Free Resume Maker & AI Resume Builder – CVGrid";
+const SITE_TITLE = "Free AI Resume Builder & Professional CV Maker – CVGrid";
 const SITE_DESC =
-    "Create a professional, ATS-friendly resume in minutes with CVGrid's free AI resume builder. Choose from 18+ premium templates, generate AI content, and download as PDF — 100% free, no watermark, no credit card.";
+    "Create a professional, ATS-friendly resume in minutes with CVGrid's AI resume builder. Choose from 18+ premium templates, generate AI content, and export instantly. Free downloads & premium watermark-free options available.";
 const OG_IMAGE = `${BASE_URL}/og-image.png`;
 const LOGO = `${BASE_URL}/logo.png`;
 
@@ -105,7 +105,7 @@ export const metadata = {
     openGraph: {
         title: SITE_TITLE,
         description:
-            "Create a professional, ATS-friendly resume in minutes. AI-powered content, 18+ premium templates, free PDF export — no watermark, no credit card.",
+            "Create a professional, ATS-friendly resume in minutes. AI-powered content, 18+ templates, and instant download. Free and premium watermark-free options available.",
         url: BASE_URL,
         siteName: SITE_NAME,
         locale: "en_US",
@@ -139,7 +139,7 @@ export const metadata = {
         creator: "@kushangacharya",
         title: SITE_TITLE,
         description:
-            "Build a professional, ATS-friendly resume in minutes with free AI. 18+ premium templates. Download as PDF free — no watermark.",
+            "Build a professional, ATS-friendly resume in minutes with AI. 18+ premium templates. Download as PDF — free and premium watermark-free options.",
         images: [
             {
                 url: OG_IMAGE,
@@ -252,7 +252,7 @@ export default function RootLayout({ children }) {
                     "width": 512,
                     "height": 512,
                 },
-                "description": "CVGrid is a free AI-powered resume builder that helps students and professionals create ATS-friendly resumes in minutes. Choose from 18+ premium templates, generate AI content, and download as PDF — completely free.",
+                "description": "CVGrid is an AI-powered resume builder that helps students and professionals create ATS-friendly resumes in minutes. Choose from 18+ templates, generate AI content, and export instantly. Free & Premium options available.",
                 "applicationCategory": "BusinessApplication",
                 "applicationSubCategory": "Resume Builder",
                 "operatingSystem": "Web Browser",
@@ -260,12 +260,27 @@ export default function RootLayout({ children }) {
                 "inLanguage": "en",
                 "isAccessibleForFree": true,
                 "offers": {
-                    "@type": "Offer",
-                    "price": "0.00",
-                    "priceCurrency": "USD",
-                    "availability": "https://schema.org/InStock",
-                    "priceValidUntil": "2027-12-31",
-                    "description": "CVGrid is completely free to use. No credit card required. No watermark.",
+                    "@type": "AggregateOffer",
+                    "priceCurrency": "INR",
+                    "lowPrice": "0",
+                    "highPrice": "150",
+                    "offerCount": "2",
+                    "offers": [
+                        {
+                            "@type": "Offer",
+                            "name": "Free Plan",
+                            "price": "0",
+                            "priceCurrency": "INR",
+                            "description": "Create and download resumes for free with a subtle CVGrid watermark."
+                        },
+                        {
+                            "@type": "Offer",
+                            "name": "Premium Export",
+                            "price": "150",
+                            "priceCurrency": "INR",
+                            "description": "Download clean, watermark-free PDF, editable Word (.docx), and high-res PNG formats."
+                        }
+                    ]
                 },
                 "aggregateRating": {
                     "@type": "AggregateRating",
@@ -644,9 +659,9 @@ export default function RootLayout({ children }) {
                 <meta name="referrer" content="origin-when-cross-origin" />
 
                 {/* ── Site Category / Abstract ────────────────── */}
-                <meta name="abstract" content="Free AI resume builder with 18+ ATS-friendly templates. Build, customize, and download your professional resume as PDF — powered by advanced AI." />
+                <meta name="abstract" content="AI resume builder with 18+ ATS-friendly templates. Build, customize, and download your professional resume. Free & Premium options available." />
                 <meta name="topic" content="Resume Builder, AI Resume, Career Tools, Job Search" />
-                <meta name="summary" content="CVGrid is a free AI-powered resume builder for students and job seekers." />
+                <meta name="summary" content="CVGrid is an AI-powered resume builder for students and job seekers with free and premium options." />
                 <meta name="Classification" content="Resume Builder" />
                 <meta name="category" content="Technology, AI Tools, Career" />
                 <meta name="pagename" content={SITE_TITLE} />
