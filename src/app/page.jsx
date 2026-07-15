@@ -48,7 +48,7 @@ export default function HomePage() {
         const unsubscribe = subscribeToAuthChanges((loggedUser) => {
             setUser(loggedUser);
             setLoadingAuth(false);
-            
+
             // Check if redirect triggered the auth modal
             if (!loggedUser && typeof window !== "undefined") {
                 const params = new URLSearchParams(window.location.search);
@@ -519,14 +519,6 @@ export default function HomePage() {
                     <div className="row justify-content-center text-center">
                         <div className="col-lg-9 col-xl-8">
 
-                            {/* Live badge */}
-                            <div className="h-fade-1 mb-4">
-                                <span className="hero-pill">
-                                    <span className="hero-pill-dot" aria-hidden="true" />
-                                    Free · No Credit Card · No Watermark
-                                </span>
-                            </div>
-
                             {/* H1 — primary SEO target */}
                             <h1 className="hero-h1 h-fade-2 mb-4">
                                 Build a <span className="h1-accent">{typewriterText}</span><span className="typewriter-cursor">|</span>
@@ -535,7 +527,7 @@ export default function HomePage() {
 
                             {/* Sub-headline */}
                             <p className="hero-sub h-fade-3 mb-5">
-                                Create ATS-friendly resumes in minutes using <strong style={{ color: "rgba(200,205,230,0.85)", fontWeight: 600 }}>advanced AI models</strong>. Pick from 18+ premium templates, generate compelling content, and download as PDF — 100% free, forever.
+                                Create ATS-friendly resumes in minutes using <strong style={{ color: "rgba(200,205,230,0.85)", fontWeight: 600 }}>advanced AI models</strong>. Pick from 18+ premium templates, generate compelling content, and download as PDF — 100% pure and professional.
                             </p>
 
                             {/* CTA buttons */}
@@ -572,11 +564,11 @@ export default function HomePage() {
                             {/* Feature tags */}
                             <div className="hero-feature-tags h-fade-5" aria-label="Key features">
                                 {[
-                                    { icon: "fa-robot",      label: "AI Content Writer"       },
-                                    { icon: "fa-check-double", label: "ATS Optimized"          },
-                                    { icon: "fa-file-pdf",   label: "Free PDF Export"          },
-                                    { icon: "fa-layer-group", label: "18+ Templates"           },
-                                    { icon: "fa-envelope",   label: "AI Cover Letter"          },
+                                    { icon: "fa-robot", label: "AI Content Writer" },
+                                    { icon: "fa-check-double", label: "ATS Optimized" },
+                                    { icon: "fa-file-pdf", label: "Free PDF Export" },
+                                    { icon: "fa-layer-group", label: "18+ Templates" },
+                                    { icon: "fa-envelope", label: "AI Cover Letter" },
                                 ].map(({ icon, label }) => (
                                     <span key={label} className="hero-tag">
                                         <i className={`fas ${icon} hero-tag-icon`} aria-hidden="true" />
@@ -596,7 +588,7 @@ export default function HomePage() {
             {/* Features Section */}
             <section className="features-section-container py-5 position-relative">
                 <div className="features-glow" aria-hidden="true" />
-                
+
                 <div className="container py-5 position-relative" style={{ zIndex: 5 }}>
                     <div className="text-center mb-5">
                         <h2 className="display-5 fw-bold mb-3 feature-gradient-title">The Best Free AI Resume Maker for Job Seekers</h2>
@@ -604,7 +596,7 @@ export default function HomePage() {
                             Empower your job application process with smart builder tools tailored to pass recruitment screens.
                         </p>
                     </div>
-                    
+
                     <div className="row g-4 justify-content-center">
                         <div className="col-md-4">
                             <div className="feature-card-custom">
@@ -648,7 +640,7 @@ export default function HomePage() {
             {/* CTA Section */}
             <section className="cta-section-container py-5 position-relative">
                 <div className="cta-glow" aria-hidden="true" />
-                
+
                 <div className="container py-5 position-relative" style={{ zIndex: 5 }}>
                     <div className="row justify-content-center text-center">
                         <div className="col-lg-8">
@@ -672,7 +664,7 @@ export default function HomePage() {
             {/* FAQ Section — matches FAQPage JSON-LD for Google Featured Snippets */}
             <section className="faq-section-container py-5" id="faq">
                 <div className="faq-glow" aria-hidden="true" />
-                
+
                 <div className="container py-5 position-relative" style={{ zIndex: 5 }}>
                     <div className="text-center mb-5">
                         <h2 className="display-5 fw-bold mb-3 feature-gradient-title">Frequently Asked Questions</h2>
