@@ -245,6 +245,14 @@ export default function HomePage() {
                     background-size: 50px 50px;
                     background-position: center center;
                 }
+                .cta-text-align {
+                    text-align: center;
+                }
+                @media (min-width: 768px) {
+                    .cta-text-align {
+                        text-align: left !important;
+                    }
+                }
             `}</style>
 
             <div className="bg-[#12121d] text-[#e4e0f1] min-h-screen" style={{ opacity: tailwindLoaded ? 1 : 0, transition: "opacity 0.25s ease-in" }}>
@@ -431,7 +439,7 @@ export default function HomePage() {
 
                     {/* Final CTA Section */}
                     <section className="px-4 md:px-8 py-16">
-                        <div className="max-w-[1280px] mx-auto ai-gradient-bg rounded-[32px] p-12 md:p-20 relative overflow-hidden text-center md:text-left">
+                        <div className="max-w-[1280px] mx-auto ai-gradient-bg rounded-[32px] p-12 md:p-20 relative overflow-hidden cta-text-align">
                             <div className="absolute right-0 top-0 w-full h-full bg-black/20 backdrop-blur-[2px] -z-0"></div>
                             <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-12">
                                 <div className="max-w-2xl">
