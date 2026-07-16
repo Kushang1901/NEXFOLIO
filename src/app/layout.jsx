@@ -10,9 +10,9 @@ import BackToTop from "../components/BackToTop";
 // ─────────────────────────────────────────────
 const BASE_URL = "https://cvgrid.in";
 const SITE_NAME = "CVGrid";
-const SITE_TITLE = "Free AI Resume Builder & Professional CV Maker – CVGrid";
+const SITE_TITLE = "Best Free AI Resume Builder & CV Maker Online – CVGrid";
 const SITE_DESC =
-    "Create a professional, ATS-friendly resume in minutes with CVGrid's AI resume builder. Choose from 18+ premium templates, generate AI content, and export instantly. Free downloads & premium watermark-free options available.";
+    "Build your career with CVGrid, the best free AI resume builder and professional CV maker online. Create an ATS-friendly resume in minutes. Choose from 18+ templates, generate AI content, and download instantly.";
 const OG_IMAGE = `${BASE_URL}/og-image.png`;
 const LOGO = `${BASE_URL}/logo.png`;
 

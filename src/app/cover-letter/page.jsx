@@ -46,7 +46,7 @@ export default function CoverLetterGenerator() {
             } else {
                 setUserEmail(null);
                 setLoadingAuth(false);
-                router.push("/?triggerAuth=true");
+                loadInitialResumeData();
             }
         });
 

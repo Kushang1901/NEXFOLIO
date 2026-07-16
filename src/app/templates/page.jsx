@@ -12,12 +12,11 @@ export default function TemplateSelection() {
     const router = useRouter();
     const [selectedCategory, setSelectedCategory] = useState("all");
     const [searchQuery, setSearchQuery] = useState("");
+    const [user, setUser] = useState(null);
 
     useEffect(() => {
-        const unsubscribe = subscribeToAuthChanges((user) => {
-            if (!user) {
-                router.push("/?triggerAuth=true");
-            }
+        const unsubscribe = subscribeToAuthChanges((loggedUser) => {
+            setUser(loggedUser);
         });
 
         // Parse category from URL query parameter on mount
@@ -46,7 +45,11 @@ export default function TemplateSelection() {
 
     const selectTemplate = (id) => {
         sessionStorage.setItem("selectedTemplate", id);
-        router.push("/builder");
+        if (user) {
+            router.push("/builder");
+        } else {
+            router.push("/?triggerAuth=true");
+        }
     };
 
     const categories = [
