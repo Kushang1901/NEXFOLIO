@@ -63,6 +63,7 @@ export async function GET(request) {
             // List all resumes for this user (omit large resume_data details for speed)
             const resumes = await db`
                 SELECT id, resume_name AS "resumeName", selected_template AS "selectedTemplate", 
+                       resume_data AS "resumeData",
                        is_public AS "isPublic", shareable_link AS "shareableLink",
                        created_at AS "createdAt", updated_at AS "updatedAt"
                 FROM resumes

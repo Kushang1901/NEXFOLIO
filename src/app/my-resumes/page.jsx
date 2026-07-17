@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import Navbar from "../../components/Navbar";
 import { subscribeToAuthChanges } from "../../authState";
 import { showToast } from "../../utils/toast";
+import { normalizeResumeData } from "../../utils/resumeAdapter";
 import { LayoutDashboard, Plus, FileText, Palette, Pencil, Eye, Trash2, Lightbulb } from "lucide-react";
 
 const TEMPLATE_THEMES = {
@@ -47,6 +48,124 @@ const getInitials = (name) => {
     }
     return name.slice(0, 2).toUpperCase();
 };
+
+function ResumeMiniPreview({ resumeData, themeColor }) {
+    const data = normalizeResumeData(resumeData);
+    const basics = data.basics || {};
+    const name = basics.name || "Untitled Resume";
+    const role = basics.role || "";
+    const email = basics.email || "";
+    const phone = basics.phone || "";
+    const summary = data.summary || "";
+    
+    const contactParts = [];
+    if (email) contactParts.push(email);
+    if (phone) contactParts.push(phone);
+    if (basics.links?.linkedin) contactParts.push("LinkedIn");
+    if (basics.links?.github) contactParts.push("GitHub");
+    const contactString = contactParts.join(" • ");
+
+    let expRole = "";
+    let expCompany = "";
+    let expDate = "";
+    
+    if (data.internship && typeof data.internship === "object") {
+        expRole = data.internship.field || "";
+        expCompany = data.internship.company || "";
+        expDate = [data.internship.start, data.internship.end].filter(Boolean).join(" – ");
+    } else if (data.experience) {
+        if (typeof data.experience === "string") {
+            expRole = data.experience;
+        } else if (typeof data.experience === "object") {
+            expRole = data.experience.role || "";
+            expCompany = data.experience.company || "";
+            expDate = [data.experience.start, data.experience.end].filter(Boolean).join(" – ");
+        }
+    } else if (data.projects) {
+        expRole = "Projects";
+        expCompany = typeof data.projects === "string" ? data.projects.substring(0, 40) + "..." : "";
+    }
+
+    return (
+        <div style={{
+            width: "185px",
+            height: "135px",
+            background: "#ffffff",
+            borderRadius: "4px",
+            border: "1px solid rgba(0,0,0,0.06)",
+            boxShadow: "0 4px 12px rgba(0,0,0,0.25)",
+            padding: "8px 10px",
+            boxSizing: "border-box",
+            overflow: "hidden",
+            display: "flex",
+            flexDirection: "column",
+            gap: "2px",
+            color: "#1f2937",
+            textAlign: "left",
+            position: "relative"
+        }}>
+            {/* Header */}
+            <div style={{ paddingBottom: "3px", borderBottom: "0.5px solid #e5e7eb" }}>
+                <div style={{ fontSize: "6.5px", fontWeight: "800", textTransform: "uppercase", color: "#111827", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                    {name}
+                </div>
+                {role && (
+                    <div style={{ fontSize: "5px", fontWeight: "600", color: themeColor || "#4f46e5", marginTop: "0.5px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                        {role}
+                    </div>
+                )}
+                <div style={{ fontSize: "3.8px", color: "#6b7280", marginTop: "1px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                    {contactString || "contact@email.com • 1234567890"}
+                </div>
+            </div>
+
+            {/* Professional Summary */}
+            {summary && (
+                <div style={{ marginTop: "1px" }}>
+                    <div style={{ fontSize: "4.2px", fontWeight: "700", textTransform: "uppercase", color: "#374151" }}>
+                        Professional Summary
+                    </div>
+                    <div style={{
+                        fontSize: "3.5px",
+                        color: "#4b5563",
+                        marginTop: "0.5px",
+                        lineHeight: "1.2",
+                        display: "-webkit-box",
+                        WebkitLineClamp: 3,
+                        WebkitBoxOrient: "vertical",
+                        overflow: "hidden"
+                    }}>
+                        {summary}
+                    </div>
+                </div>
+            )}
+
+            {/* Experience / Internship */}
+            {(expRole || expCompany) && (
+                <div style={{ marginTop: "2px", borderTop: "0.5px dashed #f3f4f6", paddingTop: "2px" }}>
+                    <div style={{ fontSize: "4.2px", fontWeight: "700", textTransform: "uppercase", color: "#374151" }}>
+                        {data.internship ? "Internships" : "Experience"}
+                    </div>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginTop: "0.5px" }}>
+                        <span style={{ fontSize: "3.8px", fontWeight: "700", color: "#111827", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", maxWidth: "70%" }}>
+                            {expRole}
+                        </span>
+                        {expDate && (
+                            <span style={{ fontSize: "3.2px", color: "#9ca3af", flexShrink: 0 }}>
+                                {expDate}
+                            </span>
+                        )}
+                    </div>
+                    {expCompany && (
+                        <div style={{ fontSize: "3.5px", color: "#6b7280", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                            {expCompany}
+                        </div>
+                    )}
+                </div>
+            )}
+        </div>
+    );
+}
 
 export default function MyResumesPage() {
     const router = useRouter();
@@ -174,14 +293,9 @@ export default function MyResumesPage() {
                                     {/* Preview Thumbnail */}
                                     <div style={{ height: "160px", background: theme.bg, position: "relative", overflow: "hidden", display: "flex", alignItems: "center", justifyContent: "center" }}>
                                         <div style={{ position: "absolute", inset: 0, background: `linear-gradient(135deg, ${theme.color}22, transparent)` }} />
-                                        <div style={{ textAlign: "center", position: "relative" }}>
-                                            <div style={{ width: "56px", height: "56px", borderRadius: "14px", background: `${theme.color}22`, border: `2px solid ${theme.color}55`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: "1.3rem", fontWeight: "800", color: theme.color, margin: "0 auto 10px" }}>{initials}</div>
-                                            <div style={{ fontSize: "0.72rem", color: theme.color, fontWeight: "700", textTransform: "uppercase", letterSpacing: "1px", background: `${theme.color}18`, border: `1px solid ${theme.color}35`, borderRadius: "999px", padding: "3px 12px" }}>{template}</div>
+                                        <div style={{ position: "relative", zIndex: 1 }}>
+                                            <ResumeMiniPreview resumeData={resume.resumeData} themeColor={theme.color} />
                                         </div>
-                                        {/* Lines decoration */}
-                                        {[...Array(4)].map((_, i) => (
-                                            <div key={i} style={{ position: "absolute", bottom: `${20 + i * 14}px`, left: "16px", right: "16px", height: "2px", background: "rgba(255,255,255,0.06)", borderRadius: "2px" }} />
-                                        ))}
                                     </div>
 
                                     {/* Card Body */}
