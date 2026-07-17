@@ -44,6 +44,9 @@ export default function TemplateSelection() {
     }, [router]);
 
     const selectTemplate = (id) => {
+        sessionStorage.removeItem("resumeId");
+        sessionStorage.removeItem("resumeData");
+        sessionStorage.removeItem("aiOutput");
         sessionStorage.setItem("selectedTemplate", id);
         if (user) {
             router.push("/builder");

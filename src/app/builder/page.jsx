@@ -634,17 +634,24 @@ export default function ResumeBuilder() {
             // Auto-save to cloud if user is logged in and it's an existing cloud resume
             if (userEmail && resumeId) {
                 const selectedTemplate = sessionStorage.getItem("selectedTemplate") || "classic";
-                fetch("/api/resumes", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        email: userEmail,
-                        id: resumeId,
-                        resumeName,
-                        resumeData: formData,
-                        selectedTemplate
-                    })
-                }).catch(err => console.error("Cloud auto-save error on submit:", err));
+                try {
+                    const response = await fetch("/api/resumes", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({
+                            email: userEmail,
+                            id: resumeId,
+                            resumeName,
+                            resumeData: formData,
+                            selectedTemplate
+                        })
+                    });
+                    if (!response.ok) {
+                        console.error("Cloud auto-save failed on submit");
+                    }
+                } catch (err) {
+                    console.error("Cloud auto-save error on submit:", err);
+                }
             }
 
             const prompt = `
