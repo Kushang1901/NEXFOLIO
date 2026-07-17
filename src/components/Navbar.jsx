@@ -28,6 +28,7 @@ export default function Navbar() {
     const [mobileTemplatesOpen, setMobileTemplatesOpen] = useState(false);
     const [showAiDropdown, setShowAiDropdown] = useState(false);
     const [mobileAiOpen, setMobileAiOpen] = useState(false);
+    const [hidden, setHidden] = useState(false);
 
     const handleCategoryClick = (category) => {
         if (typeof window !== "undefined") {
@@ -75,6 +76,41 @@ export default function Navbar() {
     // Close drawer on route change
     useEffect(() => { setMenuOpen(false); }, [pathname]);
 
+    useEffect(() => {
+        let lastScrollY = window.scrollY;
+        
+        const handleScroll = () => {
+            if (menuOpen) {
+                setHidden(false);
+                return;
+            }
+            
+            // Do not hide if cursor is hovering over the navbar
+            const isNavbarHovered = document.querySelector('nav:hover') !== null;
+            if (isNavbarHovered) {
+                setHidden(false);
+                return;
+            }
+            
+            const currentScrollY = window.scrollY;
+            const diff = currentScrollY - lastScrollY;
+            
+            if (currentScrollY <= 10) {
+                setHidden(false);
+            } else if (Math.abs(diff) > 5) {
+                if (diff > 0) {
+                    setHidden(true);
+                } else {
+                    setHidden(false);
+                }
+            }
+            lastScrollY = currentScrollY;
+        };
+
+        window.addEventListener("scroll", handleScroll, { passive: true });
+        return () => window.removeEventListener("scroll", handleScroll);
+    }, [menuOpen]);
+
     const handleLogout = async () => {
         if (typeof window !== "undefined") localStorage.removeItem("mock_user");
         try { await signOut(auth); } catch (err) { console.error("Firebase SignOut error:", err); }
@@ -91,10 +127,12 @@ export default function Navbar() {
             {/* ── Top Navbar ── */}
             <nav style={{
                 position: "sticky", top: 0, zIndex: 1000,
-                background: "rgba(0,0,0,0.92)",
-                backdropFilter: "blur(12px)",
-                borderBottom: "1px solid rgba(255,255,255,0.07)",
-                boxShadow: "0 2px 24px rgba(0,0,0,0.5)",
+                background: "rgba(8, 8, 12, 0.85)",
+                backdropFilter: "blur(16px)",
+                borderBottom: "1px solid rgba(255,255,255,0.08)",
+                boxShadow: "0 4px 30px rgba(0,0,0,0.4)",
+                transform: hidden ? "translateY(-100%)" : "translateY(0)",
+                transition: "transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), background 0.3s ease, border-color 0.3s ease",
             }}>
                 <div style={{
                     maxWidth: "1280px", margin: "0 auto",
@@ -118,28 +156,21 @@ export default function Navbar() {
                     <div style={{ width: "1px", height: "28px", background: "rgba(255,255,255,0.12)", flexShrink: 0 }} className="d-none d-lg-block" />
 
                     {/* ── Desktop: Left Nav Links ── */}
-                    <div className="d-none d-lg-flex align-items-center" style={{ gap: "4px", flex: 1 }}>
+                    <div className="d-none d-lg-flex" style={{ gap: "4px", flex: 1, height: "100%", alignItems: "stretch", alignSelf: "stretch" }}>
                         {NAV_LINKS.map((link) => {
                             if (link.label === "Templates") {
                                 return (
                                     <div
                                         key={link.href}
-                                        onMouseEnter={() => setShowTemplatesDropdown(true)}
-                                        onMouseLeave={() => setShowTemplatesDropdown(false)}
-                                        style={{ position: "static" }}
+                                        className="nav-item-wrapper"
                                     >
-                                        <Link href={link.href} style={{
-                                            ...desktopLinkStyle,
-                                            color: isActive(link.href) || showTemplatesDropdown ? "#fff" : "rgba(255,255,255,0.65)",
-                                            background: isActive(link.href) || showTemplatesDropdown ? "rgba(255,255,255,0.08)" : "transparent",
-                                            borderBottom: isActive(link.href) || showTemplatesDropdown ? "2px solid #6f9dff" : "2px solid transparent",
-                                        }}>
+                                        <Link href={link.href} className={`nav-link-item ${isActive(link.href) ? 'active' : ''}`}>
                                             {link.label}
+                                            <ChevronDown size={14} className="chevron-icon" />
                                         </Link>
 
                                         {/* MEGA DROPDOWN */}
-                                        {showTemplatesDropdown && (
-                                            <div style={megaDropdownStyle}>
+                                        <div className="mega-dropdown-menu">
                                                 <div style={megaDropdownContainerStyle}>
                                                     {/* Left Column: Grid */}
                                                     <div>
@@ -389,30 +420,22 @@ export default function Navbar() {
                                                     </div>
                                                 </div>
                                             </div>
-                                        )}
-                                    </div>
+                                        </div>
                                 );
                             }
                             if (link.label === "AI Tools") {
                                 return (
                                     <div
                                         key={link.href}
-                                        onMouseEnter={() => setShowAiDropdown(true)}
-                                        onMouseLeave={() => setShowAiDropdown(false)}
-                                        style={{ position: "static" }}
+                                        className="nav-item-wrapper"
                                     >
-                                        <Link href={link.href} style={{
-                                            ...desktopLinkStyle,
-                                            color: isActive(link.href) || showAiDropdown ? "#fff" : "rgba(255,255,255,0.65)",
-                                            background: isActive(link.href) || showAiDropdown ? "rgba(255,255,255,0.08)" : "transparent",
-                                            borderBottom: isActive(link.href) || showAiDropdown ? "2px solid #a78bfa" : "2px solid transparent",
-                                        }}>
+                                        <Link href={link.href} className={`nav-link-item ${isActive(link.href) ? 'active' : ''}`}>
                                             {link.label}
+                                            <ChevronDown size={14} className="chevron-icon" />
                                         </Link>
 
                                         {/* AI TOOLS MEGA DROPDOWN */}
-                                        {showAiDropdown && (
-                                            <div style={aiMegaDropdownStyle}>
+                                        <div className="mega-dropdown-menu">
                                                 <div style={megaDropdownContainerStyle}>
                                                     {/* Left Column: Grid */}
                                                     <div>
@@ -560,36 +583,23 @@ export default function Navbar() {
                                                     </div>
                                                 </div>
                                             </div>
-                                        )}
-                                    </div>
+                                        </div>
                                 );
                             }
                             return (
-                                <Link key={link.href} href={link.href} style={{
-                                    ...desktopLinkStyle,
-                                    color: isActive(link.href) ? "#fff" : "rgba(255,255,255,0.65)",
-                                    background: isActive(link.href) ? "rgba(255,255,255,0.08)" : "transparent",
-                                    borderBottom: isActive(link.href) ? "2px solid #6f9dff" : "2px solid transparent",
-                                }}
-                                    onMouseEnter={e => { if (!isActive(link.href)) { e.currentTarget.style.color = "#fff"; e.currentTarget.style.background = "rgba(255,255,255,0.05)"; } }}
-                                    onMouseLeave={e => { if (!isActive(link.href)) { e.currentTarget.style.color = "rgba(255,255,255,0.65)"; e.currentTarget.style.background = "transparent"; } }}
-                                >
-                                    {link.label}
-                                </Link>
+                                <div key={link.href} className="nav-item-wrapper">
+                                    <Link href={link.href} className={`nav-link-item ${isActive(link.href) ? 'active' : ''}`}>
+                                        {link.label}
+                                    </Link>
+                                </div>
                             );
                         })}
                         {user && (
-                            <Link href="/my-resumes" style={{
-                                ...desktopLinkStyle,
-                                color: isActive("/my-resumes") ? "#fff" : "rgba(255,255,255,0.65)",
-                                background: isActive("/my-resumes") ? "rgba(255,255,255,0.08)" : "transparent",
-                                borderBottom: isActive("/my-resumes") ? "2px solid #6f9dff" : "2px solid transparent",
-                            }}
-                                onMouseEnter={e => { if (!isActive("/my-resumes")) { e.currentTarget.style.color = "#fff"; e.currentTarget.style.background = "rgba(255,255,255,0.05)"; } }}
-                                onMouseLeave={e => { if (!isActive("/my-resumes")) { e.currentTarget.style.color = "rgba(255,255,255,0.65)"; e.currentTarget.style.background = "transparent"; } }}
-                            >
-                                My Resumes
-                            </Link>
+                            <div className="nav-item-wrapper">
+                                <Link href="/my-resumes" className={`nav-link-item ${isActive("/my-resumes") ? 'active' : ''}`}>
+                                    My Resumes
+                                </Link>
+                            </div>
                         )}
                     </div>
 
@@ -989,6 +999,69 @@ export default function Navbar() {
                         transform: translateY(0);
                     }
                 }
+                .nav-item-wrapper {
+                    position: static;
+                    display: flex;
+                    align-items: center;
+                    height: 100%;
+                }
+                .nav-link-item {
+                    text-decoration: none !important;
+                    font-size: 0.85rem;
+                    font-weight: 500;
+                    padding: 6px 14px;
+                    border-radius: 20px;
+                    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+                    white-space: nowrap;
+                    display: flex;
+                    align-items: center;
+                    gap: 6px;
+                    border: 1px solid transparent;
+                    color: rgba(255, 255, 255, 0.65) !important;
+                    background: transparent;
+                }
+                .nav-link-item:hover,
+                .nav-item-wrapper:hover .nav-link-item {
+                    color: #fff !important;
+                    background: rgba(255, 255, 255, 0.08) !important;
+                    border-color: rgba(255, 255, 255, 0.12) !important;
+                }
+                .nav-link-item.active {
+                    color: #fff !important;
+                    background: rgba(255, 255, 255, 0.08) !important;
+                    border-color: rgba(255, 255, 255, 0.12) !important;
+                }
+                .chevron-icon {
+                    opacity: 0.7;
+                    transition: transform 0.24s cubic-bezier(0.16, 1, 0.3, 1);
+                }
+                .nav-item-wrapper:hover .chevron-icon {
+                    transform: rotate(180deg);
+                }
+                .mega-dropdown-menu {
+                    position: absolute;
+                    top: 64px;
+                    left: 0;
+                    right: 0;
+                    width: 100vw;
+                    background: rgba(8, 8, 12, 0.96);
+                    backdrop-filter: blur(20px);
+                    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+                    box-shadow: 0 20px 48px rgba(0,0,0,0.85);
+                    z-index: 999;
+                    padding: 36px 0;
+                    opacity: 0;
+                    transform: translateY(-10px);
+                    pointer-events: none;
+                    visibility: hidden;
+                    transition: opacity 0.25s cubic-bezier(0.16, 1, 0.3, 1), transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.25s;
+                }
+                .nav-item-wrapper:hover .mega-dropdown-menu {
+                    opacity: 1;
+                    transform: translateY(0);
+                    pointer-events: auto;
+                    visibility: visible;
+                }
             `}</style>
         </>
     );
@@ -996,9 +1069,11 @@ export default function Navbar() {
 
 /* ── Shared Styles ── */
 const desktopLinkStyle = {
-    textDecoration: "none", fontSize: "0.88rem", fontWeight: "500",
-    padding: "6px 12px", borderRadius: "6px 6px 0 0",
-    transition: "all 0.15s ease", whiteSpace: "nowrap",
+    textDecoration: "none", fontSize: "0.85rem", fontWeight: "500",
+    padding: "6px 14px", borderRadius: "20px",
+    transition: "all 0.25s cubic-bezier(0.16, 1, 0.3, 1)", whiteSpace: "nowrap",
+    display: "flex", alignItems: "center", gap: "6px",
+    border: "1px solid transparent",
 };
 const hamburgerStyle = {
     background: "rgba(255,255,255,0.07)", border: "1px solid rgba(255,255,255,0.15)",
@@ -1061,13 +1136,12 @@ const megaDropdownStyle = {
     left: 0,
     right: 0,
     width: "100vw",
-    background: "rgba(5, 5, 8, 0.96)",
+    background: "rgba(8, 8, 12, 0.96)",
     backdropFilter: "blur(20px)",
     borderBottom: "1px solid rgba(255, 255, 255, 0.08)",
     boxShadow: "0 20px 48px rgba(0,0,0,0.85)",
     zIndex: 999,
     padding: "36px 0",
-    animation: "navSlideDown 0.24s cubic-bezier(0.16, 1, 0.3, 1)",
 };
 
 const megaDropdownContainerStyle = {
@@ -1183,13 +1257,12 @@ const aiMegaDropdownStyle = {
     left: 0,
     right: 0,
     width: "100vw",
-    background: "rgba(5, 5, 8, 0.96)",
+    background: "rgba(8, 8, 12, 0.96)",
     backdropFilter: "blur(20px)",
     borderBottom: "1px solid rgba(255, 255, 255, 0.08)",
     boxShadow: "0 20px 48px rgba(0,0,0,0.85)",
     zIndex: 999,
     padding: "36px 0",
-    animation: "navSlideDown 0.24s cubic-bezier(0.16, 1, 0.3, 1)",
 };
 
 const aiMegaDropdownTitleStyle = {
