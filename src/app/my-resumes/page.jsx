@@ -9,6 +9,35 @@ import { showToast } from "../../utils/toast";
 import { normalizeResumeData } from "../../utils/resumeAdapter";
 import { LayoutDashboard, Plus, FileText, Palette, Pencil, Eye, Trash2, Lightbulb } from "lucide-react";
 
+import ClassicTemplate from "../../templates/ClassicTemplate";
+import ModernTemplate from "../../templates/ModernTemplate";
+import CreativeTemplate from "../../templates/CreativeTemplate";
+import MinimalistTemplate from "../../templates/MinimalistTemplate";
+import ExecutiveTemplate from "../../templates/ExecutiveTemplate";
+import DeveloperTemplate from "../../templates/DeveloperTemplate";
+import ElegantTemplate from "../../templates/ElegantTemplate";
+import AccentTemplate from "../../templates/AccentTemplate";
+import NavyEleganceTemplate from "../../templates/NavyEleganceTemplate";
+import ModernMinimalistTemplate from "../../templates/ModernMinimalistTemplate";
+import EmeraldTemplate from "../../templates/EmeraldTemplate";
+import SlateTwoColumnTemplate from "../../templates/SlateTwoColumnTemplate";
+import SunriseTemplate from "../../templates/SunriseTemplate";
+import MidnightTemplate from "../../templates/MidnightTemplate";
+import NordicTemplate from "../../templates/NordicTemplate";
+import CrimsonTemplate from "../../templates/CrimsonTemplate";
+import AuroraTemplate from "../../templates/AuroraTemplate";
+import TimelineTemplate from "../../templates/TimelineTemplate";
+import CompactATSTemplate from "../../templates/CompactATSTemplate";
+import GraduateTemplate from "../../templates/GraduateTemplate";
+import SwissGridTemplate from "../../templates/SwissGridTemplate";
+import ProductManagerTemplate from "../../templates/ProductManagerTemplate";
+import DataAnalystTemplate from "../../templates/DataAnalystTemplate";
+import BentoTemplate from "../../templates/BentoTemplate";
+import IvyLeagueTemplate from "../../templates/IvyLeagueTemplate";
+import BlueprintTemplate from "../../templates/BlueprintTemplate";
+import ConsultantTemplate from "../../templates/ConsultantTemplate";
+import PortfolioResumeTemplate from "../../templates/PortfolioResumeTemplate";
+
 const TEMPLATE_THEMES = {
     classic: { bg: "#1e1e2e", color: "#6c71c4" },
     modern: { bg: "#0d1b2a", color: "#4f8ef7" },
@@ -49,120 +78,90 @@ const getInitials = (name) => {
     return name.slice(0, 2).toUpperCase();
 };
 
-function ResumeMiniPreview({ resumeData, themeColor }) {
-    const data = normalizeResumeData(resumeData);
-    const basics = data.basics || {};
-    const name = basics.name || "Untitled Resume";
-    const role = basics.role || "";
-    const email = basics.email || "";
-    const phone = basics.phone || "";
-    const summary = data.summary || "";
-    
-    const contactParts = [];
-    if (email) contactParts.push(email);
-    if (phone) contactParts.push(phone);
-    if (basics.links?.linkedin) contactParts.push("LinkedIn");
-    if (basics.links?.github) contactParts.push("GitHub");
-    const contactString = contactParts.join(" • ");
+const TEMPLATE_COMPONENTS = {
+    classic: ClassicTemplate,
+    modern: ModernTemplate,
+    creative: CreativeTemplate,
+    minimalist: MinimalistTemplate,
+    executive: ExecutiveTemplate,
+    developer: DeveloperTemplate,
+    elegant: ElegantTemplate,
+    accent: AccentTemplate,
+    navy_elegance: NavyEleganceTemplate,
+    minimalist_bw: ModernMinimalistTemplate,
+    emerald: EmeraldTemplate,
+    slate_two_column: SlateTwoColumnTemplate,
+    sunrise: SunriseTemplate,
+    midnight: MidnightTemplate,
+    nordic: NordicTemplate,
+    crimson: CrimsonTemplate,
+    aurora: AuroraTemplate,
+    timeline: TimelineTemplate,
+    compact_ats: CompactATSTemplate,
+    graduate: GraduateTemplate,
+    swiss_grid: SwissGridTemplate,
+    product_manager: ProductManagerTemplate,
+    data_analyst: DataAnalystTemplate,
+    bento: BentoTemplate,
+    ivy_league: IvyLeagueTemplate,
+    blueprint: BlueprintTemplate,
+    consultant: ConsultantTemplate,
+    portfolio_resume: PortfolioResumeTemplate,
+};
 
-    let expRole = "";
-    let expCompany = "";
-    let expDate = "";
-    
-    if (data.internship && typeof data.internship === "object") {
-        expRole = data.internship.field || "";
-        expCompany = data.internship.company || "";
-        expDate = [data.internship.start, data.internship.end].filter(Boolean).join(" – ");
-    } else if (data.experience) {
-        if (typeof data.experience === "string") {
-            expRole = data.experience;
-        } else if (typeof data.experience === "object") {
-            expRole = data.experience.role || "";
-            expCompany = data.experience.company || "";
-            expDate = [data.experience.start, data.experience.end].filter(Boolean).join(" – ");
-        }
-    } else if (data.projects) {
-        expRole = "Projects";
-        expCompany = typeof data.projects === "string" ? data.projects.substring(0, 40) + "..." : "";
-    }
+function ResumeMiniPreview({ template, resumeData }) {
+    const [containerWidth, setContainerWidth] = useState(290);
+    const containerRef = React.useRef(null);
+
+    useEffect(() => {
+        if (!containerRef.current) return;
+        
+        const updateWidth = () => {
+            if (containerRef.current) {
+                setContainerWidth(containerRef.current.getBoundingClientRect().width);
+            }
+        };
+
+        updateWidth();
+
+        const observer = new ResizeObserver(updateWidth);
+        observer.observe(containerRef.current);
+        return () => observer.disconnect();
+    }, []);
+
+    const data = normalizeResumeData(resumeData);
+    const TemplateComponent = TEMPLATE_COMPONENTS[template] || ClassicTemplate;
+
+    // Standard unscaled width of A4 template is 794px.
+    const scale = containerWidth / 794;
+    const unscaledHeight = 160 / scale;
 
     return (
-        <div style={{
-            width: "185px",
-            height: "135px",
-            background: "#ffffff",
-            borderRadius: "4px",
-            border: "1px solid rgba(0,0,0,0.06)",
-            boxShadow: "0 4px 12px rgba(0,0,0,0.25)",
-            padding: "8px 10px",
-            boxSizing: "border-box",
-            overflow: "hidden",
-            display: "flex",
-            flexDirection: "column",
-            gap: "2px",
-            color: "#1f2937",
-            textAlign: "left",
-            position: "relative"
-        }}>
-            {/* Header */}
-            <div style={{ paddingBottom: "3px", borderBottom: "0.5px solid #e5e7eb" }}>
-                <div style={{ fontSize: "6.5px", fontWeight: "800", textTransform: "uppercase", color: "#111827", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                    {name}
-                </div>
-                {role && (
-                    <div style={{ fontSize: "5px", fontWeight: "600", color: themeColor || "#4f46e5", marginTop: "0.5px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                        {role}
-                    </div>
-                )}
-                <div style={{ fontSize: "3.8px", color: "#6b7280", marginTop: "1px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                    {contactString || "contact@email.com • 1234567890"}
-                </div>
+        <div 
+            ref={containerRef} 
+            style={{ 
+                width: "100%", 
+                height: "160px", 
+                overflow: "hidden", 
+                position: "relative",
+                backgroundColor: "#ffffff"
+            }}
+        >
+            <div style={{
+                position: "absolute",
+                top: 0,
+                left: 0,
+                width: "794px",
+                height: `${unscaledHeight}px`,
+                transform: `scale(${scale})`,
+                transformOrigin: "top left",
+                pointerEvents: "none",
+                overflow: "hidden",
+                backgroundColor: "#ffffff",
+                color: "#000000"
+            }}>
+                <TemplateComponent data={data} />
             </div>
-
-            {/* Professional Summary */}
-            {summary && (
-                <div style={{ marginTop: "1px" }}>
-                    <div style={{ fontSize: "4.2px", fontWeight: "700", textTransform: "uppercase", color: "#374151" }}>
-                        Professional Summary
-                    </div>
-                    <div style={{
-                        fontSize: "3.5px",
-                        color: "#4b5563",
-                        marginTop: "0.5px",
-                        lineHeight: "1.2",
-                        display: "-webkit-box",
-                        WebkitLineClamp: 3,
-                        WebkitBoxOrient: "vertical",
-                        overflow: "hidden"
-                    }}>
-                        {summary}
-                    </div>
-                </div>
-            )}
-
-            {/* Experience / Internship */}
-            {(expRole || expCompany) && (
-                <div style={{ marginTop: "2px", borderTop: "0.5px dashed #f3f4f6", paddingTop: "2px" }}>
-                    <div style={{ fontSize: "4.2px", fontWeight: "700", textTransform: "uppercase", color: "#374151" }}>
-                        {data.internship ? "Internships" : "Experience"}
-                    </div>
-                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginTop: "0.5px" }}>
-                        <span style={{ fontSize: "3.8px", fontWeight: "700", color: "#111827", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", maxWidth: "70%" }}>
-                            {expRole}
-                        </span>
-                        {expDate && (
-                            <span style={{ fontSize: "3.2px", color: "#9ca3af", flexShrink: 0 }}>
-                                {expDate}
-                            </span>
-                        )}
-                    </div>
-                    {expCompany && (
-                        <div style={{ fontSize: "3.5px", color: "#6b7280", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                            {expCompany}
-                        </div>
-                    )}
-                </div>
-            )}
         </div>
     );
 }
@@ -291,11 +290,8 @@ export default function MyResumesPage() {
                                     onMouseLeave={e => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.08)"; e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "none"; }}
                                 >
                                     {/* Preview Thumbnail */}
-                                    <div style={{ height: "160px", background: theme.bg, position: "relative", overflow: "hidden", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                                        <div style={{ position: "absolute", inset: 0, background: `linear-gradient(135deg, ${theme.color}22, transparent)` }} />
-                                        <div style={{ position: "relative", zIndex: 1 }}>
-                                            <ResumeMiniPreview resumeData={resume.resumeData} themeColor={theme.color} />
-                                        </div>
+                                    <div style={{ height: "160px", position: "relative", overflow: "hidden" }}>
+                                        <ResumeMiniPreview template={template} resumeData={resume.resumeData} />
                                     </div>
 
                                     {/* Card Body */}
