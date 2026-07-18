@@ -42,6 +42,7 @@ import { normalizeResumeData } from "../../utils/resumeAdapter";
 import { useRouter } from "next/navigation";
 import { showToast } from "../../utils/toast";
 import { subscribeToAuthChanges } from "../../authState";
+import ReviewModal from "../../components/ReviewModal";
 
 export default function Preview() {
     const router = useRouter();
@@ -74,6 +75,16 @@ export default function Preview() {
     const [templateSearchQuery, setTemplateSearchQuery] = useState("");
     const [templateSelectedCategory, setTemplateSelectedCategory] = useState("all");
     const [templateLoadingText, setTemplateLoadingText] = useState("Applying template...");
+
+    // Review Modal States
+    const [showReviewModal, setShowReviewModal] = useState(false);
+
+    const triggerReviewPrompt = () => {
+        const alreadyReviewed = localStorage.getItem("cvgrid_has_reviewed");
+        if (!alreadyReviewed) {
+            setShowReviewModal(true);
+        }
+    };
 
     const saveTemplateChange = async (newTemplateId) => {
         setIsChangingTemplate(true);
@@ -378,6 +389,9 @@ export default function Preview() {
             document.body.removeChild(link);
             setShowDownloadModal(false);
             showToast("Resume downloaded as PNG successfully!", "success");
+            setTimeout(() => {
+                triggerReviewPrompt();
+            }, 1200);
         } catch (err) {
             console.error(err);
             showToast("Failed to download as PNG. Please try again.", "error");
@@ -432,6 +446,9 @@ export default function Preview() {
             pdf.save(`${resumeData?.fullName ? resumeData.fullName.replace(/\s+/g, "_") : "Resume"}.pdf`);
             setShowDownloadModal(false);
             showToast("Resume downloaded as PDF successfully!", "success");
+            setTimeout(() => {
+                triggerReviewPrompt();
+            }, 1200);
         } catch (err) {
             console.error(err);
             showToast("Failed to download as PDF. Please try again.", "error");
@@ -1865,6 +1882,13 @@ export default function Preview() {
                     </div>
                 </div>
             )}
+
+            <ReviewModal 
+                isOpen={showReviewModal} 
+                onClose={() => setShowReviewModal(false)} 
+                userEmail={userEmail} 
+                initialUserName={resumeData?.fullName || ""} 
+            />
         </div>
     );
 }

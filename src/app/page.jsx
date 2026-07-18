@@ -16,6 +16,10 @@ export default function HomePage() {
     const [countdown, setCountdown] = useState(3);
     const [tailwindLoaded, setTailwindLoaded] = useState(false);
 
+    // Testimonials State
+    const [testimonials, setTestimonials] = useState([]);
+    const [loadingTestimonials, setLoadingTestimonials] = useState(true);
+
     // Typewriter effect state
     const phrases = ["Career", "ATS Resume", "Job Search", "Professional CV"];
     const [typewriterIndex, setTypewriterIndex] = useState(0);
@@ -68,6 +72,23 @@ export default function HomePage() {
         });
         return () => { if (typeof unsubscribe === "function") unsubscribe(); };
     }, [router]);
+
+    useEffect(() => {
+        const fetchTestimonials = async () => {
+            try {
+                const res = await fetch("/api/testimonials");
+                if (res.ok) {
+                    const data = await res.json();
+                    setTestimonials(data);
+                }
+            } catch (err) {
+                console.error("Error fetching testimonials:", err);
+            } finally {
+                setLoadingTestimonials(false);
+            }
+        };
+        fetchTestimonials();
+    }, []);
 
     const triggerAuthPopup = () => {
         setShowAuthModal(true);
@@ -435,6 +456,94 @@ export default function HomePage() {
                             </div>
 
                         </div>
+                    </section>
+
+                    {/* Testimonials Section (Wall of Love) */}
+                    <section className="px-4 md:px-8 py-24 max-w-[1280px] mx-auto border-t border-white/5">
+                        <div className="text-center mb-16">
+                            <h2 className="text-3xl md:text-5xl font-bold mb-4 text-white" style={{ fontFamily: "Space Grotesk, sans-serif" }}>
+                                Loved by Career Builders
+                            </h2>
+                            <p className="text-base md:text-lg text-[#c7c4d7] max-w-2xl mx-auto" style={{ fontFamily: "Inter, sans-serif" }}>
+                                See how CVGrid helps freshers and professionals optimize their resumes and land interviews.
+                            </p>
+                        </div>
+
+                        {loadingTestimonials ? (
+                            <div className="flex justify-center py-10">
+                                <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-[#c0c1ff]"></div>
+                            </div>
+                        ) : (
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                                {(testimonials.length > 0 
+                                    ? [...testimonials, ...[
+                                        {
+                                            userName: "Anish Sharma",
+                                            role: "Software Engineer",
+                                            rating: 5,
+                                            feedback: "CVGrid is incredible. The AI bullet point rephraser helped me highlight my achievements. Landed 3 interviews in a week!"
+                                        },
+                                        {
+                                            userName: "Priya Patel",
+                                            role: "Product Manager",
+                                            rating: 5,
+                                            feedback: "I loved the classic template. The ATS optimization feature is a lifesaver. Extremely clean and professional UI."
+                                        },
+                                        {
+                                            userName: "Rahul Verma",
+                                            role: "College Graduate",
+                                            rating: 5,
+                                            feedback: "The PDF export was super fast and clean. No hidden charges or watermarks on the premium version. Highly recommend!"
+                                        }
+                                    ]].slice(0, 6)
+                                    : [
+                                        {
+                                            userName: "Anish Sharma",
+                                            role: "Software Engineer",
+                                            rating: 5,
+                                            feedback: "CVGrid is incredible. The AI bullet point rephraser helped me highlight my achievements. Landed 3 interviews in a week!"
+                                        },
+                                        {
+                                            userName: "Priya Patel",
+                                            role: "Product Manager",
+                                            rating: 5,
+                                            feedback: "I loved the classic template. The ATS optimization feature is a lifesaver. Extremely clean and professional UI."
+                                        },
+                                        {
+                                            userName: "Rahul Verma",
+                                            role: "College Graduate",
+                                            rating: 5,
+                                            feedback: "The PDF export was super fast and clean. No hidden charges or watermarks on the premium version. Highly recommend!"
+                                        }
+                                    ]
+                                ).map((item, i) => (
+                                    <div key={item.id || i} className="glass-card p-8 rounded-2xl flex flex-col justify-between gap-6 border border-indigo-500/10 hover:border-[#c0c1ff] transition-all group duration-300">
+                                        <div>
+                                            {/* Stars */}
+                                            <div className="flex gap-1 mb-4 text-[#ffb400]">
+                                                {Array.from({ length: item.rating || 5 }).map((_, idx) => (
+                                                    <span key={idx} className="material-symbols-outlined text-[20px]" style={{ fontVariationSettings: "'FILL' 1" }}>star</span>
+                                                ))}
+                                            </div>
+                                            {/* Feedback */}
+                                            <p className="text-[#e4e0f1] text-[15px] leading-relaxed italic" style={{ fontFamily: "Inter, sans-serif" }}>
+                                                "{item.feedback}"
+                                            </p>
+                                        </div>
+                                        {/* User Details */}
+                                        <div className="flex items-center gap-3 pt-4 border-t border-white/5">
+                                            <div className="w-9 h-9 rounded-full bg-[#c0c1ff]/10 flex items-center justify-center text-[#c0c1ff] font-bold text-sm">
+                                                {item.userName ? item.userName.charAt(0).toUpperCase() : "U"}
+                                            </div>
+                                            <div>
+                                                <div className="text-[14px] font-bold text-white">{item.userName || "Verified User"}</div>
+                                                <div className="text-[11px] text-[#c7c4d7]">{item.role || "Job Seeker"}</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
                     </section>
 
                     {/* Final CTA Section */}

@@ -100,7 +100,20 @@ export async function initDb() {
             );
         `;
 
-        console.log("✅ Database initialized successfully (users, resumes, cookie_consents, and payments tables checked/created/migrated)");
+        // Create testimonials table
+        await sql`
+            CREATE TABLE IF NOT EXISTS testimonials (
+                id SERIAL PRIMARY KEY,
+                user_name VARCHAR(150) NOT NULL,
+                user_email VARCHAR(255),
+                rating INT NOT NULL CHECK (rating >= 1 AND rating <= 5),
+                feedback TEXT,
+                is_public BOOLEAN DEFAULT TRUE,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            );
+        `;
+
+        console.log("✅ Database initialized successfully (users, resumes, cookie_consents, payments, and testimonials tables checked/created/migrated)");
     } catch (error) {
         console.error("❌ Database initialization failed:", error);
         throw error;
