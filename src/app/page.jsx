@@ -90,6 +90,196 @@ export default function HomePage() {
         fetchTestimonials();
     }, []);
 
+    useEffect(() => {
+        const canvas = document.getElementById("crystal-canvas");
+        if (!canvas) return;
+        const ctx = canvas.getContext("2d");
+        if (!ctx) return;
+
+        let animationFrameId;
+        let width = (canvas.width = canvas.offsetWidth);
+        let height = (canvas.height = canvas.offsetHeight);
+
+        const handleResize = () => {
+            if (!canvas) return;
+            width = canvas.width = canvas.offsetWidth;
+            height = canvas.height = canvas.offsetHeight;
+        };
+        window.addEventListener("resize", handleResize);
+
+        // Particle nodes for faint neural network connection and micro glows
+        let particles = [];
+        const maxParticles = 35;
+        const colors = [
+            "rgba(139, 92, 246, 0.25)", // Purple
+            "rgba(99, 102, 241, 0.25)", // Indigo
+            "rgba(59, 130, 246, 0.25)"  // Blue
+        ];
+
+        for (let i = 0; i < maxParticles; i++) {
+            particles.push({
+                x: Math.random() * width,
+                y: Math.random() * height,
+                vx: (Math.random() - 0.5) * 0.2,
+                vy: (Math.random() - 0.5) * 0.2,
+                radius: Math.random() * 1.5 + 0.8,
+                color: colors[Math.floor(Math.random() * colors.length)]
+            });
+        }
+
+        // Draw hexagon helper for subtle hexagonal grid
+        const drawHexagon = (ctx, x, y, size) => {
+            ctx.beginPath();
+            for (let i = 0; i < 6; i++) {
+                const angle = (i * Math.PI) / 3;
+                const hx = x + Math.cos(angle) * size;
+                const hy = y + Math.sin(angle) * size;
+                if (i === 0) ctx.moveTo(hx, hy);
+                else ctx.lineTo(hx, hy);
+            }
+            ctx.closePath();
+            ctx.strokeStyle = "rgba(99, 102, 241, 0.02)";
+            ctx.lineWidth = 0.8;
+            ctx.stroke();
+        };
+
+        const drawWave = (ctx, startX, startY, endX, endY, numStrands, amplitude, freq, speed, time, baseAlpha) => {
+            const dx = endX - startX;
+            const dy = endY - startY;
+            const len = Math.sqrt(dx * dx + dy * dy);
+            
+            const px = -dy / len;
+            const py = dx / len;
+
+            for (let s = 0; s < numStrands; s++) {
+                ctx.beginPath();
+                const strandAmp = amplitude + s * 8;
+                const strandFreq = freq + s * 0.08;
+                const strandPhase = time * speed + s * 0.16;
+                
+                let color;
+                if (s % 3 === 0) {
+                    color = `rgba(139, 92, 246, ${(baseAlpha - s * 0.015).toFixed(3)})`; // Purple
+                } else if (s % 3 === 1) {
+                    color = `rgba(99, 102, 241, ${(baseAlpha * 1.2 - s * 0.015).toFixed(3)})`; // Indigo
+                } else {
+                    color = `rgba(59, 130, 246, ${(baseAlpha - s * 0.015).toFixed(3)})`; // Electric Blue
+                }
+
+                for (let t = 0; t <= 1; t += 0.005) {
+                    const bx = startX + t * dx;
+                    const by = startY + t * dy;
+
+                    // Fade waves at start and end
+                    const taper = Math.sin(t * Math.PI); 
+
+                    // Double frequency wave for high fidelity fluid motion
+                    const waveOffset = Math.sin(t * strandFreq * Math.PI - strandPhase) * strandAmp * taper
+                                     + Math.cos(t * (strandFreq * 1.6) * Math.PI + strandPhase * 0.6) * (strandAmp * 0.22) * taper;
+
+                    const x = bx + px * waveOffset;
+                    const y = by + py * waveOffset;
+
+                    if (t === 0) ctx.moveTo(x, y);
+                    else ctx.lineTo(x, y);
+                }
+
+                ctx.strokeStyle = color;
+                ctx.lineWidth = s === 0 ? 1.4 : 0.8;
+                ctx.stroke();
+            }
+        };
+
+        let lastTime = 0;
+
+        const animate = (timestamp) => {
+            if (!lastTime) lastTime = timestamp;
+            ctx.clearRect(0, 0, width, height);
+
+            // 1. Draw extremely subtle background Hexagonal Grid (static placement)
+            drawHexagon(ctx, width * 0.2, height * 0.3, 100);
+            drawHexagon(ctx, width * 0.2 + 150, height * 0.3 + 86, 100);
+            drawHexagon(ctx, width * 0.8, height * 0.7, 120);
+            drawHexagon(ctx, width * 0.85, height * 0.3, 80);
+            drawHexagon(ctx, width * 0.5, height * 0.8, 140);
+
+            // 2. Draw flowing wave ribbons (diagonally sweeping top-right to bottom-left)
+            // Ribbon Group 1: Main diagonal wave sweep
+            drawWave(
+                ctx, 
+                width * 1.15, -height * 0.15, 
+                -width * 0.15, height * 1.15, 
+                6, // strands
+                75, // amplitude
+                3.8, // frequency
+                0.0006, // speed
+                timestamp, 
+                0.06 // alpha
+            );
+
+            // Ribbon Group 2: Secondary wave sweep for overlapping organic depth
+            drawWave(
+                ctx, 
+                width * 1.25, -height * 0.05, 
+                -width * 0.05, height * 1.25, 
+                5, // strands
+                50, // amplitude
+                5.2, // frequency
+                -0.0008, // speed (opposite direction offset)
+                timestamp, 
+                0.045 // alpha
+            );
+
+            // 3. Update and draw nodes (microscopic glowing particles)
+            for (let i = 0; i < particles.length; i++) {
+                const p = particles[i];
+                p.x += p.vx;
+                p.y += p.vy;
+
+                if (p.x < 0) p.x = width;
+                if (p.x > width) p.x = 0;
+                if (p.y < 0) p.y = height;
+                if (p.y > height) p.y = 0;
+
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                ctx.fillStyle = p.color;
+                ctx.fill();
+            }
+
+            // 4. Draw node connections (abstract neural networks)
+            for (let i = 0; i < particles.length; i++) {
+                for (let j = i + 1; j < particles.length; j++) {
+                    const pi = particles[i];
+                    const pj = particles[j];
+
+                    const dx = pi.x - pj.x;
+                    const dy = pi.y - pj.y;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+
+                    if (dist < 110) {
+                        const alpha = (1 - dist / 110) * 0.05;
+                        ctx.beginPath();
+                        ctx.moveTo(pi.x, pi.y);
+                        ctx.lineTo(pj.x, pj.y);
+                        ctx.strokeStyle = `rgba(99, 102, 241, ${alpha})`;
+                        ctx.lineWidth = 0.5;
+                        ctx.stroke();
+                    }
+                }
+            }
+
+            animationFrameId = requestAnimationFrame(animate);
+        };
+
+        animationFrameId = requestAnimationFrame(animate);
+
+        return () => {
+            window.removeEventListener("resize", handleResize);
+            cancelAnimationFrame(animationFrameId);
+        };
+    }, [tailwindLoaded]);
+
     const triggerAuthPopup = () => {
         setShowAuthModal(true);
         let timer = 3;
@@ -122,7 +312,8 @@ export default function HomePage() {
                 strategy="afterInteractive"
                 onLoad={() => setTailwindLoaded(true)}
             />
-            <Script id="tailwind-config" strategy="afterInteractive" dangerouslySetInnerHTML={{ __html: `
+            <Script id="tailwind-config" strategy="afterInteractive" dangerouslySetInnerHTML={{
+                __html: `
                 window.tailwind = window.tailwind || {};
                 window.tailwind.config = {
                     darkMode: "class",
@@ -211,13 +402,16 @@ export default function HomePage() {
                     },
                 }
             ` }} />
-            <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@300;400;600;700&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
-            
+            <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@300;400;600;700&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+
             <style>{`
                 body {
-                    background-color: #12121d !important;
+                    background-color: #090b16 !important;
                     color: #e4e0f1 !important;
                     overflow-x: hidden;
+                }
+                .hero-gradient-bg {
+                    background: radial-gradient(circle at 75% 25%, #14162e 0%, #090b16 65%, #030409 100%);
                 }
                 .ai-gradient-text {
                     background: linear-gradient(135deg, #6366F1 0%, #A855F7 100%);
@@ -281,13 +475,14 @@ export default function HomePage() {
 
                 <main className="relative">
                     {/* Hero Section: Editorial Layout */}
-                    <section className="relative min-h-[calc(100vh-64px)] lg:h-[calc(100vh-64px)] flex items-center px-4 md:px-8 pt-6 pb-6 lg:py-0 overflow-hidden grid-bg">
+                    <section className="relative min-h-[calc(100vh-64px)] lg:h-[calc(100vh-64px)] flex items-center px-4 md:px-8 pt-6 pb-6 lg:py-0 overflow-hidden hero-gradient-bg">
                         {/* Background Elements */}
-                        <div className="absolute top-1/4 -right-20 w-[600px] h-[600px] gradient-blur rounded-full opacity-60 pointer-events-none"></div>
-                        <div className="absolute bottom-1/4 -left-20 w-[400px] h-[400px] gradient-blur rounded-full opacity-40 pointer-events-none"></div>
-                        
+                        <canvas id="crystal-canvas" className="absolute inset-0 w-full h-full pointer-events-none z-0" style={{ mixBlendMode: "screen" }} />
+                        <div className="absolute top-1/4 -right-20 w-[600px] h-[600px] gradient-blur rounded-full opacity-50 pointer-events-none" style={{ background: "radial-gradient(circle, rgba(239, 68, 68, 0.12) 0%, transparent 70%)" }}></div>
+                        <div className="absolute bottom-1/4 -left-20 w-[400px] h-[400px] gradient-blur rounded-full opacity-30 pointer-events-none" style={{ background: "radial-gradient(circle, rgba(168, 85, 247, 0.08) 0%, transparent 70%)" }}></div>
+
                         <div className="max-w-[1280px] mx-auto w-full grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-                            
+
                             {/* Content Left */}
                             <div className="lg:col-span-7 z-10">
                                 <div className="flex items-center gap-4 mb-4">
@@ -309,16 +504,16 @@ export default function HomePage() {
                                 </div>
 
                                 <h1 className="text-[40px] md:text-[60px] leading-[1.05] mb-4 font-bold tracking-tight text-white" style={{ fontFamily: "Space Grotesk, sans-serif" }}>
-                                    The <span className="font-light italic">Future</span> of your <br/>
+                                    The <span className="font-light italic">Future</span> of your <br />
                                     <span className="font-bold ai-gradient-text">{typewriterText}</span> starts here.
                                 </h1>
-                                
+
                                 <p className="text-base md:text-lg text-[#c7c4d7] mb-6 max-w-[580px]" style={{ fontFamily: "Inter, sans-serif" }}>
                                     Engineered for modern recruitment. Use our neural-powered engine to generate ATS-proof resumes that recruiters actually want to read.
                                 </p>
 
                                 <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-6">
-                                    <button 
+                                    <button
                                         onClick={handleStartResume}
                                         className="ai-gradient-bg text-white font-bold px-6 py-3 rounded-xl flex items-center justify-center gap-2 group glow-hover transition-all active:scale-95 border-0"
                                     >
@@ -327,7 +522,7 @@ export default function HomePage() {
                                     </button>
                                     <div className="flex items-center gap-4 px-6 py-2 border-l border-[rgba(255,255,255,0.1)]">
                                         <span className="material-symbols-outlined text-[#c0c1ff]">verified</span>
-                                        <span className="text-sm text-[#c7c4d7] leading-tight">Free PDF Export<br/>(with watermark)</span>
+                                        <span className="text-sm text-[#c7c4d7] leading-tight">Free PDF Export<br />(with watermark)</span>
                                     </div>
                                 </div>
 
@@ -412,7 +607,7 @@ export default function HomePage() {
                             <p className="text-base md:text-lg text-[#c7c4d7] max-w-2xl mx-auto" style={{ fontFamily: "Inter, sans-serif" }}>Our toolkit is designed to bypass filters and get your profile in front of hiring managers.</p>
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                            
+
                             {/* Card 1 */}
                             <div className="glass-card p-8 rounded-2xl flex flex-col items-start gap-4 hover:border-[#c0c1ff] transition-all group cursor-default">
                                 <div className="p-4 rounded-xl bg-[#c0c1ff]/10 text-[#c0c1ff]">
@@ -475,7 +670,7 @@ export default function HomePage() {
                             </div>
                         ) : (
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                                {(testimonials.length > 0 
+                                {(testimonials.length > 0
                                     ? [...testimonials, ...[
                                         {
                                             userName: "Anish Sharma",
@@ -517,7 +712,7 @@ export default function HomePage() {
                                         }
                                     ]
                                 ).map((item, i) => (
-                                    <div key={item.id || i} className="glass-card p-8 rounded-2xl flex flex-col justify-between gap-6 border border-indigo-500/10 hover:border-[#c0c1ff] transition-all group duration-300">
+                                    <div key={i} className="glass-card p-8 rounded-2xl flex flex-col justify-between gap-6 border border-indigo-500/10 hover:border-[#c0c1ff] transition-all group duration-300">
                                         <div>
                                             {/* Stars */}
                                             <div className="flex gap-1 mb-4 text-[#ffb400]">
@@ -558,7 +753,7 @@ export default function HomePage() {
                                     </p>
                                 </div>
                                 <div className="flex flex-col items-center gap-6">
-                                    <button 
+                                    <button
                                         onClick={handleStartResume}
                                         className="bg-white text-[#12121d] font-bold text-lg px-12 py-5 rounded-2xl shadow-2xl hover:scale-105 transition-all active:scale-95 border-0"
                                     >

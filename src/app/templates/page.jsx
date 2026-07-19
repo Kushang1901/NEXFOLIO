@@ -135,39 +135,65 @@ export default function TemplateSelection() {
                 {/* ── Templates Grid ── */}
                 <div className="row g-4 justify-content-center" style={{ animation: "fadeInUp 0.8s ease-out 0.4s" }}>
                     {filteredTemplates.length > 0 ? (
-                        filteredTemplates.map(tpl => (
-                            <div key={tpl.id} className="col-md-6 col-lg-4 col-xl-3">
-                                <div
-                                    className="template-card-container"
-                                    style={cardContainerStyle}
-                                    onClick={() => selectTemplate(tpl.id)}
-                                >
-                                    {/* Preview Block */}
-                                    <div className="template-card-preview-wrapper" style={previewWrapperStyle}>
-                                        <div style={{ height: "230px", width: "100%" }}>
-                                            {tpl.preview}
-                                        </div>
-                                        {/* Hover Overlay */}
-                                        <div className="template-card-hover-overlay" style={hoverOverlayStyle}>
-                                            <button className="select-template-btn" style={selectBtnStyle}>
-                                                Use Layout
-                                            </button>
-                                        </div>
-                                    </div>
+                        filteredTemplates.map(tpl => {
+                            const FREE_TEMPLATES = ["classic", "minimalist", "elegant", "minimalist_bw", "compact_ats", "graduate"];
+                            const isPremium = !FREE_TEMPLATES.includes(tpl.id);
+                            return (
+                                <div key={tpl.id} className="col-md-6 col-lg-4 col-xl-3">
+                                    <div
+                                        className="template-card-container"
+                                        style={cardContainerStyle}
+                                        onClick={() => selectTemplate(tpl.id)}
+                                        position="relative"
+                                    >
+                                        {/* Preview Block */}
+                                        <div className="template-card-preview-wrapper" style={{ ...previewWrapperStyle, position: "relative" }}>
+                                            {/* Free/Premium Badge */}
+                                            <div style={{
+                                                position: "absolute",
+                                                top: "12px",
+                                                right: "12px",
+                                                zIndex: 10,
+                                                padding: "4px 10px",
+                                                borderRadius: "20px",
+                                                fontSize: "0.68rem",
+                                                fontWeight: "700",
+                                                textTransform: "uppercase",
+                                                letterSpacing: "0.05em",
+                                                background: isPremium 
+                                                    ? "linear-gradient(135deg, #f59e0b 0%, #d97706 100%)" // Premium gold
+                                                    : "linear-gradient(135deg, #10b981 0%, #059669 100%)", // Free green
+                                                color: "#fff",
+                                                boxShadow: "0 4px 10px rgba(0,0,0,0.3)"
+                                            }}>
+                                                {isPremium ? "⭐ Premium (₹150)" : "🆓 Free"}
+                                            </div>
 
-                                    {/* Card Footer Info */}
-                                    <div style={cardFooterStyle}>
-                                        <h3 style={cardTitleStyle}>{tpl.name}</h3>
-                                        <p style={cardDescStyle}>{tpl.desc}</p>
-                                        <div style={tagGroupStyle}>
-                                            {tpl.tags.map((tag, idx) => (
-                                                <span key={idx} style={tagStyle}>{tag}</span>
-                                            ))}
+                                            <div style={{ height: "230px", width: "100%" }}>
+                                                {tpl.preview}
+                                            </div>
+                                            {/* Hover Overlay */}
+                                            <div className="template-card-hover-overlay" style={hoverOverlayStyle}>
+                                                <button className="select-template-btn" style={selectBtnStyle}>
+                                                    Use Layout
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        {/* Card Footer Info */}
+                                        <div style={cardFooterStyle}>
+                                            <h3 style={cardTitleStyle}>{tpl.name}</h3>
+                                            <p style={cardDescStyle}>{tpl.desc}</p>
+                                            <div style={tagGroupStyle}>
+                                                {tpl.tags.map((tag, idx) => (
+                                                    <span key={idx} style={tagStyle}>{tag}</span>
+                                                ))}
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                        ))
+                            );
+                        })
                     ) : (
                         <div className="text-center py-5 w-100">
                             <RefreshCw size={36} className="text-muted spin-animation mb-3" />

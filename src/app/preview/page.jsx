@@ -238,6 +238,7 @@ export default function Preview() {
         };
     }, [selectedTemplate, activeLanguage, resumeData]);
 
+
     const handleTranslate = async (lang) => {
         if (lang === "original") {
             setActiveLanguage("original");
@@ -756,7 +757,8 @@ export default function Preview() {
     return (
         <div className="preview-page-container text-white min-vh-100">
             <Script src="https://checkout.razorpay.com/v1/checkout.js" strategy="lazyOnload" />
-            
+
+
             {/* Background Spotlights */}
             <div className="bg-glow-spot-1 no-print"></div>
             <div className="bg-glow-spot-2 no-print"></div>
@@ -1434,37 +1436,62 @@ export default function Preview() {
                                                               tpl.tags.some(t => t.toLowerCase().includes(templateSearchQuery.toLowerCase())) ||
                                                               tpl.desc.toLowerCase().includes(templateSearchQuery.toLowerCase());
                                         return matchesCategory && matchesSearch;
-                                    }).map((tpl) => (
-                                        <div 
-                                            key={tpl.id}
-                                            onClick={() => saveTemplateChange(tpl.id)}
-                                            className={`template-selector-card ${selectedTemplate === tpl.id ? 'active' : ''}`}
-                                        >
-                                            {selectedTemplate === tpl.id && (
-                                                <div className="active-badge">
-                                                    <Check size={11} /> Active
+                                    }).map((tpl) => {
+                                        const FREE_TEMPLATES = ["classic", "minimalist", "elegant", "minimalist_bw", "compact_ats", "graduate"];
+                                        const isPremium = !FREE_TEMPLATES.includes(tpl.id);
+                                        return (
+                                            <div 
+                                                key={tpl.id}
+                                                onClick={() => saveTemplateChange(tpl.id)}
+                                                className={`template-selector-card ${selectedTemplate === tpl.id ? 'active' : ''}`}
+                                                style={{ position: "relative" }}
+                                            >
+                                                {/* Premium / Free Badge */}
+                                                <div style={{
+                                                    position: "absolute",
+                                                    top: "10px",
+                                                    left: "10px",
+                                                    zIndex: 10,
+                                                    padding: "2.5px 8px",
+                                                    borderRadius: "12px",
+                                                    fontSize: "0.6rem",
+                                                    fontWeight: "700",
+                                                    textTransform: "uppercase",
+                                                    background: isPremium 
+                                                        ? "linear-gradient(135deg, #f59e0b 0%, #d97706 100%)" // Premium gold
+                                                        : "linear-gradient(135deg, #10b981 0%, #059669 100%)", // Free green
+                                                    color: "#fff",
+                                                    boxShadow: "0 2px 6px rgba(0,0,0,0.35)"
+                                                }}>
+                                                    {isPremium ? "⭐ Pro" : "🆓 Free"}
                                                 </div>
-                                            )}
-                                            
-                                            <div className="tpl-preview-box">
-                                                <div className="tpl-preview-scale">
-                                                    {tpl.preview}
+
+                                                {selectedTemplate === tpl.id && (
+                                                    <div className="active-badge">
+                                                        <Check size={11} /> Active
+                                                    </div>
+                                                )}
+                                                
+                                                <div className="tpl-preview-box">
+                                                    <div className="tpl-preview-scale">
+                                                        {tpl.preview}
+                                                    </div>
+                                                </div>
+                                                
+                                                <div className="tpl-details-box">
+                                                    <div>
+                                                        <div className="tpl-title">{tpl.name}</div>
+                                                        <div className="tpl-desc">{tpl.desc}</div>
+                                                    </div>
+                                                    <div className="d-flex flex-wrap gap-1 mt-auto">
+                                                        {tpl.tags.map((tag, idx) => (
+                                                            <span key={idx} className="badge bg-glass-tag">{tag}</span>
+                                                        ))}
+                                                    </div>
                                                 </div>
                                             </div>
-                                            
-                                            <div className="tpl-details-box">
-                                                <div>
-                                                    <div className="tpl-title">{tpl.name}</div>
-                                                    <div className="tpl-desc">{tpl.desc}</div>
-                                                </div>
-                                                <div className="d-flex flex-wrap gap-1 mt-auto">
-                                                    {tpl.tags.map((tag, idx) => (
-                                                        <span key={idx} className="badge bg-glass-tag">{tag}</span>
-                                                    ))}
-                                                </div>
-                                            </div>
-                                        </div>
-                                    ))}
+                                        );
+                                    })}
                                 </div>
                             )}
                         </div>
@@ -1505,8 +1532,117 @@ export default function Preview() {
                 }} className="no-print">
                     
                     {!isPaid ? (
-                        /* COMPARISON MODAL FOR UNPAID */
-                        <div className="card p-4 p-md-5 text-white animate-fade-in" style={{
+                        (() => {
+                            const FREE_TEMPLATES = ["classic", "minimalist", "elegant", "minimalist_bw", "compact_ats", "graduate"];
+                            const isCurrentTemplatePremium = !FREE_TEMPLATES.includes(selectedTemplate);
+                            if (isCurrentTemplatePremium) {
+                                return (
+                                    /* STRICT PREMIUM TEMPLATE PAYWALL SCREEN */
+                                    <div className="card p-4 p-md-5 text-white animate-fade-in" style={{
+                                        maxWidth: "560px",
+                                        width: "95%",
+                                        background: "linear-gradient(145deg, #181926 0%, #0d0f1a 100%)",
+                                        borderRadius: "24px",
+                                        border: "1.5px solid rgba(245, 158, 11, 0.35)", // Gold tint border
+                                        boxShadow: "0 25px 60px rgba(0, 0, 0, 0.75), 0 0 30px rgba(245, 158, 11, 0.08)"
+                                    }}>
+                                        <div className="card-body position-relative p-0 text-center">
+                                            <button 
+                                                onClick={() => setShowDownloadModal(false)}
+                                                className="btn-close btn-close-white position-absolute"
+                                                style={{ top: "-5px", right: "-5px", zIndex: 10 }}
+                                                aria-label="Close"
+                                            ></button>
+
+                                            {/* Gold Premium Seal */}
+                                            <div style={{ display: "flex", justifyContent: "center", marginBottom: "20px" }}>
+                                                <div style={{
+                                                    width: "70px",
+                                                    height: "70px",
+                                                    borderRadius: "50%",
+                                                    background: "rgba(245, 158, 11, 0.15)",
+                                                    border: "1.5px solid rgba(245, 158, 11, 0.4)",
+                                                    display: "flex",
+                                                    alignItems: "center",
+                                                    justifyContent: "center"
+                                                }}>
+                                                    <span style={{ fontSize: "32px" }}>⭐</span>
+                                                </div>
+                                            </div>
+
+                                            <h3 className="fw-bold mb-2 text-white" style={{ fontSize: "1.65rem", letterSpacing: "-0.01em" }}>Premium Layout Locked</h3>
+                                            
+                                            <div className="d-inline-block px-3 py-1 rounded-pill mb-4" style={{
+                                                background: "rgba(245, 158, 11, 0.08)",
+                                                border: "1px solid rgba(245, 158, 11, 0.2)",
+                                                fontSize: "0.82rem",
+                                                fontWeight: "600",
+                                                color: "#f59e0b"
+                                            }}>
+                                                Layout: {templateList.find(t => t.id === selectedTemplate)?.name || selectedTemplate}
+                                            </div>
+
+                                            <p className="text-white-50 mb-4" style={{ fontSize: "0.95rem", lineHeight: "1.5" }}>
+                                                You are using a Premium layout built for senior profiles and hiring software compatibility. Upgrade to Premium for a one-time charge of <strong>₹150</strong> to download.
+                                            </p>
+
+                                            <div style={{
+                                                background: "rgba(255, 255, 255, 0.02)",
+                                                border: "1px solid rgba(255, 255, 255, 0.05)",
+                                                borderRadius: "16px",
+                                                padding: "16px",
+                                                textAlign: "left",
+                                                marginBottom: "24px"
+                                            }}>
+                                                <h5 className="fw-semibold text-white mb-3" style={{ fontSize: "0.9rem" }}>What's included in Premium:</h5>
+                                                <ul className="list-unstyled d-flex flex-column gap-2 mb-0" style={{ fontSize: "0.85rem", color: "#cbd5e1" }}>
+                                                    <li className="d-flex align-items-center gap-2">
+                                                        <i className="fas fa-check text-success"></i> <strong>Clean &amp; Watermark-Free</strong> exports
+                                                    </li>
+                                                    <li className="d-flex align-items-center gap-2">
+                                                        <i className="fas fa-check text-success"></i> PDF, PNG, and Editable Word formats
+                                                    </li>
+                                                    <li className="d-flex align-items-center gap-2">
+                                                        <i className="fas fa-check text-success"></i> Unlimited downloads and edits forever
+                                                    </li>
+                                                </ul>
+                                            </div>
+
+                                            <div className="d-flex flex-column gap-2.5">
+                                                <button 
+                                                    onClick={handleRazorpayPayment}
+                                                    className="btn w-100 py-3 fw-bold"
+                                                    style={{
+                                                        background: "linear-gradient(135deg, #f59e0b 0%, #d97706 100%)",
+                                                        border: "none",
+                                                        color: "#fff",
+                                                        borderRadius: "12px",
+                                                        fontSize: "0.95rem",
+                                                        boxShadow: "0 4px 15px rgba(245, 158, 11, 0.3)"
+                                                    }}
+                                                >
+                                                    Upgrade for ₹150
+                                                </button>
+                                                
+                                                <button 
+                                                    onClick={() => {
+                                                        setShowDownloadModal(false);
+                                                        setShowTemplateModal(true);
+                                                    }}
+                                                    className="btn btn-outline-light w-100 py-2.5 fw-semibold"
+                                                    style={{ borderRadius: "12px", border: "1px solid rgba(255, 255, 255, 0.15)", fontSize: "0.88rem" }}
+                                                >
+                                                    Switch to a Free Template
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                );
+                            }
+
+                            return (
+                                /* COMPARISON MODAL FOR UNPAID (FREE TEMPLATES ONLY) */
+                                <div className="card p-4 p-md-5 text-white animate-fade-in" style={{
                             maxWidth: "700px",
                             width: "95%",
                             background: "linear-gradient(145deg, #1c2027 0%, #11141a 100%)",
@@ -1611,7 +1747,9 @@ export default function Preview() {
                                 </div>
                             </div>
                         </div>
-                    ) : (
+                    );
+                })()
+                ) : (
                         /* ORIGINAL UNLOCKED MODAL FOR PAID */
                         <div className="card text-center p-4 p-md-5 text-white animate-fade-in" style={{
                             maxWidth: "680px",
