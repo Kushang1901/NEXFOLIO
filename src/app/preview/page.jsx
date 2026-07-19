@@ -79,6 +79,9 @@ export default function Preview() {
     // Review Modal States
     const [showReviewModal, setShowReviewModal] = useState(false);
 
+    const FREE_TEMPLATES = ["modern", "creative", "product_manager", "bento"];
+    const isCurrentTemplatePremium = !FREE_TEMPLATES.includes(selectedTemplate);
+
     const triggerReviewPrompt = () => {
         const alreadyReviewed = localStorage.getItem("cvgrid_has_reviewed");
         if (!alreadyReviewed) {
@@ -403,6 +406,12 @@ export default function Preview() {
     };
 
     const downloadAsPNG = async () => {
+        if (isCurrentTemplatePremium && !isPaid) {
+            showToast("This template requires a premium upgrade to export.", "error");
+            setShowDownloadModal(false);
+            return;
+        }
+
         setIsDownloading(true);
         setDownloadType("png");
         try {
@@ -437,15 +446,14 @@ export default function Preview() {
     };
 
     const downloadAsPDF = async () => {
+        if (isCurrentTemplatePremium && !isPaid) {
+            showToast("This template requires a premium upgrade to export.", "error");
+            setShowDownloadModal(false);
+            return;
+        }
+
         setIsDownloading(true);
         setDownloadType("pdf");
-        
-        // If not paid, temporarily show the watermark for PDF generation
-        if (!isPaid) {
-            setShowWatermark(true);
-            // Wait for React to re-render the DOM with the watermark before capturing
-            await new Promise((resolve) => setTimeout(resolve, 150));
-        }
 
         try {
             const resume = document.getElementById("resume-preview");
@@ -495,6 +503,12 @@ export default function Preview() {
     };
 
     const downloadAsDOCX = async () => {
+        if (isCurrentTemplatePremium && !isPaid) {
+            showToast("This template requires a premium upgrade to export.", "error");
+            setShowDownloadModal(false);
+            return;
+        }
+
         setIsDownloading(true);
         setDownloadType("docx");
         try {
@@ -898,7 +912,7 @@ export default function Preview() {
                             }}
                         >
                             {/* Watermark Overlay for Unpaid Resume */}
-                            {!isPaid && showWatermark && (
+                            {!isPaid && showWatermark && isCurrentTemplatePremium && (
                                 <div className="watermark-overlay" style={{
                                     position: "absolute",
                                     top: 0,
@@ -1575,316 +1589,217 @@ export default function Preview() {
                     alignItems: "center",
                     justifyContent: "center"
                 }} className="no-print">
-                    
-                    {!isPaid ? (
-                        (() => {
-                            const FREE_TEMPLATES = ["modern", "creative", "product_manager", "bento"];
-                            const isCurrentTemplatePremium = !FREE_TEMPLATES.includes(selectedTemplate);
-                            if (isCurrentTemplatePremium) {
-                                return (
-                                    /* STRICT PREMIUM TEMPLATE PAYWALL SCREEN */
-                                    <div className="card p-4 p-md-5 text-white animate-fade-in" style={{
-                                        maxWidth: "560px",
-                                        width: "95%",
-                                        background: "linear-gradient(145deg, #181926 0%, #0d0f1a 100%)",
-                                        borderRadius: "24px",
-                                        border: "1.5px solid rgba(245, 158, 11, 0.35)", // Gold tint border
-                                        boxShadow: "0 25px 60px rgba(0, 0, 0, 0.75), 0 0 30px rgba(245, 158, 11, 0.08)"
-                                    }}>
-                                        <div className="card-body position-relative p-0 text-center">
-                                            <button 
-                                                onClick={() => setShowDownloadModal(false)}
-                                                className="btn-close btn-close-white position-absolute"
-                                                style={{ top: "-5px", right: "-5px", zIndex: 10 }}
-                                                aria-label="Close"
-                                            ></button>
+                    {(() => {
+                        const FREE_TEMPLATES = ["modern", "creative", "product_manager", "bento"];
+                        const isCurrentTemplatePremium = !FREE_TEMPLATES.includes(selectedTemplate);
+                        
+                        if (!isPaid && isCurrentTemplatePremium) {
+                            return (
+                                /* STRICT PREMIUM TEMPLATE PAYWALL SCREEN */
+                                <div className="card p-4 p-md-5 text-white animate-fade-in" style={{
+                                    maxWidth: "560px",
+                                    width: "95%",
+                                    background: "linear-gradient(145deg, #181926 0%, #0d0f1a 100%)",
+                                    borderRadius: "24px",
+                                    border: "1.5px solid rgba(245, 158, 11, 0.35)", // Gold tint border
+                                    boxShadow: "0 25px 60px rgba(0, 0, 0, 0.75), 0 0 30px rgba(245, 158, 11, 0.08)"
+                                }}>
+                                    <div className="card-body position-relative p-0 text-center">
+                                        <button 
+                                            onClick={() => setShowDownloadModal(false)}
+                                            className="btn-close btn-close-white position-absolute"
+                                            style={{ top: "-5px", right: "-5px", zIndex: 10 }}
+                                            aria-label="Close"
+                                        ></button>
 
-                                            {/* Gold Premium Seal */}
-                                            <div style={{ display: "flex", justifyContent: "center", marginBottom: "20px" }}>
-                                                <div style={{
-                                                    width: "70px",
-                                                    height: "70px",
-                                                    borderRadius: "50%",
-                                                    background: "rgba(245, 158, 11, 0.15)",
-                                                    border: "1.5px solid rgba(245, 158, 11, 0.4)",
-                                                    display: "flex",
-                                                    alignItems: "center",
-                                                    justifyContent: "center"
-                                                }}>
-                                                    <Crown size={32} className="text-warning" />
-                                                </div>
-                                            </div>
-
-                                            <h3 className="fw-bold mb-2 text-white" style={{ fontSize: "1.65rem", letterSpacing: "-0.01em" }}>Premium Layout Locked</h3>
-                                            
-                                            <div className="d-inline-block px-3 py-1 rounded-pill mb-4" style={{
-                                                background: "rgba(245, 158, 11, 0.08)",
-                                                border: "1px solid rgba(245, 158, 11, 0.2)",
-                                                fontSize: "0.82rem",
-                                                fontWeight: "600",
-                                                color: "#f59e0b"
-                                            }}>
-                                                Layout: {templateList.find(t => t.id === selectedTemplate)?.name || selectedTemplate}
-                                            </div>
-
-                                            <p className="text-white-50 mb-4" style={{ fontSize: "0.95rem", lineHeight: "1.5" }}>
-                                                You are using a Premium layout built for senior profiles and hiring software compatibility. Upgrade to Premium for a one-time charge of <strong>₹150</strong> to download.
-                                            </p>
-
+                                        {/* Gold Premium Seal */}
+                                        <div style={{ display: "flex", justifyContent: "center", marginBottom: "20px" }}>
                                             <div style={{
-                                                background: "rgba(255, 255, 255, 0.02)",
-                                                border: "1px solid rgba(255, 255, 255, 0.05)",
-                                                borderRadius: "16px",
-                                                padding: "16px",
-                                                textAlign: "left",
-                                                marginBottom: "24px"
+                                                width: "70px",
+                                                height: "70px",
+                                                borderRadius: "50%",
+                                                background: "rgba(245, 158, 11, 0.15)",
+                                                border: "1.5px solid rgba(245, 158, 11, 0.4)",
+                                                display: "flex",
+                                                alignItems: "center",
+                                                justifyContent: "center"
                                             }}>
-                                                <h5 className="fw-semibold text-white mb-3" style={{ fontSize: "0.9rem" }}>What's included in Premium:</h5>
-                                                <ul className="list-unstyled d-flex flex-column gap-2 mb-0" style={{ fontSize: "0.85rem", color: "#cbd5e1" }}>
-                                                    <li className="d-flex align-items-center gap-2">
-                                                        <i className="fas fa-check text-success"></i> <strong>Clean &amp; Watermark-Free</strong> exports
-                                                    </li>
-                                                    <li className="d-flex align-items-center gap-2">
-                                                        <i className="fas fa-check text-success"></i> PDF, PNG, and Editable Word formats
-                                                    </li>
-                                                    <li className="d-flex align-items-center gap-2">
-                                                        <i className="fas fa-check text-success"></i> Unlimited downloads and edits forever
-                                                    </li>
-                                                </ul>
-                                            </div>
-
-                                            <div className="d-flex flex-column gap-2.5">
-                                                <button 
-                                                    onClick={handleRazorpayPayment}
-                                                    className="btn w-100 py-3 fw-bold"
-                                                    style={{
-                                                        background: "linear-gradient(135deg, #f59e0b 0%, #d97706 100%)",
-                                                        border: "none",
-                                                        color: "#fff",
-                                                        borderRadius: "12px",
-                                                        fontSize: "0.95rem",
-                                                        boxShadow: "0 4px 15px rgba(245, 158, 11, 0.3)"
-                                                    }}
-                                                >
-                                                    Upgrade for ₹150
-                                                </button>
-                                                
-                                                <button 
-                                                    onClick={() => {
-                                                        setShowDownloadModal(false);
-                                                        setShowTemplateModal(true);
-                                                    }}
-                                                    className="btn btn-outline-light w-100 py-2.5 fw-semibold"
-                                                    style={{ borderRadius: "12px", border: "1px solid rgba(255, 255, 255, 0.15)", fontSize: "0.88rem" }}
-                                                >
-                                                    Switch to a Free Template
-                                                </button>
+                                                <Crown size={32} className="text-warning" />
                                             </div>
                                         </div>
-                                    </div>
-                                );
-                            }
 
-                            return (
-                                /* COMPARISON MODAL FOR UNPAID (FREE TEMPLATES ONLY) */
-                                <div className="card p-4 p-md-5 text-white animate-fade-in" style={{
-                            maxWidth: "700px",
-                            width: "95%",
-                            background: "linear-gradient(145deg, #1c2027 0%, #11141a 100%)",
-                            borderRadius: "24px",
-                            border: "1px solid rgba(255, 255, 255, 0.08)",
-                            boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.5)"
-                        }}>
-                            <div className="card-body position-relative p-0 text-center">
-                                <button 
-                                    onClick={() => setShowDownloadModal(false)}
-                                    className="btn-close btn-close-white position-absolute"
-                                    style={{ top: "10px", right: "10px", zIndex: 10 }}
-                                    aria-label="Close"
-                                ></button>
+                                        <h3 className="fw-bold mb-2 text-white" style={{ fontSize: "1.65rem", letterSpacing: "-0.01em" }}>Premium Layout Locked</h3>
+                                        
+                                        <div className="d-inline-block px-3 py-1 rounded-pill mb-4" style={{
+                                            background: "rgba(245, 158, 11, 0.08)",
+                                            border: "1px solid rgba(245, 158, 11, 0.2)",
+                                            fontSize: "0.82rem",
+                                            fontWeight: "600",
+                                            color: "#f59e0b"
+                                        }}>
+                                            Layout: {templateList.find(t => t.id === selectedTemplate)?.name || selectedTemplate}
+                                        </div>
 
-                                <h3 className="fw-bold mb-1 text-white" style={{ fontSize: "1.75rem", letterSpacing: "-0.02em" }}>Download Your Resume</h3>
-                                <p className="text-white-50 mb-4" style={{ fontSize: "0.95rem" }}>
-                                    How would you like to export your resume?
-                                </p>
+                                        <p className="text-white-50 mb-4" style={{ fontSize: "0.95rem", lineHeight: "1.5" }}>
+                                            You are using a Premium layout built for senior profiles and hiring software compatibility. Upgrade to Premium for a one-time charge of <strong>₹150</strong> to download.
+                                        </p>
 
-                                <div className="row g-4 text-start">
-                                    {/* FREE COLUMN */}
-                                    <div className="col-12 col-md-6">
-                                        <div className="h-100 p-4 d-flex flex-column justify-content-between" style={{
+                                        <div style={{
                                             background: "rgba(255, 255, 255, 0.02)",
                                             border: "1px solid rgba(255, 255, 255, 0.05)",
-                                            borderRadius: "18px"
+                                            borderRadius: "16px",
+                                            padding: "16px",
+                                            textAlign: "left",
+                                            marginBottom: "24px"
                                         }}>
-                                            <div>
-                                                <h4 className="fw-bold fs-5 text-white mb-3 d-flex align-items-center gap-2">
-                                                    <Unlock size={18} className="text-white-50" /> Free Download
-                                                </h4>
-                                                <ul className="list-unstyled d-flex flex-column gap-2 mb-4 text-white-50" style={{ fontSize: "0.9rem" }}>
-                                                    <li className="d-flex align-items-center gap-2 text-white-50">
-                                                        <i className="fas fa-check text-success"></i> PDF Format
-                                                    </li>
-                                                    <li className="d-flex align-items-center gap-2 text-white-50">
-                                                        <i className="fas fa-check text-success"></i> Ready to Use
-                                                    </li>
-                                                    <li className="d-flex align-items-center gap-2" style={{ color: "rgba(239, 68, 68, 0.8)" }}>
-                                                        <i className="fas fa-times"></i> CVGrid Watermark
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                            <button 
-                                                onClick={downloadAsPDF}
-                                                className="btn btn-outline-light w-100 py-2.5 fw-semibold"
-                                                style={{ borderRadius: "10px", border: "1px solid rgba(255, 255, 255, 0.15)" }}
-                                            >
-                                                Download Free
-                                            </button>
+                                            <h5 className="fw-semibold text-white mb-3" style={{ fontSize: "0.9rem" }}>What's included in Premium:</h5>
+                                            <ul className="list-unstyled d-flex flex-column gap-2 mb-0" style={{ fontSize: "0.85rem", color: "#cbd5e1" }}>
+                                                <li className="d-flex align-items-center gap-2">
+                                                    <i className="fas fa-check text-success"></i> <strong>Clean &amp; Watermark-Free</strong> exports
+                                                </li>
+                                                <li className="d-flex align-items-center gap-2">
+                                                    <i className="fas fa-check text-success"></i> PDF, PNG, and Editable Word formats
+                                                </li>
+                                                <li className="d-flex align-items-center gap-2">
+                                                    <i className="fas fa-check text-success"></i> Unlimited downloads and edits forever
+                                                </li>
+                                            </ul>
                                         </div>
-                                    </div>
 
-                                    {/* PREMIUM COLUMN */}
-                                    <div className="col-12 col-md-6">
-                                        <div className="h-100 p-4 d-flex flex-column justify-content-between position-relative" style={{
-                                            background: "linear-gradient(135deg, rgba(99, 102, 241, 0.08) 0%, rgba(13, 202, 240, 0.04) 100%)",
-                                            border: "1px solid rgba(99, 102, 241, 0.25)",
-                                            borderRadius: "18px"
-                                        }}>
-                                            <div className="position-absolute" style={{ top: "-12px", right: "20px" }}>
-                                                <span className="badge bg-indigo text-white px-2.5 py-1 text-uppercase fw-bold" style={{ fontSize: "0.65rem", borderRadius: "8px", letterSpacing: "0.05em", background: "#6366f1" }}>RECOMMENDED</span>
-                                            </div>
-                                            <div>
-                                                <h4 className="fw-bold fs-5 text-white mb-3 d-flex align-items-center gap-2">
-                                                    <Crown size={18} className="text-warning" /> Premium Export <span className="text-info fs-6 fw-normal ms-auto">₹150</span>
-                                                </h4>
-                                                <ul className="list-unstyled d-flex flex-column gap-2 mb-4" style={{ fontSize: "0.9rem" }}>
-                                                    <li className="d-flex align-items-center gap-2 text-white">
-                                                        <i className="fas fa-check text-success"></i> No Watermark
-                                                    </li>
-                                                    <li className="d-flex align-items-center gap-2 text-white">
-                                                        <i className="fas fa-check text-success"></i> Clean Professional PDF
-                                                    </li>
-                                                    <li className="d-flex align-items-center gap-2 text-white">
-                                                        <i className="fas fa-check text-success"></i> Word (.docx) & PNG downloads
-                                                    </li>
-                                                    <li className="d-flex align-items-center gap-2 text-white">
-                                                        <i className="fas fa-check text-success"></i> Unlimited Downloads
-                                                    </li>
-                                                </ul>
-                                            </div>
+                                        <div className="d-flex flex-column gap-2.5">
                                             <button 
                                                 onClick={handleRazorpayPayment}
-                                                className="btn w-100 py-2.5 fw-bold btn-gradient"
-                                                style={{ borderRadius: "10px" }}
+                                                className="btn w-100 py-3 fw-bold"
+                                                style={{
+                                                    background: "linear-gradient(135deg, #f59e0b 0%, #d97706 100%)",
+                                                    border: "none",
+                                                    color: "#fff",
+                                                    borderRadius: "12px",
+                                                    fontSize: "0.95rem",
+                                                    boxShadow: "0 4px 15px rgba(245, 158, 11, 0.3)"
+                                                }}
                                             >
-                                                Buy Premium
+                                                Upgrade for ₹150
+                                            </button>
+                                            
+                                            <button 
+                                                onClick={() => {
+                                                    setShowDownloadModal(false);
+                                                    setShowTemplateModal(true);
+                                                }}
+                                                className="btn btn-outline-light w-100 py-2.5 fw-semibold"
+                                                style={{ borderRadius: "12px", border: "1px solid rgba(255, 255, 255, 0.15)", fontSize: "0.88rem" }}
+                                            >
+                                                Switch to a Free Template
                                             </button>
                                         </div>
                                     </div>
                                 </div>
-
-                                <div className="mt-4">
+                            );
+                        }
+                        
+                        return (
+                            /* ORIGINAL UNLOCKED MODAL FOR PAID OR FREE TEMPLATE USERS */
+                            <div className="card text-center p-4 p-md-5 text-white animate-fade-in" style={{
+                                maxWidth: "680px",
+                                width: "95%",
+                                background: "linear-gradient(145deg, #1c2027 0%, #11141a 100%)",
+                                borderRadius: "20px",
+                                border: "1px solid rgba(142, 144, 160, 0.25)",
+                                boxShadow: "0 15px 35px rgba(0, 0, 0, 0.6)"
+                            }}>
+                                <div className="card-body position-relative p-0">
                                     <button 
                                         onClick={() => setShowDownloadModal(false)}
-                                        className="btn btn-link text-white-50 text-decoration-none small"
-                                    >
-                                        Cancel
-                                    </button>
+                                        className="btn-close btn-close-white position-absolute"
+                                        style={{ top: "10px", right: "10px", zIndex: 10 }}
+                                        aria-label="Close"
+                                    ></button>
+                                    
+                                    <h3 className="fw-bold mb-3 d-flex align-items-center justify-content-center gap-2" style={{ letterSpacing: "-0.01em" }}>
+                                        {isCurrentTemplatePremium ? (
+                                            <>
+                                                <Crown size={22} className="text-warning" /> Premium Export Unlocked
+                                            </>
+                                        ) : (
+                                            <>
+                                                <Unlock size={22} className="text-success" /> Choose Export Format
+                                            </>
+                                        )}
+                                    </h3>
+                                    <p className="text-white-50 mb-4" style={{ fontSize: "0.95rem" }}>
+                                        {isCurrentTemplatePremium 
+                                            ? "Premium feature unlocked! Download your clean, watermark-free resume." 
+                                            : "Download your clean, watermark-free resume in your preferred format."}
+                                    </p>
+                                    
+                                    <div className="row g-3">
+                                        <div className="col-12 col-md-4">
+                                            <button 
+                                                onClick={downloadAsPNG}
+                                                className="btn btn-outline-info w-100 p-3.5 d-flex flex-column align-items-center justify-content-center"
+                                                style={{
+                                                    borderRadius: "16px",
+                                                    borderWidth: "1.5px",
+                                                    transition: "all 0.2s ease",
+                                                    background: "rgba(13, 202, 240, 0.05)",
+                                                    height: "100%"
+                                                }}
+                                            >
+                                                <i className="fas fa-file-image fa-2x mb-3 text-info"></i>
+                                                <span className="fw-bold fs-6 mb-1 text-white">PNG Image</span>
+                                                <span className="text-white-50 small" style={{ fontSize: "0.75rem" }}>Best for sharing</span>
+                                            </button>
+                                        </div>
+                                        <div className="col-12 col-md-4">
+                                            <button 
+                                                onClick={downloadAsPDF}
+                                                className="btn btn-outline-primary w-100 p-3.5 d-flex flex-column align-items-center justify-content-center"
+                                                style={{
+                                                    borderRadius: "16px",
+                                                    borderWidth: "1.5px",
+                                                    transition: "all 0.2s ease",
+                                                    background: "rgba(13, 110, 253, 0.05)",
+                                                    height: "100%"
+                                                }}
+                                            >
+                                                <i className="fas fa-file-pdf fa-2x mb-3 text-primary"></i>
+                                                <span className="fw-bold fs-6 mb-1 text-white">PDF File</span>
+                                                <span className="text-white-50 small" style={{ fontSize: "0.75rem" }}>Best for printing/ATS</span>
+                                            </button>
+                                        </div>
+                                        <div className="col-12 col-md-4">
+                                            <button 
+                                                onClick={downloadAsDOCX}
+                                                className="btn btn-outline-indigo w-100 p-3.5 d-flex flex-column align-items-center justify-content-center"
+                                                style={{
+                                                    borderRadius: "16px",
+                                                    borderWidth: "1.5px",
+                                                    transition: "all 0.2s ease",
+                                                    background: "rgba(99, 102, 241, 0.05)",
+                                                    borderColor: "rgba(99, 102, 241, 0.4)",
+                                                    height: "100%"
+                                                }}
+                                            >
+                                                <i className="fas fa-file-word fa-2x mb-3 text-indigo" style={{ color: "#818cf8" }}></i>
+                                                <span className="fw-bold fs-6 mb-1 text-white">Word File</span>
+                                                <span className="text-white-50 small" style={{ fontSize: "0.75rem" }}>100% Editable Doc</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    
+                                    <div className="mt-4">
+                                        <button 
+                                            onClick={() => setShowDownloadModal(false)}
+                                            className="btn btn-link text-white-50 text-decoration-none"
+                                        >
+                                            Close
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    );
-                })()
-                ) : (
-                        /* ORIGINAL UNLOCKED MODAL FOR PAID */
-                        <div className="card text-center p-4 p-md-5 text-white animate-fade-in" style={{
-                            maxWidth: "680px",
-                            width: "95%",
-                            background: "linear-gradient(145deg, #1c2027 0%, #11141a 100%)",
-                            borderRadius: "20px",
-                            border: "1px solid rgba(142, 144, 160, 0.25)",
-                            boxShadow: "0 15px 35px rgba(0, 0, 0, 0.6)"
-                        }}>
-                            <div className="card-body position-relative p-0">
-                                <button 
-                                    onClick={() => setShowDownloadModal(false)}
-                                    className="btn-close btn-close-white position-absolute"
-                                    style={{ top: "10px", right: "10px", zIndex: 10 }}
-                                    aria-label="Close"
-                                ></button>
-                                
-                                <h3 className="fw-bold mb-3 d-flex align-items-center justify-content-center gap-2" style={{ letterSpacing: "-0.01em" }}>
-                                    <Crown size={22} className="text-warning" /> Choose Export Format
-                                </h3>
-                                <p className="text-white-50 mb-4" style={{ fontSize: "0.95rem" }}>
-                                    Premium feature unlocked! Download your clean, watermark-free resume.
-                                </p>
-                                
-                                <div className="row g-3">
-                                    <div className="col-12 col-md-4">
-                                        <button 
-                                            onClick={downloadAsPNG}
-                                            className="btn btn-outline-info w-100 p-3.5 d-flex flex-column align-items-center justify-content-center"
-                                            style={{
-                                                borderRadius: "16px",
-                                                borderWidth: "1.5px",
-                                                transition: "all 0.2s ease",
-                                                background: "rgba(13, 202, 240, 0.05)",
-                                                height: "100%"
-                                            }}
-                                        >
-                                            <i className="fas fa-file-image fa-2x mb-3 text-info"></i>
-                                            <span className="fw-bold fs-6 mb-1 text-white">PNG Image</span>
-                                            <span className="text-white-50 small" style={{ fontSize: "0.75rem" }}>Best for sharing</span>
-                                        </button>
-                                    </div>
-                                    <div className="col-12 col-md-4">
-                                        <button 
-                                            onClick={downloadAsPDF}
-                                            className="btn btn-outline-primary w-100 p-3.5 d-flex flex-column align-items-center justify-content-center"
-                                            style={{
-                                                borderRadius: "16px",
-                                                borderWidth: "1.5px",
-                                                transition: "all 0.2s ease",
-                                                background: "rgba(13, 110, 253, 0.05)",
-                                                height: "100%"
-                                            }}
-                                        >
-                                            <i className="fas fa-file-pdf fa-2x mb-3 text-primary"></i>
-                                            <span className="fw-bold fs-6 mb-1 text-white">PDF File</span>
-                                            <span className="text-white-50 small" style={{ fontSize: "0.75rem" }}>Best for printing/ATS</span>
-                                        </button>
-                                    </div>
-                                    <div className="col-12 col-md-4">
-                                        <button 
-                                            onClick={downloadAsDOCX}
-                                            className="btn btn-outline-indigo w-100 p-3.5 d-flex flex-column align-items-center justify-content-center"
-                                            style={{
-                                                borderRadius: "16px",
-                                                borderWidth: "1.5px",
-                                                transition: "all 0.2s ease",
-                                                background: "rgba(99, 102, 241, 0.05)",
-                                                borderColor: "rgba(99, 102, 241, 0.4)",
-                                                height: "100%"
-                                            }}
-                                        >
-                                            <i className="fas fa-file-word fa-2x mb-3 text-indigo" style={{ color: "#818cf8" }}></i>
-                                            <span className="fw-bold fs-6 mb-1 text-white">Word File</span>
-                                            <span className="text-white-50 small" style={{ fontSize: "0.75rem" }}>100% Editable Doc</span>
-                                        </button>
-                                    </div>
-                                </div>
-                                
-                                <div className="mt-4">
-                                    <button 
-                                        onClick={() => setShowDownloadModal(false)}
-                                        className="btn btn-link text-white-50 text-decoration-none"
-                                    >
-                                        Close
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    )}
+                        );
+                    })()}
                 </div>
             )}
 

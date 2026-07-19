@@ -48,6 +48,9 @@ export default function PublicResumePage() {
     const [isPaid, setIsPaid] = useState(false);
     const [showWatermark, setShowWatermark] = useState(false);
 
+    const FREE_TEMPLATES = ["modern", "creative", "product_manager", "bento"];
+    const isCurrentTemplatePremium = !FREE_TEMPLATES.includes(selectedTemplate);
+
     useEffect(() => {
         if (!id) return;
 
@@ -281,7 +284,7 @@ export default function PublicResumePage() {
                     }}
                 >
                     {/* Watermark Overlay for Unpaid Resume */}
-                    {!isPaid && showWatermark && (
+                    {!isPaid && showWatermark && isCurrentTemplatePremium && (
                         <div className="watermark-overlay" style={{
                             position: "absolute",
                             top: 0,
