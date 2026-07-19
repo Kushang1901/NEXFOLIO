@@ -91,15 +91,36 @@ export default function SunriseTemplate({ data }) {
                         )}
 
                         {/* Projects */}
-                        {data.projects && (
-                            <section style={{ marginBottom: "1.75rem" }}>
-                                <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "12px" }}>
-                                    <div style={{ width: "28px", height: "3px", background: accent, borderRadius: "2px" }}></div>
-                                    <h2 style={{ margin: 0, fontSize: "0.75rem", fontWeight: "700", textTransform: "uppercase", letterSpacing: "2px", color: accent }}>Projects</h2>
-                                </div>
-                                <p style={{ whiteSpace: "pre-line", lineHeight: "1.6", color: "#444", fontSize: "0.9rem", margin: 0 }}>{data.projects}</p>
-                            </section>
-                        )}
+                        {data.projects && (() => {
+                            const lines = data.projects.split("\n");
+                            const projs = [];
+                            let cur = null;
+                            lines.forEach(line => {
+                                const t = line.trim();
+                                if (!t) return;
+                                if (t.startsWith("-")) { if (cur) cur.bullets.push(t.replace(/^-\s*/, "")); }
+                                else { if (cur) projs.push(cur); cur = { name: t, bullets: [] }; }
+                            });
+                            if (cur) projs.push(cur);
+                            if (!projs.length) return <section><h4 style={{ margin: "0 0 12px", fontSize: "0.65rem", fontWeight: "800", textTransform: "uppercase", letterSpacing: "2.5px", color: accent }}>Projects</h4><p style={{ whiteSpace: "pre-line", lineHeight: "1.7", color: "#334155", fontSize: "0.9rem", margin: 0 }}>{data.projects}</p></section>;
+                            return (
+                                <section>
+                                    <h4 style={{ margin: "0 0 12px", fontSize: "0.65rem", fontWeight: "800", textTransform: "uppercase", letterSpacing: "2.5px", color: accent }}>Projects</h4>
+                                    <div style={{ display: "flex", flexDirection: "column", gap: "9px" }}>
+                                        {projs.map((proj, i) => (
+                                            <div key={i} style={{ borderLeft: `3px solid ${accent}`, paddingLeft: "12px", paddingTop: "5px", paddingBottom: "5px", background: "#fff7ed", borderRadius: "0 6px 6px 0" }}>
+                                                <div style={{ fontWeight: "700", fontSize: "0.9rem", color: "#92400e", marginBottom: "4px" }}>{proj.name}</div>
+                                                {proj.bullets.length > 0 && (
+                                                    <ul style={{ margin: 0, paddingLeft: "16px", fontSize: "0.82rem", color: "#374151", lineHeight: "1.5" }}>
+                                                        {proj.bullets.map((b, j) => <li key={j} style={{ marginBottom: "2px" }}>{b}</li>)}
+                                                    </ul>
+                                                )}
+                                            </div>
+                                        ))}
+                                    </div>
+                                </section>
+                            );
+                        })()}
                     </div>
 
                     <div>

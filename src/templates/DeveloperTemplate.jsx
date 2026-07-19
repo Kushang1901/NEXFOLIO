@@ -158,13 +158,37 @@ export default function DeveloperTemplate({ data }) {
                     )}
 
                     {/* Projects */}
-                    {data.projects && (
-                        <section className="mb-4">
-                            <h5 className="fw-bold mb-3" style={{ borderBottom: "2px solid #0f172a", paddingBottom: "6px" }}>const projects = () =&gt; &#123;</h5>
-                            <p className="small text-muted" style={{ paddingLeft: "16px", borderLeft: "2px dashed #cbd5e1", whiteSpace: "pre-line", lineHeight: "1.6" }}>{data.projects}</p>
-                            <h5 className="fw-bold mt-2">&#125;</h5>
-                        </section>
-                    )}
+                    {data.projects && (() => {
+                        const lines = data.projects.split("\n");
+                        const projs = [];
+                        let cur = null;
+                        lines.forEach(line => {
+                            const t = line.trim();
+                            if (!t) return;
+                            if (t.startsWith("-")) { if (cur) cur.bullets.push(t.replace(/^-\s*/, "")); }
+                            else { if (cur) projs.push(cur); cur = { name: t, bullets: [] }; }
+                        });
+                        if (cur) projs.push(cur);
+                        if (!projs.length) return <section className="mb-4"><h5 className="fw-bold mb-3" style={{ borderBottom: "2px solid #0f172a", paddingBottom: "6px" }}>const projects = () =&gt; &#123;</h5><p className="small text-muted" style={{ paddingLeft: "16px", borderLeft: "2px dashed #cbd5e1", whiteSpace: "pre-line", lineHeight: "1.6" }}>{data.projects}</p><h5 className="fw-bold mt-2">&#125;</h5></section>;
+                        return (
+                            <section className="mb-4">
+                                <h5 className="fw-bold mb-3" style={{ borderBottom: "2px solid #0f172a", paddingBottom: "6px" }}>const projects = () =&gt; &#123;</h5>
+                                <div style={{ paddingLeft: "16px", borderLeft: "2px dashed #cbd5e1", display: "flex", flexDirection: "column", gap: "10px" }}>
+                                    {projs.map((proj, i) => (
+                                        <div key={i} style={{ background: "#f8fafc", border: "1px solid #e2e8f0", borderRadius: "4px", padding: "8px 12px" }}>
+                                            <div className="fw-bold text-dark" style={{ fontSize: "0.9rem", marginBottom: "4px" }}>// {proj.name}</div>
+                                            {proj.bullets.length > 0 && (
+                                                <ul className="text-muted" style={{ margin: 0, paddingLeft: "16px", fontSize: "0.82rem", lineHeight: "1.5" }}>
+                                                    {proj.bullets.map((b, j) => <li key={j} style={{ marginBottom: "2px" }}>{b}</li>)}
+                                                </ul>
+                                            )}
+                                        </div>
+                                    ))}
+                                </div>
+                                <h5 className="fw-bold mt-2">&#125;</h5>
+                            </section>
+                        );
+                    })()}
 
                     {/* Achievements */}
                     {data.achievements && (

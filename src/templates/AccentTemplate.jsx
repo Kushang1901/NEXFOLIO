@@ -127,12 +127,36 @@ export default function AccentTemplate({ data }) {
                 )}
 
                 {/* Projects */}
-                {data.projects && (
-                    <section className="mb-4">
-                        <h6 className="fw-bold text-uppercase pb-1 mb-2" style={{ color: "#0083b0", borderBottom: "1px solid #e2e8f0" }}>Projects</h6>
-                        <p className="small text-muted" style={{ whiteSpace: "pre-line", lineHeight: "1.6" }}>{data.projects}</p>
-                    </section>
-                )}
+                {data.projects && (() => {
+                    const lines = data.projects.split("\n");
+                    const projs = [];
+                    let cur = null;
+                    lines.forEach(line => {
+                        const t = line.trim();
+                        if (!t) return;
+                        if (t.startsWith("-")) { if (cur) cur.bullets.push(t.replace(/^-\s*/, "")); }
+                        else { if (cur) projs.push(cur); cur = { name: t, bullets: [] }; }
+                    });
+                    if (cur) projs.push(cur);
+                    if (!projs.length) return <section className="mb-4"><h6 className="fw-bold text-uppercase pb-1 mb-2" style={{ color: "#0083b0", borderBottom: "1px solid #e2e8f0" }}>Projects</h6><p className="small text-muted" style={{ whiteSpace: "pre-line", lineHeight: "1.6" }}>{data.projects}</p></section>;
+                    return (
+                        <section className="mb-4">
+                            <h6 className="fw-bold text-uppercase pb-1 mb-2" style={{ color: "#0083b0", borderBottom: "1px solid #e2e8f0" }}>Projects</h6>
+                            <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+                                {projs.map((proj, i) => (
+                                    <div key={i} style={{ borderLeft: "3px solid #0083b0", paddingLeft: "10px", paddingTop: "4px", paddingBottom: "4px", background: "#f0f9ff", borderRadius: "0 4px 4px 0" }}>
+                                        <div className="fw-bold" style={{ fontSize: "0.88rem", color: "#0083b0", marginBottom: "3px" }}>{proj.name}</div>
+                                        {proj.bullets.length > 0 && (
+                                            <ul className="text-muted" style={{ margin: 0, paddingLeft: "14px", fontSize: "0.8rem", lineHeight: "1.5" }}>
+                                                {proj.bullets.map((b, j) => <li key={j} style={{ marginBottom: "2px" }}>{b}</li>)}
+                                            </ul>
+                                        )}
+                                    </div>
+                                ))}
+                            </div>
+                        </section>
+                    );
+                })()}
 
                 {/* Education */}
                 {data.education && data.education.length > 0 && (

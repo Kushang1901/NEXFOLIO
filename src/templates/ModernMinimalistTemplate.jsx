@@ -119,14 +119,36 @@ export default function ModernMinimalistTemplate({ data }) {
             )}
 
             {/* Projects */}
-            {data.projects && (
-                <section className="mb-4">
-                    <h5 className="text-uppercase fw-bold mb-2" style={{ letterSpacing: "1px", fontWeight: "700" }}>
-                        Projects
-                    </h5>
-                    <p className="text-dark" style={{ whiteSpace: "pre-line", fontSize: "0.95rem" }}>{data.projects}</p>
-                </section>
-            )}
+            {data.projects && (() => {
+                const lines = data.projects.split("\n");
+                const projs = [];
+                let cur = null;
+                lines.forEach(line => {
+                    const t = line.trim();
+                    if (!t) return;
+                    if (t.startsWith("-")) { if (cur) cur.bullets.push(t.replace(/^-\s*/, "")); }
+                    else { if (cur) projs.push(cur); cur = { name: t, bullets: [] }; }
+                });
+                if (cur) projs.push(cur);
+                if (!projs.length) return <section className="mb-4"><h5 className="text-uppercase fw-bold mb-2" style={{ letterSpacing: "1px", fontWeight: "700" }}>Projects</h5><p className="text-dark" style={{ whiteSpace: "pre-line", fontSize: "0.95rem" }}>{data.projects}</p></section>;
+                return (
+                    <section className="mb-4">
+                        <h5 className="text-uppercase fw-bold mb-2" style={{ letterSpacing: "1px", fontWeight: "700" }}>Projects</h5>
+                        <div style={{ display: "flex", flexDirection: "column", gap: "9px" }}>
+                            {projs.map((proj, i) => (
+                                <div key={i} style={{ borderLeft: "3px solid #111", paddingLeft: "12px", paddingTop: "4px", paddingBottom: "4px" }}>
+                                    <div style={{ fontWeight: "800", fontSize: "0.9rem", color: "#111", marginBottom: "3px" }}>{proj.name}</div>
+                                    {proj.bullets.length > 0 && (
+                                        <ul className="text-muted" style={{ margin: 0, paddingLeft: "14px", fontSize: "0.84rem", lineHeight: "1.5" }}>
+                                            {proj.bullets.map((b, j) => <li key={j} style={{ marginBottom: "2px" }}>{b}</li>)}
+                                        </ul>
+                                    )}
+                                </div>
+                            ))}
+                        </div>
+                    </section>
+                );
+            })()}
 
             {/* Education */}
             {data.education && data.education.length > 0 && (

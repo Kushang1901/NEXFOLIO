@@ -134,15 +134,41 @@ export default function AuroraTemplate({ data }) {
                         </section>
                     )}
 
-                    {data.projects && (
-                        <section>
-                            <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "14px" }}>
-                                <div style={{ width: "20px", height: "3px", background: "linear-gradient(90deg, #22d3ee, #4ade80)", borderRadius: "2px" }}></div>
-                                <h3 style={{ margin: 0, fontSize: "0.65rem", fontWeight: "700", textTransform: "uppercase", letterSpacing: "2.5px", color: "#475569" }}>Projects</h3>
-                            </div>
-                            <p style={{ whiteSpace: "pre-line", lineHeight: "1.6", color: "#334155", fontSize: "0.9rem", margin: 0 }}>{data.projects}</p>
-                        </section>
-                    )}
+                    {data.projects && (() => {
+                        const lines = data.projects.split("\n");
+                        const projs = [];
+                        let cur = null;
+                        lines.forEach(line => {
+                            const t = line.trim();
+                            if (!t) return;
+                            if (t.startsWith("-")) { if (cur) cur.bullets.push(t.replace(/^-\s*/, "")); }
+                            else { if (cur) projs.push(cur); cur = { name: t, bullets: [] }; }
+                        });
+                        if (cur) projs.push(cur);
+                        if (!projs.length) return <section><div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "14px" }}><div style={{ width: "20px", height: "3px", background: "linear-gradient(90deg, #22d3ee, #4ade80)", borderRadius: "2px" }}></div><h3 style={{ margin: 0, fontSize: "0.65rem", fontWeight: "700", textTransform: "uppercase", letterSpacing: "2.5px", color: "#475569" }}>Projects</h3></div><p style={{ whiteSpace: "pre-line", lineHeight: "1.6", color: "#334155", fontSize: "0.9rem", margin: 0 }}>{data.projects}</p></section>;
+                        return (
+                            <section>
+                                <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "14px" }}>
+                                    <div style={{ width: "20px", height: "3px", background: "linear-gradient(90deg, #22d3ee, #4ade80)", borderRadius: "2px" }}></div>
+                                    <h3 style={{ margin: 0, fontSize: "0.65rem", fontWeight: "700", textTransform: "uppercase", letterSpacing: "2.5px", color: "#475569" }}>Projects</h3>
+                                </div>
+                                <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+                                    {projs.map((proj, i) => (
+                                        <div key={i} style={{ borderLeft: "3px solid #22d3ee", paddingLeft: "12px", paddingTop: "5px", paddingBottom: "5px", background: "#f0fdfe", borderRadius: "0 6px 6px 0" }}>
+                                            <div style={{ fontWeight: "700", fontSize: "0.88rem", color: "#0369a1", marginBottom: "4px" }}>{proj.name}</div>
+                                            {proj.bullets.length > 0 && (
+                                                <ul style={{ margin: 0, paddingLeft: "16px", listStyleType: "disc" }}>
+                                                    {proj.bullets.map((b, j) => (
+                                                        <li key={j} style={{ fontSize: "0.82rem", color: "#475569", lineHeight: "1.5", marginBottom: "2px" }}>{b}</li>
+                                                    ))}
+                                                </ul>
+                                            )}
+                                        </div>
+                                    ))}
+                                </div>
+                            </section>
+                        );
+                    })()}
                 </div>
             </div>
         </div>

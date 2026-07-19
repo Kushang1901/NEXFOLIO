@@ -146,14 +146,36 @@ export default function SlateTwoColumnTemplate({ data }) {
                 )}
 
                 {/* Projects */}
-                {data.projects && (
-                    <section className="mb-4 pb-2">
-                        <h5 className="text-uppercase fw-bold text-slate-800 border-bottom pb-2 mb-3" style={{ color: "#1e293b", letterSpacing: "0.5px" }}>
-                            Academic & Personal Projects
-                        </h5>
-                        <p style={{ whiteSpace: "pre-line", lineHeight: "1.6", fontSize: "0.95rem" }}>{data.projects}</p>
-                    </section>
-                )}
+                {data.projects && (() => {
+                    const lines = data.projects.split("\n");
+                    const projs = [];
+                    let cur = null;
+                    lines.forEach(line => {
+                        const t = line.trim();
+                        if (!t) return;
+                        if (t.startsWith("-")) { if (cur) cur.bullets.push(t.replace(/^-\s*/, "")); }
+                        else { if (cur) projs.push(cur); cur = { name: t, bullets: [] }; }
+                    });
+                    if (cur) projs.push(cur);
+                    if (!projs.length) return <section className="mb-4 pb-2"><h5 className="text-uppercase fw-bold text-slate-800 border-bottom pb-2 mb-3" style={{ color: "#1e293b", letterSpacing: "0.5px" }}>Academic &amp; Personal Projects</h5><p style={{ whiteSpace: "pre-line", lineHeight: "1.6", fontSize: "0.95rem" }}>{data.projects}</p></section>;
+                    return (
+                        <section className="mb-4 pb-2">
+                            <h5 className="text-uppercase fw-bold border-bottom pb-2 mb-3" style={{ color: "#1e293b", letterSpacing: "0.5px" }}>Academic &amp; Personal Projects</h5>
+                            <div style={{ display: "flex", flexDirection: "column", gap: "9px" }}>
+                                {projs.map((proj, i) => (
+                                    <div key={i} style={{ borderLeft: "3px solid #64748b", paddingLeft: "12px", paddingTop: "4px", paddingBottom: "4px", background: "#f8fafc", borderRadius: "0 6px 6px 0" }}>
+                                        <div style={{ fontWeight: "700", fontSize: "0.9rem", color: "#1e293b", marginBottom: "3px" }}>{proj.name}</div>
+                                        {proj.bullets.length > 0 && (
+                                            <ul style={{ margin: 0, paddingLeft: "14px", fontSize: "0.85rem", color: "#475569", lineHeight: "1.5" }}>
+                                                {proj.bullets.map((b, j) => <li key={j} style={{ marginBottom: "2px" }}>{b}</li>)}
+                                            </ul>
+                                        )}
+                                    </div>
+                                ))}
+                            </div>
+                        </section>
+                    );
+                })()}
 
                 {/* Education */}
                 {data.education && data.education.length > 0 && (

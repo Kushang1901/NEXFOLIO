@@ -69,12 +69,36 @@ export default function BlueprintTemplate({ data }) {
             )}
 
             {/* PROJECTS */}
-            {data.projects && (
-                <div className="mb-4">
-                    <h6 className="fw-bold text-uppercase" style={{ fontSize: "12px", color: "#2563eb", borderBottom: "1.5px solid #2563eb", paddingBottom: "2px" }}>// Engineering Projects</h6>
-                    <p style={{ fontSize: "11.5px", whiteSpace: "pre-line", lineHeight: "1.4", margin: 0 }}>{data.projects}</p>
-                </div>
-            )}
+            {data.projects && (() => {
+                    const lines = data.projects.split("\n");
+                    const projs = [];
+                    let cur = null;
+                    lines.forEach(line => {
+                        const t = line.trim();
+                        if (!t) return;
+                        if (t.startsWith("-")) { if (cur) cur.bullets.push(t.replace(/^-\s*/, "")); }
+                        else { if (cur) projs.push(cur); cur = { name: t, bullets: [] }; }
+                    });
+                    if (cur) projs.push(cur);
+                    if (!projs.length) return <section className="mb-4"><h5 className="fw-bold text-uppercase mb-3" style={{ fontSize: "11px", color: blue, letterSpacing: "1px", borderBottom: `2px solid ${blue}`, paddingBottom: "4px" }}>Key Projects</h5><p style={{ fontSize: "11.5px", lineHeight: "1.5", color: "#475569", whiteSpace: "pre-line", margin: 0 }}>{data.projects}</p></section>;
+                    return (
+                        <section className="mb-4">
+                            <h5 className="fw-bold text-uppercase mb-3" style={{ fontSize: "11px", color: blue, letterSpacing: "1px", borderBottom: `2px solid ${blue}`, paddingBottom: "4px" }}>Key Projects</h5>
+                            <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+                                {projs.map((proj, i) => (
+                                    <div key={i} style={{ borderLeft: `3px solid ${blue}`, paddingLeft: "10px", paddingTop: "5px", paddingBottom: "5px", background: "#f0f9ff", borderRadius: "0 4px 4px 0" }}>
+                                        <div style={{ fontWeight: "700", fontSize: "12px", color: blue, marginBottom: "4px" }}>{proj.name}</div>
+                                        {proj.bullets.length > 0 && (
+                                            <ul style={{ margin: 0, paddingLeft: "14px", fontSize: "11px", color: "#475569", lineHeight: "1.5" }}>
+                                                {proj.bullets.map((b, j) => <li key={j} style={{ marginBottom: "2px" }}>{b}</li>)}
+                                            </ul>
+                                        )}
+                                    </div>
+                                ))}
+                            </div>
+                        </section>
+                    );
+                })()}
 
             {/* EDUCATION */}
             <div className="mb-4">

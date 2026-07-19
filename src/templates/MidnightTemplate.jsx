@@ -134,12 +134,36 @@ export default function MidnightTemplate({ data }) {
                     )}
 
                     {/* Projects */}
-                    {data.projects && (
-                        <section>
-                            <SectionTitle>Projects</SectionTitle>
-                            <p style={{ whiteSpace: "pre-line", lineHeight: "1.6", color: "#c4b5fd", fontSize: "0.9rem", margin: 0 }}>{data.projects}</p>
-                        </section>
-                    )}
+                    {data.projects && (() => {
+                        const lines = data.projects.split("\n");
+                        const projs = [];
+                        let cur = null;
+                        lines.forEach(line => {
+                            const t = line.trim();
+                            if (!t) return;
+                            if (t.startsWith("-")) { if (cur) cur.bullets.push(t.replace(/^-\s*/, "")); }
+                            else { if (cur) projs.push(cur); cur = { name: t, bullets: [] }; }
+                        });
+                        if (cur) projs.push(cur);
+                        if (!projs.length) return <section><SectionTitle>Projects</SectionTitle><p style={{ whiteSpace: "pre-line", lineHeight: "1.6", color: "#c4b5fd", fontSize: "0.9rem", margin: 0 }}>{data.projects}</p></section>;
+                        return (
+                            <section>
+                                <SectionTitle>Projects</SectionTitle>
+                                <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+                                    {projs.map((proj, i) => (
+                                        <div key={i} style={{ background: `${purple}11`, border: `1px solid ${border}`, borderRadius: "8px", padding: "10px 14px" }}>
+                                            <div style={{ fontWeight: "700", fontSize: "0.9rem", color: "#d8b4fe", marginBottom: "5px" }}>{proj.name}</div>
+                                            {proj.bullets.length > 0 && (
+                                                <ul style={{ margin: 0, paddingLeft: "16px", fontSize: "0.82rem", color: "#9ca3af", lineHeight: "1.5" }}>
+                                                    {proj.bullets.map((b, j) => <li key={j} style={{ marginBottom: "2px" }}>{b}</li>)}
+                                                </ul>
+                                            )}
+                                        </div>
+                                    ))}
+                                </div>
+                            </section>
+                        );
+                    })()}
                 </div>
             </div>
         </div>

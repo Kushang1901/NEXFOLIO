@@ -158,12 +158,42 @@ export default function CreativeTemplate({ data }) {
             )}
 
             {/* PROJECTS */}
-            {data.projects && (
-                <div className="card p-4 mb-3">
-                    <h5 className="fw-bold">Projects</h5>
-                    <p style={{ whiteSpace: "pre-line" }}>{data.projects}</p>
-                </div>
-            )}
+            {data.projects && (() => {
+                const lines = data.projects.split("\n");
+                const projects = [];
+                let current = null;
+                lines.forEach(line => {
+                    const trimmed = line.trim();
+                    if (!trimmed) return;
+                    if (trimmed.startsWith("-")) {
+                        if (current) current.bullets.push(trimmed.replace(/^-\s*/, ""));
+                    } else {
+                        if (current) projects.push(current);
+                        current = { name: trimmed, bullets: [] };
+                    }
+                });
+                if (current) projects.push(current);
+                if (!projects.length) return <div className="card p-4 mb-3"><h5 className="fw-bold">Projects</h5><p style={{ whiteSpace: "pre-line" }}>{data.projects}</p></div>;
+                return (
+                    <div className="card p-4 mb-3">
+                        <h5 className="fw-bold">Projects</h5>
+                        <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+                            {projects.map((proj, i) => (
+                                <div key={i} style={{ borderLeft: "3px solid #333", paddingLeft: "12px", paddingTop: "4px", paddingBottom: "4px", background: "#f8f8f8", borderRadius: "0 6px 6px 0" }}>
+                                    <div style={{ fontWeight: "700", fontSize: "0.9rem", color: "#222", marginBottom: "4px" }}>{proj.name}</div>
+                                    {proj.bullets.length > 0 && (
+                                        <ul style={{ margin: 0, paddingLeft: "16px", listStyleType: "disc" }}>
+                                            {proj.bullets.map((b, j) => (
+                                                <li key={j} style={{ fontSize: "0.83rem", color: "#555", lineHeight: "1.5", marginBottom: "2px" }}>{b}</li>
+                                            ))}
+                                        </ul>
+                                    )}
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                );
+            })()}
 
             {/* SKILLS */}
             {data.skills.length > 0 && (

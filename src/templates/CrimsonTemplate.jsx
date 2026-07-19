@@ -92,16 +92,40 @@ export default function CrimsonTemplate({ data }) {
                             </section>
                         )}
 
-                        {data.projects && (
-                            <section>
-                                <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "14px" }}>
-                                    <h2 style={{ margin: 0, fontFamily: "'Georgia', serif", fontSize: "1.1rem", color: "#1c1917", fontWeight: "700", fontStyle: "italic" }}>Projects</h2>
-                                    <div style={{ flex: 1, height: "1px", background: "#e7e5e4" }}></div>
-                                    <div style={{ width: "6px", height: "6px", background: red, borderRadius: "50%", flexShrink: 0 }}></div>
-                                </div>
-                                <p style={{ whiteSpace: "pre-line", lineHeight: "1.7", color: "#44403c", fontSize: "0.92rem", margin: 0 }}>{data.projects}</p>
-                            </section>
-                        )}
+                        {data.projects && (() => {
+                            const lines = data.projects.split("\n");
+                            const projs = [];
+                            let cur = null;
+                            lines.forEach(line => {
+                                const t = line.trim();
+                                if (!t) return;
+                                if (t.startsWith("-")) { if (cur) cur.bullets.push(t.replace(/^-\s*/, "")); }
+                                else { if (cur) projs.push(cur); cur = { name: t, bullets: [] }; }
+                            });
+                            if (cur) projs.push(cur);
+                            if (!projs.length) return <section><div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "14px" }}><h2 style={{ margin: 0, fontFamily: "'Georgia', serif", fontSize: "1.1rem", color: "#1c1917", fontWeight: "700", fontStyle: "italic" }}>Projects</h2><div style={{ flex: 1, height: "1px", background: "#e7e5e4" }}></div><div style={{ width: "6px", height: "6px", background: red, borderRadius: "50%", flexShrink: 0 }}></div></div><p style={{ whiteSpace: "pre-line", lineHeight: "1.7", color: "#44403c", fontSize: "0.92rem", margin: 0 }}>{data.projects}</p></section>;
+                            return (
+                                <section>
+                                    <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "14px" }}>
+                                        <h2 style={{ margin: 0, fontFamily: "'Georgia', serif", fontSize: "1.1rem", color: "#1c1917", fontWeight: "700", fontStyle: "italic" }}>Projects</h2>
+                                        <div style={{ flex: 1, height: "1px", background: "#e7e5e4" }}></div>
+                                        <div style={{ width: "6px", height: "6px", background: red, borderRadius: "50%", flexShrink: 0 }}></div>
+                                    </div>
+                                    <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+                                        {projs.map((proj, i) => (
+                                            <div key={i} style={{ borderLeft: `3px solid ${red}`, paddingLeft: "12px", paddingTop: "5px", paddingBottom: "5px", background: redLight, borderRadius: "0 4px 4px 0" }}>
+                                                <div style={{ fontWeight: "700", fontFamily: "'Georgia', serif", fontSize: "0.92rem", color: red, marginBottom: "4px" }}>{proj.name}</div>
+                                                {proj.bullets.length > 0 && (
+                                                    <ul style={{ margin: 0, paddingLeft: "16px", fontSize: "0.85rem", color: "#44403c", lineHeight: "1.6" }}>
+                                                        {proj.bullets.map((b, j) => <li key={j} style={{ marginBottom: "2px" }}>{b}</li>)}
+                                                    </ul>
+                                                )}
+                                            </div>
+                                        ))}
+                                    </div>
+                                </section>
+                            );
+                        })()}
                     </div>
 
                     <div>

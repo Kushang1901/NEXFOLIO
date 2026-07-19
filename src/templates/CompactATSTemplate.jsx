@@ -77,12 +77,36 @@ export default function CompactATSTemplate({ data }) {
             )}
 
             {/* PROJECTS */}
-            {data.projects && (
-                <div className="mb-3">
-                    <h6 className="fw-bold text-uppercase border-bottom pb-1" style={{ fontSize: "12px", borderBottomWidth: "2px" }}>Projects</h6>
-                    <p style={{ whiteSpace: "pre-line", lineHeight: "1.4", margin: 0 }}>{data.projects}</p>
-                </div>
-            )}
+            {data.projects && (() => {
+                const lines = data.projects.split("\n");
+                const projs = [];
+                let cur = null;
+                lines.forEach(line => {
+                    const t = line.trim();
+                    if (!t) return;
+                    if (t.startsWith("-")) { if (cur) cur.bullets.push(t.replace(/^-\s*/, "")); }
+                    else { if (cur) projs.push(cur); cur = { name: t, bullets: [] }; }
+                });
+                if (cur) projs.push(cur);
+                if (!projs.length) return <div className="mb-3"><div className="fw-bold text-uppercase border-bottom mb-2" style={{ fontSize: "11px", letterSpacing: "1.5px", borderColor: "#333" }}>PROJECTS</div><p className="small text-muted" style={{ whiteSpace: "pre-line", lineHeight: "1.5", margin: 0 }}>{data.projects}</p></div>;
+                return (
+                    <div className="mb-3">
+                        <div className="fw-bold text-uppercase border-bottom mb-2" style={{ fontSize: "11px", letterSpacing: "1.5px", borderColor: "#333" }}>PROJECTS</div>
+                        <div style={{ display: "flex", flexDirection: "column", gap: "7px" }}>
+                            {projs.map((proj, i) => (
+                                <div key={i} style={{ borderLeft: "2px solid #333", paddingLeft: "8px" }}>
+                                    <div style={{ fontWeight: "700", fontSize: "11.5px", color: "#111", marginBottom: "3px" }}>{proj.name}</div>
+                                    {proj.bullets.length > 0 && (
+                                        <ul style={{ margin: 0, paddingLeft: "14px", fontSize: "11px", color: "#444", lineHeight: "1.5" }}>
+                                            {proj.bullets.map((b, j) => <li key={j} style={{ marginBottom: "1px" }}>{b}</li>)}
+                                        </ul>
+                                    )}
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                );
+            })()}
 
             {/* EDUCATION */}
             <div className="mb-3">

@@ -114,12 +114,36 @@ export default function ElegantTemplate({ data }) {
             )}
 
             {/* Projects */}
-            {data.projects && (
-                <div className="mb-4">
-                    <h5 className="fw-semibold text-uppercase border-bottom pb-2 mb-3" style={{ fontSize: "16px", letterSpacing: "1.5px" }}>Selected Projects</h5>
-                    <p className="small text-muted" style={{ whiteSpace: "pre-line", lineHeight: "1.7", paddingLeft: "12px" }}>{data.projects}</p>
-                </div>
-            )}
+            {data.projects && (() => {
+                const lines = data.projects.split("\n");
+                const projs = [];
+                let cur = null;
+                lines.forEach(line => {
+                    const t = line.trim();
+                    if (!t) return;
+                    if (t.startsWith("-")) { if (cur) cur.bullets.push(t.replace(/^-\s*/, "")); }
+                    else { if (cur) projs.push(cur); cur = { name: t, bullets: [] }; }
+                });
+                if (cur) projs.push(cur);
+                if (!projs.length) return <div className="mb-4"><h5 className="fw-semibold text-uppercase border-bottom pb-2 mb-3" style={{ fontSize: "16px", letterSpacing: "1.5px" }}>Selected Projects</h5><p className="small text-muted" style={{ whiteSpace: "pre-line", lineHeight: "1.7", paddingLeft: "12px" }}>{data.projects}</p></div>;
+                return (
+                    <div className="mb-4">
+                        <h5 className="fw-semibold text-uppercase border-bottom pb-2 mb-3" style={{ fontSize: "16px", letterSpacing: "1.5px" }}>Selected Projects</h5>
+                        <div style={{ display: "flex", flexDirection: "column", gap: "10px", paddingLeft: "12px" }}>
+                            {projs.map((proj, i) => (
+                                <div key={i} style={{ borderLeft: "2px solid #4a5568", paddingLeft: "12px" }}>
+                                    <div className="fw-semibold text-dark" style={{ fontStyle: "italic", fontSize: "0.92rem", marginBottom: "4px" }}>{proj.name}</div>
+                                    {proj.bullets.length > 0 && (
+                                        <ul className="text-muted" style={{ margin: 0, paddingLeft: "16px", fontSize: "0.85rem", lineHeight: "1.6" }}>
+                                            {proj.bullets.map((b, j) => <li key={j} style={{ marginBottom: "2px" }}>{b}</li>)}
+                                        </ul>
+                                    )}
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                );
+            })()}
 
             {/* Education */}
             {data.education && data.education.length > 0 && (

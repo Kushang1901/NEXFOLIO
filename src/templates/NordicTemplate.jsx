@@ -86,12 +86,36 @@ export default function NordicTemplate({ data }) {
                         </section>
                     )}
 
-                    {data.projects && (
+                    {data.projects && (() => {
+                    const lines = data.projects.split("\n");
+                    const projs = [];
+                    let cur = null;
+                    lines.forEach(line => {
+                        const t = line.trim();
+                        if (!t) return;
+                        if (t.startsWith("-")) { if (cur) cur.bullets.push(t.replace(/^-\s*/, "")); }
+                        else { if (cur) projs.push(cur); cur = { name: t, bullets: [] }; }
+                    });
+                    if (cur) projs.push(cur);
+                    if (!projs.length) return <section style={{ marginBottom: "2rem" }}><h2 style={{ margin: "0 0 14px", fontSize: "0.65rem", fontWeight: "700", textTransform: "uppercase", letterSpacing: "3px", color: blue }}>Projects</h2><p style={{ whiteSpace: "pre-line", lineHeight: "1.6", color: "#374151", fontSize: "0.9rem", margin: 0 }}>{data.projects}</p></section>;
+                    return (
                         <section style={{ marginBottom: "2rem" }}>
                             <h2 style={{ margin: "0 0 14px", fontSize: "0.65rem", fontWeight: "700", textTransform: "uppercase", letterSpacing: "3px", color: blue }}>Projects</h2>
-                            <p style={{ whiteSpace: "pre-line", lineHeight: "1.6", color: "#374151", fontSize: "0.9rem", margin: 0 }}>{data.projects}</p>
+                            <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+                                {projs.map((proj, i) => (
+                                    <div key={i} style={{ borderLeft: "3px solid #2563eb", paddingLeft: "12px", paddingTop: "5px", paddingBottom: "5px", background: "#f8fafc", borderRadius: "0 6px 6px 0" }}>
+                                        <div style={{ fontWeight: "700", fontSize: "0.92rem", color: "#1e3a5f", marginBottom: "4px" }}>{proj.name}</div>
+                                        {proj.bullets.length > 0 && (
+                                            <ul style={{ margin: 0, paddingLeft: "16px", fontSize: "0.85rem", color: "#475569", lineHeight: "1.5" }}>
+                                                {proj.bullets.map((b, j) => <li key={j} style={{ marginBottom: "2px" }}>{b}</li>)}
+                                            </ul>
+                                        )}
+                                    </div>
+                                ))}
+                            </div>
                         </section>
-                    )}
+                    );
+                })()}
                 </div>
 
                 {/* Right column */}

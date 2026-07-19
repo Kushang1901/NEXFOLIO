@@ -171,12 +171,42 @@ export default function ModernTemplate({ data }) {
                 )}
 
                 {/* PROJECTS */}
-                {data.projects && (
-                    <section>
-                        <h5 className="fw-bold">PROJECTS</h5>
-                        <p style={{ whiteSpace: "pre-line" }}>{data.projects}</p>
-                    </section>
-                )}
+                {data.projects && (() => {
+                    const lines = data.projects.split("\n");
+                    const projects = [];
+                    let current = null;
+                    lines.forEach(line => {
+                        const trimmed = line.trim();
+                        if (!trimmed) return;
+                        if (trimmed.startsWith("-")) {
+                            if (current) current.bullets.push(trimmed.replace(/^-\s*/, ""));
+                        } else {
+                            if (current) projects.push(current);
+                            current = { name: trimmed, bullets: [] };
+                        }
+                    });
+                    if (current) projects.push(current);
+                    if (!projects.length) return <section><h5 className="fw-bold">PROJECTS</h5><p style={{ whiteSpace: "pre-line" }}>{data.projects}</p></section>;
+                    return (
+                        <section>
+                            <h5 className="fw-bold">PROJECTS</h5>
+                            <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+                                {projects.map((proj, i) => (
+                                    <div key={i} style={{ borderLeft: "3px solid #0d6efd", paddingLeft: "12px", paddingTop: "4px", paddingBottom: "4px", background: "#f0f4ff", borderRadius: "0 6px 6px 0" }}>
+                                        <div style={{ fontWeight: "700", fontSize: "0.9rem", color: "#0d6efd", marginBottom: "4px" }}>{proj.name}</div>
+                                        {proj.bullets.length > 0 && (
+                                            <ul style={{ margin: 0, paddingLeft: "16px", listStyleType: "disc" }}>
+                                                {proj.bullets.map((b, j) => (
+                                                    <li key={j} style={{ fontSize: "0.83rem", color: "#374151", lineHeight: "1.5", marginBottom: "2px" }}>{b}</li>
+                                                ))}
+                                            </ul>
+                                        )}
+                                    </div>
+                                ))}
+                            </div>
+                        </section>
+                    );
+                })()}
 
                 {/* ACHIEVEMENTS / CERTIFICATIONS */}
                 {data.achievements && (

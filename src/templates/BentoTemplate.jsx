@@ -82,12 +82,36 @@ export default function BentoTemplate({ data }) {
                 )}
 
                 {/* 6. PROJECTS BLOCK */}
-                {data.projects && (
-                    <div style={{ background: "#ffffff", border: "1px solid #e2e8f0", borderRadius: "16px", padding: "18px" }}>
-                        <h6 className="fw-bold text-uppercase text-secondary mb-2" style={{ fontSize: "10.5px", letterSpacing: "0.5px" }}>Projects</h6>
-                        <p style={{ fontSize: "11.5px", lineHeight: "1.4", color: "#334155", whiteSpace: "pre-line", margin: 0 }}>{data.projects}</p>
-                    </div>
-                )}
+                {data.projects && (() => {
+                    const lines = data.projects.split("\n");
+                    const projs = [];
+                    let cur = null;
+                    lines.forEach(line => {
+                        const t = line.trim();
+                        if (!t) return;
+                        if (t.startsWith("-")) { if (cur) cur.bullets.push(t.replace(/^-\s*/, "")); }
+                        else { if (cur) projs.push(cur); cur = { name: t, bullets: [] }; }
+                    });
+                    if (cur) projs.push(cur);
+                    if (!projs.length) return <div style={{ background: "#ffffff", border: "1px solid #e2e8f0", borderRadius: "16px", padding: "18px" }}><h6 className="fw-bold text-uppercase text-secondary mb-2" style={{ fontSize: "10.5px", letterSpacing: "0.5px" }}>Projects</h6><p style={{ fontSize: "11.5px", lineHeight: "1.4", color: "#334155", whiteSpace: "pre-line", margin: 0 }}>{data.projects}</p></div>;
+                    return (
+                        <div style={{ gridColumn: "span 2", background: "#ffffff", border: "1px solid #e2e8f0", borderRadius: "16px", padding: "18px" }}>
+                            <h6 className="fw-bold text-uppercase text-secondary mb-3" style={{ fontSize: "10.5px", letterSpacing: "0.5px" }}>Projects</h6>
+                            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px" }}>
+                                {projs.map((proj, i) => (
+                                    <div key={i} style={{ border: "1px solid #e2e8f0", borderRadius: "10px", padding: "10px 12px", borderTop: "3px solid #6366f1" }}>
+                                        <div style={{ fontWeight: "700", fontSize: "11.5px", color: "#0f172a", marginBottom: "5px" }}>{proj.name}</div>
+                                        {proj.bullets.length > 0 && (
+                                            <ul style={{ margin: 0, paddingLeft: "14px", fontSize: "10.5px", color: "#475569", lineHeight: "1.5" }}>
+                                                {proj.bullets.map((b, j) => <li key={j} style={{ marginBottom: "2px" }}>{b}</li>)}
+                                            </ul>
+                                        )}
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    );
+                })()}
 
                 {/* 7. EDUCATION BLOCK */}
                 <div style={{ background: "#ffffff", border: "1px solid #e2e8f0", borderRadius: "16px", padding: "18px" }}>
