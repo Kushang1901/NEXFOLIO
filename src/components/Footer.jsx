@@ -2,6 +2,7 @@
 
 import React from "react";
 import Link from "next/link";
+import { ArrowUp } from "lucide-react";
 
 export default function Footer() {
     const scrollToTop = () => {
@@ -132,7 +133,7 @@ export default function Footer() {
                         className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 hover:border-[#c0c1ff]/30 flex items-center justify-center text-[#c0c1ff] hover:bg-[#c0c1ff]/15 transition-all duration-300 group shadow-md"
                         title="Back to Top"
                     >
-                        <span className="material-symbols-outlined transition-transform duration-300 group-hover:-translate-y-1">arrow_upward</span>
+                        <ArrowUp size={20} className="transition-transform duration-300 group-hover:-translate-y-1" />
                     </button>
                     <span className="font-medium tracking-wide">© 2026 CVGrid Career Architect.</span>
                 </div>
