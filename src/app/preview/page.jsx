@@ -6,7 +6,7 @@ import jsPDF from "jspdf";
 import Link from "next/link";
 import Script from "next/script";
 import Navbar from "../../components/Navbar";
-import { FileQuestion, ChevronRight, Home, LayoutGrid, Check, Search, Sparkles, X, SlidersHorizontal, Loader2 } from "lucide-react";
+import { FileQuestion, ChevronRight, Home, LayoutGrid, Check, Search, Sparkles, X, SlidersHorizontal, Loader2, Crown, Unlock, Star } from "lucide-react";
 import { templateList } from "../../templates/templatesData";
 
 import ClassicTemplate from "../../templates/ClassicTemplate";
@@ -1446,7 +1446,6 @@ export default function Preview() {
                                                 className={`template-selector-card ${selectedTemplate === tpl.id ? 'active' : ''}`}
                                                 style={{ position: "relative" }}
                                             >
-                                                {/* Premium / Free Badge */}
                                                 <div style={{
                                                     position: "absolute",
                                                     top: "10px",
@@ -1463,7 +1462,19 @@ export default function Preview() {
                                                     color: "#fff",
                                                     boxShadow: "0 2px 6px rgba(0,0,0,0.35)"
                                                 }}>
-                                                    {isPremium ? "⭐ Pro" : "🆓 Free"}
+                                                    <div className="d-flex align-items-center gap-1">
+                                                        {isPremium ? (
+                                                            <>
+                                                                <Crown size={10} className="text-white" />
+                                                                <span>Premium</span>
+                                                            </>
+                                                        ) : (
+                                                            <>
+                                                                <Unlock size={10} className="text-white" />
+                                                                <span>Free</span>
+                                                            </>
+                                                        )}
+                                                    </div>
                                                 </div>
 
                                                 {selectedTemplate === tpl.id && (
@@ -1566,7 +1577,7 @@ export default function Preview() {
                                                     alignItems: "center",
                                                     justifyContent: "center"
                                                 }}>
-                                                    <span style={{ fontSize: "32px" }}>⭐</span>
+                                                    <Crown size={32} className="text-warning" />
                                                 </div>
                                             </div>
 
@@ -1673,7 +1684,7 @@ export default function Preview() {
                                         }}>
                                             <div>
                                                 <h4 className="fw-bold fs-5 text-white mb-3 d-flex align-items-center gap-2">
-                                                    <span>🆓</span> Free Download
+                                                    <Unlock size={18} className="text-white-50" /> Free Download
                                                 </h4>
                                                 <ul className="list-unstyled d-flex flex-column gap-2 mb-4 text-white-50" style={{ fontSize: "0.9rem" }}>
                                                     <li className="d-flex align-items-center gap-2 text-white-50">
@@ -1709,7 +1720,7 @@ export default function Preview() {
                                             </div>
                                             <div>
                                                 <h4 className="fw-bold fs-5 text-white mb-3 d-flex align-items-center gap-2">
-                                                    <span>⭐</span> Premium Export <span className="text-info fs-6 fw-normal ms-auto">₹150</span>
+                                                    <Crown size={18} className="text-warning" /> Premium Export <span className="text-info fs-6 fw-normal ms-auto">₹150</span>
                                                 </h4>
                                                 <ul className="list-unstyled d-flex flex-column gap-2 mb-4" style={{ fontSize: "0.9rem" }}>
                                                     <li className="d-flex align-items-center gap-2 text-white">
@@ -1768,7 +1779,7 @@ export default function Preview() {
                                 ></button>
                                 
                                 <h3 className="fw-bold mb-3 d-flex align-items-center justify-content-center gap-2" style={{ letterSpacing: "-0.01em" }}>
-                                    <span className="text-warning">👑</span> Choose Export Format
+                                    <Crown size={22} className="text-warning" /> Choose Export Format
                                 </h3>
                                 <p className="text-white-50 mb-4" style={{ fontSize: "0.95rem" }}>
                                     Premium feature unlocked! Download your clean, watermark-free resume.

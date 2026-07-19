@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Navbar from "../../components/Navbar";
 import { subscribeToAuthChanges } from "../../authState";
-import { Search, Sparkles, SlidersHorizontal, RefreshCw } from "lucide-react";
+import { Search, Sparkles, SlidersHorizontal, RefreshCw, Crown, Unlock } from "lucide-react";
 import { templateList } from "../../templates/templatesData";
 
 export default function TemplateSelection() {
@@ -166,7 +166,19 @@ export default function TemplateSelection() {
                                                 color: "#fff",
                                                 boxShadow: "0 4px 10px rgba(0,0,0,0.3)"
                                             }}>
-                                                {isPremium ? "⭐ Premium (₹150)" : "🆓 Free"}
+                                                <div className="d-flex align-items-center gap-1">
+                                                    {isPremium ? (
+                                                        <>
+                                                            <Crown size={12} className="text-white" />
+                                                            <span>Premium</span>
+                                                        </>
+                                                    ) : (
+                                                        <>
+                                                            <Unlock size={12} className="text-white" />
+                                                            <span>Free</span>
+                                                        </>
+                                                    )}
+                                                </div>
                                             </div>
 
                                             <div style={{ height: "230px", width: "100%" }}>
