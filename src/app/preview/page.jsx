@@ -285,9 +285,43 @@ export default function Preview() {
     };
 
     const handleRazorpayPayment = async () => {
-        if (!resumeId || !userEmail) {
+        if (!userEmail) {
             showToast("You must be logged in to purchase premium features.", "error");
             return;
+        }
+
+        let currentResumeId = resumeId;
+
+        // If logged in but the resume hasn't been saved to cloud yet (no resumeId), save it first!
+        if (!currentResumeId) {
+            try {
+                showToast("Saving resume to cloud before upgrade...", "info");
+                const saveRes = await fetch("/api/resumes", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        email: userEmail,
+                        resumeName: resumeData?.fullName ? `${resumeData.fullName}'s Resume` : "My Resume",
+                        resumeData: resumeData,
+                        selectedTemplate: selectedTemplate,
+                        isPublic: isPublic,
+                        shareableLink: shareableLink
+                    })
+                });
+
+                if (!saveRes.ok) {
+                    throw new Error("Failed to save resume before payment.");
+                }
+
+                const saveResult = await saveRes.json();
+                currentResumeId = saveResult.id;
+                setResumeId(saveResult.id);
+                sessionStorage.setItem("resumeId", saveResult.id);
+            } catch (err) {
+                console.error("Error auto-saving resume:", err);
+                showToast("Failed to initiate upgrade. Please save your resume first.", "error");
+                return;
+            }
         }
 
         try {
@@ -297,7 +331,7 @@ export default function Preview() {
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                     action: "create_order",
-                    resumeId: resumeId
+                    resumeId: currentResumeId
                 })
             });
 
@@ -325,7 +359,7 @@ export default function Preview() {
                             headers: { "Content-Type": "application/json" },
                             body: JSON.stringify({
                                 action: "verify_payment",
-                                resumeId: resumeId,
+                                resumeId: currentResumeId,
                                 razorpayPaymentId: response.razorpay_payment_id,
                                 razorpayOrderId: response.razorpay_order_id,
                                 razorpaySignature: response.razorpay_signature
