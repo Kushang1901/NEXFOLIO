@@ -520,16 +520,6 @@ export default function HomePage() {
                                         <span className="text-base">Build My Resume</span>
                                         <span className="material-symbols-outlined text-[20px] transition-transform group-hover:translate-x-1">trending_flat</span>
                                     </button>
-                                    <div className="flex items-center gap-4 px-6 py-2 border-l border-[rgba(255,255,255,0.1)]">
-                                        <span className="material-symbols-outlined text-[#c0c1ff]">verified</span>
-                                        <span className="text-sm text-[#c7c4d7] leading-tight">Free PDF Export<br />(with watermark)</span>
-                                    </div>
-                                </div>
-
-                                <div className="mt-6 flex flex-wrap gap-8 opacity-60 grayscale hover:grayscale-0 transition-all">
-                                    <div className="flex items-center gap-2"><span className="font-bold text-lg tracking-tighter" style={{ fontFamily: "Space Grotesk, sans-serif" }}>FORBES</span></div>
-                                    <div className="flex items-center gap-2"><span className="font-bold text-lg tracking-tighter" style={{ fontFamily: "Space Grotesk, sans-serif" }}>WIRED</span></div>
-                                    <div className="flex items-center gap-2"><span className="font-bold text-lg tracking-tighter" style={{ fontFamily: "Space Grotesk, sans-serif" }}>TECHCRUNCH</span></div>
                                 </div>
                             </div>
 
@@ -775,7 +765,7 @@ export default function HomePage() {
                             {[
                                 {
                                     q: "Is CVGrid free to use?",
-                                    a: "Yes! CVGrid offers a generous free tier. You can create your resume, choose from our templates, and download your CV with a subtle watermark. We offer a premium upgrade (INR 150) for completely watermark-free premium downloads (PDF, DOCX, PNG).",
+                                    a: "Yes! CVGrid offers a generous free tier. You can create your resume and download it completely free and watermark-free using any of our free templates. Premium templates are available for a one-time upgrade charge of ₹150 per resume.",
                                 },
                                 {
                                     q: "Are the resume templates ATS-friendly?",
@@ -791,7 +781,7 @@ export default function HomePage() {
                                 },
                                 {
                                     q: "Can I download my resume as a PDF?",
-                                    a: "Yes. Once you're done editing, you can immediately download your CV as a high-quality PDF, Word document (.docx), or high-res PNG image. Free downloads contain a watermark; premium exports are clean.",
+                                    a: "Yes. Once you're done editing, you can immediately download your CV as a high-quality PDF, Word document (.docx), or high-res PNG image. Downloads are completely free and watermark-free on our free layouts; premium layouts require a one-time upgrade.",
                                 },
                                 {
                                     q: "Does CVGrid work for freshers and students?",
