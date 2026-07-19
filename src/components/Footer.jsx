@@ -100,9 +100,9 @@ export default function Footer() {
                                 </svg>
                             </a>
                             <a 
-                                href="https://linkedin.com" 
+                                href="https://www.linkedin.com/in/kushang-acharya-938a712a6/" 
                                 target="_blank" 
-                                rel="noreferrer" 
+                                rel="noopener noreferrer" 
                                 className="w-9 h-9 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-[#c7c4d7] hover:text-white hover:bg-white/10 transition-all duration-200"
                             >
                                 <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
@@ -110,9 +110,9 @@ export default function Footer() {
                                 </svg>
                             </a>
                             <a 
-                                href="https://github.com" 
+                                href="https://github.com/Kushang1901" 
                                 target="_blank" 
-                                rel="noreferrer" 
+                                rel="noopener noreferrer" 
                                 className="w-9 h-9 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-[#c7c4d7] hover:text-white hover:bg-white/10 transition-all duration-200"
                             >
                                 <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">

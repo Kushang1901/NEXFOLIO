@@ -271,14 +271,14 @@ export default function RootLayout({ children }) {
                             "name": "Free Plan",
                             "price": "0",
                             "priceCurrency": "INR",
-                            "description": "Create and download resumes for free with a subtle CVGrid watermark."
+                            "description": "Create and download resumes for free with watermark-free PDF exports."
                         },
                         {
                             "@type": "Offer",
                             "name": "Premium Export",
                             "price": "150",
                             "priceCurrency": "INR",
-                            "description": "Download clean, watermark-free PDF, editable Word (.docx), and high-res PNG formats."
+                            "description": "Unlock premium layouts and download clean PDF, editable Word (.docx), and high-res PNG formats."
                         }
                     ]
                 },
@@ -525,7 +525,7 @@ export default function RootLayout({ children }) {
                         "name": "Is CVGrid really free to use?",
                         "acceptedAnswer": {
                             "@type": "Answer",
-                            "text": "Yes! CVGrid is 100% free. You can create a resume, choose from 18+ premium templates, generate AI content, and download your resume as a PDF — all without paying anything or entering a credit card.",
+                            "text": "Yes! CVGrid offers a generous free tier. You can create your resume and download it completely free and watermark-free using any of our free templates. Premium templates are available for a one-time upgrade charge of ₹150.",
                         },
                     },
                     {
@@ -549,7 +549,7 @@ export default function RootLayout({ children }) {
                         "name": "Can I download my resume as a PDF?",
                         "acceptedAnswer": {
                             "@type": "Answer",
-                            "text": "Yes! Once you've built your resume, you can download it as a high-quality PDF or PNG image with a single click. No watermarks, no subscriptions — completely free.",
+                            "text": "Yes! Once you've built your resume, you can download it as a high-quality PDF, Word doc, or PNG. Free templates are completely watermark-free and free to download; premium templates are unlocked with a single one-time payment.",
                         },
                     },
                     {
