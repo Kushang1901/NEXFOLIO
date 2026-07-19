@@ -1437,7 +1437,7 @@ export default function Preview() {
                                                               tpl.desc.toLowerCase().includes(templateSearchQuery.toLowerCase());
                                         return matchesCategory && matchesSearch;
                                     }).map((tpl) => {
-                                        const FREE_TEMPLATES = ["classic", "minimalist", "elegant", "minimalist_bw", "compact_ats", "graduate"];
+                                        const FREE_TEMPLATES = ["modern", "creative", "product_manager", "bento"];
                                         const isPremium = !FREE_TEMPLATES.includes(tpl.id);
                                         return (
                                             <div 
@@ -1533,7 +1533,7 @@ export default function Preview() {
                     
                     {!isPaid ? (
                         (() => {
-                            const FREE_TEMPLATES = ["classic", "minimalist", "elegant", "minimalist_bw", "compact_ats", "graduate"];
+                            const FREE_TEMPLATES = ["modern", "creative", "product_manager", "bento"];
                             const isCurrentTemplatePremium = !FREE_TEMPLATES.includes(selectedTemplate);
                             if (isCurrentTemplatePremium) {
                                 return (

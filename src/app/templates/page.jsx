@@ -136,7 +136,7 @@ export default function TemplateSelection() {
                 <div className="row g-4 justify-content-center" style={{ animation: "fadeInUp 0.8s ease-out 0.4s" }}>
                     {filteredTemplates.length > 0 ? (
                         filteredTemplates.map(tpl => {
-                            const FREE_TEMPLATES = ["classic", "minimalist", "elegant", "minimalist_bw", "compact_ats", "graduate"];
+                            const FREE_TEMPLATES = ["modern", "creative", "product_manager", "bento"];
                             const isPremium = !FREE_TEMPLATES.includes(tpl.id);
                             return (
                                 <div key={tpl.id} className="col-md-6 col-lg-4 col-xl-3">
