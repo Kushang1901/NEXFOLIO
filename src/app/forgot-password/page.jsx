@@ -18,14 +18,8 @@ export default function ForgotPassword() {
         confirmPassword: ""
     });
     const [loading, setLoading] = useState(false);
-    const [tailwindLoaded, setTailwindLoaded] = useState(false);
+    const [tailwindLoaded, setTailwindLoaded] = useState(true);
     const [devOtpHint, setDevOtpHint] = useState("");
-
-    useEffect(() => {
-        if (typeof window !== "undefined" && window.tailwind) {
-            setTailwindLoaded(true);
-        }
-    }, []);
 
     // Handle email submission to send OTP
     const handleSendOtp = async (e) => {
@@ -175,101 +169,6 @@ export default function ForgotPassword() {
 
     return (
         <>
-            <Script 
-                src="https://cdn.tailwindcss.com?plugins=forms,container-queries" 
-                strategy="afterInteractive" 
-                onLoad={() => setTailwindLoaded(true)}
-            />
-            <Script id="tailwind-config" strategy="afterInteractive" dangerouslySetInnerHTML={{ __html: `
-                window.tailwind = window.tailwind || {};
-                window.tailwind.config = {
-                    darkMode: "class",
-                    theme: {
-                        extend: {
-                            "colors": {
-                                "surface-container-lowest": "#0a0e15",
-                                "tertiary-fixed-dim": "#c3c6cd",
-                                "on-primary-fixed-variant": "#003ab2",
-                                "surface-container-highest": "#31353d",
-                                "primary": "#b6c4ff",
-                                "inverse-primary": "#2453d4",
-                                "on-surface": "#dfe2ed",
-                                "background": "#0f131b",
-                                "primary-container": "#6789ff",
-                                "on-secondary-fixed": "#410006",
-                                "surface-container-low": "#181c23",
-                                "surface-variant": "#31353d",
-                                "secondary": "#ffb3b0",
-                                "tertiary": "#c3c6cd",
-                                "inverse-surface": "#dfe2ed",
-                                "surface-container-high": "#262a2f",
-                                "outline": "#8e90a0",
-                                "on-secondary-container": "#ff9e9a",
-                                "primary-fixed": "#dce1ff",
-                                "on-primary-container": "#002170",
-                                "on-surface-variant": "#c4c5d7",
-                                "secondary-fixed-dim": "#ffb3b0",
-                                "on-tertiary-fixed-variant": "#43474d",
-                                "on-tertiary-fixed": "#181c21",
-                                "on-primary": "#00277f",
-                                "surface-dim": "#0f131b",
-                                "surface-container": "#1c2027",
-                                "surface": "#0f131b",
-                                "on-tertiary": "#2d3136",
-                                "outline-variant": "#434654",
-                                "secondary-container": "#8a2226",
-                                "on-primary-fixed": "#001550",
-                                "on-tertiary-container": "#262a2f",
-                                "on-secondary-fixed-variant": "#862024",
-                                "tertiary-container": "#8d9197",
-                                "error": "#ffb4ab",
-                                "surface-tint": "#b6c4ff",
-                                "on-error": "#690005",
-                                "on-error-container": "#ffdad6",
-                                "on-background": "#dfe2ed",
-                                "on-secondary": "#660511",
-                                "error-container": "#93000a",
-                                "primary-fixed-dim": "#b6c4ff",
-                                "secondary-fixed": "#ffdad8",
-                                "inverse-on-surface": "#2c3039",
-                                "tertiary-fixed": "#e0e2e9",
-                                "surface-bright": "#353942"
-                            },
-                            "borderRadius": {
-                                "DEFAULT": "0.125rem",
-                                "lg": "0.25rem",
-                                "xl": "0.5rem",
-                                "full": "0.75rem"
-                            },
-                            "spacing": {
-                                "input-padding": "1rem",
-                                "container-max-width": "1200px",
-                                "margin-mobile": "16px",
-                                "gutter": "24px",
-                                "section-gap": "4rem",
-                                "element-gap": "1.5rem"
-                            },
-                            "fontFamily": {
-                                "headline-md": ["Inter"],
-                                "button": ["Inter"],
-                                "body-sm": ["Inter"],
-                                "label-bold": ["Inter"],
-                                "headline-lg": ["Inter"],
-                                "body-lg": ["Inter"]
-                            },
-                            "fontSize": {
-                                "headline-md": ["24px", { "lineHeight": "1.3", "fontWeight": "600" }],
-                                "button": ["16px", { "lineHeight": "1", "letterSpacing": "0.01em", "fontWeight": "500" }],
-                                "body-sm": ["14px", { "lineHeight": "1.5", "fontWeight": "400" }],
-                                "label-bold": ["14px", { "lineHeight": "1.2", "fontWeight": "600" }],
-                                "headline-lg": ["32px", { "lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700" }],
-                                "body-lg": ["16px", { "lineHeight": "1.5", "fontWeight": "400" }]
-                            }
-                        },
-                    },
-                }
-            ` }} />
-            <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
             <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
             <style dangerouslySetInnerHTML={{ __html: `
                 body {

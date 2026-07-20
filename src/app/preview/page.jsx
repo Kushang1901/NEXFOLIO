@@ -1,8 +1,6 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import html2canvas from "html2canvas";
-import jsPDF from "jspdf";
 import Link from "next/link";
 import Script from "next/script";
 import Navbar from "../../components/Navbar";
@@ -419,6 +417,7 @@ export default function Preview() {
             const resume = document.getElementById("resume-preview");
             if (!resume) return;
 
+            const html2canvas = (await import("html2canvas")).default;
             const canvas = await html2canvas(resume, {
                 scale: 2,
                 useCORS: true
@@ -458,6 +457,9 @@ export default function Preview() {
         try {
             const resume = document.getElementById("resume-preview");
             if (!resume) return;
+
+            const html2canvas = (await import("html2canvas")).default;
+            const jsPDF = (await import("jspdf")).default;
 
             const canvas = await html2canvas(resume, {
                 scale: 2,

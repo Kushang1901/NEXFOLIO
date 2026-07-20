@@ -9,7 +9,7 @@ import { Mail, MessageSquare, Send, CheckCircle, ArrowLeft } from "lucide-react"
 import { showToast } from "../../utils/toast";
 
 export default function ContactSupport() {
-    const [tailwindLoaded, setTailwindLoaded] = useState(false);
+    const [tailwindLoaded, setTailwindLoaded] = useState(true);
     const [loading, setLoading] = useState(false);
     const [submitted, setSubmitted] = useState(false);
     const [formData, setFormData] = useState({
@@ -18,12 +18,6 @@ export default function ContactSupport() {
         subject: "General Inquiry",
         message: ""
     });
-
-    useEffect(() => {
-        if (typeof window !== "undefined" && window.tailwind) {
-            setTailwindLoaded(true);
-        }
-    }, []);
 
     const handleChange = (e) => {
         setFormData(prev => ({
@@ -68,37 +62,7 @@ export default function ContactSupport() {
 
     return (
         <>
-            <Script 
-                src="https://cdn.tailwindcss.com?plugins=forms,container-queries" 
-                strategy="afterInteractive" 
-                onLoad={() => setTailwindLoaded(true)}
-            />
-            <Script id="tailwind-config" strategy="afterInteractive" dangerouslySetInnerHTML={{ __html: `
-                window.tailwind = window.tailwind || {};
-                window.tailwind.config = {
-                    darkMode: "class",
-                    theme: {
-                        extend: {
-                            "colors": {
-                                "surface-container-lowest": "#0a0e15",
-                                "primary": "#b6c4ff",
-                                "on-surface": "#dfe2ed",
-                                "background": "#0f131b",
-                                "surface-container-low": "#181c23",
-                                "surface-variant": "#31353d",
-                                "secondary": "#ffb3b0",
-                                "surface-container-high": "#262a32",
-                                "outline": "#8e90a0",
-                                "on-surface-variant": "#c4c5d7",
-                                "outline-variant": "#434654",
-                                "surface-container": "#1c2027",
-                                "surface": "#0f131b",
-                            }
-                        }
-                    }
-                }
-            ` }} />
-            <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+
             
             <style dangerouslySetInnerHTML={{ __html: `
                 body {

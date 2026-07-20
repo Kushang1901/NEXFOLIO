@@ -8,47 +8,11 @@ import Script from "next/script";
 import { Shield, Eye, Lock, FileText, ArrowLeft, Cpu } from "lucide-react";
 
 export default function PrivacyPolicy() {
-    const [tailwindLoaded, setTailwindLoaded] = useState(false);
-
-    useEffect(() => {
-        if (typeof window !== "undefined" && window.tailwind) {
-            setTailwindLoaded(true);
-        }
-    }, []);
+    const [tailwindLoaded, setTailwindLoaded] = useState(true);
 
     return (
         <>
-            <Script 
-                src="https://cdn.tailwindcss.com?plugins=forms,container-queries" 
-                strategy="afterInteractive" 
-                onLoad={() => setTailwindLoaded(true)}
-            />
-            <Script id="tailwind-config" strategy="afterInteractive" dangerouslySetInnerHTML={{ __html: `
-                window.tailwind = window.tailwind || {};
-                window.tailwind.config = {
-                    darkMode: "class",
-                    theme: {
-                        extend: {
-                            "colors": {
-                                "surface-container-lowest": "#0a0e15",
-                                "primary": "#b6c4ff",
-                                "on-surface": "#dfe2ed",
-                                "background": "#0f131b",
-                                "surface-container-low": "#181c23",
-                                "surface-variant": "#31353d",
-                                "secondary": "#ffb3b0",
-                                "surface-container-high": "#262a32",
-                                "outline": "#8e90a0",
-                                "on-surface-variant": "#c4c5d7",
-                                "outline-variant": "#434654",
-                                "surface-container": "#1c2027",
-                                "surface": "#0f131b",
-                            }
-                        }
-                    }
-                }
-            ` }} />
-            <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+
             
             <style dangerouslySetInnerHTML={{ __html: `
                 body {

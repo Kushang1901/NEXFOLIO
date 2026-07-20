@@ -144,7 +144,7 @@ export default function CookieConsent() {
                     <div style={iconWrapperStyle}>
                         <Cookie size={18} color="#6366f1" />
                     </div>
-                    <h4 style={titleStyle}>Cookie Preference</h4>
+                    <div style={titleStyle}>Cookie Preference</div>
                 </div>
                 <p style={descStyle}>
                     We use cookies to optimize CVGrid, customize your experience, and analyze our traffic. 
@@ -216,7 +216,7 @@ const containerStyle = {
     flexDirection: "column",
     gap: "14px",
     animation: "slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards",
-    fontFamily: "'Inter', sans-serif",
+    fontFamily: "var(--font-inter), sans-serif",
 };
 
 const headerStyle = {
@@ -241,7 +241,7 @@ const titleStyle = {
     fontSize: "1.05rem",
     fontWeight: "700",
     color: "#ffffff",
-    fontFamily: "'Space Grotesk', sans-serif",
+    fontFamily: "var(--font-space-grotesk), sans-serif",
     letterSpacing: "0.02em",
 };
 

@@ -14,7 +14,7 @@ export default function HomePage() {
     const [loadingAuth, setLoadingAuth] = useState(true);
     const [showAuthModal, setShowAuthModal] = useState(false);
     const [countdown, setCountdown] = useState(3);
-    const [tailwindLoaded, setTailwindLoaded] = useState(false);
+    const [tailwindLoaded, setTailwindLoaded] = useState(true);
 
     // Testimonials State
     const [testimonials, setTestimonials] = useState([]);
@@ -25,12 +25,6 @@ export default function HomePage() {
     const [typewriterIndex, setTypewriterIndex] = useState(0);
     const [typewriterText, setTypewriterText] = useState("Career");
     const [isTypewriterDeleting, setIsTypewriterDeleting] = useState(false);
-
-    useEffect(() => {
-        if (typeof window !== "undefined" && window.tailwind) {
-            setTailwindLoaded(true);
-        }
-    }, []);
 
     useEffect(() => {
         let timer;
@@ -307,102 +301,7 @@ export default function HomePage() {
 
     return (
         <>
-            <Script
-                src="https://cdn.tailwindcss.com?plugins=forms,container-queries"
-                strategy="afterInteractive"
-                onLoad={() => setTailwindLoaded(true)}
-            />
-            <Script id="tailwind-config" strategy="afterInteractive" dangerouslySetInnerHTML={{
-                __html: `
-                window.tailwind = window.tailwind || {};
-                window.tailwind.config = {
-                    darkMode: "class",
-                    theme: {
-                        extend: {
-                            "colors": {
-                                "surface-dim": "#12121d",
-                                "on-secondary-container": "#a8afff",
-                                "secondary-fixed": "#e0e0ff",
-                                "secondary": "#bdc2ff",
-                                "on-primary": "#1000a9",
-                                "on-tertiary-container": "#400071",
-                                "surface-container-highest": "#343440",
-                                "error-container": "#93000a",
-                                "surface": "#12121d",
-                                "primary": "#c0c1ff",
-                                "surface-tint": "#c0c1ff",
-                                "inverse-surface": "#e4e0f1",
-                                "tertiary-fixed": "#f0dbff",
-                                "inverse-primary": "#494bd6",
-                                "error": "#ffb4ab",
-                                "on-tertiary": "#490080",
-                                "surface-container-high": "#292935",
-                                "background": "#12121d",
-                                "on-background": "#e4e0f1",
-                                "on-secondary": "#131e8c",
-                                "on-surface-variant": "#c7c4d7",
-                                "outline-variant": "#464554",
-                                "on-primary-container": "#0d0096",
-                                "secondary-container": "#2f3aa3",
-                                "surface-card": "#11111E",
-                                "on-secondary-fixed": "#000767",
-                                "on-error": "#690005",
-                                "surface-container-low": "#1b1a26",
-                                "on-primary-fixed-variant": "#2f2ebe",
-                                "outline": "#908fa0",
-                                "on-tertiary-fixed-variant": "#6900b3",
-                                "inverse-on-surface": "#302f3b",
-                                "on-primary-fixed": "#07006c",
-                                "on-secondary-fixed-variant": "#2f3aa3",
-                                "tertiary-container": "#b76dff",
-                                "glow-blue": "rgba(99, 102, 241, 0.4)",
-                                "primary-fixed": "#e1e0ff",
-                                "surface-variant": "#343440",
-                                "secondary-fixed-dim": "#bdc2ff",
-                                "surface-bright": "#393844",
-                                "tertiary": "#ddb7ff",
-                                "surface-container-lowest": "#0d0d18",
-                                "ai-gradient-start": "#6366F1",
-                                "on-surface": "#e4e0f1",
-                                "ai-gradient-end": "#A855F7",
-                                "surface-container": "#1f1e2a",
-                                "primary-fixed-dim": "#c0c1ff",
-                                "on-tertiary-fixed": "#2c0051",
-                                "tertiary-fixed-dim": "#ddb7ff",
-                                "primary-container": "#8083ff",
-                                "on-error-container": "#ffdad6",
-                                "glass-stroke": "rgba(255, 255, 255, 0.1)"
-                            },
-                            "borderRadius": {
-                                "DEFAULT": "0.25rem",
-                                "lg": "0.5rem",
-                                "xl": "0.75rem",
-                                "full": "9999px"
-                            },
-                            "spacing": {
-                                "container-max": "1280px",
-                                "stack-sm": "8px",
-                                "section-gap": "120px",
-                                "margin-mobile": "16px",
-                                "stack-lg": "32px",
-                                "stack-md": "16px",
-                                "gutter": "24px"
-                            },
-                            "fontFamily": {
-                                "body-md": ["Inter"],
-                                "label-sm": ["Inter"],
-                                "headline-lg": ["Space Grotesk"],
-                                "headline-md": ["Space Grotesk"],
-                                "display-lg-mobile": ["Space Grotesk"],
-                                "display-lg": ["Space Grotesk"],
-                                "label-md": ["Inter"],
-                                "body-lg": ["Inter"]
-                            }
-                        },
-                    },
-                }
-            ` }} />
-            <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@300;400;600;700&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+            <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=block" rel="stylesheet" />
 
             <style>{`
                 body {
@@ -503,12 +402,12 @@ export default function HomePage() {
                                     </div>
                                 </div>
 
-                                <h1 className="text-[40px] md:text-[60px] leading-[1.05] mb-4 font-bold tracking-tight text-white" style={{ fontFamily: "Space Grotesk, sans-serif" }}>
+                                <h1 className="text-[40px] md:text-[60px] leading-[1.05] mb-4 font-bold tracking-tight text-white" style={{ fontFamily: "var(--font-space-grotesk), sans-serif" }}>
                                     The <span className="font-light italic">Future</span> of your <br />
                                     <span className="font-bold ai-gradient-text">{typewriterText}</span> starts here.
                                 </h1>
 
-                                <p className="text-base md:text-lg text-[#c7c4d7] mb-6 max-w-[580px]" style={{ fontFamily: "Inter, sans-serif" }}>
+                                <p className="text-base md:text-lg text-[#c7c4d7] mb-6 max-w-[580px]" style={{ fontFamily: "var(--font-inter), sans-serif" }}>
                                     Engineered for modern recruitment. Use our neural-powered engine to generate ATS-proof resumes that recruiters actually want to read.
                                 </p>
 
@@ -593,8 +492,8 @@ export default function HomePage() {
                     {/* Bento Features */}
                     <section className="px-4 md:px-8 py-24 max-w-[1280px] mx-auto">
                         <div className="text-center mb-16">
-                            <h2 className="text-3xl md:text-5xl font-bold mb-4 text-white" style={{ fontFamily: "Space Grotesk, sans-serif" }}>Precision Tools for Professionals</h2>
-                            <p className="text-base md:text-lg text-[#c7c4d7] max-w-2xl mx-auto" style={{ fontFamily: "Inter, sans-serif" }}>Our toolkit is designed to bypass filters and get your profile in front of hiring managers.</p>
+                            <h2 className="text-3xl md:text-5xl font-bold mb-4 text-white" style={{ fontFamily: "var(--font-space-grotesk), sans-serif" }}>Precision Tools for Professionals</h2>
+                            <p className="text-base md:text-lg text-[#c7c4d7] max-w-2xl mx-auto" style={{ fontFamily: "var(--font-inter), sans-serif" }}>Our toolkit is designed to bypass filters and get your profile in front of hiring managers.</p>
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
 
@@ -603,11 +502,11 @@ export default function HomePage() {
                                 <div className="p-4 rounded-xl bg-[#c0c1ff]/10 text-[#c0c1ff]">
                                     <span className="material-symbols-outlined text-[32px]">psychology</span>
                                 </div>
-                                <h3 className="text-2xl font-bold text-white" style={{ fontFamily: "Space Grotesk, sans-serif" }}>AI Resume Writer</h3>
-                                <p className="text-[#c7c4d7] leading-relaxed" style={{ fontFamily: "Inter, sans-serif" }}>
+                                <h3 className="text-2xl font-bold text-white" style={{ fontFamily: "var(--font-space-grotesk), sans-serif" }}>AI Resume Writer</h3>
+                                <p className="text-[#c7c4d7] leading-relaxed" style={{ fontFamily: "var(--font-inter), sans-serif" }}>
                                     Generate impactful summaries and action-oriented bullet points using models trained on successful job applications.
                                 </p>
-                                <button onClick={handleStartResume} className="mt-4 flex items-center gap-2 text-[#c0c1ff] font-semibold bg-transparent border-0 p-0 group-hover:gap-4 transition-all" style={{ fontFamily: "Inter, sans-serif" }}>
+                                <button onClick={handleStartResume} className="mt-4 flex items-center gap-2 text-[#c0c1ff] font-semibold bg-transparent border-0 p-0 group-hover:gap-4 transition-all" style={{ fontFamily: "var(--font-inter), sans-serif" }}>
                                     Start Writing <span className="material-symbols-outlined text-[18px]">east</span>
                                 </button>
                             </div>
@@ -617,11 +516,11 @@ export default function HomePage() {
                                 <div className="p-4 rounded-xl bg-[#c0c1ff]/10 text-[#c0c1ff]">
                                     <span className="material-symbols-outlined text-[32px]">fact_check</span>
                                 </div>
-                                <h3 className="text-2xl font-bold text-white" style={{ fontFamily: "Space Grotesk, sans-serif" }}>ATS Optimization</h3>
-                                <p className="text-[#c7c4d7] leading-relaxed" style={{ fontFamily: "Inter, sans-serif" }}>
+                                <h3 className="text-2xl font-bold text-white" style={{ fontFamily: "var(--font-space-grotesk), sans-serif" }}>ATS Optimization</h3>
+                                <p className="text-[#c7c4d7] leading-relaxed" style={{ fontFamily: "var(--font-inter), sans-serif" }}>
                                     Every template is tested against leading recruitment software to ensure your content is never garbled or ignored.
                                 </p>
-                                <Link href="/ats-checker" className="mt-4 flex items-center gap-2 text-[#c0c1ff] font-semibold group-hover:gap-4 transition-all text-decoration-none" style={{ fontFamily: "Inter, sans-serif" }}>
+                                <Link href="/ats-checker" className="mt-4 flex items-center gap-2 text-[#c0c1ff] font-semibold group-hover:gap-4 transition-all text-decoration-none" style={{ fontFamily: "var(--font-inter), sans-serif" }}>
                                     Scan My CV <span className="material-symbols-outlined text-[18px]">east</span>
                                 </Link>
                             </div>
@@ -631,11 +530,11 @@ export default function HomePage() {
                                 <div className="p-4 rounded-xl bg-[#c0c1ff]/10 text-[#c0c1ff]">
                                     <span className="material-symbols-outlined text-[32px]">download</span>
                                 </div>
-                                <h3 className="text-2xl font-bold text-white" style={{ fontFamily: "Space Grotesk, sans-serif" }}>Export &amp; Share</h3>
-                                <p className="text-[#c7c4d7] leading-relaxed" style={{ fontFamily: "Inter, sans-serif" }}>
+                                <h3 className="text-2xl font-bold text-white" style={{ fontFamily: "var(--font-space-grotesk), sans-serif" }}>Export &amp; Share</h3>
+                                <p className="text-[#c7c4d7] leading-relaxed" style={{ fontFamily: "var(--font-inter), sans-serif" }}>
                                     Download pixel-perfect PDFs or generate a private link to share your live portfolio directly with employers.
                                 </p>
-                                <Link href="/templates" className="mt-4 flex items-center gap-2 text-[#c0c1ff] font-semibold group-hover:gap-4 transition-all text-decoration-none" style={{ fontFamily: "Inter, sans-serif" }}>
+                                <Link href="/templates" className="mt-4 flex items-center gap-2 text-[#c0c1ff] font-semibold group-hover:gap-4 transition-all text-decoration-none" style={{ fontFamily: "var(--font-inter), sans-serif" }}>
                                     View Formats <span className="material-symbols-outlined text-[18px]">east</span>
                                 </Link>
                             </div>
@@ -646,10 +545,10 @@ export default function HomePage() {
                     {/* Testimonials Section (Wall of Love) */}
                     <section className="px-4 md:px-8 py-24 max-w-[1280px] mx-auto border-t border-white/5">
                         <div className="text-center mb-16">
-                            <h2 className="text-3xl md:text-5xl font-bold mb-4 text-white" style={{ fontFamily: "Space Grotesk, sans-serif" }}>
+                            <h2 className="text-3xl md:text-5xl font-bold mb-4 text-white" style={{ fontFamily: "var(--font-space-grotesk), sans-serif" }}>
                                 Loved by Career Builders
                             </h2>
-                            <p className="text-base md:text-lg text-[#c7c4d7] max-w-2xl mx-auto" style={{ fontFamily: "Inter, sans-serif" }}>
+                            <p className="text-base md:text-lg text-[#c7c4d7] max-w-2xl mx-auto" style={{ fontFamily: "var(--font-inter), sans-serif" }}>
                                 See how CVGrid helps freshers and professionals optimize their resumes and land interviews.
                             </p>
                         </div>
@@ -711,7 +610,7 @@ export default function HomePage() {
                                                 ))}
                                             </div>
                                             {/* Feedback */}
-                                            <p className="text-[#e4e0f1] text-[15px] leading-relaxed italic" style={{ fontFamily: "Inter, sans-serif" }}>
+                                            <p className="text-[#e4e0f1] text-[15px] leading-relaxed italic" style={{ fontFamily: "var(--font-inter), sans-serif" }}>
                                                 "{item.feedback}"
                                             </p>
                                         </div>
@@ -737,8 +636,8 @@ export default function HomePage() {
                             <div className="absolute right-0 top-0 w-full h-full bg-black/20 backdrop-blur-[2px] -z-0"></div>
                             <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-12">
                                 <div className="max-w-2xl">
-                                    <h2 className="text-3xl md:text-5xl font-bold mb-6 text-white" style={{ fontFamily: "Space Grotesk, sans-serif" }}>Ready to land your dream interview?</h2>
-                                    <p className="text-white/80 text-lg md:text-xl mb-0" style={{ fontFamily: "Inter, sans-serif" }}>
+                                    <h2 className="text-3xl md:text-5xl font-bold mb-6 text-white" style={{ fontFamily: "var(--font-space-grotesk), sans-serif" }}>Ready to land your dream interview?</h2>
+                                    <p className="text-white/80 text-lg md:text-xl mb-0" style={{ fontFamily: "var(--font-inter), sans-serif" }}>
                                         Join 10,000+ job seekers who leveled up their career with CVGrid. Create your resume now.
                                     </p>
                                 </div>
@@ -760,7 +659,7 @@ export default function HomePage() {
 
                     {/* FAQ Section */}
                     <section className="px-4 md:px-8 py-16 max-w-3xl mx-auto" id="faq">
-                        <h2 className="text-3xl md:text-5xl font-bold mb-12 text-center text-white" style={{ fontFamily: "Space Grotesk, sans-serif" }}>FAQs</h2>
+                        <h2 className="text-3xl md:text-5xl font-bold mb-12 text-center text-white" style={{ fontFamily: "var(--font-space-grotesk), sans-serif" }}>FAQs</h2>
                         <div className="space-y-4">
                             {[
                                 {
@@ -790,10 +689,10 @@ export default function HomePage() {
                             ].map((item, i) => (
                                 <details key={i} className="group glass-card rounded-2xl overflow-hidden border border-[rgba(255,255,255,0.1)] transition-all">
                                     <summary className="flex justify-between items-center p-6 cursor-pointer list-none">
-                                        <span className="font-semibold text-white text-base md:text-lg" style={{ fontFamily: "Inter, sans-serif" }}>{item.q}</span>
+                                        <span className="font-semibold text-white text-base md:text-lg" style={{ fontFamily: "var(--font-inter), sans-serif" }}>{item.q}</span>
                                         <span className="material-symbols-outlined faq-icon-toggle text-[#c0c1ff]">expand_more</span>
                                     </summary>
-                                    <div className="p-6 pt-0 text-[#c7c4d7] border-t border-[rgba(255,255,255,0.1)]/30 text-sm md:text-base leading-relaxed" style={{ fontFamily: "Inter, sans-serif" }}>
+                                    <div className="p-6 pt-0 text-[#c7c4d7] border-t border-[rgba(255,255,255,0.1)]/30 text-sm md:text-base leading-relaxed" style={{ fontFamily: "var(--font-inter), sans-serif" }}>
                                         {item.a}
                                     </div>
                                 </details>

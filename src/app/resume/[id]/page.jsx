@@ -2,8 +2,6 @@
 
 import React, { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
-import html2canvas from "html2canvas";
-import jsPDF from "jspdf";
 import { Lock, Home } from "lucide-react";
 
 import ClassicTemplate from "../../../templates/ClassicTemplate";
@@ -101,6 +99,9 @@ export default function PublicResumePage() {
         try {
             const resume = document.getElementById("resume-preview");
             if (!resume) return;
+
+            const html2canvas = (await import("html2canvas")).default;
+            const jsPDF = (await import("jspdf")).default;
 
             const canvas = await html2canvas(resume, {
                 scale: 2,

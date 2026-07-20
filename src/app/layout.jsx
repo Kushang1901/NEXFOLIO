@@ -4,6 +4,20 @@ import ToastContainer from "../components/Toast";
 import PageLoader from "../components/PageLoader";
 import CookieConsent from "../components/CookieConsent";
 import BackToTop from "../components/BackToTop";
+import { Inter, Space_Grotesk } from "next/font/google";
+import Script from "next/script";
+
+const inter = Inter({
+    subsets: ["latin"],
+    display: "swap",
+    variable: "--font-inter",
+});
+
+const spaceGrotesk = Space_Grotesk({
+    subsets: ["latin"],
+    display: "swap",
+    variable: "--font-space-grotesk",
+});
 
 // ─────────────────────────────────────────────
 // SITE CONSTANTS
@@ -590,26 +604,20 @@ export default function RootLayout({ children }) {
     };
 
     return (
-        <html lang="en" suppressHydrationWarning>
+        <html lang="en" className={`${inter.variable} ${spaceGrotesk.variable}`} suppressHydrationWarning>
             <head>
                 {/* ── Performance: Preconnect ─────────────────── */}
-                <link rel="preconnect" href="https://fonts.googleapis.com" />
-                <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
                 <link rel="preconnect" href="https://cdnjs.cloudflare.com" />
                 <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
                 <link rel="dns-prefetch" href="https://www.google-analytics.com" />
-
-                {/* ── Fonts ───────────────────────────────────── */}
-                <link
-                    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700&display=swap"
-                    rel="stylesheet"
-                />
 
                 {/* ── FontAwesome ─────────────────────────────── */}
                 <link
                     rel="stylesheet"
                     href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
                     crossOrigin="anonymous"
+                    media="print"
+                    onLoad="this.media='all'"
                 />
 
                 {/* ════════════════════════════════════════════════
@@ -694,14 +702,13 @@ export default function RootLayout({ children }) {
                 />
 
                 {/* ── reCAPTCHA Enterprise ────────────────────── */}
-                <script
+                <Script
                     src="https://www.google.com/recaptcha/enterprise.js?render=6LfIrjQsAAAAANY4PBe_oGp6mIFkTwyeAB_DdG81"
-                    async
-                    defer
+                    strategy="afterInteractive"
                 />
 
                 {/* ── Google Analytics (gtag.js) ──────────────── */}
-                <script dangerouslySetInnerHTML={{
+                <Script id="ga-consent" strategy="afterInteractive" dangerouslySetInnerHTML={{
                     __html: `
                         window.dataLayer = window.dataLayer || [];
                         function gtag(){dataLayer.push(arguments);}
@@ -720,8 +727,8 @@ export default function RootLayout({ children }) {
                         });
                     `
                 }} />
-                <script async src="https://www.googletagmanager.com/gtag/js?id=G-J3TJ0ZE0GM" />
-                <script dangerouslySetInnerHTML={{
+                <Script strategy="afterInteractive" src="https://www.googletagmanager.com/gtag/js?id=G-J3TJ0ZE0GM" />
+                <Script id="ga-config" strategy="afterInteractive" dangerouslySetInnerHTML={{
                     __html: `
                         gtag('js', new Date());
                         gtag('config', 'G-J3TJ0ZE0GM', { anonymize_ip: true, cookie_flags: 'SameSite=None;Secure' });

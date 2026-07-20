@@ -144,7 +144,7 @@ export default function Navbar() {
                     <Link href="/" onClick={closeMenu} style={{ textDecoration: "none", display: "flex", alignItems: "center", gap: "10px", flexShrink: 0 }}>
                         <img src="/logo.png" alt="CVGrid Logo" style={{ height: "32px", width: "32px" }} />
                         <span style={{
-                            fontFamily: "'Space Grotesk', sans-serif", fontWeight: "700",
+                            fontFamily: "var(--font-space-grotesk), sans-serif", fontWeight: "700",
                             letterSpacing: "0.08em",
                             background: "linear-gradient(90deg, #ffffff 0%, #b6c4ff 100%)",
                             WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",
@@ -682,7 +682,7 @@ export default function Navbar() {
             }}>
                 {/* Drawer Header */}
                 <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "20px 24px", borderBottom: "1px solid rgba(255,255,255,0.07)" }}>
-                    <span style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: "700", letterSpacing: "0.08em", background: "linear-gradient(90deg, #fff 0%, #b6c4ff 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", fontSize: "1.1rem" }}>CVGRID</span>
+                    <span style={{ fontFamily: "var(--font-space-grotesk), sans-serif", fontWeight: "700", letterSpacing: "0.08em", background: "linear-gradient(90deg, #fff 0%, #b6c4ff 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", fontSize: "1.1rem" }}>CVGRID</span>
                     <button onClick={closeMenu} aria-label="Close menu" style={{ background: "rgba(255,255,255,0.07)", border: "1px solid rgba(255,255,255,0.12)", borderRadius: "8px", color: "#fff", width: "36px", height: "36px", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}>
                         <X size={16} />
                     </button>
@@ -738,6 +738,8 @@ export default function Navbar() {
                                                 e.stopPropagation();
                                                 setMobileTemplatesOpen(!mobileTemplatesOpen);
                                             }}
+                                            aria-label="Toggle templates sub-menu"
+                                            aria-expanded={mobileTemplatesOpen}
                                             style={{
                                                 background: "rgba(255,255,255,0.05)",
                                                 border: "1px solid rgba(255,255,255,0.1)",
@@ -859,6 +861,8 @@ export default function Navbar() {
                                                 e.stopPropagation();
                                                 setMobileAiOpen(!mobileAiOpen);
                                             }}
+                                            aria-label="Toggle AI tools sub-menu"
+                                            aria-expanded={mobileAiOpen}
                                             style={{
                                                 background: "rgba(255,255,255,0.05)",
                                                 border: "1px solid rgba(255,255,255,0.1)",

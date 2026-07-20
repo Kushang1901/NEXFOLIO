@@ -301,7 +301,7 @@ const badgeStyle = {
 };
 
 const heroTitleStyle = {
-    fontFamily: "'Space Grotesk', sans-serif",
+    fontFamily: "var(--font-space-grotesk), sans-serif",
     fontSize: "2.8rem",
     fontWeight: "800",
     background: "linear-gradient(135deg, #ffffff 0%, #dbe2ff 50%, #a5b4fc 100%)",
@@ -423,7 +423,7 @@ const cardTitleStyle = {
     fontSize: "1.05rem",
     fontWeight: "700",
     color: "#ffffff",
-    fontFamily: "'Space Grotesk', sans-serif",
+    fontFamily: "var(--font-space-grotesk), sans-serif",
     letterSpacing: "0.01em",
 };
 

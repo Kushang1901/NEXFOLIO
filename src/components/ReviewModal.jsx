@@ -193,7 +193,7 @@ const overlayStyle = {
     alignItems: "center",
     justifyContent: "center",
     zIndex: 99999,
-    fontFamily: "'Inter', sans-serif",
+    fontFamily: "var(--font-inter), sans-serif",
 };
 
 const modalStyle = {
@@ -242,7 +242,7 @@ const titleStyle = {
     fontWeight: "700",
     margin: "0 0 8px 0",
     color: "#ffffff",
-    fontFamily: "'Space Grotesk', sans-serif",
+    fontFamily: "var(--font-space-grotesk), sans-serif",
 };
 
 const subtitleStyle = {
@@ -366,7 +366,7 @@ const successTitleStyle = {
     fontWeight: "700",
     margin: "0 0 12px 0",
     color: "#ffffff",
-    fontFamily: "'Space Grotesk', sans-serif",
+    fontFamily: "var(--font-space-grotesk), sans-serif",
 };
 
 const successSubtitleStyle = {

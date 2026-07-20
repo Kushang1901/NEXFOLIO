@@ -7,8 +7,6 @@ import { subscribeToAuthChanges } from "../../authState";
 import { showToast } from "../../utils/toast";
 import CoverLetterPreview from "../../components/CoverLetterPreview";
 import { normalizeResumeData } from "../../utils/resumeAdapter";
-import html2canvas from "html2canvas";
-import jsPDF from "jspdf";
 import Link from "next/link";
 import { Sparkles, SlidersHorizontal, Loader2, FileDown, Eye, FileSignature, Briefcase, ChevronRight } from "lucide-react";
 
@@ -157,6 +155,7 @@ export default function CoverLetterGenerator() {
             const letter = document.getElementById("cover-letter-printable");
             if (!letter) return;
 
+            const html2canvas = (await import("html2canvas")).default;
             const canvas = await html2canvas(letter, {
                 scale: 2,
                 useCORS: true
@@ -186,6 +185,9 @@ export default function CoverLetterGenerator() {
             await new Promise((resolve) => setTimeout(resolve, 800));
             const letter = document.getElementById("cover-letter-printable");
             if (!letter) return;
+
+            const html2canvas = (await import("html2canvas")).default;
+            const jsPDF = (await import("jspdf")).default;
 
             const canvas = await html2canvas(letter, {
                 scale: 2,
