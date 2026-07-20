@@ -1,4 +1,19 @@
 /** @type {import('next').NextConfig} */
+const cspHeader = `
+  default-src 'self';
+  script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.google.com https://www.gstatic.com https://www.googletagmanager.com https://apis.google.com;
+  style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com;
+  img-src 'self' data: blob: https://lh3.googleusercontent.com https://images.unsplash.com https://www.google-analytics.com https://www.googletagmanager.com https://www.gstatic.com;
+  connect-src 'self' https://*.googleapis.com https://*.firebaseapp.com https://*.firebaseio.com https://www.google-analytics.com https://stats.g.doubleclick.net;
+  font-src 'self' data: https://cdnjs.cloudflare.com https://fonts.gstatic.com;
+  frame-src 'self' https://www.google.com https://*.firebaseapp.com;
+  object-src 'none';
+  base-uri 'self';
+  form-action 'self';
+  frame-ancestors 'self';
+  upgrade-insecure-requests;
+`.replace(/\s{2,}/g, " ").trim();
+
 const nextConfig = {
     reactStrictMode: true,
     eslint: {
@@ -20,7 +35,10 @@ const nextConfig = {
             {
                 source: "/(.*)",
                 headers: [
-                    // Security headers (also help with Google Trust Score)
+                    // Security headers (also help with Google Trust Score & Lighthouse Best Practices)
+                    { key: "Content-Security-Policy", value: cspHeader },
+                    { key: "Cross-Origin-Opener-Policy", value: "same-origin-allow-popups" },
+                    { key: "Cross-Origin-Resource-Policy", value: "same-site" },
                     { key: "X-Content-Type-Options", value: "nosniff" },
                     { key: "X-Frame-Options", value: "SAMEORIGIN" },
                     { key: "X-XSS-Protection", value: "1; mode=block" },
