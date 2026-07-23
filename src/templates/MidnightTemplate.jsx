@@ -32,12 +32,8 @@ export default function MidnightTemplate({ data }) {
             <div style={{ background: `linear-gradient(135deg, ${bg} 0%, ${card} 40%, ${purple}22 100%)`, padding: "2.5rem", borderBottom: `1px solid ${border}`, position: "relative" }}>
                 <div style={{ position: "absolute", top: 0, right: 0, width: "300px", height: "300px", background: `radial-gradient(circle, ${purple}33 0%, transparent 70%)`, pointerEvents: "none" }}></div>
                 <div style={{ display: "flex", alignItems: "center", gap: "24px", position: "relative" }}>
-                    {data.basics.photo ? (
+                    {data.basics.photo && (
                         <img src={data.basics.photo} alt="Profile" style={{ width: "100px", height: "100px", objectFit: "cover", borderRadius: "50%", border: `3px solid ${purple}`, flexShrink: 0 }} />
-                    ) : (
-                        <div style={{ width: "80px", height: "80px", borderRadius: "50%", background: `linear-gradient(135deg, ${purple}, ${purpleMid})`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: "2rem", fontWeight: "700", color: "#fff", flexShrink: 0 }}>
-                            {data.basics.name?.[0] || "?"}
-                        </div>
                     )}
                     <div>
                         <h1 style={{ margin: "0 0 4px", fontSize: "2.25rem", fontWeight: "800", background: `linear-gradient(135deg, #e2d9f3, ${purple}cc)`, WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", letterSpacing: "-0.03em" }}>{data.basics.name}</h1>

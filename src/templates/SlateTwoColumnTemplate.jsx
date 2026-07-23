@@ -1,3 +1,4 @@
+
 import React from "react";
 
 export default function SlateTwoColumnTemplate({ data }) {
@@ -15,11 +16,11 @@ export default function SlateTwoColumnTemplate({ data }) {
     };
 
     return (
-        <div className="d-flex flex-row" style={{ fontFamily: "Inter, system-ui, sans-serif", color: "#334155", minHeight: "297mm", boxSizing: "border-box", width: "100%" }}>
+        <div className="d-flex flex-row" style={{ fontFamily: "Inter, system-ui, sans-serif", color: "#334155", minHeight: "297mm", boxSizing: "border-box", width: "794px" }}>
             {/* Sidebar Column */}
-            <div className="p-4 p-md-5" style={{ width: "32%", background: "#f8fafc", borderRight: "1px solid #e2e8f0", flexShrink: 0 }}>
+            <div className="p-4 p-md-5" style={{ width: "254px", background: "#f8fafc", borderRight: "1px solid #e2e8f0", flexShrink: 0, boxSizing: "border-box" }}>
                 <div className="sidebar-col w-100">
-                    <div className="text-center text-md-start mb-4">
+                    <div className="text-center mb-4">
                         {data.basics.photo && (
                             <img
                                 src={data.basics.photo}
@@ -30,7 +31,10 @@ export default function SlateTwoColumnTemplate({ data }) {
                                     objectFit: "cover",
                                     borderRadius: "50%",
                                     border: "3px solid #64748b",
-                                    marginBottom: "16px"
+                                    marginBottom: "16px",
+                                    display: "block",
+                                    marginLeft: "auto",
+                                    marginRight: "auto"
                                 }}
                             />
                         )}
@@ -87,8 +91,8 @@ export default function SlateTwoColumnTemplate({ data }) {
                 </div>
             </div>
 
-            {/* Main Content Column (68% width) */}
-            <div className="p-4 p-md-5 main-col flex-grow-1" style={{ width: "68%", background: "#ffffff" }}>
+            {/* Main Content Column (540px width) */}
+            <div className="p-4 p-md-5 main-col flex-grow-1" style={{ width: "540px", background: "#ffffff", boxSizing: "border-box", flexShrink: 0 }}>
                 {/* Summary */}
                 {data.summary && (
                     <section className="mb-4 pb-2">

@@ -618,6 +618,36 @@ export default function ResumeBuilder() {
         reader.readAsDataURL(file);
     };
 
+    const handleRemovePhoto = () => {
+        setFormData(prev => {
+            const updated = { ...prev, profilePhoto: "" };
+            sessionStorage.setItem("resumeData", JSON.stringify(updated));
+            return updated;
+        });
+
+        // Clear the file input in the DOM
+        const fileInput = document.querySelector('input[type="file"][accept="image/*"]');
+        if (fileInput) {
+            fileInput.value = "";
+        }
+
+        // Also remove photo from Neon Postgres if logged in
+        const unsubscribe = subscribeToAuthChanges(async (user) => {
+            if (user && user.email) {
+                try {
+                    await fetch("/api/user", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ email: user.email, photoUrl: "" })
+                    });
+                } catch (err) {
+                    console.error("Failed to delete photo from Postgres:", err);
+                }
+            }
+        });
+        if (typeof unsubscribe === "function") unsubscribe();
+    };
+
 
 
     /* ================= SUBMIT ================= */
@@ -936,18 +966,50 @@ ${formData.skills || "Not provided"}
                                     />
 
                                     {formData.profilePhoto && (
-                                        <div className="mt-3">
-                                            <img
-                                                src={formData.profilePhoto}
-                                                alt="Profile Preview"
-                                                style={{
-                                                    width: "120px",
-                                                    height: "120px",
-                                                    objectFit: "cover",
-                                                    borderRadius: "50%",
-                                                    border: "2px solid #0d6efd"
-                                                }}
-                                            />
+                                        <div className="mt-3 d-flex align-items-center gap-3">
+                                            <div style={{ position: "relative", display: "inline-block" }}>
+                                                <img
+                                                    src={formData.profilePhoto}
+                                                    alt="Profile Preview"
+                                                    style={{
+                                                        width: "100px",
+                                                        height: "100px",
+                                                        objectFit: "cover",
+                                                        borderRadius: "50%",
+                                                        border: "3px solid #0d6efd",
+                                                        boxShadow: "0 4px 10px rgba(0,0,0,0.3)"
+                                                    }}
+                                                />
+                                                <button
+                                                    type="button"
+                                                    onClick={handleRemovePhoto}
+                                                    className="btn btn-danger btn-sm rounded-circle d-flex align-items-center justify-content-center"
+                                                    style={{
+                                                        position: "absolute",
+                                                        top: "-5px",
+                                                        right: "-5px",
+                                                        width: "28px",
+                                                        height: "28px",
+                                                        padding: "0",
+                                                        fontSize: "12px",
+                                                        fontWeight: "bold",
+                                                        border: "2px solid #212529",
+                                                        boxShadow: "0 2px 5px rgba(0,0,0,0.4)",
+                                                        cursor: "pointer",
+                                                        zIndex: 5
+                                                    }}
+                                                    title="Remove Photo"
+                                                >
+                                                    ✕
+                                                </button>
+                                            </div>
+                                            <button
+                                                type="button"
+                                                className="btn btn-outline-danger btn-sm fw-semibold px-3"
+                                                onClick={handleRemovePhoto}
+                                            >
+                                                Remove Photo
+                                            </button>
                                         </div>
                                     )}
                                 </div>

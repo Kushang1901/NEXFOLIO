@@ -63,7 +63,7 @@ export default function CoverLetterGenerator() {
                 loadInitialResumeData();
             } else {
                 setUserEmail(null);
-                setLoadingAuth(false);
+                setLoadingAuth(false);          
                 loadInitialResumeData();
             }
         });
@@ -428,18 +428,23 @@ export default function CoverLetterGenerator() {
             const html2canvas = (await import("html2canvas")).default;
             const jsPDF = (await import("jspdf")).default;
 
+            // Wait for all custom web fonts to be fully loaded
+            if (typeof document !== "undefined" && document.fonts) {
+                await document.fonts.ready;
+            }
+
             const canvas = await html2canvas(letter, {
                 scale: 2,
                 useCORS: true
             });
 
             const imgData = canvas.toDataURL("image/png");
-            const pdf = new jsPDF("p", "mm", "a4");
-
-            const pdfWidth = pdf.internal.pageSize.getWidth();
-            const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
-
-            pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
+            
+            const imgWidth = 210; // A4 width in mm
+            const imgHeight = (canvas.height * imgWidth) / canvas.width; // Proportional height in mm
+            
+            const pdf = new jsPDF("p", "mm", [imgWidth, imgHeight]);
+            pdf.addImage(imgData, "PNG", 0, 0, imgWidth, imgHeight);
             pdf.save(`Cover_Letter_${companyName.replace(/\s+/g, "_") || "Draft"}.pdf`);
             showToast("Cover letter downloaded as PDF!", "success");
         } catch (err) {

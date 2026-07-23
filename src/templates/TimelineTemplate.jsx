@@ -22,12 +22,8 @@ export default function TimelineTemplate({ data }) {
             <div style={{ display: "grid", gridTemplateColumns: "280px 1fr" }}>
                 {/* Left dark panel */}
                 <div style={{ background: "#0f172a", padding: "2.5rem 1.75rem", display: "flex", flexDirection: "column", alignItems: "flex-start" }}>
-                    {data.basics.photo ? (
+                    {data.basics.photo && (
                         <img src={data.basics.photo} alt="Profile" style={{ width: "100px", height: "100px", objectFit: "cover", borderRadius: "50%", border: `3px solid ${teal}`, marginBottom: "20px" }} />
-                    ) : (
-                        <div style={{ width: "80px", height: "80px", borderRadius: "50%", background: teal, display: "flex", alignItems: "center", justifyContent: "center", fontSize: "2rem", fontWeight: "700", color: "#fff", marginBottom: "20px" }}>
-                            {data.basics.name?.[0] || "?"}
-                        </div>
                     )}
                     <h1 style={{ margin: "0 0 4px", fontSize: "1.6rem", fontWeight: "800", color: "#fff", lineHeight: "1.2", letterSpacing: "-0.02em" }}>{data.basics.name}</h1>
                     {data.basics.role && <p style={{ margin: "0 0 20px", fontSize: "0.8rem", color: teal, textTransform: "uppercase", letterSpacing: "1.5px", fontWeight: "600" }}>{data.basics.role}</p>}

@@ -4,9 +4,9 @@ export default function DataAnalystTemplate({ data }) {
     const links = data?.basics?.links || {};
     
     return (
-        <div className="d-flex" style={{ minHeight: "297mm", boxSizing: "border-box", width: "100%", fontFamily: "'Inter', sans-serif" }}>
+        <div className="d-flex" style={{ minHeight: "297mm", boxSizing: "border-box", width: "794px", fontFamily: "'Inter', sans-serif" }}>
             {/* SIDEBAR FOR TECH STACK & TOOLS */}
-            <div className="p-4 bg-light" style={{ width: "30%", borderRight: "1px solid #e2e8f0" }}>
+            <div className="p-4 bg-light" style={{ width: "238px", borderRight: "1px solid #e2e8f0", boxSizing: "border-box", flexShrink: 0 }}>
                 {data.basics.photo && (
                     <div className="text-center mb-4">
                         <img
@@ -44,7 +44,7 @@ export default function DataAnalystTemplate({ data }) {
             </div>
 
             {/* MAIN DATA BLOCK */}
-            <div className="p-4" style={{ width: "70%" }}>
+            <div className="p-4" style={{ width: "556px", boxSizing: "border-box", flexShrink: 0 }}>
                 <div className="border-bottom pb-3 mb-4">
                     <h1 className="fw-bold mb-1" style={{ fontSize: "28px", color: "#0f172a" }}>{data.basics.name}</h1>
                     {data.basics.role && <h5 className="fw-bold mb-0" style={{ fontSize: "14px", color: "#0891b2" }}>{data.basics.role}</h5>}

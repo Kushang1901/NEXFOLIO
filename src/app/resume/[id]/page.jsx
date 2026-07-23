@@ -103,18 +103,24 @@ export default function PublicResumePage() {
             const html2canvas = (await import("html2canvas")).default;
             const jsPDF = (await import("jspdf")).default;
 
+            // Wait for all custom web fonts to be fully loaded
+            if (typeof document !== "undefined" && document.fonts) {
+                await document.fonts.ready;
+            }
+
             const canvas = await html2canvas(resume, {
                 scale: 2,
                 useCORS: true
             });
 
             const imgData = canvas.toDataURL("image/png");
-            const pdf = new jsPDF("p", "mm", "a4");
+            
+            const imgWidth = 210; // A4 width in mm
+            const imgHeight = (canvas.height * imgWidth) / canvas.width; // Proportional height in mm
+            
+            const pdf = new jsPDF("p", "mm", [imgWidth, imgHeight]);
+            pdf.addImage(imgData, "PNG", 0, 0, imgWidth, imgHeight);
 
-            const pdfWidth = pdf.internal.pageSize.getWidth();
-            const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
-
-            pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
             pdf.save(`${resumeData?.fullName ? resumeData.fullName.replace(/\s+/g, "_") : "Resume"}.pdf`);
             showToast("Resume downloaded as PDF successfully!", "success");
         } catch (err) {
@@ -279,9 +285,10 @@ export default function PublicResumePage() {
                     style={{
                         borderRadius: "12px",
                         boxShadow: "0 8px 30px rgba(0,0,0,0.5)",
-                        maxWidth: "850px",
+                        width: "794px",
                         position: "relative",
-                        overflow: "hidden"
+                        overflow: "hidden",
+                        fontFamily: "'Inter', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif"
                     }}
                 >
                     {/* Watermark Overlay for Unpaid Resume */}

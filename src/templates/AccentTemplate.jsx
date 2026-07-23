@@ -22,7 +22,7 @@ export default function AccentTemplate({ data }) {
             <div className="p-5 flex-grow-1" style={{ flexGrow: 1 }}>
                 {/* Header Grid */}
                 <div className="row align-items-center mb-4">
-                    <div className="col-8">
+                    <div className={data.basics.photo ? "col-8" : "col-12"}>
                         <h2 className="fw-bold mb-1" style={{ color: "#0083b0" }}>{data.basics.name}</h2>
                         {data.basics.role && (
                             <p className="text-uppercase tracking-wider fw-semibold text-secondary small mb-3">
@@ -34,8 +34,8 @@ export default function AccentTemplate({ data }) {
                             <span><i className="fa-solid fa-phone me-1"></i>{data.basics.phone}</span>
                         </div>
                     </div>
-                    <div className="col-4 text-end">
-                        {data.basics.photo && (
+                    {data.basics.photo && (
+                        <div className="col-4 text-end">
                             <img
                                 src={data.basics.photo}
                                 alt="Profile"
@@ -48,8 +48,8 @@ export default function AccentTemplate({ data }) {
                                     padding: "2px"
                                 }}
                             />
-                        )}
-                    </div>
+                        </div>
+                    )}
                 </div>
 
                 {/* Social Links Row */}

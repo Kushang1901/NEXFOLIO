@@ -28,7 +28,10 @@ export default function MinimalistTemplate({ data }) {
                             objectFit: "cover",
                             borderRadius: "50%",
                             marginBottom: "16px",
-                            border: "1px solid #e2e8f0"
+                            border: "1px solid #e2e8f0",
+                            display: "block",
+                            marginLeft: "auto",
+                            marginRight: "auto"
                         }}
                     />
                 )}

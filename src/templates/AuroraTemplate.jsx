@@ -21,12 +21,8 @@ export default function AuroraTemplate({ data }) {
                 <div style={{ position: "absolute", bottom: "-60px", right: "10%", width: "250px", height: "250px", background: "radial-gradient(circle, #4ade8044 0%, transparent 70%)", pointerEvents: "none" }}></div>
 
                 <div style={{ position: "relative", display: "flex", alignItems: "center", gap: "24px" }}>
-                    {data.basics.photo ? (
+                    {data.basics.photo && (
                         <img src={data.basics.photo} alt="Profile" style={{ width: "100px", height: "100px", objectFit: "cover", borderRadius: "50%", border: "3px solid rgba(255,255,255,0.3)", flexShrink: 0 }} />
-                    ) : (
-                        <div style={{ width: "80px", height: "80px", borderRadius: "50%", background: "linear-gradient(135deg, #22d3ee, #4ade80)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "2rem", fontWeight: "700", color: "#0f172a", flexShrink: 0 }}>
-                            {data.basics.name?.[0] || "?"}
-                        </div>
                     )}
                     <div>
                         <h1 style={{ margin: "0 0 6px", fontSize: "2.25rem", fontWeight: "800", color: "#fff", letterSpacing: "-0.03em" }}>{data.basics.name}</h1>

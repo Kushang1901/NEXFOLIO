@@ -6,7 +6,7 @@ export default function SwissGridTemplate({ data }) {
     return (
         <div className="p-5" style={{ minHeight: "297mm", boxSizing: "border-box", width: "100%", fontFamily: "'Helvetica Neue', Helvetica, Arial, sans-serif", color: "#111" }}>
             {/* TOP HEADER */}
-            <div className="row align-items-start border-bottom border-3 border-dark pb-4 mb-4">
+            <div className="row align-items-start pb-4 mb-4" style={{ borderBottom: "3px solid #111111" }}>
                 <div className="col-8">
                     <h1 className="fw-bold mb-0 text-uppercase" style={{ fontSize: "32px", letterSpacing: "-0.5px" }}>{data.basics.name}</h1>
                     {data.basics.role && <h5 className="text-secondary mb-0 mt-1" style={{ fontSize: "14px", fontWeight: "600", textTransform: "uppercase" }}>{data.basics.role}</h5>}

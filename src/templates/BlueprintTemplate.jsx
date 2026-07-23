@@ -2,6 +2,7 @@ import React from "react";
 
 export default function BlueprintTemplate({ data }) {
     const links = data?.basics?.links || {};
+    const blue = "#2563eb";
     
     return (
         <div className="p-5" style={{ 

@@ -29,11 +29,11 @@ export default function ModernTemplate({ data }) {
 
 
     return (
-        <div className="d-flex" style={{ minHeight: "297mm", boxSizing: "border-box", width: "100%" }}>
+        <div className="d-flex" style={{ minHeight: "297mm", boxSizing: "border-box", width: "794px" }}>
             {/* LEFT SIDEBAR */}
             <div
-                className="p-4 text-white"
-                style={{ width: "32%", background: "linear-gradient(180deg, #1e40af 0%, #1e3a8a 50%, #0f172a 100%)", flexShrink: 0 }}
+                className="text-white"
+                style={{ width: "254px", padding: "24px 16px", background: "linear-gradient(180deg, #1e40af 0%, #1e3a8a 50%, #0f172a 100%)", flexShrink: 0, boxSizing: "border-box" }}
             >
                 <div className="text-center mb-4">
                     {data.basics.photo && (
@@ -49,7 +49,8 @@ export default function ModernTemplate({ data }) {
                                 border: "3px solid rgba(255, 255, 255, 0.8)",
                                 boxShadow: "0 4px 15px rgba(0, 0, 0, 0.2)",
                                 display: "block",
-                                margin: "0 auto 15px"
+                                marginLeft: "auto",
+                                marginRight: "auto"
                             }}
                         />
                     )}
@@ -72,32 +73,32 @@ export default function ModernTemplate({ data }) {
                 </div>
 
                 {/* Contact Card */}
-                <div className="p-3 rounded-3 mb-4" style={{ background: "rgba(255, 255, 255, 0.05)", border: "1px solid rgba(255, 255, 255, 0.1)" }}>
-                    <div className="d-flex flex-column gap-2.5" style={{ fontSize: "0.82rem" }}>
-                        <div className="d-flex align-items-center gap-2.5 text-white-50 text-truncate">
-                            <i className="fas fa-envelope text-white opacity-75" style={{ width: "16px" }}></i>
-                            <span className="text-white text-truncate" title={data.basics.email}>{data.basics.email}</span>
+                <div className="p-2.5 rounded-3 mb-4" style={{ background: "rgba(255, 255, 255, 0.05)", border: "1px solid rgba(255, 255, 255, 0.1)" }}>
+                    <div className="d-flex flex-column gap-2" style={{ fontSize: "0.76rem" }}>
+                        <div className="d-flex align-items-center gap-2 text-white-50">
+                            <i className="fas fa-envelope text-white opacity-75" style={{ width: "14px", flexShrink: 0 }}></i>
+                            <span className="text-white word-break-all" title={data.basics.email} style={{ wordBreak: "break-all" }}>{data.basics.email}</span>
                         </div>
-                        <div className="d-flex align-items-center gap-2.5 text-white-50">
-                            <i className="fas fa-phone text-white opacity-75" style={{ width: "16px" }}></i>
+                        <div className="d-flex align-items-center gap-2 text-white-50">
+                            <i className="fas fa-phone text-white opacity-75" style={{ width: "14px", flexShrink: 0 }}></i>
                             <span className="text-white">{data.basics.phone}</span>
                         </div>
                         {links.github && (
-                            <a href={links.github} target="_blank" rel="noreferrer" className="d-flex align-items-center gap-2.5 text-white text-decoration-none text-truncate hover-opacity-100">
-                                <i className="fab fa-github text-white opacity-75" style={{ width: "16px" }}></i>
-                                <span className="text-white text-truncate">{getUsername(links.github, "github")}</span>
+                            <a href={links.github} target="_blank" rel="noreferrer" className="d-flex align-items-center gap-2 text-white text-decoration-none hover-opacity-100">
+                                <i className="fab fa-github text-white opacity-75" style={{ width: "14px", flexShrink: 0 }}></i>
+                                <span className="text-white word-break-all" style={{ wordBreak: "break-all" }}>{getUsername(links.github, "github")}</span>
                             </a>
                         )}
                         {links.linkedin && (
-                            <a href={links.linkedin} target="_blank" rel="noreferrer" className="d-flex align-items-center gap-2.5 text-white text-decoration-none text-truncate hover-opacity-100">
-                                <i className="fab fa-linkedin text-white opacity-75" style={{ width: "16px" }}></i>
-                                <span className="text-white text-truncate">{getUsername(links.linkedin, "linkedin")}</span>
+                            <a href={links.linkedin} target="_blank" rel="noreferrer" className="d-flex align-items-center gap-2 text-white text-decoration-none hover-opacity-100">
+                                <i className="fab fa-linkedin text-white opacity-75" style={{ width: "14px", flexShrink: 0 }}></i>
+                                <span className="text-white word-break-all" style={{ wordBreak: "break-all" }}>{getUsername(links.linkedin, "linkedin")}</span>
                             </a>
                         )}
                         {links.portfolio && (
-                            <a href={links.portfolio} target="_blank" rel="noreferrer" className="d-flex align-items-center gap-2.5 text-white text-decoration-none text-truncate hover-opacity-100">
-                                <i className="fa-solid fa-globe text-white opacity-75" style={{ width: "16px" }}></i>
-                                <span className="text-white text-truncate">{getUsername(links.portfolio, "portfolio")}</span>
+                            <a href={links.portfolio} target="_blank" rel="noreferrer" className="d-flex align-items-center gap-2 text-white text-decoration-none hover-opacity-100">
+                                <i className="fa-solid fa-globe text-white opacity-75" style={{ width: "14px", flexShrink: 0 }}></i>
+                                <span className="text-white word-break-all" style={{ wordBreak: "break-all" }}>{getUsername(links.portfolio, "portfolio")}</span>
                             </a>
                         )}
                     </div>
@@ -128,7 +129,7 @@ export default function ModernTemplate({ data }) {
             </div>
 
             {/* RIGHT CONTENT */}
-            <div className="p-5" style={{ width: "68%" }}>
+            <div className="p-5" style={{ width: "540px", boxSizing: "border-box", flexShrink: 0 }}>
                 {/* SUMMARY */}
                 <section className="mb-4">
                     <h5 className="fw-bold">PROFILE</h5>

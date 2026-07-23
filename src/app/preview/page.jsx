@@ -458,8 +458,14 @@ export default function Preview() {
             const resume = document.getElementById("resume-preview");
             if (!resume) return;
 
+
             const html2canvas = (await import("html2canvas")).default;
             const jsPDF = (await import("jspdf")).default;
+
+            // Wait for all custom web fonts to be fully loaded
+            if (typeof document !== "undefined" && document.fonts) {
+                await document.fonts.ready;
+            }
 
             const canvas = await html2canvas(resume, {
                 scale: 2,
@@ -467,30 +473,17 @@ export default function Preview() {
             });
 
             const imgData = canvas.toDataURL("image/png");
-            const pdf = new jsPDF("p", "mm", "a4");
-
-            const imgWidth = pdf.internal.pageSize.getWidth(); // 210
-            const pageHeight = pdf.internal.pageSize.getHeight(); // 297
-            const imgHeight = (canvas.height * imgWidth) / canvas.width;
             
-            let heightLeft = imgHeight;
-            let position = 0;
-
-            // Add the first page
-            pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
-            heightLeft -= pageHeight;
-
-            // Add subsequent pages if there is remaining height
-            while (heightLeft > 0) {
-                position = heightLeft - imgHeight; // slide image up
-                pdf.addPage();
-                pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
-                heightLeft -= pageHeight;
-            }
+            const imgWidth = 210; // A4 width in mm
+            const imgHeight = (canvas.height * imgWidth) / canvas.width; // Proportional height in mm
+            
+            const pdf = new jsPDF("p", "mm", [imgWidth, imgHeight]);
+            pdf.addImage(imgData, "PNG", 0, 0, imgWidth, imgHeight);
 
             pdf.save(`${resumeData?.fullName ? resumeData.fullName.replace(/\s+/g, "_") : "Resume"}.pdf`);
             setShowDownloadModal(false);
             showToast("Resume downloaded as PDF successfully!", "success");
+
             setTimeout(() => {
                 triggerReviewPrompt();
             }, 1200);
@@ -518,19 +511,211 @@ export default function Preview() {
             const resumeElement = document.getElementById("resume-preview");
             if (!resumeElement) return;
 
-            let htmlContent = resumeElement.innerHTML;
+            // Create a temporary clone of the resume to manipulate for Word export
+            const clone = resumeElement.cloneNode(true);
+
+            // 1. Replace FontAwesome icons with standard Unicode text icons for Word compatibility
+            const icons = clone.querySelectorAll("i");
+            icons.forEach(icon => {
+                const classes = icon.className || "";
+                if (classes.includes("fa-envelope")) {
+                    icon.outerHTML = "<span>✉ </span>";
+                } else if (classes.includes("fa-phone")) {
+                    icon.outerHTML = "<span>☎ </span>";
+                } else if (classes.includes("fa-globe")) {
+                    icon.outerHTML = "<span>🌐 </span>";
+                } else if (classes.includes("fa-linkedin")) {
+                    icon.outerHTML = "<span>🔗 </span>";
+                } else if (classes.includes("fa-github")) {
+                    icon.outerHTML = "<span>💻 </span>";
+                } else if (classes.includes("fa-map-marker") || classes.includes("fa-location")) {
+                    icon.outerHTML = "<span>📍 </span>";
+                } else {
+                    icon.outerHTML = "<span>• </span>";
+                }
+            });
+
+            // 2. Convert all horizontal flex containers (row layouts) to tables using live dimensions
+            const flexContainers = clone.querySelectorAll(".d-flex, [style*='display: flex']");
             
-            // Convert relative image sources to absolute URLs for Word compatibility
-            const tempDiv = document.createElement("div");
-            tempDiv.innerHTML = htmlContent;
-            const images = tempDiv.getElementsByTagName("img");
-            for (let i = 0; i < images.length; i++) {
-                const src = images[i].getAttribute("src");
-                if (src && src.startsWith("/")) {
-                    images[i].setAttribute("src", window.location.origin + src);
+            // Traverse bottom-up (reverse order) to handle nested flex containers properly
+            for (let i = flexContainers.length - 1; i >= 0; i--) {
+                const container = flexContainers[i];
+                
+                // Resolve path to match corresponding live DOM element
+                const path = [];
+                let parent = container;
+                while (parent && parent !== clone) {
+                    const parentNode = parent.parentNode;
+                    const index = Array.from(parentNode.children).indexOf(parent);
+                    path.unshift(index);
+                    parent = parentNode;
+                }
+                
+                let liveContainer = resumeElement;
+                for (const idx of path) {
+                    if (liveContainer && liveContainer.children[idx]) {
+                        liveContainer = liveContainer.children[idx];
+                    } else {
+                        liveContainer = null;
+                        break;
+                    }
+                }
+                
+                if (!liveContainer) continue;
+                
+                const style = window.getComputedStyle(liveContainer);
+                const isColumn = container.classList.contains("flex-column") || style.flexDirection === "column" || container.style.flexDirection === "column";
+                
+                const children = Array.from(container.children);
+                if (children.length >= 2 && !isColumn) {
+                    const table = document.createElement("table");
+                    table.setAttribute("cellpadding", "0");
+                    table.setAttribute("cellspacing", "0");
+                    table.setAttribute("border", "0");
+                    table.style.width = "100%";
+                    table.style.borderCollapse = "collapse";
+                    table.style.fontFamily = "'Inter', 'Segoe UI', Arial, sans-serif";
+                    
+                    const tr = document.createElement("tr");
+                    
+                    children.forEach((child, index) => {
+                        const td = document.createElement("td");
+                        td.setAttribute("valign", "top");
+                        
+                        // Set width based on live rendered dimensions
+                        const liveChild = liveContainer.children[index];
+                        if (liveChild) {
+                            const rect = liveChild.getBoundingClientRect();
+                            td.style.width = `${rect.width}px`;
+                            td.setAttribute("width", `${rect.width}`);
+                            
+                            // Copy live background color
+                            const childStyle = window.getComputedStyle(liveChild);
+                            if (childStyle.backgroundColor && childStyle.backgroundColor !== "rgba(0, 0, 0, 0)" && childStyle.backgroundColor !== "transparent") {
+                                td.style.backgroundColor = childStyle.backgroundColor;
+                            }
+                        }
+                        
+                        td.setAttribute("style", child.getAttribute("style") || "");
+                        td.style.boxSizing = "border-box";
+                        
+                        if (td.style.background && (td.style.background.includes("gradient") || td.style.background.includes("rgba"))) {
+                            td.style.backgroundColor = index === 0 ? "#1e3a8a" : "#ffffff";
+                            td.style.background = index === 0 ? "#1e3a8a" : "#ffffff";
+                        }
+                        td.appendChild(child);
+                        tr.appendChild(td);
+                    });
+                    
+                    table.appendChild(tr);
+                    container.parentNode.replaceChild(table, container);
                 }
             }
-            htmlContent = tempDiv.innerHTML;
+
+            // 3. Convert flex-column layouts to standard block layout, keeping horizontal layouts inline-block
+            const allElements = clone.querySelectorAll("*");
+            allElements.forEach(el => {
+                const style = el.getAttribute("style") || "";
+                const isFlex = el.classList.contains("d-flex") || el.classList.contains("flex-column") || style.includes("display: flex") || style.includes("display:flex");
+                
+                if (isFlex) {
+                    const isColumn = el.classList.contains("flex-column") || style.includes("flex-direction: column") || style.includes("flex-direction:column");
+                    
+                    el.classList.remove("d-flex", "flex-column");
+                    el.style.display = "block";
+                    el.style.width = "100%";
+                    
+                    // Force stacked display on children and add margin spacing
+                    Array.from(el.children).forEach(child => {
+                        if (isColumn) {
+                            child.style.display = "block";
+                            child.style.marginBottom = "6px";
+                        } else {
+                            child.style.display = "inline-block";
+                            child.style.marginRight = "6px";
+                            child.style.marginBottom = "6px";
+                        }
+                    });
+                }
+            });
+
+            // 5. Format badges/pills to have a solid background and borders for Word
+            const badges = clone.querySelectorAll(".badge, span.rounded-pill, span[style*='border-radius']");
+            badges.forEach(badge => {
+                badge.style.display = "inline-block";
+                badge.style.padding = "4px 8px";
+                badge.style.margin = "4px 2px";
+                
+                // Solid color fallback for Word
+                if (badge.style.color === "rgb(255, 255, 255)" || badge.style.color === "#ffffff" || badge.style.color === "#fff") {
+                    badge.style.backgroundColor = "#3b82f6";
+                    badge.style.border = "1px solid #2563eb";
+                    badge.style.color = "#ffffff";
+                } else {
+                    badge.style.backgroundColor = "#f1f5f9";
+                    badge.style.border = "1px solid #cbd5e1";
+                    badge.style.color = "#334155";
+                }
+                badge.style.borderRadius = "4px";
+                badge.innerHTML = badge.innerHTML + " &nbsp; ";
+            });
+
+            // 6. Convert project cards with left borders to table boxes
+            const cards = clone.querySelectorAll("div[style*='borderLeft'], div[style*='border-left']");
+            cards.forEach(card => {
+                const table = document.createElement("table");
+                table.setAttribute("cellpadding", "8");
+                table.setAttribute("cellspacing", "0");
+                table.setAttribute("border", "0");
+                table.style.width = "100%";
+                table.style.borderCollapse = "collapse";
+                table.style.marginBottom = "10px";
+                
+                const tr = document.createElement("tr");
+                const td = document.createElement("td");
+                td.setAttribute("valign", "top");
+                
+                td.style.borderLeft = card.style.borderLeft || "3px solid #0d6efd";
+                td.style.backgroundColor = card.style.backgroundColor || card.style.background || "#f0f4ff";
+                td.style.paddingLeft = "12px";
+                td.style.paddingTop = "8px";
+                td.style.paddingBottom = "8px";
+                
+                while (card.firstChild) {
+                    td.appendChild(card.firstChild);
+                }
+                
+                tr.appendChild(td);
+                table.appendChild(tr);
+                card.parentNode.replaceChild(table, card);
+            });
+
+            // 7. Adjust links styling
+            const links = clone.querySelectorAll("a");
+            links.forEach(link => {
+                link.style.color = "#0284c7";
+                link.style.textDecoration = "underline";
+                if (!link.innerHTML.endsWith("&nbsp; ")) {
+                    link.innerHTML = link.innerHTML + " &nbsp; ";
+                }
+            });
+
+            // 8. Clean up profile photos and absolute elements
+            const images = clone.querySelectorAll("img");
+            images.forEach(img => {
+                const src = img.getAttribute("src");
+                if (src && src.startsWith("/")) {
+                    img.setAttribute("src", window.location.origin + src);
+                }
+                img.style.width = "100px";
+                img.style.height = "100px";
+                img.setAttribute("width", "100");
+                img.setAttribute("height", "100");
+                img.style.borderRadius = "50%";
+            });
+
+            let htmlContent = clone.innerHTML;
 
             // Extract all styles active on the page
             let styles = "";
@@ -910,7 +1095,8 @@ export default function Preview() {
                                 left: 0,
                                 transform: `scale(${scale})`,
                                 transformOrigin: "top left",
-                                overflow: "hidden"
+                                overflow: "hidden",
+                                fontFamily: "'Inter', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif"
                             }}
                         >
                             {/* Watermark Overlay for Unpaid Resume */}
@@ -1736,7 +1922,7 @@ export default function Preview() {
                                     </p>
                                     
                                     <div className="row g-3">
-                                        <div className="col-12 col-md-4">
+                                        <div className="col-12 col-md-6">
                                             <button 
                                                 onClick={downloadAsPNG}
                                                 className="btn btn-outline-info w-100 p-3.5 d-flex flex-column align-items-center justify-content-center"
@@ -1753,7 +1939,7 @@ export default function Preview() {
                                                 <span className="text-white-50 small" style={{ fontSize: "0.75rem" }}>Best for sharing</span>
                                             </button>
                                         </div>
-                                        <div className="col-12 col-md-4">
+                                        <div className="col-12 col-md-6">
                                             <button 
                                                 onClick={downloadAsPDF}
                                                 className="btn btn-outline-primary w-100 p-3.5 d-flex flex-column align-items-center justify-content-center"
@@ -1768,24 +1954,6 @@ export default function Preview() {
                                                 <i className="fas fa-file-pdf fa-2x mb-3 text-primary"></i>
                                                 <span className="fw-bold fs-6 mb-1 text-white">PDF File</span>
                                                 <span className="text-white-50 small" style={{ fontSize: "0.75rem" }}>Best for printing/ATS</span>
-                                            </button>
-                                        </div>
-                                        <div className="col-12 col-md-4">
-                                            <button 
-                                                onClick={downloadAsDOCX}
-                                                className="btn btn-outline-indigo w-100 p-3.5 d-flex flex-column align-items-center justify-content-center"
-                                                style={{
-                                                    borderRadius: "16px",
-                                                    borderWidth: "1.5px",
-                                                    transition: "all 0.2s ease",
-                                                    background: "rgba(99, 102, 241, 0.05)",
-                                                    borderColor: "rgba(99, 102, 241, 0.4)",
-                                                    height: "100%"
-                                                }}
-                                            >
-                                                <i className="fas fa-file-word fa-2x mb-3 text-indigo" style={{ color: "#818cf8" }}></i>
-                                                <span className="fw-bold fs-6 mb-1 text-white">Word File</span>
-                                                <span className="text-white-50 small" style={{ fontSize: "0.75rem" }}>100% Editable Doc</span>
                                             </button>
                                         </div>
                                     </div>

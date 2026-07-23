@@ -29,7 +29,10 @@ export default function ElegantTemplate({ data }) {
                             borderRadius: "50%",
                             marginBottom: "16px",
                             border: "1px double #4a5568",
-                            padding: "4px"
+                            padding: "4px",
+                            display: "block",
+                            marginLeft: "auto",
+                            marginRight: "auto"
                         }}
                     />
                 )}

@@ -19,12 +19,8 @@ export default function CrimsonTemplate({ data }) {
         <div style={{ fontFamily: "'Georgia', 'Times New Roman', serif", color: "#1c1917", background: "#fff", minHeight: "100%" }}>
             {/* Full-width top header */}
             <div style={{ background: "#1c1917", padding: "2.5rem 3rem", display: "flex", alignItems: "center", gap: "28px" }}>
-                {data.basics.photo ? (
+                {data.basics.photo && (
                     <img src={data.basics.photo} alt="Profile" style={{ width: "96px", height: "96px", objectFit: "cover", borderRadius: "4px", flexShrink: 0, border: `3px solid ${red}` }} />
-                ) : (
-                    <div style={{ width: "80px", height: "80px", background: red, display: "flex", alignItems: "center", justifyContent: "center", fontSize: "2.5rem", fontWeight: "700", color: "#fff", flexShrink: 0, borderRadius: "4px" }}>
-                        {data.basics.name?.[0] || "?"}
-                    </div>
                 )}
                 <div style={{ flex: 1 }}>
                     <h1 style={{ margin: "0 0 4px", fontSize: "2.5rem", fontWeight: "700", color: "#fff", fontFamily: "'Georgia', serif", letterSpacing: "-0.01em" }}>{data.basics.name}</h1>

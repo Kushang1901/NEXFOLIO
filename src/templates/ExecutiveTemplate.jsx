@@ -43,22 +43,6 @@ export default function ExecutiveTemplate({ data }) {
             <div className="d-flex flex-row flex-grow-1" style={{ flexGrow: 1 }}>
                 {/* Left Gray Sidebar Column */}
                 <div className="p-4" style={{ width: "35%", background: "#f1f5f9", borderRight: "1px solid #e2e8f0" }}>
-                    {data.basics.photo && (
-                        <div className="text-center mb-4">
-                            <img
-                                src={data.basics.photo}
-                                alt="Profile"
-                                style={{
-                                    width: "120px",
-                                    height: "120px",
-                                    objectFit: "cover",
-                                    border: "3px solid #1b2a4a",
-                                    boxShadow: "0 4px 6px rgba(0,0,0,0.1)"
-                                }}
-                            />
-                        </div>
-                    )}
-
                     {/* Links */}
                     {Object.keys(links).length > 0 && (
                         <div className="mb-4">

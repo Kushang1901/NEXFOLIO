@@ -21,24 +21,60 @@ export default function NordicTemplate({ data }) {
             <div style={{ background: blue, height: "6px" }}></div>
 
             {/* Header */}
-            <div style={{ padding: "2.5rem 3rem 2rem", borderBottom: "1px solid #e5e7eb" }}>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: "20px" }}>
-                    <div style={{ display: "flex", alignItems: "center", gap: "20px" }}>
-                        {data.basics.photo && (
-                            <img src={data.basics.photo} alt="Profile" style={{ width: "84px", height: "84px", objectFit: "cover", borderRadius: "8px", border: "2px solid #e5e7eb", flexShrink: 0 }} />
-                        )}
-                        <div>
-                            <h1 style={{ margin: "0 0 4px", fontSize: "2.25rem", fontWeight: "800", color: "#111827", letterSpacing: "-0.03em" }}>{data.basics.name}</h1>
-                            {data.basics.role && <p style={{ margin: 0, fontSize: "1rem", color: blue, fontWeight: "600", textTransform: "uppercase", letterSpacing: "1px", fontSize: "0.85rem" }}>{data.basics.role}</p>}
-                        </div>
-                    </div>
-                    <div style={{ textAlign: "right", fontSize: "0.85rem", color: "#6b7280", lineHeight: "1.8" }}>
-                        <div>{data.basics.email}</div>
-                        <div>{data.basics.phone}</div>
-                        {links.linkedin && <div><a href={links.linkedin} target="_blank" rel="noreferrer" style={{ color: blue, textDecoration: "none" }}>linkedin/{getUsername(links.linkedin, "linkedin")}</a></div>}
-                        {links.github && <div><a href={links.github} target="_blank" rel="noreferrer" style={{ color: blue, textDecoration: "none" }}>github/{getUsername(links.github, "github")}</a></div>}
-                        {links.portfolio && <div><a href={links.portfolio} target="_blank" rel="noreferrer" style={{ color: blue, textDecoration: "none" }}>{getUsername(links.portfolio, "portfolio")}</a></div>}
-                    </div>
+            <div style={{ padding: "2.5rem 2rem 2.5rem", borderBottom: "1px solid #e5e7eb", textAlign: "center" }}>
+                {data.basics.photo && (
+                    <img 
+                        src={data.basics.photo} 
+                        alt="Profile" 
+                        style={{ 
+                            width: "90px", 
+                            height: "90px", 
+                            objectFit: "cover", 
+                            borderRadius: "50%", 
+                            border: "2px solid #e5e7eb", 
+                            marginBottom: "16px",
+                            display: "block",
+                            marginLeft: "auto",
+                            marginRight: "auto"
+                        }} 
+                    />
+                )}
+                <h1 style={{ margin: "0 0 6px", fontSize: "2.25rem", fontWeight: "800", color: "#111827", letterSpacing: "-0.03em" }}>{data.basics.name}</h1>
+                {data.basics.role && (
+                    <p style={{ margin: "0 0 16px", fontSize: "0.85rem", color: blue, fontWeight: "600", textTransform: "uppercase", letterSpacing: "1.5px" }}>
+                        {data.basics.role}
+                    </p>
+                )}
+                
+                {/* Horizontal Centered Contacts */}
+                <div style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: "16px", flexWrap: "wrap", fontSize: "0.82rem", color: "#6b7280" }}>
+                    <span>✉ {data.basics.email}</span>
+                    <span>•</span>
+                    <span>📞 {data.basics.phone}</span>
+                    {links.linkedin && (
+                        <>
+                            <span>•</span>
+                            <a href={links.linkedin} target="_blank" rel="noreferrer" style={{ color: blue, textDecoration: "none" }}>
+                                linkedin/{getUsername(links.linkedin, "linkedin")}
+                            </a>
+                        </>
+                    )}
+                    {links.github && (
+                        <>
+                            <span>•</span>
+                            <a href={links.github} target="_blank" rel="noreferrer" style={{ color: blue, textDecoration: "none" }}>
+                                github/{getUsername(links.github, "github")}
+                            </a>
+                        </>
+                    )}
+                    {links.portfolio && (
+                        <>
+                            <span>•</span>
+                            <a href={links.portfolio} target="_blank" rel="noreferrer" style={{ color: blue, textDecoration: "none" }}>
+                                {getUsername(links.portfolio, "portfolio")}
+                            </a>
+                        </>
+                    )}
                 </div>
             </div>
 

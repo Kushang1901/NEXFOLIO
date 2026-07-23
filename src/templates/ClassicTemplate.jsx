@@ -41,7 +41,10 @@ export default function ClassicTemplate({ data }) {
                             objectFit: "cover",
                             borderRadius: "50%",
                             marginBottom: "14px",
-                            border: "3px solid #cbd5e1"
+                            border: "3px solid #cbd5e1",
+                            display: "block",
+                            marginLeft: "auto",
+                            marginRight: "auto"
                         }}
                     />
                 )}

@@ -2,6 +2,7 @@ import React from "react";
 
 export default function EmeraldTemplate({ data }) {
     const links = data?.basics?.links || {};
+    const green = "#0d9488";
     const getUsername = (url, type) => {
         if (!url) return "";
         try {
