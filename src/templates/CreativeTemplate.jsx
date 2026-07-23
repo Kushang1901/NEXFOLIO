@@ -41,7 +41,9 @@ export default function CreativeTemplate({ data }) {
                             objectFit: "cover",
                             borderRadius: "20px",
                             marginBottom: "15px",
-                            border: "3px solid #333"
+                            border: "3px solid #333",
+                            display: "block",
+                            margin: "0 auto"
                         }}
                     />
                 )}
@@ -56,16 +58,17 @@ export default function CreativeTemplate({ data }) {
                     </p>
                 )}
 
-                <div className="d-flex align-items-center gap-4 mt-3 flex-wrap">
+                <div className="d-flex align-items-center justify-content-center gap-3 mt-3 flex-wrap">
                     {links.github && (
                         <a
                             href={links.github}
                             target="_blank"
                             rel="noreferrer"
-                            className="d-flex align-items-center gap-2 text-decoration-none text-dark"
+                            className="d-flex align-items-center gap-2 text-decoration-none text-dark bg-light px-3 py-1.5 rounded-pill border small"
+                            style={{ transition: "all 0.2s ease", fontSize: "0.85rem" }}
                         >
-                            <i className="fab fa-github fa-lg text-dark"></i>
-                            <span>{getUsername(links.github, "github")}</span>
+                            <i className="fab fa-github text-dark"></i>
+                            <span className="fw-medium">{getUsername(links.github, "github")}</span>
                         </a>
                     )}
 
@@ -74,10 +77,11 @@ export default function CreativeTemplate({ data }) {
                             href={links.linkedin}
                             target="_blank"
                             rel="noreferrer"
-                            className="d-flex align-items-center gap-2 text-decoration-none text-dark"
+                            className="d-flex align-items-center gap-2 text-decoration-none text-dark bg-light px-3 py-1.5 rounded-pill border small"
+                            style={{ transition: "all 0.2s ease", fontSize: "0.85rem" }}
                         >
-                            <i className="fab fa-linkedin fa-lg text-primary"></i>
-                            <span>{getUsername(links.linkedin, "linkedin")}</span>
+                            <i className="fab fa-linkedin text-primary"></i>
+                            <span className="fw-medium">{getUsername(links.linkedin, "linkedin")}</span>
                         </a>
                     )}
 
@@ -86,16 +90,14 @@ export default function CreativeTemplate({ data }) {
                             href={links.portfolio}
                             target="_blank"
                             rel="noreferrer"
-                            className="d-flex align-items-center gap-2 text-decoration-none text-dark"
+                            className="d-flex align-items-center gap-2 text-decoration-none text-dark bg-light px-3 py-1.5 rounded-pill border small"
+                            style={{ transition: "all 0.2s ease", fontSize: "0.85rem" }}
                         >
-                            <i className="fa-solid fa-globe fa-lg text-success"></i>
-                            <span>{getUsername(links.portfolio, "portfolio")}</span>
+                            <i className="fa-solid fa-globe text-success"></i>
+                            <span className="fw-medium">{getUsername(links.portfolio, "portfolio")}</span>
                         </a>
                     )}
                 </div>
-
-
-
             </div>
 
             {/* SUMMARY */}
