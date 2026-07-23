@@ -113,7 +113,25 @@ export async function initDb() {
             );
         `;
 
-        console.log("✅ Database initialized successfully (users, resumes, cookie_consents, payments, and testimonials tables checked/created/migrated)");
+        // Create cover_letters table
+        await sql`
+            CREATE TABLE IF NOT EXISTS cover_letters (
+                id SERIAL PRIMARY KEY,
+                user_email VARCHAR(255) NOT NULL REFERENCES users(email) ON DELETE CASCADE,
+                letter_name VARCHAR(255) DEFAULT 'My Cover Letter',
+                job_title VARCHAR(255) NOT NULL,
+                company_name VARCHAR(255) NOT NULL,
+                hiring_manager VARCHAR(255),
+                tone VARCHAR(100) DEFAULT 'Professional',
+                selected_template VARCHAR(100) DEFAULT 'classic',
+                letter_text TEXT NOT NULL,
+                candidate_data JSONB,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            );
+        `;
+
+        console.log("✅ Database initialized successfully (users, resumes, cookie_consents, payments, testimonials, and cover_letters tables checked/created/migrated)");
     } catch (error) {
         console.error("❌ Database initialization failed:", error);
         throw error;

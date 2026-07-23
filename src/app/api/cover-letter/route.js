@@ -5,7 +5,7 @@ const apiKey = process.env.GEMINI_API_KEY;
 
 export async function POST(request) {
     try {
-        const { candidateInfo, jobTitle, companyName, jobDescription, hiringManager, tone } = await request.json();
+        const { candidateInfo, jobTitle, companyName, jobDescription, hiringManager, tone, customInstructions } = await request.json();
 
         if (!candidateInfo) {
             return NextResponse.json(
@@ -78,6 +78,7 @@ Target Job Information:
 ${jobDescription}
 
 Selected Writing Tone: ${tone || "Professional"}
+${customInstructions ? `\nAdditional Focus / Special Instructions:\n${customInstructions}\n` : ""}
 
 Requirements:
 1. Address the cover letter directly to the Hiring Manager or Company.

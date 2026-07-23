@@ -20,6 +20,23 @@ export default function CoverLetterGenerator() {
     const [selectedResumeId, setSelectedResumeId] = useState("session"); // "session" or ID number
     const [selectedResumeData, setSelectedResumeData] = useState(null);
 
+    // Custom/Manual mode states
+    const [isManualMode, setIsManualMode] = useState(false);
+    const [manualName, setManualName] = useState("");
+    const [manualRole, setManualRole] = useState("");
+    const [manualEmail, setManualEmail] = useState("");
+    const [manualPhone, setManualPhone] = useState("");
+    const [manualLinkedIn, setManualLinkedIn] = useState("");
+    
+    // AI Custom Instructions
+    const [customInstructions, setCustomInstructions] = useState("");
+
+    // Cloud Saved Cover Letters
+    const [savedLettersList, setSavedLettersList] = useState([]);
+    const [selectedLetterId, setSelectedLetterId] = useState("new");
+    const [letterName, setLetterName] = useState("My Cover Letter");
+    const [isSaving, setIsSaving] = useState(false);
+
     // Cover Letter generation inputs
     const [jobTitle, setJobTitle] = useState("");
     const [companyName, setCompanyName] = useState("");
@@ -40,6 +57,7 @@ export default function CoverLetterGenerator() {
                 setUserEmail(user.email);
                 setLoadingAuth(false);
                 await fetchSavedResumes(user.email);
+                await fetchSavedLetters();
                 loadInitialResumeData();
             } else {
                 setUserEmail(null);
@@ -64,6 +82,18 @@ export default function CoverLetterGenerator() {
             }
         } catch (err) {
             console.error("Error loading user resumes:", err);
+        }
+    };
+
+    const fetchSavedLetters = async () => {
+        try {
+            const response = await fetch("/api/cover-letters");
+            if (response.ok) {
+                const data = await response.json();
+                setSavedLettersList(data);
+            }
+        } catch (err) {
+            console.error("Error loading user cover letters:", err);
         }
     };
 
@@ -104,10 +134,147 @@ export default function CoverLetterGenerator() {
         }
     };
 
+    const getActiveResumeData = () => {
+        if (isManualMode) {
+            return {
+                basics: {
+                    name: manualName,
+                    role: manualRole,
+                    email: manualEmail,
+                    phone: manualPhone,
+                    links: {
+                        linkedin: manualLinkedIn
+                    }
+                }
+            };
+        }
+        return selectedResumeData;
+    };
+
+    const handleSelectLetter = async (letterId) => {
+        setSelectedLetterId(letterId);
+        if (letterId === "new") {
+            setLetterName("My Cover Letter");
+            setJobTitle("");
+            setCompanyName("");
+            setHiringManager("");
+            setJobDescription("");
+            setTone("Professional");
+            setCoverLetterText("");
+            setCustomInstructions("");
+            setIsManualMode(false);
+            return;
+        }
+
+        try {
+            const response = await fetch(`/api/cover-letters?id=${letterId}`);
+            if (response.ok) {
+                const data = await response.json();
+                setLetterName(data.letterName || "My Cover Letter");
+                setJobTitle(data.jobTitle || "");
+                setCompanyName(data.companyName || "");
+                setHiringManager(data.hiringManager || "");
+                setTone(data.tone || "Professional");
+                setSelectedTemplate(data.selectedTemplate || "classic");
+                setCoverLetterText(data.letterText || "");
+                
+                if (data.candidateData) {
+                    setIsManualMode(true);
+                    setManualName(data.candidateData.basics?.name || "");
+                    setManualRole(data.candidateData.basics?.role || "");
+                    setManualEmail(data.candidateData.basics?.email || "");
+                    setManualPhone(data.candidateData.basics?.phone || "");
+                    setManualLinkedIn(data.candidateData.basics?.links?.linkedin || "");
+                } else {
+                    setIsManualMode(false);
+                }
+            }
+        } catch (err) {
+            console.error("Error fetching single cover letter details:", err);
+            showToast("Failed to load cover letter details.", "error");
+        }
+    };
+
+    const handleSave = async () => {
+        if (!jobTitle || !companyName || !coverLetterText) {
+            showToast("Please generate a cover letter and fill in job details before saving.", "error");
+            return;
+        }
+        
+        setIsSaving(true);
+        try {
+            const body = {
+                letterName,
+                jobTitle,
+                companyName,
+                hiringManager,
+                tone,
+                selectedTemplate,
+                letterText: coverLetterText,
+                candidateData: isManualMode ? getActiveResumeData() : null
+            };
+            
+            if (selectedLetterId !== "new") {
+                body.id = selectedLetterId;
+            }
+            
+            const response = await fetch("/api/cover-letters", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(body)
+            });
+            
+            if (!response.ok) {
+                throw new Error("Failed to save cover letter");
+            }
+            
+            const result = await response.json();
+            showToast("Cover letter saved successfully!", "success");
+            
+            if (selectedLetterId === "new") {
+                setSelectedLetterId(result.id);
+            }
+            
+            await fetchSavedLetters();
+        } catch (err) {
+            console.error(err);
+            showToast("Failed to save cover letter.", "error");
+        } finally {
+            setIsSaving(false);
+        }
+    };
+
+    const handleDeleteLetter = async (id) => {
+        if (!confirm("Are you sure you want to delete this saved cover letter?")) return;
+        
+        try {
+            const response = await fetch(`/api/cover-letters?id=${id}`, {
+                method: "DELETE"
+            });
+            if (response.ok) {
+                showToast("Cover letter deleted.", "success");
+                if (selectedLetterId === id) {
+                    handleSelectLetter("new");
+                }
+                await fetchSavedLetters();
+            } else {
+                showToast("Failed to delete cover letter.", "error");
+            }
+        } catch (err) {
+            console.error("Delete cover letter error:", err);
+            showToast("Failed to delete cover letter.", "error");
+        }
+    };
+
     const handleGenerate = async (e) => {
         e.preventDefault();
-        if (!selectedResumeData) {
-            showToast("No resume data found. Please build a resume first.", "error");
+        const activeResume = getActiveResumeData();
+        if (!activeResume) {
+            showToast("No resume data found. Please build a resume first or toggle Manual Details.", "error");
+            return;
+        }
+        if (isManualMode && !manualName) {
+            showToast("Please enter Candidate Name in Manual Mode.", "error");
             return;
         }
         if (!jobTitle || !companyName || !jobDescription) {
@@ -121,12 +288,13 @@ export default function CoverLetterGenerator() {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
-                    candidateInfo: selectedResumeData,
+                    candidateInfo: activeResume,
                     jobTitle,
                     companyName,
                     jobDescription,
                     hiringManager,
-                    tone
+                    tone,
+                    customInstructions
                 })
             });
 
@@ -224,7 +392,8 @@ export default function CoverLetterGenerator() {
         );
     }
 
-    const normalizedData = selectedResumeData ? normalizeResumeData(selectedResumeData) : null;
+    const activeResumeData = getActiveResumeData();
+    const normalizedData = activeResumeData ? normalizeResumeData(activeResumeData) : null;
 
     return (
         <div className="cover-letter-page-container text-white min-vh-100 d-flex flex-column">
@@ -245,7 +414,58 @@ export default function CoverLetterGenerator() {
                                     <FileSignature size={22} className="text-indigo" />
                                     <h1 className="h3 fw-bold mb-0 text-white animate-fade-in">AI Cover Letter Generator</h1>
                                 </div>
-                                <p className="text-white-50 small mb-4">Tailor a professional cover letter specifically to your target job using AI.</p>
+                                <p className="text-white-50 small mb-3">Tailor a professional cover letter specifically to your target job using AI.</p>
+
+                                {/* Saved Letters Management Dropdown */}
+                                {userEmail && (
+                                    <div className="col-12 bg-dark-custom p-3 rounded-3 border-glass mb-4 d-flex flex-column gap-2">
+                                        <div className="d-flex justify-content-between align-items-center">
+                                            <label className="form-label text-white-50 fw-semibold small mb-0">Saved Cover Letters</label>
+                                            {selectedLetterId !== "new" && (
+                                                <button
+                                                    onClick={() => handleDeleteLetter(selectedLetterId)}
+                                                    className="btn btn-sm btn-outline-danger py-0 px-2 fw-semibold"
+                                                    style={{ fontSize: "0.75rem", borderRadius: "4px" }}
+                                                >
+                                                    Delete Current
+                                                </button>
+                                            )}
+                                        </div>
+                                        <div className="d-flex gap-2">
+                                            <select
+                                                className="form-select bg-dark text-white border-glass flex-grow-1"
+                                                value={selectedLetterId}
+                                                onChange={(e) => handleSelectLetter(e.target.value)}
+                                                style={{ borderRadius: "8px", height: "38px" }}
+                                            >
+                                                <option value="new">Create New Cover Letter...</option>
+                                                {savedLettersList.map((letter) => (
+                                                    <option key={letter.id} value={letter.id}>
+                                                        {letter.letterName} ({letter.companyName})
+                                                    </option>
+                                                ))}
+                                            </select>
+                                        </div>
+                                        <div className="d-flex gap-2 mt-1">
+                                            <input
+                                                type="text"
+                                                className="form-control bg-dark text-white border-glass py-1 px-2.5 flex-grow-1"
+                                                placeholder="Document Name (e.g. Google SWE Letter)"
+                                                value={letterName}
+                                                onChange={(e) => setLetterName(e.target.value)}
+                                                style={{ borderRadius: "6px", fontSize: "0.85rem", height: "34px" }}
+                                            />
+                                            <button
+                                                onClick={handleSave}
+                                                disabled={isSaving || !coverLetterText}
+                                                className="btn btn-indigo btn-sm py-1 px-3 d-flex align-items-center gap-1.5"
+                                                style={{ borderRadius: "6px", fontSize: "0.85rem", whiteSpace: "nowrap", backgroundColor: "#4f46e5", border: "none", color: "#ffffff" }}
+                                            >
+                                                {isSaving ? <Loader2 className="spinner-icon fa-spin" size={14} /> : "Save"}
+                                            </button>
+                                        </div>
+                                    </div>
+                                )}
 
                                 <form onSubmit={handleGenerate} className="row g-3">
                                     {/* Resume Source selector */}
@@ -254,6 +474,7 @@ export default function CoverLetterGenerator() {
                                         <select
                                             className="form-select bg-dark-custom text-white border-glass"
                                             value={selectedResumeId}
+                                            disabled={isManualMode}
                                             onChange={(e) => setSelectedResumeId(e.target.value)}
                                             style={{ borderRadius: "8px", height: "42px" }}
                                         >
@@ -263,6 +484,86 @@ export default function CoverLetterGenerator() {
                                             ))}
                                         </select>
                                     </div>
+
+                                    {/* Manual Mode Toggle */}
+                                    <div className="col-12 d-flex align-items-center justify-content-between py-2 bg-dark-custom px-3 rounded-3 border-glass">
+                                        <div className="d-flex flex-column">
+                                            <span className="small fw-semibold text-white">Manual Profile Details</span>
+                                            <span className="text-white-50" style={{ fontSize: "0.75rem" }}>Input credentials without a resume draft</span>
+                                        </div>
+                                        <div className="form-check form-switch mb-0">
+                                            <input
+                                                className="form-check-input cursor-pointer"
+                                                type="checkbox"
+                                                role="switch"
+                                                checked={isManualMode}
+                                                onChange={(e) => setIsManualMode(e.target.checked)}
+                                                id="manualModeSwitch"
+                                            />
+                                        </div>
+                                    </div>
+
+                                    {/* Manual Input Fields */}
+                                    {isManualMode && (
+                                        <div className="col-12 row g-2 mt-0 px-2 py-3 bg-dark-custom rounded-3 border-glass" style={{ border: "1px solid rgba(99, 102, 241, 0.2)" }}>
+                                            <div className="col-md-6 mt-1">
+                                                <label className="form-label text-white-50 fw-semibold small mb-1">Full Name</label>
+                                                <input
+                                                    type="text"
+                                                    className="form-control bg-dark text-white border-glass"
+                                                    placeholder="e.g. John Doe"
+                                                    value={manualName}
+                                                    onChange={(e) => setManualName(e.target.value)}
+                                                    required={isManualMode}
+                                                    style={{ borderRadius: "6px", height: "36px", fontSize: "0.85rem" }}
+                                                />
+                                            </div>
+                                            <div className="col-md-6 mt-1">
+                                                <label className="form-label text-white-50 fw-semibold small mb-1">Professional Title</label>
+                                                <input
+                                                    type="text"
+                                                    className="form-control bg-dark text-white border-glass"
+                                                    placeholder="e.g. Frontend Engineer"
+                                                    value={manualRole}
+                                                    onChange={(e) => setManualRole(e.target.value)}
+                                                    style={{ borderRadius: "6px", height: "36px", fontSize: "0.85rem" }}
+                                                />
+                                            </div>
+                                            <div className="col-md-6 mt-2">
+                                                <label className="form-label text-white-50 fw-semibold small mb-1">Email</label>
+                                                <input
+                                                    type="email"
+                                                    className="form-control bg-dark text-white border-glass"
+                                                    placeholder="e.g. john@example.com"
+                                                    value={manualEmail}
+                                                    onChange={(e) => setManualEmail(e.target.value)}
+                                                    style={{ borderRadius: "6px", height: "36px", fontSize: "0.85rem" }}
+                                                />
+                                            </div>
+                                            <div className="col-md-6 mt-2">
+                                                <label className="form-label text-white-50 fw-semibold small mb-1">Phone</label>
+                                                <input
+                                                    type="text"
+                                                    className="form-control bg-dark text-white border-glass"
+                                                    placeholder="e.g. +1 234 567 89"
+                                                    value={manualPhone}
+                                                    onChange={(e) => setManualPhone(e.target.value)}
+                                                    style={{ borderRadius: "6px", height: "36px", fontSize: "0.85rem" }}
+                                                />
+                                            </div>
+                                            <div className="col-12 mt-2">
+                                                <label className="form-label text-white-50 fw-semibold small mb-1">LinkedIn / Portfolio URL</label>
+                                                <input
+                                                    type="text"
+                                                    className="form-control bg-dark text-white border-glass"
+                                                    placeholder="e.g. linkedin.com/in/johndoe"
+                                                    value={manualLinkedIn}
+                                                    onChange={(e) => setManualLinkedIn(e.target.value)}
+                                                    style={{ borderRadius: "6px", height: "36px", fontSize: "0.85rem" }}
+                                                />
+                                            </div>
+                                        </div>
+                                    )}
 
                                     {/* Job Title & Company */}
                                     <div className="col-md-6">
@@ -338,6 +639,19 @@ export default function CoverLetterGenerator() {
                                         </select>
                                     </div>
 
+                                    {/* AI Focus instructions */}
+                                    <div className="col-12">
+                                        <label className="form-label text-white-50 fw-semibold small">Additional AI Instructions / Focus Areas (Optional)</label>
+                                        <textarea
+                                            className="form-control bg-dark-custom text-white border-glass"
+                                            rows="2"
+                                            placeholder="e.g. Focus on my React experience, Keep it under 250 words, highlight leadership roles..."
+                                            value={customInstructions}
+                                            onChange={(e) => setCustomInstructions(e.target.value)}
+                                            style={{ borderRadius: "8px", padding: "10px", fontSize: "0.85rem" }}
+                                        ></textarea>
+                                    </div>
+
                                     {/* Job Description */}
                                     <div className="col-12">
                                         <label className="form-label text-white-50 fw-semibold small">Job Description / Requirements</label>
@@ -357,7 +671,7 @@ export default function CoverLetterGenerator() {
                                         <button
                                             type="submit"
                                             className="btn btn-gradient-premium w-100 py-2.5 fw-semibold d-flex align-items-center justify-content-center gap-2 animate-fade-in"
-                                            disabled={isGenerating || !selectedResumeData}
+                                            disabled={isGenerating || (!activeResumeData && !isManualMode)}
                                         >
                                             {isGenerating ? (
                                                 <>
@@ -371,9 +685,9 @@ export default function CoverLetterGenerator() {
                                                 </>
                                             )}
                                         </button>
-                                        {!selectedResumeData && (
+                                        {!activeResumeData && !isManualMode && (
                                             <small className="text-danger mt-2 d-block text-center fw-semibold">
-                                                * Build a resume first or load an active session draft to generate.
+                                                * Build a resume draft, select a profile, or toggle Manual Profile to generate.
                                             </small>
                                         )}
                                     </div>
@@ -439,7 +753,7 @@ export default function CoverLetterGenerator() {
                                         padding: "24px 12px"
                                     }}
                                 >
-                                    {selectedResumeData ? (
+                                    {activeResumeData ? (
                                         <div id="cover-letter-printable" className="bg-white text-dark mx-auto" style={{
                                             width: "210mm",
                                             minHeight: "297mm",
@@ -458,7 +772,7 @@ export default function CoverLetterGenerator() {
                                         <div className="text-center text-white-50 py-5 my-5">
                                             <FileSignature size={48} className="text-white-50 mb-3" />
                                             <p className="fs-5 mb-1 text-white animate-fade-in">Preview is not ready</p>
-                                            <p className="small px-4 text-center">Build your resume draft first so we can generate the styled letterhead credentials.</p>
+                                            <p className="small px-4 text-center">Build your resume draft first or enable Manual Profile to generate the styled letterhead credentials.</p>
                                         </div>
                                     )}
                                 </div>
