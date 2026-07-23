@@ -16,15 +16,20 @@ export default function BlueprintTemplate({ data }) {
             backgroundSize: "24px 24px"
         }}>
             {/* SCHEMATIC HEADER */}
-            <div style={{ border: "2px solid #2563eb", padding: "20px", marginBottom: "24px", position: "relative" }}>
+            <div className={data.basics.photo ? "d-flex align-items-center gap-4" : ""} style={{ border: "2px solid #2563eb", padding: "20px", marginBottom: "24px", position: "relative" }}>
                 <span style={{ position: "absolute", top: "-10px", left: "12px", background: "#fafbfd", padding: "0 8px", fontSize: "10px", color: "#2563eb", fontWeight: "bold" }}>[SYS.INFO]</span>
-                <h1 className="fw-bold mb-1" style={{ fontSize: "24px", color: "#2563eb" }}>{data.basics.name}</h1>
-                {data.basics.role && <h5 className="fw-bold mb-2" style={{ fontSize: "12px" }}>ROLE // {data.basics.role.toUpperCase()}</h5>}
-                <div style={{ fontSize: "11px", color: "#475569" }}>
-                    <div>EMAIL: {data.basics.email}</div>
-                    <div>PHONE: {data.basics.phone}</div>
-                    {links.linkedin && <div>LINKEDIN: {links.linkedin}</div>}
-                    {links.github && <div>GITHUB: {links.github}</div>}
+                {data.basics.photo && (
+                    <img src={data.basics.photo} alt="Profile" style={{ width: "80px", height: "80px", objectFit: "cover", border: "2px solid #2563eb", padding: "2px", flexShrink: 0 }} />
+                )}
+                <div>
+                    <h1 className="fw-bold mb-1" style={{ fontSize: "24px", color: "#2563eb" }}>{data.basics.name}</h1>
+                    {data.basics.role && <h5 className="fw-bold mb-2" style={{ fontSize: "12px" }}>ROLE // {data.basics.role.toUpperCase()}</h5>}
+                    <div style={{ fontSize: "11px", color: "#475569" }}>
+                        <div>EMAIL: {data.basics.email}</div>
+                        <div>PHONE: {data.basics.phone}</div>
+                        {links.linkedin && <div>LINKEDIN: {links.linkedin}</div>}
+                        {links.github && <div>GITHUB: {links.github}</div>}
+                    </div>
                 </div>
             </div>
 

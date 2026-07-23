@@ -6,25 +6,30 @@ export default function CompactATSTemplate({ data }) {
     return (
         <div className="p-4" style={{ minHeight: "297mm", boxSizing: "border-box", width: "100%", fontFamily: "Arial, Helvetica, sans-serif", fontSize: "11px", color: "#111" }}>
             {/* HEADER */}
-            <div className="border-bottom pb-2 mb-3">
-                <h1 className="fw-bold mb-1 text-uppercase" style={{ fontSize: "20px", letterSpacing: "0.5px" }}>{data.basics.name}</h1>
-                {data.basics.role && <h5 className="fw-semibold text-muted mb-2" style={{ fontSize: "12px" }}>{data.basics.role}</h5>}
-                <div className="d-flex flex-wrap gap-2 text-muted">
-                    <span>{data.basics.email}</span>
-                    <span>•</span>
-                    <span>{data.basics.phone}</span>
-                    {links.linkedin && (
-                        <>
-                            <span>•</span>
-                            <span>LinkedIn: {links.linkedin.replace(/^https?:\/\/(www\.)?/, "")}</span>
-                        </>
-                    )}
-                    {links.github && (
-                        <>
-                            <span>•</span>
-                            <span>GitHub: {links.github.replace(/^https?:\/\/(www\.)?/, "")}</span>
-                        </>
-                    )}
+            <div className={`border-bottom pb-2 mb-3 ${data.basics.photo ? "d-flex align-items-center gap-3" : ""}`}>
+                {data.basics.photo && (
+                    <img src={data.basics.photo} alt="Profile" style={{ width: "65px", height: "65px", objectFit: "cover", borderRadius: "50%", border: "1px solid #111", flexShrink: 0 }} />
+                )}
+                <div>
+                    <h1 className="fw-bold mb-1 text-uppercase" style={{ fontSize: "20px", letterSpacing: "0.5px" }}>{data.basics.name}</h1>
+                    {data.basics.role && <h5 className="fw-semibold text-muted mb-2" style={{ fontSize: "12px" }}>{data.basics.role}</h5>}
+                    <div className="d-flex flex-wrap gap-2 text-muted">
+                        <span>{data.basics.email}</span>
+                        <span>•</span>
+                        <span>{data.basics.phone}</span>
+                        {links.linkedin && (
+                            <>
+                                <span>•</span>
+                                <span>LinkedIn: {links.linkedin.replace(/^https?:\/\/(www\.)?/, "")}</span>
+                            </>
+                        )}
+                        {links.github && (
+                            <>
+                                <span>•</span>
+                                <span>GitHub: {links.github.replace(/^https?:\/\/(www\.)?/, "")}</span>
+                            </>
+                        )}
+                    </div>
                 </div>
             </div>
 

@@ -396,24 +396,8 @@ export default function ResumeBuilder() {
                     }
                 }
 
-                try {
-                    const response = await fetch(`/api/user?email=${encodeURIComponent(user.email)}`);
-                    if (response.ok) {
-                        const data = await response.json();
-                        if (activeEmail === user.email && data.photoUrl) {
-                            setFormData(prev => {
-                                if (!prev.profilePhoto) {
-                                    const updated = { ...prev, profilePhoto: data.photoUrl };
-                                    sessionStorage.setItem("resumeData", JSON.stringify(updated));
-                                    return updated;
-                                }
-                                return prev;
-                            });
-                        }
-                    }
-                } catch (err) {
-                    console.error("Error fetching photo from database:", err);
-                }
+// NOTE: profilePhoto is NOT auto-populated from user account.
+                // Only the photo the user explicitly uploads in the builder is used.
             } else {
                 activeEmail = null;
                 setUserEmail(null);
@@ -593,27 +577,29 @@ export default function ResumeBuilder() {
 
         const reader = new FileReader();
         reader.onloadend = () => {
-            setFormData(prev => {
-                const updated = { ...prev, profilePhoto: reader.result };
-                sessionStorage.setItem("resumeData", JSON.stringify(updated));
-                return updated;
-            });
-
-            // Persist to Neon Postgres if logged in
-            const unsubscribe = subscribeToAuthChanges(async (user) => {
-                if (user && user.email) {
-                    try {
-                        await fetch("/api/user", {
-                            method: "POST",
-                            headers: { "Content-Type": "application/json" },
-                            body: JSON.stringify({ email: user.email, photoUrl: reader.result })
-                        });
-                    } catch (err) {
-                        console.error("Failed to save photo to Postgres:", err);
-                    }
+            // Compress image to max 200x200px JPEG at 0.7 quality to keep base64 small
+            const img = new Image();
+            img.onload = () => {
+                const MAX_SIZE = 200;
+                let { width, height } = img;
+                if (width > height) {
+                    if (width > MAX_SIZE) { height = Math.round(height * MAX_SIZE / width); width = MAX_SIZE; }
+                } else {
+                    if (height > MAX_SIZE) { width = Math.round(width * MAX_SIZE / height); height = MAX_SIZE; }
                 }
-            });
-            if (typeof unsubscribe === "function") unsubscribe();
+                const canvas = document.createElement("canvas");
+                canvas.width = width;
+                canvas.height = height;
+                const ctx = canvas.getContext("2d");
+                ctx.drawImage(img, 0, 0, width, height);
+                const compressed = canvas.toDataURL("image/jpeg", 0.7);
+                setFormData(prev => {
+                    const updated = { ...prev, profilePhoto: compressed };
+                    sessionStorage.setItem("resumeData", JSON.stringify(updated));
+                    return updated;
+                });
+            };
+            img.src = reader.result;
         };
         reader.readAsDataURL(file);
     };
@@ -630,22 +616,6 @@ export default function ResumeBuilder() {
         if (fileInput) {
             fileInput.value = "";
         }
-
-        // Also remove photo from Neon Postgres if logged in
-        const unsubscribe = subscribeToAuthChanges(async (user) => {
-            if (user && user.email) {
-                try {
-                    await fetch("/api/user", {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({ email: user.email, photoUrl: "" })
-                    });
-                } catch (err) {
-                    console.error("Failed to delete photo from Postgres:", err);
-                }
-            }
-        });
-        if (typeof unsubscribe === "function") unsubscribe();
     };
 
 

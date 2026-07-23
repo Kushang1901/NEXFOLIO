@@ -158,8 +158,25 @@ export default function Preview() {
                 if (res.ok) {
                     const data = await res.json();
                     if (data.resumeData) {
-                        setResumeData(data.resumeData);
-                        sessionStorage.setItem("resumeData", JSON.stringify(data.resumeData));
+                        // Session data is the source of truth for profilePhoto.
+                        // If the user just removed/changed the photo in the builder,
+                        // sessionStorage reflects that — DO NOT let DB overwrite it.
+                        const sessionPhoto = (() => {
+                            try {
+                                const sd = sessionStorage.getItem("resumeData");
+                                if (!sd) return null; // null = no session data, use DB
+                                const parsed = JSON.parse(sd);
+                                // Return the value if key exists (even empty string means "no photo")
+                                return "profilePhoto" in parsed ? parsed.profilePhoto : null;
+                            } catch { return null; }
+                        })();
+                        const merged = {
+                            ...data.resumeData,
+                            // Session wins; only fall back to DB if session has no data
+                            profilePhoto: sessionPhoto !== null ? sessionPhoto : (data.resumeData.profilePhoto || "")
+                        };
+                        setResumeData(merged);
+                        sessionStorage.setItem("resumeData", JSON.stringify(merged));
                     }
                     if (data.selectedTemplate) {
                         setSelectedTemplate(data.selectedTemplate);
@@ -278,7 +295,12 @@ export default function Preview() {
     };
 
     const handleEdit = () => {
-        router.push("/builder");
+        // Pass resumeId so the builder can auto-save changes (including photo removal) to DB
+        if (resumeId) {
+            window.location.href = `/builder?id=${resumeId}`;
+        } else {
+            window.location.href = "/builder";
+        }
     };
 
     const handleDownload = () => {
@@ -896,7 +918,9 @@ export default function Preview() {
 
     /* ================= NORMALIZE DATA ================= */
     const data = normalizeResumeData(
-        activeLanguage !== "original" && translatedResumeData ? translatedResumeData : resumeData
+        activeLanguage !== "original" && translatedResumeData
+            ? { ...translatedResumeData, profilePhoto: translatedResumeData.profilePhoto || resumeData?.profilePhoto }
+            : resumeData
     );
 
     /* ================= TEMPLATE LOGIC ================= */

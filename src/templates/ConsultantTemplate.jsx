@@ -7,9 +7,14 @@ export default function ConsultantTemplate({ data }) {
         <div className="p-5" style={{ minHeight: "297mm", boxSizing: "border-box", width: "100%", fontFamily: "'Inter', sans-serif", color: "#1e293b" }}>
             {/* HEADER */}
             <div className="d-flex align-items-center justify-content-between mb-4 border-bottom border-2 pb-3" style={{ borderColor: "#1e3a8a" }}>
-                <div>
-                    <h1 className="fw-bold mb-1 text-uppercase" style={{ fontSize: "24px", color: "#1e3a8a", letterSpacing: "1px" }}>{data.basics.name}</h1>
-                    {data.basics.role && <h5 className="text-secondary mb-0" style={{ fontSize: "13px", fontWeight: "600", textTransform: "uppercase" }}>{data.basics.role}</h5>}
+                <div className="d-flex align-items-center gap-3">
+                    {data.basics.photo && (
+                        <img src={data.basics.photo} alt="Profile" style={{ width: "70px", height: "70px", objectFit: "cover", borderRadius: "50%", border: "2px solid #1e3a8a", flexShrink: 0 }} />
+                    )}
+                    <div>
+                        <h1 className="fw-bold mb-1" style={{ fontSize: "24px", color: "#1e3a8a", letterSpacing: "1px" }}>{data.basics.name}</h1>
+                        {data.basics.role && <h5 className="text-secondary mb-0" style={{ fontSize: "13px", fontWeight: "600", textTransform: "uppercase" }}>{data.basics.role}</h5>}
+                    </div>
                 </div>
                 <div style={{ fontSize: "11px", textAlign: "right", color: "#475569" }}>
                     <div>{data.basics.email}</div>

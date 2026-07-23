@@ -6,19 +6,24 @@ export default function ProductManagerTemplate({ data }) {
     return (
         <div className="p-5" style={{ minHeight: "297mm", boxSizing: "border-box", width: "100%", fontFamily: "'Inter', sans-serif" }}>
             {/* HEADER */}
-            <div className="mb-4">
-                <h1 className="fw-bold mb-1" style={{ fontSize: "26px", color: "#0f172a", letterSpacing: "-0.5px" }}>{data.basics.name}</h1>
-                {data.basics.role && <h5 className="fw-bold mb-2" style={{ fontSize: "14px", color: "#4f46e5" }}>{data.basics.role}</h5>}
-                <div className="d-flex flex-wrap gap-3 text-muted" style={{ fontSize: "11.5px" }}>
-                    <span>Email: {data.basics.email}</span>
-                    <span>•</span>
-                    <span>Phone: {data.basics.phone}</span>
-                    {links.linkedin && (
-                        <>
-                            <span>•</span>
-                            <a href={links.linkedin} className="text-decoration-none text-muted">LinkedIn: {links.linkedin.replace(/^https?:\/\/(www\.)?/, "")}</a>
-                        </>
-                    )}
+            <div className="d-flex align-items-center gap-4 mb-4">
+                {data.basics.photo && (
+                    <img src={data.basics.photo} alt="Profile" style={{ width: "80px", height: "80px", objectFit: "cover", borderRadius: "8px", border: "2px solid #4f46e5", flexShrink: 0 }} />
+                )}
+                <div>
+                    <h1 className="fw-bold mb-1" style={{ fontSize: "26px", color: "#0f172a", letterSpacing: "-0.5px" }}>{data.basics.name}</h1>
+                    {data.basics.role && <h5 className="fw-bold mb-2" style={{ fontSize: "14px", color: "#4f46e5" }}>{data.basics.role}</h5>}
+                    <div className="d-flex flex-wrap gap-3 text-muted" style={{ fontSize: "11.5px" }}>
+                        <span>Email: {data.basics.email}</span>
+                        <span>•</span>
+                        <span>Phone: {data.basics.phone}</span>
+                        {links.linkedin && (
+                            <>
+                                <span>•</span>
+                                <a href={links.linkedin} className="text-decoration-none text-muted">LinkedIn: {links.linkedin.replace(/^https?:\/\/(www\.)?/, "")}</a>
+                            </>
+                        )}
+                    </div>
                 </div>
             </div>
 

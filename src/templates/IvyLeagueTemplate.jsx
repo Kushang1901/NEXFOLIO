@@ -6,21 +6,26 @@ export default function IvyLeagueTemplate({ data }) {
     return (
         <div className="p-5" style={{ minHeight: "297mm", boxSizing: "border-box", width: "100%", fontFamily: "Georgia, 'Times New Roman', Times, serif", color: "#111", lineHeight: "1.5" }}>
             {/* HEADER */}
-            <div className="text-center mb-4">
-                <h1 className="fw-normal mb-1" style={{ fontSize: "28px" }}>{data.basics.name}</h1>
-                {data.basics.role && <h5 className="text-uppercase text-secondary mb-2" style={{ fontSize: "11px", letterSpacing: "1.5px" }}>{data.basics.role}</h5>}
-                <div style={{ fontSize: "11.5px", color: "#555" }}>
-                    <span>{data.basics.email}</span>
-                    <span className="mx-2">•</span>
-                    <span>{data.basics.phone}</span>
-                </div>
-                <div className="mt-1" style={{ fontSize: "11.5px", color: "#555" }}>
-                    {links.linkedin && (
-                        <span className="me-3">LinkedIn: {links.linkedin.replace(/^https?:\/\/(www\.)?/, "")}</span>
-                    )}
-                    {links.portfolio && (
-                        <span>Portfolio: {links.portfolio.replace(/^https?:\/\/(www\.)?/, "")}</span>
-                    )}
+            <div className={`d-flex align-items-center justify-content-center gap-4 mb-4 ${data.basics.photo ? "flex-row text-start" : "flex-column text-center"}`}>
+                {data.basics.photo && (
+                    <img src={data.basics.photo} alt="Profile" style={{ width: "90px", height: "90px", objectFit: "cover", borderRadius: "50%", border: "1px solid #777", flexShrink: 0 }} />
+                )}
+                <div className={data.basics.photo ? "text-start" : "text-center"}>
+                    <h1 className="fw-normal mb-1" style={{ fontSize: "28px" }}>{data.basics.name}</h1>
+                    {data.basics.role && <h5 className="text-uppercase text-secondary mb-2" style={{ fontSize: "11px", letterSpacing: "1.5px" }}>{data.basics.role}</h5>}
+                    <div style={{ fontSize: "11.5px", color: "#555" }}>
+                        <span>{data.basics.email}</span>
+                        <span className="mx-2">•</span>
+                        <span>{data.basics.phone}</span>
+                    </div>
+                    <div className="mt-1" style={{ fontSize: "11.5px", color: "#555" }}>
+                        {links.linkedin && (
+                            <span className="me-3">LinkedIn: {links.linkedin.replace(/^https?:\/\/(www\.)?/, "")}</span>
+                        )}
+                        {links.portfolio && (
+                            <span>Portfolio: {links.portfolio.replace(/^https?:\/\/(www\.)?/, "")}</span>
+                        )}
+                    </div>
                 </div>
             </div>
 

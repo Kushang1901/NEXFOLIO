@@ -93,7 +93,7 @@ Requirements:
 `;
 
         const genAI = new GoogleGenerativeAI(apiKey);
-        const models = ["gemini-2.5-flash", "gemini-2.0-flash", "gemini-1.5-flash"];
+        const models = ["gemini-flash-latest", "gemini-2.5-flash", "gemini-2.0-flash", "gemini-2.0-flash-lite", "gemini-flash-lite-latest"];
         let result = null;
         let lastError = null;
 

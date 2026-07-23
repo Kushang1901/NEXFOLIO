@@ -19,15 +19,20 @@ export default function ModernMinimalistTemplate({ data }) {
             {/* Header Section */}
             <div className="pb-4 mb-4" style={{ borderBottom: "2px solid #111111" }}>
                 <div className="d-flex flex-row justify-content-between align-items-start gap-4">
-                    <div>
-                        <h1 className="fw-extrabold mb-1" style={{ fontSize: "2.5rem", letterSpacing: "-0.5px", fontWeight: "800" }}>
-                            {data.basics.name}
-                        </h1>
-                        {data.basics.role && (
-                            <p className="text-uppercase fw-bold text-muted mb-0" style={{ letterSpacing: "1.5px", fontSize: "0.9rem" }}>
-                                {data.basics.role}
-                            </p>
+                    <div className="d-flex align-items-center gap-3">
+                        {data.basics.photo && (
+                            <img src={data.basics.photo} alt="Profile" style={{ width: "80px", height: "80px", objectFit: "cover", borderRadius: "50%", border: "2px solid #111", flexShrink: 0 }} />
                         )}
+                        <div>
+                            <h1 className="fw-extrabold mb-1" style={{ fontSize: "2.5rem", letterSpacing: "-0.5px", fontWeight: "800" }}>
+                                {data.basics.name}
+                            </h1>
+                            {data.basics.role && (
+                                <p className="text-uppercase fw-bold text-muted mb-0" style={{ letterSpacing: "1.5px", fontSize: "0.9rem" }}>
+                                    {data.basics.role}
+                                </p>
+                            )}
+                        </div>
                     </div>
                     <div className="small text-md-end" style={{ fontWeight: "500" }}>
                         <div>{data.basics.email}</div>
