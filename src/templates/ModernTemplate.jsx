@@ -33,89 +33,102 @@ export default function ModernTemplate({ data }) {
             {/* LEFT SIDEBAR */}
             <div
                 className="p-4 text-white"
-                style={{ width: "30%", background: "#0d6efd" }}
+                style={{ width: "32%", background: "linear-gradient(180deg, #1e40af 0%, #1e3a8a 50%, #0f172a 100%)", flexShrink: 0 }}
             >
-                {data.basics.photo && (
-                    <img
-                        src={data.basics.photo}
-                        alt="Profile"
-                        style={{
-                            width: "100px",
-                            height: "100px",
-                            objectFit: "cover",
-                            borderRadius: "50%",
-                            marginBottom: "15px",
-                            border: "2px solid white",
-                            display: "block",
-                            margin: "0 auto 15px"
-                        }}
-                    />
-                )}
-
-                <h3 className="fw-bold text-center mb-2" style={{ fontSize: "1.45rem" }}>{data.basics.name}</h3>
-                <p className="text-center text-truncate small mb-1" style={{ opacity: 0.85 }}>{data.basics.email}</p>
-                <p className="text-center small mb-2" style={{ opacity: 0.85 }}>{data.basics.phone}</p>
-                {data.basics.role && (
-                    <p className="fw-semibold mt-2 text-center text-uppercase small" style={{ letterSpacing: "1px", opacity: 0.95 }}>
-                        {data.basics.role}
-                    </p>
-                )}
-
-                <div className="d-flex flex-column align-items-center gap-2 mt-3 w-100">
-                    {links.github && (
-                        <a
-                            href={links.github}
-                            target="_blank"
-                            rel="noreferrer"
-                            className="d-flex align-items-center gap-2 text-decoration-none text-white text-truncate w-100 justify-content-center"
-                            style={{ fontSize: "0.85rem", opacity: 0.9 }}
-                        >
-                            <i className="fab fa-github fa-lg text-white"></i>
-                            <span>{getUsername(links.github, "github")}</span>
-                        </a>
+                <div className="text-center mb-4">
+                    {data.basics.photo && (
+                        <img
+                            src={data.basics.photo}
+                            alt="Profile"
+                            style={{
+                                width: "100px",
+                                height: "100px",
+                                objectFit: "cover",
+                                borderRadius: "50%",
+                                marginBottom: "15px",
+                                border: "3px solid rgba(255, 255, 255, 0.8)",
+                                boxShadow: "0 4px 15px rgba(0, 0, 0, 0.2)",
+                                display: "block",
+                                margin: "0 auto 15px"
+                            }}
+                        />
                     )}
 
-                    {links.linkedin && (
-                        <a
-                            href={links.linkedin}
-                            target="_blank"
-                            rel="noreferrer"
-                            className="d-flex align-items-center gap-2 text-decoration-none text-white text-truncate w-100 justify-content-center"
-                            style={{ fontSize: "0.85rem", opacity: 0.9 }}
-                        >
-                            <i className="fab fa-linkedin fa-lg text-white"></i>
-                            <span>{getUsername(links.linkedin, "linkedin")}</span>
-                        </a>
-                    )}
-
-                    {links.portfolio && (
-                        <a
-                            href={links.portfolio}
-                            target="_blank"
-                            rel="noreferrer"
-                            className="d-flex align-items-center gap-2 text-decoration-none text-white text-truncate w-100 justify-content-center"
-                            style={{ fontSize: "0.85rem", opacity: 0.9 }}
-                        >
-                            <i className="fa-solid fa-globe fa-lg text-white"></i>
-                            <span>{getUsername(links.portfolio, "portfolio")}</span>
-                        </a>
+                    <h3 className="fw-bold text-white mb-1" style={{ fontSize: "1.45rem", letterSpacing: "-0.02em" }}>{data.basics.name}</h3>
+                    {data.basics.role && (
+                        <span className="badge mt-1 text-uppercase text-white tracking-wider" 
+                              style={{ 
+                                  fontSize: "0.68rem", 
+                                  letterSpacing: "1px", 
+                                  background: "rgba(255, 255, 255, 0.15)",
+                                  border: "1px solid rgba(255, 255, 255, 0.25)",
+                                  borderRadius: "6px",
+                                  padding: "5px 10px",
+                                  display: "inline-block"
+                              }}>
+                            {data.basics.role}
+                        </span>
                     )}
                 </div>
 
+                {/* Contact Card */}
+                <div className="p-3 rounded-3 mb-4" style={{ background: "rgba(255, 255, 255, 0.05)", border: "1px solid rgba(255, 255, 255, 0.1)" }}>
+                    <div className="d-flex flex-column gap-2.5" style={{ fontSize: "0.82rem" }}>
+                        <div className="d-flex align-items-center gap-2.5 text-white-50 text-truncate">
+                            <i className="fas fa-envelope text-white opacity-75" style={{ width: "16px" }}></i>
+                            <span className="text-white text-truncate" title={data.basics.email}>{data.basics.email}</span>
+                        </div>
+                        <div className="d-flex align-items-center gap-2.5 text-white-50">
+                            <i className="fas fa-phone text-white opacity-75" style={{ width: "16px" }}></i>
+                            <span className="text-white">{data.basics.phone}</span>
+                        </div>
+                        {links.github && (
+                            <a href={links.github} target="_blank" rel="noreferrer" className="d-flex align-items-center gap-2.5 text-white text-decoration-none text-truncate hover-opacity-100">
+                                <i className="fab fa-github text-white opacity-75" style={{ width: "16px" }}></i>
+                                <span className="text-white text-truncate">{getUsername(links.github, "github")}</span>
+                            </a>
+                        )}
+                        {links.linkedin && (
+                            <a href={links.linkedin} target="_blank" rel="noreferrer" className="d-flex align-items-center gap-2.5 text-white text-decoration-none text-truncate hover-opacity-100">
+                                <i className="fab fa-linkedin text-white opacity-75" style={{ width: "16px" }}></i>
+                                <span className="text-white text-truncate">{getUsername(links.linkedin, "linkedin")}</span>
+                            </a>
+                        )}
+                        {links.portfolio && (
+                            <a href={links.portfolio} target="_blank" rel="noreferrer" className="d-flex align-items-center gap-2.5 text-white text-decoration-none text-truncate hover-opacity-100">
+                                <i className="fa-solid fa-globe text-white opacity-75" style={{ width: "16px" }}></i>
+                                <span className="text-white text-truncate">{getUsername(links.portfolio, "portfolio")}</span>
+                            </a>
+                        )}
+                    </div>
+                </div>
 
+                <hr style={{ borderColor: "rgba(255, 255, 255, 0.2)" }} />
 
-                <hr />
-
-                <h6 className="fw-bold">SKILLS</h6>
-                <ul>
+                <h6 className="fw-bold text-uppercase tracking-wider mb-3" style={{ fontSize: "0.8rem", letterSpacing: "1.5px", color: "rgba(255, 255, 255, 0.8)" }}>Skills</h6>
+                <div className="d-flex flex-wrap gap-2">
                     {data.skills.map((skill, i) => (
-                        <li key={i}>{skill}</li>
+                        <span
+                            key={i}
+                            className="px-2.5 py-1 rounded-pill"
+                            style={{
+                                fontSize: "0.75rem",
+                                background: "rgba(255, 255, 255, 0.1)",
+                                border: "1px solid rgba(255, 255, 255, 0.15)",
+                                color: "#ffffff",
+                                fontWeight: "500",
+                                letterSpacing: "0.2px",
+                                display: "inline-block"
+                            }}
+                        >
+                            {skill}
+                        </span>
                     ))}
-                </ul>
+                </div>
             </div>
 
             {/* RIGHT CONTENT */}
-            <div className="p-5" style={{ width: "70%" }}>
+            <div className="p-5" style={{ width: "68%" }}>
                 {/* SUMMARY */}
                 <section className="mb-4">
                     <h5 className="fw-bold">PROFILE</h5>
