@@ -7,7 +7,7 @@ import { auth } from "../firebase";
 import { signOut } from "firebase/auth";
 import { subscribeToAuthChanges } from "../authState";
 import { showToast } from "../utils/toast";
-import { Home, Palette, FileSignature, Target, Sparkles, FileText, X, ArrowRight, LogOut, ChevronDown } from "lucide-react";
+import { Home, Palette, FileSignature, Target, Sparkles, FileText, X, ArrowRight, LogOut, ChevronDown, User } from "lucide-react";
 
 const NAV_LINKS = [
     { label: "Home", href: "/" },
@@ -29,6 +29,7 @@ export default function Navbar() {
     const [showAiDropdown, setShowAiDropdown] = useState(false);
     const [mobileAiOpen, setMobileAiOpen] = useState(false);
     const [hidden, setHidden] = useState(false);
+    const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
 
     const handleCategoryClick = (category) => {
         if (typeof window !== "undefined") {
@@ -65,6 +66,18 @@ export default function Navbar() {
         });
         return () => { if (typeof unsubscribe === "function") unsubscribe(); };
     }, []);
+
+    // Click outside handler for profile dropdown
+    useEffect(() => {
+        if (!profileDropdownOpen) return;
+        const handleOutsideClick = (e) => {
+            if (!e.target.closest(".profile-dropdown-container")) {
+                setProfileDropdownOpen(false);
+            }
+        };
+        window.addEventListener("click", handleOutsideClick);
+        return () => window.removeEventListener("click", handleOutsideClick);
+    }, [profileDropdownOpen]);
 
     useEffect(() => {
         if (typeof document !== "undefined") {
@@ -604,17 +617,24 @@ export default function Navbar() {
                     </div>
 
                     {/* ── Desktop: Right Auth Actions ── */}
-                    <div className="d-none d-lg-flex align-items-center" style={{ gap: "12px", marginLeft: "auto" }}>
+                    <div className="d-none d-lg-flex align-items-center profile-dropdown-container" style={{ gap: "12px", marginLeft: "auto", position: "relative" }}>
                         {user ? (
-                            <>
-                                <Link href="/profile" onClick={closeMenu} style={profileCapsuleStyle}
-                                    onMouseEnter={e => {
-                                        e.currentTarget.style.background = "rgba(255, 255, 255, 0.09)";
-                                        e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.15)";
-                                    }}
-                                    onMouseLeave={e => {
-                                        e.currentTarget.style.background = "rgba(255, 255, 255, 0.05)";
-                                        e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.08)";
+                            <div style={{ position: "relative" }}>
+                                <button 
+                                    onClick={() => setProfileDropdownOpen(prev => !prev)}
+                                    style={{
+                                        ...profileCapsuleStyle,
+                                        background: profileDropdownOpen ? "rgba(255, 255, 255, 0.09)" : "rgba(255, 255, 255, 0.05)",
+                                        borderColor: profileDropdownOpen ? "rgba(255, 255, 255, 0.15)" : "rgba(255, 255, 255, 0.08)",
+                                        display: "flex",
+                                        alignItems: "center",
+                                        gap: "8px",
+                                        padding: "4px 8px 4px 4px",
+                                        border: "1px solid rgba(255, 255, 255, 0.08)",
+                                        borderRadius: "30px",
+                                        transition: "all 0.2s ease",
+                                        cursor: "pointer",
+                                        color: "inherit"
                                     }}
                                 >
                                     {photoUrl ? (
@@ -622,24 +642,89 @@ export default function Navbar() {
                                     ) : (
                                         <div style={avatarStyle}>{(displayName || user.email).charAt(0).toUpperCase()}</div>
                                     )}
-                                    <span style={{ color: "rgba(255, 255, 255, 0.9)", fontSize: "0.85rem", fontWeight: "500", maxWidth: "120px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{displayName || user.email}</span>
-                                </Link>
-                                <button onClick={handleLogout} style={logoutBtnStyle}
-                                    onMouseEnter={e => {
-                                        e.currentTarget.style.background = "rgba(239, 68, 68, 0.08)";
-                                        e.currentTarget.style.borderColor = "rgba(239, 68, 68, 0.2)";
-                                        e.currentTarget.style.color = "#ef4444";
-                                    }}
-                                    onMouseLeave={e => {
-                                        e.currentTarget.style.background = "rgba(255, 255, 255, 0.04)";
-                                        e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.08)";
-                                        e.currentTarget.style.color = "rgba(255, 255, 255, 0.75)";
-                                    }}
-                                >
-                                    <LogOut size={14} />
-                                    Logout
+                                    <span style={{ color: "rgba(255, 255, 255, 0.9)", fontSize: "0.85rem", fontWeight: "500", maxWidth: "120px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                                        {displayName || user.email}
+                                    </span>
+                                    <ChevronDown size={14} style={{ color: "rgba(255,255,255,0.5)", transition: "transform 0.2s", transform: profileDropdownOpen ? "rotate(180deg)" : "rotate(0)" }} />
                                 </button>
-                            </>
+
+                                {profileDropdownOpen && (
+                                    <div style={{
+                                        position: "absolute",
+                                        top: "calc(100% + 8px)",
+                                        right: 0,
+                                        width: "160px",
+                                        background: "rgba(13, 14, 21, 0.96)",
+                                        backdropFilter: "blur(16px)",
+                                        border: "1px solid rgba(255, 255, 255, 0.08)",
+                                        borderRadius: "12px",
+                                        boxShadow: "0 10px 25px rgba(0, 0, 0, 0.5)",
+                                        padding: "6px",
+                                        zIndex: 1010,
+                                        display: "flex",
+                                        flexDirection: "column",
+                                        gap: "4px"
+                                    }}>
+                                        <Link 
+                                            href="/profile" 
+                                            onClick={() => { setProfileDropdownOpen(false); closeMenu(); }}
+                                            style={{
+                                                display: "flex",
+                                                alignItems: "center",
+                                                gap: "8px",
+                                                padding: "8px 12px",
+                                                color: "rgba(255, 255, 255, 0.8)",
+                                                fontSize: "0.85rem",
+                                                fontWeight: "500",
+                                                textDecoration: "none",
+                                                borderRadius: "8px",
+                                                transition: "all 0.15s ease",
+                                                cursor: "pointer"
+                                            }}
+                                            onMouseEnter={e => {
+                                                e.currentTarget.style.background = "rgba(255, 255, 255, 0.05)";
+                                                e.currentTarget.style.color = "#fff";
+                                            }}
+                                            onMouseLeave={e => {
+                                                e.currentTarget.style.background = "transparent";
+                                                e.currentTarget.style.color = "rgba(255, 255, 255, 0.8)";
+                                            }}
+                                        >
+                                            <User size={14} />
+                                            My Profile
+                                        </Link>
+
+                                        <button 
+                                            onClick={() => { setProfileDropdownOpen(false); handleLogout(); }}
+                                            style={{
+                                                display: "flex",
+                                                alignItems: "center",
+                                                gap: "8px",
+                                                padding: "8px 12px",
+                                                color: "#f87171",
+                                                fontSize: "0.85rem",
+                                                fontWeight: "500",
+                                                background: "transparent",
+                                                border: "none",
+                                                borderRadius: "8px",
+                                                width: "100%",
+                                                textAlign: "left",
+                                                transition: "all 0.15s ease",
+                                                cursor: "pointer"
+                                            }}
+                                            onMouseEnter={e => {
+                                                e.currentTarget.style.background = "rgba(248, 113, 113, 0.08)";
+                                            }}
+                                            onMouseLeave={e => {
+                                                e.currentTarget.style.background = "transparent";
+                                            }}
+                                        >
+                                            <LogOut size={14} />
+                                            Logout
+                                        </button>
+                                    </div>
+                                )}
+                            </div>
                         ) : (
                             <>
                                 <Link href="/signup" style={{ color: "rgba(255,255,255,0.75)", textDecoration: "none", fontSize: "0.9rem", fontWeight: "500", padding: "7px 14px" }}>Sign Up</Link>
@@ -971,6 +1056,19 @@ export default function Navbar() {
                             gap: "10px",
                         }}>
                             <FileText size={16} /> My Resumes
+                        </Link>
+                    )}
+                    {user && (
+                        <Link href="/profile" onClick={closeMenu} style={{
+                            ...drawerLinkStyle,
+                            color: isActive("/profile") ? "#fff" : "rgba(255,255,255,0.75)",
+                            background: isActive("/profile") ? "rgba(111,157,255,0.1)" : "transparent",
+                            borderLeft: isActive("/profile") ? "3px solid #6f9dff" : "3px solid transparent",
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "10px",
+                        }}>
+                            <User size={16} /> My Profile
                         </Link>
                     )}
 

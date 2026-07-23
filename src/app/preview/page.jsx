@@ -48,7 +48,10 @@ export default function Preview() {
     const [aiOutput, setAiOutput] = useState("");
     const [selectedTemplate, setSelectedTemplate] = useState("classic");
     const [showDownloadModal, setShowDownloadModal] = useState(false);
-    const [downloadType, setDownloadType] = useState(null); // 'png' or 'pdf'
+    const [showDocxSubModal, setShowDocxSubModal] = useState(false);
+    const [showPremiumPrompt, setShowPremiumPrompt] = useState(false);
+    const [premiumPromptType, setPremiumPromptType] = useState("");
+    const [downloadType, setDownloadType] = useState(null); // 'png', 'pdf', 'docx-editable', 'docx-visual'
     const [isDownloading, setIsDownloading] = useState(false);
     const [isPaid, setIsPaid] = useState(false);
     const [showWatermark, setShowWatermark] = useState(false);
@@ -426,8 +429,8 @@ export default function Preview() {
     };
 
     const downloadAsPNG = async () => {
-        if (isCurrentTemplatePremium && !isPaid) {
-            showToast("This template requires a premium upgrade to export.", "error");
+        if (!isPaid) {
+            showToast("PNG export requires a premium upgrade.", "error");
             setShowDownloadModal(false);
             return;
         }
@@ -519,315 +522,262 @@ export default function Preview() {
         }
     };
 
-    const downloadAsDOCX = async () => {
-        if (isCurrentTemplatePremium && !isPaid) {
-            showToast("This template requires a premium upgrade to export.", "error");
-            setShowDownloadModal(false);
+    /* ===== WORD EDITABLE — generated from resume data via `docx` library ===== */
+    const downloadAsWordEditable = async () => {
+        if (!isPaid) {
+            showToast("Word export requires a premium upgrade.", "error");
+            setShowDownloadModal(false); setShowDocxSubModal(false);
             return;
         }
-
         setIsDownloading(true);
-        setDownloadType("docx");
+        setDownloadType("docx-editable");
+        setShowDocxSubModal(false);
+        setShowDownloadModal(false);
         try {
-            await new Promise((resolve) => setTimeout(resolve, 800));
-            const resumeElement = document.getElementById("resume-preview");
-            if (!resumeElement) return;
+            await new Promise(r => setTimeout(r, 600));
+            const { Document, Packer, Paragraph, TextRun, HeadingLevel, AlignmentType,
+                    BorderStyle, Table, TableRow, TableCell, WidthType, ImageRun,
+                    ShadingType } = await import("docx");
 
-            // Create a temporary clone of the resume to manipulate for Word export
-            const clone = resumeElement.cloneNode(true);
+            const data = resumeData || {};
+            const name = data.fullName || "Resume";
+            const fileName = name.replace(/\s+/g, "_");
 
-            // 1. Replace FontAwesome icons with standard Unicode text icons for Word compatibility
-            const icons = clone.querySelectorAll("i");
-            icons.forEach(icon => {
-                const classes = icon.className || "";
-                if (classes.includes("fa-envelope")) {
-                    icon.outerHTML = "<span>✉ </span>";
-                } else if (classes.includes("fa-phone")) {
-                    icon.outerHTML = "<span>☎ </span>";
-                } else if (classes.includes("fa-globe")) {
-                    icon.outerHTML = "<span>🌐 </span>";
-                } else if (classes.includes("fa-linkedin")) {
-                    icon.outerHTML = "<span>🔗 </span>";
-                } else if (classes.includes("fa-github")) {
-                    icon.outerHTML = "<span>💻 </span>";
-                } else if (classes.includes("fa-map-marker") || classes.includes("fa-location")) {
-                    icon.outerHTML = "<span>📍 </span>";
-                } else {
-                    icon.outerHTML = "<span>• </span>";
-                }
+            // Helper: bold label + value paragraph
+            const labelValue = (label, value) => value
+                ? new Paragraph({
+                    spacing: { after: 60 },
+                    children: [
+                        new TextRun({ text: `${label}: `, bold: true, size: 22 }),
+                        new TextRun({ text: value, size: 22 }),
+                    ],
+                })
+                : null;
+
+            // Helper: section heading
+            const sectionHead = (text) => new Paragraph({
+                heading: HeadingLevel.HEADING_2,
+                spacing: { before: 240, after: 100 },
+                border: { bottom: { style: BorderStyle.SINGLE, size: 6, color: "3B82F6" } },
+                children: [new TextRun({ text: text.toUpperCase(), bold: true, color: "1E3A8A", size: 26 })],
             });
 
-            // 2. Convert all horizontal flex containers (row layouts) to tables using live dimensions
-            const flexContainers = clone.querySelectorAll(".d-flex, [style*='display: flex']");
-            
-            // Traverse bottom-up (reverse order) to handle nested flex containers properly
-            for (let i = flexContainers.length - 1; i >= 0; i--) {
-                const container = flexContainers[i];
-                
-                // Resolve path to match corresponding live DOM element
-                const path = [];
-                let parent = container;
-                while (parent && parent !== clone) {
-                    const parentNode = parent.parentNode;
-                    const index = Array.from(parentNode.children).indexOf(parent);
-                    path.unshift(index);
-                    parent = parentNode;
-                }
-                
-                let liveContainer = resumeElement;
-                for (const idx of path) {
-                    if (liveContainer && liveContainer.children[idx]) {
-                        liveContainer = liveContainer.children[idx];
-                    } else {
-                        liveContainer = null;
-                        break;
-                    }
-                }
-                
-                if (!liveContainer) continue;
-                
-                const style = window.getComputedStyle(liveContainer);
-                const isColumn = container.classList.contains("flex-column") || style.flexDirection === "column" || container.style.flexDirection === "column";
-                
-                const children = Array.from(container.children);
-                if (children.length >= 2 && !isColumn) {
-                    const table = document.createElement("table");
-                    table.setAttribute("cellpadding", "0");
-                    table.setAttribute("cellspacing", "0");
-                    table.setAttribute("border", "0");
-                    table.style.width = "100%";
-                    table.style.borderCollapse = "collapse";
-                    table.style.fontFamily = "'Inter', 'Segoe UI', Arial, sans-serif";
-                    
-                    const tr = document.createElement("tr");
-                    
-                    children.forEach((child, index) => {
-                        const td = document.createElement("td");
-                        td.setAttribute("valign", "top");
-                        
-                        // Set width based on live rendered dimensions
-                        const liveChild = liveContainer.children[index];
-                        if (liveChild) {
-                            const rect = liveChild.getBoundingClientRect();
-                            td.style.width = `${rect.width}px`;
-                            td.setAttribute("width", `${rect.width}`);
-                            
-                            // Copy live background color
-                            const childStyle = window.getComputedStyle(liveChild);
-                            if (childStyle.backgroundColor && childStyle.backgroundColor !== "rgba(0, 0, 0, 0)" && childStyle.backgroundColor !== "transparent") {
-                                td.style.backgroundColor = childStyle.backgroundColor;
-                            }
-                        }
-                        
-                        td.setAttribute("style", child.getAttribute("style") || "");
-                        td.style.boxSizing = "border-box";
-                        
-                        if (td.style.background && (td.style.background.includes("gradient") || td.style.background.includes("rgba"))) {
-                            td.style.backgroundColor = index === 0 ? "#1e3a8a" : "#ffffff";
-                            td.style.background = index === 0 ? "#1e3a8a" : "#ffffff";
-                        }
-                        td.appendChild(child);
-                        tr.appendChild(td);
-                    });
-                    
-                    table.appendChild(tr);
-                    container.parentNode.replaceChild(table, container);
-                }
+            // Helper: bullet text
+            const bullet = (text) => text
+                ? new Paragraph({
+                    bullet: { level: 0 },
+                    spacing: { after: 60 },
+                    children: [new TextRun({ text, size: 22 })],
+                })
+                : null;
+
+            const sections = [];
+
+            // ── Header ──
+            sections.push(new Paragraph({
+                alignment: AlignmentType.CENTER,
+                spacing: { after: 60 },
+                children: [new TextRun({ text: name, bold: true, size: 52, color: "111827" })],
+            }));
+            if (data.role) sections.push(new Paragraph({
+                alignment: AlignmentType.CENTER,
+                spacing: { after: 80 },
+                children: [new TextRun({ text: data.role, size: 24, color: "4B5563" })],
+            }));
+
+            // ── Contact ──
+            const contacts = [data.email, data.phone, data.portfolio, data.linkedin, data.github].filter(Boolean);
+            if (contacts.length) sections.push(new Paragraph({
+                alignment: AlignmentType.CENTER,
+                spacing: { after: 200 },
+                children: contacts.map((c, i) => new TextRun({ text: i === 0 ? c : `  |  ${c}`, size: 20, color: "374151" })),
+            }));
+
+            // ── Summary ──
+            if (data.professionalSummary) {
+                sections.push(sectionHead("Professional Summary"));
+                sections.push(new Paragraph({ spacing: { after: 120 }, children: [new TextRun({ text: data.professionalSummary, size: 22 })] }));
             }
 
-            // 3. Convert flex-column layouts to standard block layout, keeping horizontal layouts inline-block
-            const allElements = clone.querySelectorAll("*");
-            allElements.forEach(el => {
-                const style = el.getAttribute("style") || "";
-                const isFlex = el.classList.contains("d-flex") || el.classList.contains("flex-column") || style.includes("display: flex") || style.includes("display:flex");
-                
-                if (isFlex) {
-                    const isColumn = el.classList.contains("flex-column") || style.includes("flex-direction: column") || style.includes("flex-direction:column");
-                    
-                    el.classList.remove("d-flex", "flex-column");
-                    el.style.display = "block";
-                    el.style.width = "100%";
-                    
-                    // Force stacked display on children and add margin spacing
-                    Array.from(el.children).forEach(child => {
-                        if (isColumn) {
-                            child.style.display = "block";
-                            child.style.marginBottom = "6px";
-                        } else {
-                            child.style.display = "inline-block";
-                            child.style.marginRight = "6px";
-                            child.style.marginBottom = "6px";
-                        }
-                    });
-                }
-            });
-
-            // 5. Format badges/pills to have a solid background and borders for Word
-            const badges = clone.querySelectorAll(".badge, span.rounded-pill, span[style*='border-radius']");
-            badges.forEach(badge => {
-                badge.style.display = "inline-block";
-                badge.style.padding = "4px 8px";
-                badge.style.margin = "4px 2px";
-                
-                // Solid color fallback for Word
-                if (badge.style.color === "rgb(255, 255, 255)" || badge.style.color === "#ffffff" || badge.style.color === "#fff") {
-                    badge.style.backgroundColor = "#3b82f6";
-                    badge.style.border = "1px solid #2563eb";
-                    badge.style.color = "#ffffff";
-                } else {
-                    badge.style.backgroundColor = "#f1f5f9";
-                    badge.style.border = "1px solid #cbd5e1";
-                    badge.style.color = "#334155";
-                }
-                badge.style.borderRadius = "4px";
-                badge.innerHTML = badge.innerHTML + " &nbsp; ";
-            });
-
-            // 6. Convert project cards with left borders to table boxes
-            const cards = clone.querySelectorAll("div[style*='borderLeft'], div[style*='border-left']");
-            cards.forEach(card => {
-                const table = document.createElement("table");
-                table.setAttribute("cellpadding", "8");
-                table.setAttribute("cellspacing", "0");
-                table.setAttribute("border", "0");
-                table.style.width = "100%";
-                table.style.borderCollapse = "collapse";
-                table.style.marginBottom = "10px";
-                
-                const tr = document.createElement("tr");
-                const td = document.createElement("td");
-                td.setAttribute("valign", "top");
-                
-                td.style.borderLeft = card.style.borderLeft || "3px solid #0d6efd";
-                td.style.backgroundColor = card.style.backgroundColor || card.style.background || "#f0f4ff";
-                td.style.paddingLeft = "12px";
-                td.style.paddingTop = "8px";
-                td.style.paddingBottom = "8px";
-                
-                while (card.firstChild) {
-                    td.appendChild(card.firstChild);
-                }
-                
-                tr.appendChild(td);
-                table.appendChild(tr);
-                card.parentNode.replaceChild(table, card);
-            });
-
-            // 7. Adjust links styling
-            const links = clone.querySelectorAll("a");
-            links.forEach(link => {
-                link.style.color = "#0284c7";
-                link.style.textDecoration = "underline";
-                if (!link.innerHTML.endsWith("&nbsp; ")) {
-                    link.innerHTML = link.innerHTML + " &nbsp; ";
-                }
-            });
-
-            // 8. Clean up profile photos and absolute elements
-            const images = clone.querySelectorAll("img");
-            images.forEach(img => {
-                const src = img.getAttribute("src");
-                if (src && src.startsWith("/")) {
-                    img.setAttribute("src", window.location.origin + src);
-                }
-                img.style.width = "100px";
-                img.style.height = "100px";
-                img.setAttribute("width", "100");
-                img.setAttribute("height", "100");
-                img.style.borderRadius = "50%";
-            });
-
-            let htmlContent = clone.innerHTML;
-
-            // Extract all styles active on the page
-            let styles = "";
-            const styleSheets = document.styleSheets;
-            for (let i = 0; i < styleSheets.length; i++) {
-                try {
-                    const rules = styleSheets[i].cssRules || styleSheets[i].rules;
-                    if (rules) {
-                        for (let j = 0; j < rules.length; j++) {
-                            styles += rules[j].cssText;
-                        }
-                    }
-                } catch (e) {
-                    // Ignore cross-origin stylesheet access errors
-                }
+            // ── Education ──
+            const educationEntries = [
+                data.graduation?.course ? `Graduation — ${data.graduation.course} (${[data.graduation.startMonth, data.graduation.startYear].filter(Boolean).join(" ")} – ${[data.graduation.endMonth, data.graduation.endYear].filter(Boolean).join(" ") || "Present"})` : null,
+                data.hasPostGraduation && data.postGraduation?.course ? `Post Graduation — ${data.postGraduation.course} (${[data.postGraduation.startMonth, data.postGraduation.startYear].filter(Boolean).join(" ")} – ${[data.postGraduation.endMonth, data.postGraduation.endYear].filter(Boolean).join(" ") || "Present"})` : null,
+                data.hasPhd && data.phd?.course ? `PhD — ${data.phd.course} (${[data.phd.startMonth, data.phd.startYear].filter(Boolean).join(" ")} – ${[data.phd.endMonth, data.phd.endYear].filter(Boolean).join(" ") || "Present"})` : null,
+            ].filter(Boolean);
+            if (educationEntries.length) {
+                sections.push(sectionHead("Education"));
+                educationEntries.forEach(e => sections.push(new Paragraph({ spacing: { after: 80 }, children: [new TextRun({ text: e, size: 22 })] })));
             }
 
-            // Word-specific overrides
-            const docxStyles = `
-                ${styles}
-                @page Section1 {
-                    size: 210mm 297mm;
-                    margin: 0mm;
-                }
-                div.Section1 {
-                    page: Section1;
-                    width: 210mm;
-                    min-height: 297mm;
-                    background-color: #ffffff;
-                    color: #000000;
-                }
-                body {
-                    background-color: #ffffff;
-                }
-                .no-print { display: none !important; }
-            `;
+            // ── Experience ──
+            if (data.hasExperience && data.experience?.company) {
+                sections.push(sectionHead("Work Experience"));
+                const exp = data.experience;
+                sections.push(new Paragraph({
+                    spacing: { after: 40 },
+                    children: [
+                        new TextRun({ text: `${exp.role || ""} at ${exp.company || ""}`, bold: true, size: 24 }),
+                        new TextRun({ text: `  |  ${exp.location || ""}  |  ${exp.start || ""} – ${exp.ongoing ? "Present" : exp.end || ""}`, size: 22, color: "6B7280" }),
+                    ],
+                }));
+                if (exp.description) sections.push(new Paragraph({ spacing: { after: 120 }, children: [new TextRun({ text: exp.description, size: 22 })] }));
+            }
 
-            // Wrap in Microsoft Word Office HTML namespaces
-            const docHtml = `
-                <html xmlns:o='urn:schemas-microsoft-com:office:office' 
-                      xmlns:w='urn:schemas-microsoft-com:office:word' 
-                      xmlns='http://www.w3.org/TR/REC-html40'>
-                <head>
-                    <meta charset="utf-8">
-                    <title>${resumeData?.fullName || "Resume"}</title>
-                    <!--[if gte mso 9]>
-                    <xml>
-                        <w:WordDocument>
-                            <w:View>Print</w:View>
-                            <w:Zoom>100</w:Zoom>
-                            <w:DoNotOptimizeForBrowser/>
-                        </w:WordDocument>
-                    </xml>
-                    <![endif]-->
-                    <style>
-                        ${docxStyles}
-                    </style>
-                </head>
-                <body>
-                    <div class="Section1">
-                        ${htmlContent}
-                    </div>
-                </body>
-                </html>
-            `;
+            // ── Internship ──
+            if (data.hasInternship && data.internship?.company) {
+                sections.push(sectionHead("Internship"));
+                const int = data.internship;
+                sections.push(new Paragraph({
+                    spacing: { after: 120 },
+                    children: [
+                        new TextRun({ text: `${int.field || ""} at ${int.company || ""}`, bold: true, size: 24 }),
+                        new TextRun({ text: `  |  ${int.start || ""} – ${int.ongoing ? "Present" : int.end || ""}`, size: 22, color: "6B7280" }),
+                    ],
+                }));
+            }
 
-            // Microsoft Word MIME type
-            const blob = new Blob(['\ufeff' + docHtml], {
-                type: "application/msword"
+            // ── Projects ──
+            if (data.projects) {
+                sections.push(sectionHead("Projects"));
+                const projectLines = data.projects.split("\n").map(l => l.trim()).filter(Boolean);
+                projectLines.forEach(line => {
+                    const isBullet = line.startsWith("-") || line.startsWith("•");
+                    sections.push(new Paragraph({
+                        bullet: isBullet ? { level: 0 } : undefined,
+                        spacing: { after: 60 },
+                        children: [new TextRun({ text: isBullet ? line.slice(1).trim() : line, size: 22 })],
+                    }));
+                });
+            }
+
+            // ── Achievements ──
+            if (data.achievements) {
+                sections.push(sectionHead("Achievements"));
+                const achLines = data.achievements.split("\n").map(l => l.trim()).filter(Boolean);
+                achLines.forEach(line => {
+                    const isBullet = line.startsWith("-") || line.startsWith("•");
+                    sections.push(new Paragraph({
+                        bullet: isBullet ? { level: 0 } : undefined,
+                        spacing: { after: 60 },
+                        children: [new TextRun({ text: isBullet ? line.slice(1).trim() : line, size: 22 })],
+                    }));
+                });
+            }
+
+            // ── Skills ──
+            if (data.skills) {
+                sections.push(sectionHead("Skills"));
+                const skillList = typeof data.skills === "string"
+                    ? data.skills.split(",").map(s => s.trim()).filter(Boolean)
+                    : (Array.isArray(data.skills) ? data.skills : []);
+                sections.push(new Paragraph({
+                    spacing: { after: 120 },
+                    children: skillList.map((s, i) => new TextRun({ text: i === 0 ? s : `  •  ${s}`, size: 22 })),
+                }));
+            }
+
+            const doc = new Document({
+                numbering: {
+                    config: [{
+                        reference: "default-bullets",
+                        levels: [{ level: 0, format: "bullet", text: "\u2022", alignment: AlignmentType.LEFT,
+                            style: { paragraph: { indent: { left: 360, hanging: 180 } } } }],
+                    }],
+                },
+                styles: {
+                    default: { document: { run: { font: "Calibri", size: 22 } } },
+                    paragraphStyles: [
+                        { id: "Heading2", name: "Heading 2", run: { bold: true, size: 26 }, paragraph: { spacing: { before: 240, after: 100 } } },
+                    ],
+                },
+                sections: [{ children: sections.filter(Boolean) }],
             });
 
-            const url = URL.createObjectURL(blob);
+            const buffer = await Packer.toBlob(doc);
+            const url = URL.createObjectURL(buffer);
             const link = document.createElement("a");
             link.href = url;
-            link.download = `${resumeData?.fullName ? resumeData.fullName.replace(/\s+/g, "_") : "Resume"}.doc`;
+            link.download = `${fileName}.docx`;
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
             URL.revokeObjectURL(url);
-
-            setShowDownloadModal(false);
-            showToast("Resume downloaded as editable Word file successfully!", "success");
+            showToast("Editable Word document downloaded!", "success");
+            setTimeout(() => triggerReviewPrompt(), 1200);
         } catch (err) {
-            console.error("DOCX download error:", err);
-            showToast("Failed to download as Word file. Please try again.", "error");
+            console.error("Editable DOCX error:", err);
+            showToast("Failed to generate Word document. Please try again.", "error");
         } finally {
             setIsDownloading(false);
             setDownloadType(null);
         }
     };
+
+    /* ===== WORD VISUAL — canvas screenshot embedded in a DOC file ===== */
+    const downloadAsWordVisual = async () => {
+        if (!isPaid) {
+            showToast("Word export requires a premium upgrade.", "error");
+            setShowDownloadModal(false); setShowDocxSubModal(false);
+            return;
+        }
+        setIsDownloading(true);
+        setDownloadType("docx-visual");
+        setShowDocxSubModal(false);
+        setShowDownloadModal(false);
+        try {
+            await new Promise(r => setTimeout(r, 600));
+            const resume = document.getElementById("resume-preview");
+            if (!resume) return;
+
+            if (typeof document !== "undefined" && document.fonts) await document.fonts.ready;
+
+            const html2canvas = (await import("html2canvas")).default;
+            const canvas = await html2canvas(resume, { scale: 2, useCORS: true });
+            const imgData = canvas.toDataURL("image/png");
+            const fileName = (resumeData?.fullName || "Resume").replace(/\s+/g, "_");
+
+            // Embed the PNG screenshot in a Word-HTML DOC — looks exactly like the preview
+            const docHtml = `
+<html xmlns:o='urn:schemas-microsoft-com:office:office' 
+      xmlns:w='urn:schemas-microsoft-com:office:word' 
+      xmlns='http://www.w3.org/TR/REC-html40'>
+<head>
+  <meta charset="utf-8">
+  <title>${resumeData?.fullName || "Resume"}</title>
+  <!--[if gte mso 9]><xml><w:WordDocument><w:View>Print</w:View><w:Zoom>100</w:Zoom><w:DoNotOptimizeForBrowser/></w:WordDocument></xml><![endif]-->
+  <style>
+    @page Section1 { size: 210mm 297mm; margin: 0; }
+    div.Section1 { page: Section1; width: 210mm; }
+    body { margin: 0; padding: 0; background: #fff; }
+    img.resume-img { width: 210mm; display: block; }
+  </style>
+</head>
+<body><div class="Section1">
+  <img class="resume-img" src="${imgData}" alt="Resume" />
+</div></body>
+</html>`;
+
+            const blob = new Blob(["\ufeff" + docHtml], { type: "application/msword" });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement("a");
+            link.href = url;
+            link.download = `${fileName}_visual.doc`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+            showToast("Visual Word document downloaded! (Looks identical to preview)", "success");
+            setTimeout(() => triggerReviewPrompt(), 1200);
+        } catch (err) {
+            console.error("Visual DOCX error:", err);
+            showToast("Failed to generate visual Word file. Please try again.", "error");
+        } finally {
+            setIsDownloading(false);
+            setDownloadType(null);
+        }
+    };
+
 
     const handleTogglePublic = async (e) => {
         const checked = e.target.checked;
@@ -1922,74 +1872,267 @@ export default function Preview() {
                             }}>
                                 <div className="card-body position-relative p-0">
                                     <button 
-                                        onClick={() => setShowDownloadModal(false)}
+                                        onClick={() => { 
+                                            setShowDownloadModal(false); 
+                                            setShowDocxSubModal(false); 
+                                            setShowPremiumPrompt(false);
+                                            setPremiumPromptType("");
+                                        }}
                                         className="btn-close btn-close-white position-absolute"
                                         style={{ top: "10px", right: "10px", zIndex: 10 }}
                                         aria-label="Close"
                                     ></button>
                                     
-                                    <h3 className="fw-bold mb-3 d-flex align-items-center justify-content-center gap-2" style={{ letterSpacing: "-0.01em" }}>
-                                        {isCurrentTemplatePremium ? (
-                                            <>
-                                                <Crown size={22} className="text-warning" /> Premium Export Unlocked
-                                            </>
-                                        ) : (
-                                            <>
-                                                <Unlock size={22} className="text-success" /> Choose Export Format
-                                            </>
-                                        )}
-                                    </h3>
-                                    <p className="text-white-50 mb-4" style={{ fontSize: "0.95rem" }}>
-                                        {isCurrentTemplatePremium 
-                                            ? "Premium feature unlocked! Download your clean, watermark-free resume." 
-                                            : "Download your clean, watermark-free resume in your preferred format."}
-                                    </p>
-                                    
-                                    <div className="row g-3">
-                                        <div className="col-12 col-md-6">
-                                            <button 
-                                                onClick={downloadAsPNG}
-                                                className="btn btn-outline-info w-100 p-3.5 d-flex flex-column align-items-center justify-content-center"
-                                                style={{
-                                                    borderRadius: "16px",
-                                                    borderWidth: "1.5px",
-                                                    transition: "all 0.2s ease",
-                                                    background: "rgba(13, 202, 240, 0.05)",
-                                                    height: "100%"
-                                                }}
-                                            >
-                                                <i className="fas fa-file-image fa-2x mb-3 text-info"></i>
-                                                <span className="fw-bold fs-6 mb-1 text-white">PNG Image</span>
-                                                <span className="text-white-50 small" style={{ fontSize: "0.75rem" }}>Best for sharing</span>
-                                            </button>
-                                        </div>
-                                        <div className="col-12 col-md-6">
-                                            <button 
-                                                onClick={downloadAsPDF}
-                                                className="btn btn-outline-primary w-100 p-3.5 d-flex flex-column align-items-center justify-content-center"
-                                                style={{
-                                                    borderRadius: "16px",
-                                                    borderWidth: "1.5px",
-                                                    transition: "all 0.2s ease",
-                                                    background: "rgba(13, 110, 253, 0.05)",
-                                                    height: "100%"
-                                                }}
-                                            >
-                                                <i className="fas fa-file-pdf fa-2x mb-3 text-primary"></i>
-                                                <span className="fw-bold fs-6 mb-1 text-white">PDF File</span>
-                                                <span className="text-white-50 small" style={{ fontSize: "0.75rem" }}>Best for printing/ATS</span>
-                                            </button>
-                                        </div>
-                                    </div>
-                                    
-                                    <div className="mt-4">
-                                        <button 
-                                            onClick={() => setShowDownloadModal(false)}
-                                            className="btn btn-link text-white-50 text-decoration-none"
-                                        >
-                                            Close
-                                        </button>
-                                    </div>
+                                    {showPremiumPrompt ? (
+                                        <>
+                                            <div style={{ display: "flex", justifyContent: "center", marginBottom: "20px" }}>
+                                                <div style={{
+                                                    width: "70px",
+                                                    height: "70px",
+                                                    borderRadius: "50%",
+                                                    background: "rgba(245, 158, 11, 0.15)",
+                                                    border: "1.5px solid rgba(245, 158, 11, 0.4)",
+                                                    display: "flex",
+                                                    alignItems: "center",
+                                                    justifyContent: "center"
+                                                }}>
+                                                    <Crown size={32} className="text-warning" />
+                                                </div>
+                                            </div>
+
+                                            <h3 className="fw-bold mb-2 text-white" style={{ fontSize: "1.65rem", letterSpacing: "-0.01em" }}>
+                                                Unlock {premiumPromptType} Format
+                                            </h3>
+                                            
+                                            <p className="text-white-50 mb-4 px-md-4" style={{ fontSize: "0.95rem", lineHeight: "1.5" }}>
+                                                Downloading in <strong>{premiumPromptType}</strong> format is a Premium feature. Upgrade to Premium for a one-time charge of <strong>₹150</strong> to unlock all formats, get watermark-free high-res downloads, and lifetime access to all templates!
+                                            </p>
+
+                                            <div style={{
+                                                background: "rgba(255, 255, 255, 0.02)",
+                                                border: "1px solid rgba(255, 255, 255, 0.05)",
+                                                borderRadius: "16px",
+                                                padding: "16px",
+                                                textAlign: "left",
+                                                marginBottom: "24px",
+                                                maxWidth: "460px",
+                                                margin: "0 auto 24px"
+                                            }}>
+                                                <h5 className="fw-semibold text-white mb-3" style={{ fontSize: "0.9rem" }}>What's included in Premium:</h5>
+                                                <ul className="list-unstyled d-flex flex-column gap-2 mb-0" style={{ fontSize: "0.85rem", color: "#cbd5e1" }}>
+                                                    <li className="d-flex align-items-center gap-2">
+                                                        <i className="fas fa-check text-success"></i> <strong>Clean &amp; Watermark-Free</strong> exports
+                                                    </li>
+                                                    <li className="d-flex align-items-center gap-2">
+                                                        <i className="fas fa-check text-success"></i> PDF, PNG, and Editable Word formats
+                                                    </li>
+                                                    <li className="d-flex align-items-center gap-2">
+                                                        <i className="fas fa-check text-success"></i> Unlimited downloads and edits forever
+                                                    </li>
+                                                </ul>
+                                            </div>
+
+                                            <div className="d-flex flex-column gap-2.5 mx-auto" style={{ maxWidth: "320px", width: "100%" }}>
+                                                <button 
+                                                    onClick={handleRazorpayPayment}
+                                                    className="btn w-100 py-3 fw-bold"
+                                                    style={{
+                                                        background: "linear-gradient(135deg, #f59e0b 0%, #d97706 100%)",
+                                                        border: "none",
+                                                        color: "#fff",
+                                                        borderRadius: "12px",
+                                                        fontSize: "0.95rem",
+                                                        boxShadow: "0 4px 15px rgba(245, 158, 11, 0.3)"
+                                                    }}
+                                                >
+                                                    Upgrade for ₹150
+                                                </button>
+                                                
+                                                <button 
+                                                    onClick={() => {
+                                                        setShowPremiumPrompt(false);
+                                                        setPremiumPromptType("");
+                                                    }}
+                                                    className="btn btn-outline-light w-100 py-2.5 fw-semibold"
+                                                    style={{ borderRadius: "12px", border: "1px solid rgba(255, 255, 255, 0.15)", fontSize: "0.88rem" }}
+                                                >
+                                                    Back to Formats
+                                                </button>
+                                            </div>
+                                        </>
+                                    ) : !showDocxSubModal ? (
+                                        <>
+                                            <h3 className="fw-bold mb-3 d-flex align-items-center justify-content-center gap-2" style={{ letterSpacing: "-0.01em" }}>
+                                                {isCurrentTemplatePremium ? (
+                                                    <>
+                                                        <Crown size={22} className="text-warning" /> Premium Export Unlocked
+                                                    </>
+                                                ) : (
+                                                    <>
+                                                        <Unlock size={22} className="text-success" /> Choose Export Format
+                                                    </>
+                                                )}
+                                            </h3>
+                                            <p className="text-white-50 mb-4" style={{ fontSize: "0.95rem" }}>
+                                                {isCurrentTemplatePremium 
+                                                    ? "Premium feature unlocked! Download your clean, watermark-free resume." 
+                                                    : "Download your clean, watermark-free resume in your preferred format."}
+                                            </p>
+                                            
+                                            <div className="row g-3">
+                                                <div className="col-12 col-md-4">
+                                                    <button 
+                                                        onClick={() => {
+                                                            if (!isPaid) {
+                                                                setPremiumPromptType("PNG Image");
+                                                                setShowPremiumPrompt(true);
+                                                            } else {
+                                                                downloadAsPNG();
+                                                            }
+                                                        }}
+                                                        className="btn btn-outline-info w-100 p-3 d-flex flex-column align-items-center justify-content-center"
+                                                        style={{
+                                                            borderRadius: "16px",
+                                                            borderWidth: "1.5px",
+                                                            transition: "all 0.2s ease",
+                                                            background: "rgba(13, 202, 240, 0.05)",
+                                                            height: "100%"
+                                                        }}
+                                                    >
+                                                        <div className="d-flex align-items-center gap-1.5 mb-2">
+                                                            <i className="fas fa-file-image fa-2x text-info"></i>
+                                                            {!isPaid && <i className="fas fa-lock text-warning" style={{ fontSize: "0.85rem" }}></i>}
+                                                        </div>
+                                                        <span className="fw-bold fs-6 mb-1 text-white">PNG Image</span>
+                                                        <span className="text-white-50 small" style={{ fontSize: "0.75rem" }}>{!isPaid ? "Premium feature" : "Best for sharing"}</span>
+                                                    </button>
+                                                </div>
+                                                <div className="col-12 col-md-4">
+                                                    <button 
+                                                        onClick={downloadAsPDF}
+                                                        className="btn btn-outline-primary w-100 p-3 d-flex flex-column align-items-center justify-content-center"
+                                                        style={{
+                                                            borderRadius: "16px",
+                                                            borderWidth: "1.5px",
+                                                            transition: "all 0.2s ease",
+                                                            background: "rgba(13, 110, 253, 0.05)",
+                                                            height: "100%"
+                                                        }}
+                                                    >
+                                                        <i className="fas fa-file-pdf fa-2x mb-3 text-primary"></i>
+                                                        <span className="fw-bold fs-6 mb-1 text-white">PDF File</span>
+                                                        <span className="text-white-50 small" style={{ fontSize: "0.75rem" }}>Best for printing/ATS</span>
+                                                    </button>
+                                                </div>
+                                                <div className="col-12 col-md-4">
+                                                    <button 
+                                                        onClick={() => {
+                                                            if (!isPaid) {
+                                                                setPremiumPromptType("Word (DOCX)");
+                                                                setShowPremiumPrompt(true);
+                                                            } else {
+                                                                setShowDocxSubModal(true);
+                                                            }
+                                                        }}
+                                                        className="btn btn-outline-success w-100 p-3 d-flex flex-column align-items-center justify-content-center"
+                                                        style={{
+                                                            borderRadius: "16px",
+                                                            borderWidth: "1.5px",
+                                                            transition: "all 0.2s ease",
+                                                            background: "rgba(25, 135, 84, 0.05)",
+                                                            height: "100%"
+                                                        }}
+                                                    >
+                                                        <div className="d-flex align-items-center gap-1.5 mb-2">
+                                                            <i className="fas fa-file-word fa-2x text-success"></i>
+                                                            {!isPaid && <i className="fas fa-lock text-warning" style={{ fontSize: "0.85rem" }}></i>}
+                                                        </div>
+                                                        <span className="fw-bold fs-6 mb-1 text-white">Word (DOCX)</span>
+                                                        <span className="text-white-50 small" style={{ fontSize: "0.75rem" }}>{!isPaid ? "Premium feature" : "Editable options"}</span>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            
+                                            <div className="mt-4">
+                                                <button 
+                                                    onClick={() => setShowDownloadModal(false)}
+                                                    className="btn btn-link text-white-50 text-decoration-none"
+                                                >
+                                                    Close
+                                                </button>
+                                            </div>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <h3 className="fw-bold mb-3 d-flex align-items-center justify-content-center gap-2" style={{ letterSpacing: "-0.01em" }}>
+                                                <i className="fas fa-file-word text-success"></i> Word Document Style
+                                            </h3>
+                                            <p className="text-white-50 mb-4" style={{ fontSize: "0.95rem" }}>
+                                                Choose how you want to download and edit your resume in Microsoft Word.
+                                            </p>
+                                            
+                                            <div className="row g-3 text-start">
+                                                <div className="col-12 col-md-6">
+                                                    <div className="p-3.5 h-100 d-flex flex-column justify-content-between" style={{
+                                                        borderRadius: "16px",
+                                                        border: "1.5px solid rgba(25, 135, 84, 0.3)",
+                                                        background: "rgba(25, 135, 84, 0.02)"
+                                                    }}>
+                                                        <div>
+                                                            <div className="d-flex align-items-center gap-2 mb-2">
+                                                                <span className="badge bg-success">Recommended</span>
+                                                                <span className="fw-bold text-white fs-6">Editable Document</span>
+                                                            </div>
+                                                            <p className="text-white-50 mb-4" style={{ fontSize: "0.82rem", lineHeight: "1.4" }}>
+                                                                Standard editable text layout. Uses plain sections and standard margins. <strong>Best for ATS scanners and direct editing in MS Word.</strong>
+                                                            </p>
+                                                        </div>
+                                                        <button 
+                                                            onClick={downloadAsWordEditable}
+                                                            className="btn btn-success w-100 py-2.5 fw-semibold d-flex align-items-center justify-content-center gap-2"
+                                                            style={{ borderRadius: "12px" }}
+                                                        >
+                                                            <i className="fas fa-download"></i> Download Editable
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                                <div className="col-12 col-md-6">
+                                                    <div className="p-3.5 h-100 d-flex flex-column justify-content-between" style={{
+                                                        borderRadius: "16px",
+                                                        border: "1.5px solid rgba(13, 202, 240, 0.3)",
+                                                        background: "rgba(13, 202, 240, 0.02)"
+                                                    }}>
+                                                        <div>
+                                                            <div className="d-flex align-items-center gap-2 mb-2">
+                                                                <span className="badge bg-info">1:1 Replica</span>
+                                                                <span className="fw-bold text-white fs-6">Visual Document</span>
+                                                            </div>
+                                                            <p className="text-white-50 mb-4" style={{ fontSize: "0.82rem", lineHeight: "1.4" }}>
+                                                                Maintains 100% exact design, styling, and template layout of the preview. <strong>Embedded as a high-resolution print image inside the Word document.</strong>
+                                                            </p>
+                                                        </div>
+                                                        <button 
+                                                            onClick={downloadAsWordVisual}
+                                                            className="btn btn-info text-white w-100 py-2.5 fw-semibold d-flex align-items-center justify-content-center gap-2"
+                                                            style={{ borderRadius: "12px" }}
+                                                        >
+                                                            <i className="fas fa-download"></i> Download Visual
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            
+                                            <div className="mt-4 d-flex justify-content-center gap-3">
+                                                <button 
+                                                    onClick={() => setShowDocxSubModal(false)}
+                                                    className="btn btn-outline-light px-4 py-2"
+                                                    style={{ borderRadius: "12px", border: "1px solid rgba(255,255,255,0.15)" }}
+                                                >
+                                                    <i className="fas fa-arrow-left me-2"></i> Back
+                                                </button>
+                                            </div>
+                                        </>
+                                    )}
                                 </div>
                             </div>
                         );
@@ -2025,14 +2168,20 @@ export default function Preview() {
                                 <i className="fas fa-circle-notch fa-spin text-primary" style={{ fontSize: "3rem" }}></i>
                             </div>
                             <h4 className="fw-bold mb-3">
-                                {downloadType === "png" ? "Generating Image" : (downloadType === "docx" ? "Creating Word Document" : "Compiling PDF")}
+                                {downloadType === "png" 
+                                    ? "Generating Image" 
+                                    : (downloadType?.startsWith("docx-") 
+                                        ? "Creating Word Document" 
+                                        : "Compiling PDF")}
                             </h4>
                             <p className="text-white-50 mb-0">
                                 {downloadType === "png" 
                                     ? "Converting your resume layouts to high-res PNG..." 
-                                    : (downloadType === "docx"
+                                    : (downloadType === "docx-editable"
                                         ? "Formatting and downloading editable Word Document..."
-                                        : "Optimizing structure and creating print-ready PDF...")}
+                                        : (downloadType === "docx-visual"
+                                            ? "Generating visual layout Word Document..."
+                                            : "Optimizing structure and creating print-ready PDF..."))}
                             </p>
                         </div>
                     </div>
