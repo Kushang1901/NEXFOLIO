@@ -47,6 +47,8 @@ export default function CoverLetterGenerator() {
 
     // Output & UX states
     const [isGenerating, setIsGenerating] = useState(false);
+    const [isGeneratingJobDesc, setIsGeneratingJobDesc] = useState(false);
+    const [isGeneratingFocus, setIsGeneratingFocus] = useState(false);
     const [coverLetterText, setCoverLetterText] = useState("");
     const [isDownloading, setIsDownloading] = useState(false);
     const [downloadType, setDownloadType] = useState(null); // 'png' or 'pdf'
@@ -263,6 +265,75 @@ export default function CoverLetterGenerator() {
         } catch (err) {
             console.error("Delete cover letter error:", err);
             showToast("Failed to delete cover letter.", "error");
+        }
+    };
+
+    const handleAIJobDescription = async () => {
+        if (!jobTitle || !companyName) {
+            showToast("Please enter Target Job Title and Company Name first.", "error");
+            return;
+        }
+        setIsGeneratingJobDesc(true);
+        try {
+            const response = await fetch("/api/cover-letter/ai-helper", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    action: "job-description",
+                    jobTitle,
+                    companyName
+                })
+            });
+            if (!response.ok) {
+                const err = await response.json().catch(() => ({}));
+                throw new Error(err.error || "Failed to generate job description");
+            }
+            const data = await response.json();
+            setJobDescription(data.result);
+            showToast("Job description generated successfully!", "success");
+        } catch (err) {
+            console.error(err);
+            showToast(err.message || "Failed to generate job description.", "error");
+        } finally {
+            setIsGeneratingJobDesc(false);
+        }
+    };
+
+    const handleAIFocusInstructions = async () => {
+        const activeResume = getActiveResumeData();
+        if (!activeResume) {
+            showToast("Please load a resume or toggle Manual Details first.", "error");
+            return;
+        }
+        if (isManualMode && !manualName) {
+            showToast("Please enter Candidate Name first.", "error");
+            return;
+        }
+        setIsGeneratingFocus(true);
+        try {
+            const response = await fetch("/api/cover-letter/ai-helper", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    action: "focus-instructions",
+                    jobTitle,
+                    companyName,
+                    candidateInfo: activeResume,
+                    jobDescription
+                })
+            });
+            if (!response.ok) {
+                const err = await response.json().catch(() => ({}));
+                throw new Error(err.error || "Failed to generate focus instructions");
+            }
+            const data = await response.json();
+            setCustomInstructions(data.result);
+            showToast("Focus instructions recommended!", "success");
+        } catch (err) {
+            console.error(err);
+            showToast(err.message || "Failed to recommend focus areas.", "error");
+        } finally {
+            setIsGeneratingFocus(false);
         }
     };
 
@@ -641,7 +712,25 @@ export default function CoverLetterGenerator() {
 
                                     {/* AI Focus instructions */}
                                     <div className="col-12">
-                                        <label className="form-label text-white-50 fw-semibold small">Additional AI Instructions / Focus Areas (Optional)</label>
+                                        <div className="d-flex justify-content-between align-items-center mb-1.5">
+                                            <label className="form-label text-white-50 fw-semibold small mb-0">Additional AI Instructions / Focus Areas (Optional)</label>
+                                            <button
+                                                type="button"
+                                                onClick={handleAIFocusInstructions}
+                                                disabled={isGeneratingFocus || (!activeResumeData && !isManualMode)}
+                                                className="btn btn-sm btn-outline-info py-0.5 px-2 d-flex align-items-center gap-1.5 fw-semibold"
+                                                style={{ fontSize: "0.75rem", borderRadius: "6px", height: "24px", color: "#38bdf8", borderColor: "rgba(56, 189, 248, 0.4)", backgroundColor: "transparent" }}
+                                                onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = "rgba(56, 189, 248, 0.1)"; }}
+                                                onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = "transparent"; }}
+                                            >
+                                                {isGeneratingFocus ? (
+                                                    <Loader2 className="spinner-icon fa-spin" size={12} />
+                                                ) : (
+                                                    <Sparkles size={12} />
+                                                )}
+                                                Suggest Focus
+                                            </button>
+                                        </div>
                                         <textarea
                                             className="form-control bg-dark-custom text-white border-glass"
                                             rows="2"
@@ -654,7 +743,25 @@ export default function CoverLetterGenerator() {
 
                                     {/* Job Description */}
                                     <div className="col-12">
-                                        <label className="form-label text-white-50 fw-semibold small">Job Description / Requirements</label>
+                                        <div className="d-flex justify-content-between align-items-center mb-1.5">
+                                            <label className="form-label text-white-50 fw-semibold small mb-0">Job Description / Requirements</label>
+                                            <button
+                                                type="button"
+                                                onClick={handleAIJobDescription}
+                                                disabled={isGeneratingJobDesc || !jobTitle || !companyName}
+                                                className="btn btn-sm btn-outline-info py-0.5 px-2 d-flex align-items-center gap-1.5 fw-semibold"
+                                                style={{ fontSize: "0.75rem", borderRadius: "6px", height: "24px", color: "#38bdf8", borderColor: "rgba(56, 189, 248, 0.4)", backgroundColor: "transparent" }}
+                                                onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = "rgba(56, 189, 248, 0.1)"; }}
+                                                onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = "transparent"; }}
+                                            >
+                                                {isGeneratingJobDesc ? (
+                                                    <Loader2 className="spinner-icon fa-spin" size={12} />
+                                                ) : (
+                                                    <Sparkles size={12} />
+                                                )}
+                                                Generate Sample
+                                            </button>
+                                        </div>
                                         <textarea
                                             className="form-control bg-dark-custom text-white border-glass"
                                             rows="5"
