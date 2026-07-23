@@ -717,7 +717,7 @@ export default function CoverLetterGenerator() {
                                             <button
                                                 type="button"
                                                 onClick={handleAIFocusInstructions}
-                                                disabled={isGeneratingFocus || (!activeResumeData && !isManualMode)}
+                                                disabled={isGeneratingFocus}
                                                 className="btn btn-sm btn-outline-info py-0.5 px-2 d-flex align-items-center gap-1.5 fw-semibold"
                                                 style={{ fontSize: "0.75rem", borderRadius: "6px", height: "24px", color: "#38bdf8", borderColor: "rgba(56, 189, 248, 0.4)", backgroundColor: "transparent" }}
                                                 onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = "rgba(56, 189, 248, 0.1)"; }}
@@ -748,7 +748,7 @@ export default function CoverLetterGenerator() {
                                             <button
                                                 type="button"
                                                 onClick={handleAIJobDescription}
-                                                disabled={isGeneratingJobDesc || !jobTitle || !companyName}
+                                                disabled={isGeneratingJobDesc}
                                                 className="btn btn-sm btn-outline-info py-0.5 px-2 d-flex align-items-center gap-1.5 fw-semibold"
                                                 style={{ fontSize: "0.75rem", borderRadius: "6px", height: "24px", color: "#38bdf8", borderColor: "rgba(56, 189, 248, 0.4)", backgroundColor: "transparent" }}
                                                 onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = "rgba(56, 189, 248, 0.1)"; }}

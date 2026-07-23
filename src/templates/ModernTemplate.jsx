@@ -45,29 +45,32 @@ export default function ModernTemplate({ data }) {
                             objectFit: "cover",
                             borderRadius: "50%",
                             marginBottom: "15px",
-                            border: "2px solid white"
+                            border: "2px solid white",
+                            display: "block",
+                            margin: "0 auto 15px"
                         }}
                     />
                 )}
 
-                <h3 className="fw-bold">{data.basics.name}</h3>
-                <p>{data.basics.email}</p>
-                <p>{data.basics.phone}</p>
+                <h3 className="fw-bold text-center mb-2" style={{ fontSize: "1.45rem" }}>{data.basics.name}</h3>
+                <p className="text-center text-truncate small mb-1" style={{ opacity: 0.85 }}>{data.basics.email}</p>
+                <p className="text-center small mb-2" style={{ opacity: 0.85 }}>{data.basics.phone}</p>
                 {data.basics.role && (
-                    <p className="fw-semibold mt-2">
+                    <p className="fw-semibold mt-2 text-center text-uppercase small" style={{ letterSpacing: "1px", opacity: 0.95 }}>
                         {data.basics.role}
                     </p>
                 )}
 
-                <div className="d-flex align-items-center gap-4 mt-3 flex-wrap">
+                <div className="d-flex flex-column align-items-center gap-2 mt-3 w-100">
                     {links.github && (
                         <a
                             href={links.github}
                             target="_blank"
                             rel="noreferrer"
-                            className="d-flex align-items-center gap-2 text-decoration-none text-dark"
+                            className="d-flex align-items-center gap-2 text-decoration-none text-white text-truncate w-100 justify-content-center"
+                            style={{ fontSize: "0.85rem", opacity: 0.9 }}
                         >
-                            <i className="fab fa-github fa-lg text-dark"></i>
+                            <i className="fab fa-github fa-lg text-white"></i>
                             <span>{getUsername(links.github, "github")}</span>
                         </a>
                     )}
@@ -77,9 +80,10 @@ export default function ModernTemplate({ data }) {
                             href={links.linkedin}
                             target="_blank"
                             rel="noreferrer"
-                            className="d-flex align-items-center gap-2 text-decoration-none text-dark"
+                            className="d-flex align-items-center gap-2 text-decoration-none text-white text-truncate w-100 justify-content-center"
+                            style={{ fontSize: "0.85rem", opacity: 0.9 }}
                         >
-                            <i className="fab fa-linkedin fa-lg text-primary"></i>
+                            <i className="fab fa-linkedin fa-lg text-white"></i>
                             <span>{getUsername(links.linkedin, "linkedin")}</span>
                         </a>
                     )}
@@ -89,9 +93,10 @@ export default function ModernTemplate({ data }) {
                             href={links.portfolio}
                             target="_blank"
                             rel="noreferrer"
-                            className="d-flex align-items-center gap-2 text-decoration-none text-dark"
+                            className="d-flex align-items-center gap-2 text-decoration-none text-white text-truncate w-100 justify-content-center"
+                            style={{ fontSize: "0.85rem", opacity: 0.9 }}
                         >
-                            <i className="fa-solid fa-globe fa-lg text-success"></i>
+                            <i className="fa-solid fa-globe fa-lg text-white"></i>
                             <span>{getUsername(links.portfolio, "portfolio")}</span>
                         </a>
                     )}
