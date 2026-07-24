@@ -394,8 +394,8 @@ export default function PortfolioBuilderPage() {
                         </div>
                     ) : (
                         <div className="text-center py-5 border border-dashed rounded-16" style={{ borderColor: "rgba(255,255,255,0.1)", background: "rgba(255,255,255,0.01)" }}>
-                            <Lock size={48} className="text-amber-500 mb-3" />
                             <h3 className="fw-bold mb-2">Premium Portfolio Builder Locked</h3>
+                            <Lock size={48} className="text-amber-500 my-3 mx-auto" style={{ display: "block" }} />
                             <p className="text-white-50 max-w-md mx-auto mb-4" style={{ fontSize: "0.95rem" }}>
                                 Generate, preview, edit, and download the full ZIP source code of a premium portfolio website from your resume.
                             </p>
