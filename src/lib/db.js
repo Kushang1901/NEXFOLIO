@@ -72,6 +72,29 @@ export async function initDb() {
             ALTER TABLE resumes ADD COLUMN IF NOT EXISTS is_paid BOOLEAN DEFAULT FALSE;
         `;
 
+        // Add privacy, stats, slug, and portfolio payment columns
+        await sql`
+            ALTER TABLE resumes ADD COLUMN IF NOT EXISTS privacy_option VARCHAR(50) DEFAULT 'public';
+        `;
+        await sql`
+            ALTER TABLE resumes ADD COLUMN IF NOT EXISTS password_hash VARCHAR(255) DEFAULT NULL;
+        `;
+        await sql`
+            ALTER TABLE resumes ADD COLUMN IF NOT EXISTS view_count INT DEFAULT 0;
+        `;
+        await sql`
+            ALTER TABLE resumes ADD COLUMN IF NOT EXISTS download_count INT DEFAULT 0;
+        `;
+        await sql`
+            ALTER TABLE resumes ADD COLUMN IF NOT EXISTS last_viewed TIMESTAMP DEFAULT NULL;
+        `;
+        await sql`
+            ALTER TABLE resumes ADD COLUMN IF NOT EXISTS slug VARCHAR(255) DEFAULT NULL;
+        `;
+        await sql`
+            ALTER TABLE resumes ADD COLUMN IF NOT EXISTS is_portfolio_paid BOOLEAN DEFAULT FALSE;
+        `;
+
         // Create cookie_consents table
         await sql`
             CREATE TABLE IF NOT EXISTS cookie_consents (

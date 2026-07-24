@@ -7,7 +7,7 @@ if (typeof window !== "undefined" && !window.__fetchInterceptorAttached) {
     const originalFetch = window.fetch;
     window.fetch = async function (url, options = {}) {
         const urlStr = url.toString();
-        const isTargetApi = urlStr.includes("/api/resumes") || urlStr.includes("/api/user") || urlStr.includes("/api/payments") || urlStr.includes("/api/cover-letters");
+        const isTargetApi = urlStr.includes("/api/resumes") || urlStr.includes("/api/user") || urlStr.includes("/api/payments") || urlStr.includes("/api/cover-letters") || urlStr.includes("/api/ai/") || urlStr.includes("/api/resume-sharing");
         
         if (isTargetApi) {
             options.headers = options.headers || {};

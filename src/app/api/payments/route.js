@@ -25,7 +25,7 @@ export async function POST(request) {
         }
 
         const body = await request.json();
-        const { action, resumeId } = body;
+        const { action, resumeId, type } = body;
 
         if (!resumeId) {
             return NextResponse.json(
@@ -35,6 +35,9 @@ export async function POST(request) {
         }
 
         const db = await getDb();
+        const isPortfolio = type === "portfolio";
+        const orderAmount = isPortfolio ? 49900 : 15000;
+        const receiptId = isPortfolio ? `receipt_portfolio_${resumeId}` : `receipt_resume_${resumeId}`;
 
         // 1. CREATE RAZORPAY ORDER ACTION
         if (action === "create_order") {
@@ -50,9 +53,9 @@ export async function POST(request) {
                     "Authorization": `Basic ${authString}`
                 },
                 body: JSON.stringify({
-                    amount: 15000, // ₹150 in paise
+                    amount: orderAmount,
                     currency: "INR",
-                    receipt: `receipt_resume_${resumeId}`
+                    receipt: receiptId
                 })
             });
 
@@ -99,14 +102,25 @@ export async function POST(request) {
                 );
             }
 
-            // Update resume status in Neon Database to paid
-            const result = await db`
-                UPDATE resumes
-                SET is_paid = TRUE,
-                    updated_at = CURRENT_TIMESTAMP
-                WHERE id = ${resumeId} AND user_email = ${authedEmail}
-                RETURNING id
-            `;
+            // Update status in Neon Database based on payment type
+            let result;
+            if (isPortfolio) {
+                result = await db`
+                    UPDATE resumes
+                    SET is_portfolio_paid = TRUE,
+                        updated_at = CURRENT_TIMESTAMP
+                    WHERE id = ${resumeId} AND user_email = ${authedEmail}
+                    RETURNING id
+                `;
+            } else {
+                result = await db`
+                    UPDATE resumes
+                    SET is_paid = TRUE,
+                        updated_at = CURRENT_TIMESTAMP
+                    WHERE id = ${resumeId} AND user_email = ${authedEmail}
+                    RETURNING id
+                `;
+            }
 
             if (result.length === 0) {
                 return NextResponse.json(
@@ -123,20 +137,22 @@ export async function POST(request) {
                 const userId = userResult[0]?.id;
 
                 if (userId) {
+                    const pricePaid = isPortfolio ? 499.00 : 150.00;
                     await db`
                         INSERT INTO payments (resume_id, user_id, payment_status, payment_id, order_id, amount)
-                        VALUES (${resumeId}, ${userId}, 'paid', ${razorpayPaymentId}, ${razorpayOrderId}, 150.00)
+                        VALUES (${resumeId}, ${userId}, 'paid', ${razorpayPaymentId}, ${razorpayOrderId}, ${pricePaid})
                         ON CONFLICT (payment_id) DO NOTHING
                     `;
                 }
             } catch (payErr) {
                 console.error("⚠️ Failed to record payment details in database:", payErr);
-                // We don't fail the request here, since the resume is already marked paid
             }
 
             return NextResponse.json({
                 success: true,
-                message: "Payment successfully verified and resume upgraded to premium!"
+                message: isPortfolio 
+                    ? "Payment successfully verified and premium portfolio builder unlocked!" 
+                    : "Payment successfully verified and resume upgraded to premium!"
             }, { headers: corsHeaders });
         }
 

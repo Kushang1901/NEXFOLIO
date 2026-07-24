@@ -45,40 +45,69 @@ export default function PublicResumePage() {
     const [isDownloading, setIsDownloading] = useState(false);
     const [isPaid, setIsPaid] = useState(false);
     const [showWatermark, setShowWatermark] = useState(false);
+    
+    // Privacy protection & statistics
+    const [isLocked, setIsLocked] = useState(false);
+    const [password, setPassword] = useState("");
+    const [realId, setRealId] = useState(null);
 
     const FREE_TEMPLATES = ["modern", "creative", "product_manager", "bento"];
     const isCurrentTemplatePremium = !FREE_TEMPLATES.includes(selectedTemplate);
 
+    const fetchPublicResume = async (pass = "") => {
+        try {
+            setLoading(true);
+            setError(null);
+            const query = pass ? `&password=${encodeURIComponent(pass)}` : "";
+            const res = await fetch(`/api/resumes?id=${id}${query}`);
+            
+            const data = await res.json();
+            if (!res.ok) {
+                if (res.status === 401 && data.error === "Incorrect password") {
+                    showToast("Incorrect password. Please try again.", "error");
+                    setIsLocked(true);
+                    return;
+                }
+                if (res.status === 401 || res.status === 404) {
+                    throw new Error(data.error || "This resume is private or does not exist.");
+                }
+                throw new Error("Failed to load resume.");
+            }
+
+            if (data.isLocked) {
+                setIsLocked(true);
+                setRealId(data.id);
+                return;
+            }
+
+            setIsLocked(false);
+            setRealId(data.id);
+
+            if (data.resumeData) {
+                setResumeData(data.resumeData);
+            }
+            if (data.selectedTemplate) {
+                setSelectedTemplate(data.selectedTemplate);
+            }
+            setIsPaid(data.isPaid || false);
+
+            // Increment unique view stat on success
+            fetch("/api/resume-sharing", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ action: "increment_stat", resumeId: data.id, statType: "view" })
+            }).catch(err => console.error("Stats View Log Error:", err));
+
+        } catch (err) {
+            console.error("Error fetching public resume:", err);
+            setError(err.message);
+        } finally {
+            setLoading(false);
+        }
+    };
+
     useEffect(() => {
         if (!id) return;
-
-        const fetchPublicResume = async () => {
-            try {
-                setLoading(true);
-                const res = await fetch(`/api/resumes?id=${id}`);
-                if (!res.ok) {
-                    if (res.status === 401 || res.status === 404) {
-                        throw new Error("This resume is private or does not exist.");
-                    }
-                    throw new Error("Failed to load resume.");
-                }
-                const data = await res.json();
-                
-                if (data.resumeData) {
-                    setResumeData(data.resumeData);
-                }
-                if (data.selectedTemplate) {
-                    setSelectedTemplate(data.selectedTemplate);
-                }
-                setIsPaid(data.isPaid || false);
-            } catch (err) {
-                console.error("Error fetching public resume:", err);
-                setError(err.message);
-            } finally {
-                setLoading(false);
-            }
-        };
-
         fetchPublicResume();
     }, [id]);
 
@@ -123,6 +152,15 @@ export default function PublicResumePage() {
 
             pdf.save(`${resumeData?.fullName ? resumeData.fullName.replace(/\s+/g, "_") : "Resume"}.pdf`);
             showToast("Resume downloaded as PDF successfully!", "success");
+
+            // Log download stat
+            if (realId) {
+                fetch("/api/resume-sharing", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ action: "increment_stat", resumeId: realId, statType: "download" })
+                }).catch(err => console.error("Stats Download Log Error:", err));
+            }
         } catch (err) {
             console.error(err);
             showToast("Failed to download as PDF. Please try again.", "error");
@@ -139,6 +177,66 @@ export default function PublicResumePage() {
                     <span className="visually-hidden">Loading...</span>
                 </div>
                 <p className="fs-5">Loading resume details...</p>
+            </div>
+        );
+    }
+
+    if (isLocked) {
+        return (
+            <div className="bg-dark text-white min-vh-100 d-flex align-items-center justify-content-center px-3" style={{ background: "#060610" }}>
+                <div className="card p-5 text-center text-white" style={{
+                    maxWidth: "460px",
+                    width: "100%",
+                    background: "linear-gradient(145deg, #1c2027 0%, #11141a 100%)",
+                    borderRadius: "20px",
+                    border: "1px solid rgba(255, 255, 255, 0.08)",
+                    boxShadow: "0 15px 35px rgba(0, 0, 0, 0.6)"
+                }}>
+                    <div className="card-body p-0">
+                        <div className="d-flex justify-content-center mb-4">
+                            <div style={{ width: "70px", height: "70px", borderRadius: "18px", background: "rgba(99,102,241,0.1)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                                <Lock size={36} color="#818cf8" />
+                            </div>
+                        </div>
+                        <h3 className="fw-bold mb-2">Password Protected</h3>
+                        <p className="text-white-50 mb-4" style={{ fontSize: "0.9rem", lineHeight: "1.5" }}>
+                            The owner has secured this resume. Please enter the password to view.
+                        </p>
+                        
+                        <div className="mb-4">
+                            <input 
+                                type="password" 
+                                value={password} 
+                                onChange={(e) => setPassword(e.target.value)} 
+                                placeholder="Enter password..." 
+                                className="form-control" 
+                                style={{
+                                    backgroundColor: "rgba(11, 13, 23, 0.85)",
+                                    border: "1px solid rgba(255, 255, 255, 0.08)",
+                                    color: "#fff",
+                                    borderRadius: "10px",
+                                    padding: "12px 14px",
+                                    textAlign: "center"
+                                }}
+                                onKeyDown={(e) => {
+                                    if (e.key === "Enter") fetchPublicResume(password);
+                                }}
+                            />
+                        </div>
+
+                        <button 
+                            onClick={() => fetchPublicResume(password)} 
+                            className="btn btn-primary w-100 py-2.5 fw-semibold" 
+                            style={{ 
+                                borderRadius: "10px", 
+                                background: "linear-gradient(135deg, #6366f1, #4f46e5)", 
+                                border: "none" 
+                            }}
+                        >
+                            Unlock Resume
+                        </button>
+                    </div>
+                </div>
             </div>
         );
     }

@@ -5,7 +5,7 @@ import Link from "next/link";
 import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
 import Script from "next/script";
-import { Sparkles, ScanLine, FileText, UploadCloud, CheckCircle, ArrowRight, ShieldCheck, Cpu, Target, Eye } from "lucide-react";
+import { Sparkles, ScanLine, FileText, UploadCloud, CheckCircle, ArrowRight, ShieldCheck, Cpu, Target, Eye, KeyRound, Briefcase, HelpCircle, LayoutTemplate, Share2, Crown } from "lucide-react";
 
 export default function AIToolsHub() {
     const [tailwindLoaded, setTailwindLoaded] = useState(true);
@@ -61,7 +61,7 @@ export default function AIToolsHub() {
             borderColor: "rgba(99, 102, 241, 0.2)"
         },
         {
-            title: "ATS Score & Match Checker",
+            title: "ATS Match Checker",
             description: "Check your resume's compatibility score against any job description instantly. Get detailed feedback on keyword density, missing keywords, and layout structure.",
             details: [
                 "Instant match scoring (0-100%)",
@@ -77,6 +77,70 @@ export default function AIToolsHub() {
             borderColor: "rgba(16, 185, 129, 0.2)"
         },
         {
+            title: "Resume & Job Match Score",
+            description: "Compare your resume with a job description. Calculate detailed category match scores, find gaps, strengths, weaknesses, and get AI suggestions.",
+            details: [
+                "0–100% overall & category scores",
+                "AI resume rewrite recommendations",
+                "Downloadable match score report"
+            ],
+            Icon: CheckCircle,
+            ctaText: "Analyze Match Score",
+            ctaLink: "/ai-tools/match-score",
+            badge: "New Feature",
+            color: "#38bdf8", // Sky Blue
+            bgColor: "rgba(56, 189, 248, 0.08)",
+            borderColor: "rgba(56, 189, 248, 0.2)"
+        },
+        {
+            title: "Resume Keyword Optimizer",
+            description: "Scan your resume against a target description. Extract found keywords, see keyword density, and insert missing keywords in one-click.",
+            details: [
+                "Full keyword density analysis",
+                "Instant missing keyword lists",
+                "One-click keyword optimization"
+            ],
+            Icon: KeyRound,
+            ctaText: "Optimize Keywords",
+            ctaLink: "/ai-tools/keyword-optimizer",
+            badge: "SEO Tool",
+            color: "#fb7185", // Rose
+            bgColor: "rgba(251, 113, 133, 0.08)",
+            borderColor: "rgba(251, 113, 133, 0.2)"
+        },
+        {
+            title: "Job Description Analyzer",
+            description: "Paste a job description to instantly extract required skills, education and experience requirements, technologies, and ATS keywords.",
+            details: [
+                "Summary & seniority analysis",
+                "Clean structural parameter cards",
+                "Required vs preferred skills"
+            ],
+            Icon: Briefcase,
+            ctaText: "Analyze Job Post",
+            ctaLink: "/ai-tools/job-analyzer",
+            badge: "Smart Extract",
+            color: "#ec4899", // Pink
+            bgColor: "rgba(236, 72, 153, 0.08)",
+            borderColor: "rgba(236, 72, 153, 0.2)"
+        },
+        {
+            title: "AI Interview Questions",
+            description: "Generate realistic interview questions based on your resume and job description. Includes suggested answers, difficulty level, and regeneration.",
+            details: [
+                "HR, Technical, Behavioral categories",
+                "Detailed AI-suggested answers",
+                "Role-specific coding questions"
+            ],
+            Icon: HelpCircle,
+            ctaText: "Generate Questions",
+            ctaLink: "/ai-tools/interview-generator",
+            badge: "Prep Guide",
+            color: "#a78bfa", // Purple
+            bgColor: "rgba(167, 139, 250, 0.08)",
+            borderColor: "rgba(167, 139, 250, 0.2)"
+        },
+        {
             title: "AI Cover Letter Generator",
             description: "Create a highly personalized, compelling cover letter in seconds. Tailor the tone and content directly to the job description to grab recruiter attention immediately.",
             details: [
@@ -88,25 +152,42 @@ export default function AIToolsHub() {
             ctaText: "Generate Cover Letter",
             ctaLink: "/cover-letter",
             badge: "Time Saver",
-            color: "#ec4899", // Pink
-            bgColor: "rgba(236, 72, 153, 0.08)",
-            borderColor: "rgba(236, 72, 153, 0.2)"
+            color: "#fb923c", // Orange
+            bgColor: "rgba(251, 146, 60, 0.08)",
+            borderColor: "rgba(251, 146, 60, 0.2)"
         },
         {
-            title: "Smart PDF Resume Parser",
-            description: "Already have a resume? Upload it to our parser and let AI automatically extract your profile information to pre-fill the builder, upgrading your template in seconds.",
+            title: "Premium AI Portfolio Builder",
+            description: "Generate a beautiful recruiter-friendly portfolio website from your resume using AI. Choose from templates, preview, edit, and download source code.",
             details: [
-                "Extracts text & structure",
-                "Quick template transitions",
-                "No manual typing required"
+                "3 gorgeous modern layouts",
+                "Interactive live iframe preview",
+                "Download full HTML/CSS/JS source"
             ],
-            Icon: UploadCloud,
-            ctaText: "Import Resume PDF",
-            ctaLink: "/builder",
-            badge: "Instant Upload",
-            color: "#f59e0b", // Amber
-            bgColor: "rgba(245, 158, 11, 0.08)",
-            borderColor: "rgba(245, 158, 11, 0.2)"
+            Icon: LayoutTemplate,
+            ctaText: "Build Portfolio Website",
+            ctaLink: "/ai-tools/portfolio-builder",
+            badge: "Premium",
+            color: "#f59e0b", // Gold/Amber
+            bgColor: "rgba(245, 158, 11, 0.1)",
+            borderColor: "rgba(245, 158, 11, 0.35)",
+            isPremium: true
+        },
+        {
+            title: "Public Resume Sharing",
+            description: "Generate a public resume link and QR code. Manage password protection privacy settings and track detailed view and download statistics.",
+            details: [
+                "Custom username slug URLs",
+                "QR code & sharing short links",
+                "Views, downloads, last-viewed stats"
+            ],
+            Icon: Share2,
+            ctaText: "Share Resume",
+            ctaLink: "/ai-tools/resume-sharing",
+            badge: "Traffic Stats",
+            color: "#22d3ee", // Cyan
+            bgColor: "rgba(34, 211, 238, 0.08)",
+            borderColor: "rgba(34, 211, 238, 0.2)"
         }
     ];
 
@@ -187,13 +268,13 @@ export default function AIToolsHub() {
 
                 {/* Tools Grid */}
                 <main className="max-w-7xl mx-auto px-6 pb-24 relative flex-grow">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-20">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-20">
                         {tools.map((tool, idx) => {
                             const IconComponent = tool.Icon;
                             return (
                                 <section 
                                     key={idx} 
-                                    className="glass-card rounded-2xl p-8 flex flex-col justify-between transition-all duration-300 hover:-translate-y-2 hover:border-opacity-65 hover:shadow-[0_20px_50px_rgba(0,0,0,0.4)] relative group overflow-hidden"
+                                    className={`glass-card rounded-2xl p-8 flex flex-col justify-between transition-all duration-300 hover:-translate-y-2 hover:border-opacity-65 hover:shadow-[0_20px_50px_rgba(0,0,0,0.4)] relative group overflow-hidden ${tool.isPremium ? 'border-amber-500/40' : ''}`}
                                     style={{ borderColor: tool.borderColor }}
                                 >
                                     {/* Accent background glow */}
@@ -216,13 +297,14 @@ export default function AIToolsHub() {
                                                 <IconComponent size={28} />
                                             </div>
                                             <span 
-                                                className="text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-full border"
+                                                className="text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-full border flex items-center gap-1"
                                                 style={{ 
                                                     color: tool.color, 
                                                     borderColor: tool.borderColor,
                                                     backgroundColor: tool.bgColor
                                                 }}
                                             >
+                                                {tool.isPremium && <Crown size={12} className="text-amber-400 fill-amber-400" />}
                                                 {tool.badge}
                                             </span>
                                         </div>

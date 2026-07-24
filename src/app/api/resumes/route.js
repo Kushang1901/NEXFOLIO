@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { getDb } from "../../../lib/db";
+import crypto from "crypto";
 
 const corsHeaders = {
     "Access-Control-Allow-Origin": "*",
@@ -22,15 +23,26 @@ export async function GET(request) {
         const db = await getDb();
 
         if (id) {
-            // Fetch a specific resume (could be public, or owned by the email associated with the token)
-            const resumes = await db`
+            // Fetch a specific resume (could be by ID or custom Slug, public, or owned by user)
+            const isSlug = isNaN(Number(id));
+            const resumes = isSlug ? await db`
                 SELECT id, user_email AS "userEmail", resume_name AS "resumeName", 
                        resume_data AS "resumeData", selected_template AS "selectedTemplate", 
                        is_public AS "isPublic", shareable_link AS "shareableLink",
-                       is_paid AS "isPaid",
+                       is_paid AS "isPaid", privacy_option AS "privacyOption", password_hash AS "passwordHash",
+                       is_portfolio_paid AS "isPortfolioPaid",
                        created_at AS "createdAt", updated_at AS "updatedAt"
                 FROM resumes
-                WHERE id = ${id}
+                WHERE slug = ${id.toLowerCase()}
+            ` : await db`
+                SELECT id, user_email AS "userEmail", resume_name AS "resumeName", 
+                       resume_data AS "resumeData", selected_template AS "selectedTemplate", 
+                       is_public AS "isPublic", shareable_link AS "shareableLink",
+                       is_paid AS "isPaid", privacy_option AS "privacyOption", password_hash AS "passwordHash",
+                       is_portfolio_paid AS "isPortfolioPaid",
+                       created_at AS "createdAt", updated_at AS "updatedAt"
+                FROM resumes
+                WHERE id = ${parseInt(id)}
             `;
 
             if (resumes.length === 0) {
@@ -41,16 +53,33 @@ export async function GET(request) {
             }
 
             const resume = resumes[0];
+            const isOwner = resume.userEmail === authedEmail;
 
-            // If it's not public, verify owner email matches verified requester email
-            if (!resume.isPublic && resume.userEmail !== authedEmail) {
+            // Enforce Private privacy setting
+            if (resume.privacyOption === "private" && !isOwner) {
                 return NextResponse.json(
-                    { error: "Unauthorized" },
+                    { error: "Unauthorized: This resume is set to Private." },
                     { status: 401, headers: corsHeaders }
                 );
             }
 
-            return NextResponse.json(resume, { headers: corsHeaders });
+            // Enforce Password Protected privacy setting
+            if (resume.privacyOption === "password" && !isOwner) {
+                const passwordParam = searchParams.get("password");
+                if (!passwordParam) {
+                    return NextResponse.json(
+                        { isLocked: true, id: resume.id, resumeName: resume.resumeName },
+                        { headers: corsHeaders }
+                    );
+                }
+                const inputHash = crypto.createHash("sha256").update(passwordParam).digest("hex");
+                if (inputHash !== resume.passwordHash) {
+                    return NextResponse.json(
+                        { error: "Incorrect password" },
+                        { status: 401, headers: corsHeaders }
+                    );
+                }
+            }
         } else {
             // If listing all, valid auth token is required
             if (!authedEmail) {
