@@ -21,7 +21,7 @@ export default function HomePage() {
     const [loadingTestimonials, setLoadingTestimonials] = useState(true);
 
     // Typewriter effect state
-    const phrases = ["Career", "ATS Resume", "Job Search", "Professional CV"];
+    const phrases = ["Career", "ATS Resume", "AI Portfolio", "Interview Prep", "Job Search", "Professional CV"];
     const [typewriterIndex, setTypewriterIndex] = useState(0);
     const [typewriterText, setTypewriterText] = useState("Career");
     const [isTypewriterDeleting, setIsTypewriterDeleting] = useState(false);
@@ -211,7 +211,7 @@ export default function HomePage() {
                 0.06 // alpha
             );
 
-            // Ribbon Group 2: Secondary wave sweep for overlapping organic depth
+            // Ribbon Group 2: Secondary wave sweep for organic depth
             drawWave(
                 ctx, 
                 width * 1.25, -height * 0.05, 
@@ -219,12 +219,12 @@ export default function HomePage() {
                 5, // strands
                 50, // amplitude
                 5.2, // frequency
-                -0.0008, // speed (opposite direction offset)
+                -0.0008, // speed
                 timestamp, 
                 0.045 // alpha
             );
 
-            // 3. Update and draw nodes (microscopic glowing particles)
+            // 3. Update and draw nodes
             for (let i = 0; i < particles.length; i++) {
                 const p = particles[i];
                 p.x += p.vx;
@@ -241,7 +241,7 @@ export default function HomePage() {
                 ctx.fill();
             }
 
-            // 4. Draw node connections (abstract neural networks)
+            // 4. Draw node connections
             for (let i = 0; i < particles.length; i++) {
                 for (let j = i + 1; j < particles.length; j++) {
                     const pi = particles[i];
@@ -354,8 +354,8 @@ export default function HomePage() {
                 }
                 .grid-bg {
                     background-image: 
-                        linear-gradient(rgba(255, 255, 255, 0.015) 1px, transparent 1px),
-                        linear-gradient(90deg, rgba(255, 255, 255, 0.015) 1px, transparent 1px);
+                    linear-gradient(rgba(255, 255, 255, 0.015) 1px, transparent 1px),
+                    linear-gradient(90deg, rgba(255, 255, 255, 0.015) 1px, transparent 1px);
                     background-size: 50px 50px;
                     background-position: center center;
                 }
@@ -464,7 +464,7 @@ export default function HomePage() {
                                         </div>
                                     </div>
 
-                                    {/* Floating AI Skills match badge - Top Right */}
+                                    {/* Floating AI Skills match badge */}
                                     <div className="absolute -top-10 -right-6 float-ui z-30 glass-card px-4 py-3 rounded-xl border-indigo-500/20 shadow-lg hidden md:block" style={{ animationDelay: "-1.5s" }}>
                                         <div className="flex items-center gap-2">
                                             <div className="w-2.5 h-2.5 rounded-full bg-purple-500 animate-ping"></div>
@@ -472,7 +472,7 @@ export default function HomePage() {
                                         </div>
                                     </div>
 
-                                    {/* Floating PDF download toast - Left */}
+                                    {/* Floating PDF download toast */}
                                     <div className="absolute top-1/4 -left-20 float-ui z-30 glass-card px-3 py-2 rounded-xl border-white/10 shadow-lg hidden md:block" style={{ animationDelay: "-4.5s" }}>
                                         <div className="flex items-center gap-2">
                                             <span className="material-symbols-outlined text-red-400 text-sm">picture_as_pdf</span>
@@ -493,7 +493,7 @@ export default function HomePage() {
                     <section className="px-4 md:px-8 py-24 max-w-[1280px] mx-auto">
                         <div className="text-center mb-16">
                             <h2 className="text-3xl md:text-5xl font-bold mb-4 text-white" style={{ fontFamily: "var(--font-space-grotesk), sans-serif" }}>Precision Tools for Professionals</h2>
-                            <p className="text-base md:text-lg text-[#c7c4d7] max-w-2xl mx-auto" style={{ fontFamily: "var(--font-inter), sans-serif" }}>Our toolkit is designed to bypass filters and get your profile in front of hiring managers.</p>
+                            <p className="text-base md:text-lg text-[#c7c4d7] max-w-2xl mx-auto" style={{ fontFamily: "var(--font-inter), sans-serif" }}>Our comprehensive toolkit is designed to optimize your resume, generate portfolios, and prepare you for interviews.</p>
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
 
@@ -516,9 +516,9 @@ export default function HomePage() {
                                 <div className="p-4 rounded-xl bg-[#c0c1ff]/10 text-[#c0c1ff]">
                                     <span className="material-symbols-outlined text-[32px]">fact_check</span>
                                 </div>
-                                <h3 className="text-2xl font-bold text-white" style={{ fontFamily: "var(--font-space-grotesk), sans-serif" }}>ATS Optimization</h3>
+                                <h3 className="text-2xl font-bold text-white" style={{ fontFamily: "var(--font-space-grotesk), sans-serif" }}>ATS Match Checker</h3>
                                 <p className="text-[#c7c4d7] leading-relaxed" style={{ fontFamily: "var(--font-inter), sans-serif" }}>
-                                    Every template is tested against leading recruitment software to ensure your content is never garbled or ignored.
+                                    Compare your resume against descriptions and identify keyword gaps with our precision engine.
                                 </p>
                                 <Link href="/ats-checker" className="mt-4 flex items-center gap-2 text-[#c0c1ff] font-semibold group-hover:gap-4 transition-all text-decoration-none" style={{ fontFamily: "var(--font-inter), sans-serif" }}>
                                     Scan My CV <span className="material-symbols-outlined text-[18px]">east</span>
@@ -528,14 +528,56 @@ export default function HomePage() {
                             {/* Card 3 */}
                             <div className="glass-card p-8 rounded-2xl flex flex-col items-start gap-4 hover:border-[#c0c1ff] transition-all group cursor-default">
                                 <div className="p-4 rounded-xl bg-[#c0c1ff]/10 text-[#c0c1ff]">
-                                    <span className="material-symbols-outlined text-[32px]">download</span>
+                                    <span className="material-symbols-outlined text-[32px]">share</span>
                                 </div>
-                                <h3 className="text-2xl font-bold text-white" style={{ fontFamily: "var(--font-space-grotesk), sans-serif" }}>Export &amp; Share</h3>
+                                <h3 className="text-2xl font-bold text-white" style={{ fontFamily: "var(--font-space-grotesk), sans-serif" }}>Smart URL Sharing</h3>
                                 <p className="text-[#c7c4d7] leading-relaxed" style={{ fontFamily: "var(--font-inter), sans-serif" }}>
-                                    Download pixel-perfect PDFs or generate a private link to share your live portfolio directly with employers.
+                                    Set custom handles, password locks, and track detailed real-time visitor counts and downloads.
                                 </p>
-                                <Link href="/templates" className="mt-4 flex items-center gap-2 text-[#c0c1ff] font-semibold group-hover:gap-4 transition-all text-decoration-none" style={{ fontFamily: "var(--font-inter), sans-serif" }}>
-                                    View Formats <span className="material-symbols-outlined text-[18px]">east</span>
+                                <Link href="/ai-tools/resume-sharing" className="mt-4 flex items-center gap-2 text-[#c0c1ff] font-semibold group-hover:gap-4 transition-all text-decoration-none" style={{ fontFamily: "var(--font-inter), sans-serif" }}>
+                                    Share Resume <span className="material-symbols-outlined text-[18px]">east</span>
+                                </Link>
+                            </div>
+
+                            {/* Card 4 */}
+                            <div className="glass-card p-8 rounded-2xl flex flex-col items-start gap-4 hover:border-[#c0c1ff] transition-all group cursor-default">
+                                <div className="p-4 rounded-xl bg-[#c0c1ff]/10 text-[#c0c1ff]">
+                                    <span className="material-symbols-outlined text-[32px]">percent</span>
+                                </div>
+                                <h3 className="text-2xl font-bold text-white" style={{ fontFamily: "var(--font-space-grotesk), sans-serif" }}>ATS Overlap Score</h3>
+                                <p className="text-[#c7c4d7] leading-relaxed" style={{ fontFamily: "var(--font-inter), sans-serif" }}>
+                                    Find match percentages, missing ATS keywords, and get suggestions to optimize your resume bullets.
+                                </p>
+                                <Link href="/ai-tools/match-score" className="mt-4 flex items-center gap-2 text-[#c0c1ff] font-semibold group-hover:gap-4 transition-all text-decoration-none" style={{ fontFamily: "var(--font-inter), sans-serif" }}>
+                                    Get Match Score <span className="material-symbols-outlined text-[18px]">east</span>
+                                </Link>
+                            </div>
+
+                            {/* Card 5 */}
+                            <div className="glass-card p-8 rounded-2xl flex flex-col items-start gap-4 hover:border-[#c0c1ff] transition-all group cursor-default">
+                                <div className="p-4 rounded-xl bg-[#c0c1ff]/10 text-[#c0c1ff]">
+                                    <span className="material-symbols-outlined text-[32px]">language</span>
+                                </div>
+                                <h3 className="text-2xl font-bold text-white" style={{ fontFamily: "var(--font-space-grotesk), sans-serif" }}>AI Portfolio Builder</h3>
+                                <p className="text-[#c7c4d7] leading-relaxed" style={{ fontFamily: "var(--font-inter), sans-serif" }}>
+                                    Convert your resume into a stunning, responsive portfolio website and download the source ZIP.
+                                </p>
+                                <Link href="/ai-tools/portfolio-builder" className="mt-4 flex items-center gap-2 text-[#c0c1ff] font-semibold group-hover:gap-4 transition-all text-decoration-none" style={{ fontFamily: "var(--font-inter), sans-serif" }}>
+                                    Build Portfolio <span className="material-symbols-outlined text-[18px]">east</span>
+                                </Link>
+                            </div>
+
+                            {/* Card 6 */}
+                            <div className="glass-card p-8 rounded-2xl flex flex-col items-start gap-4 hover:border-[#c0c1ff] transition-all group cursor-default">
+                                <div className="p-4 rounded-xl bg-[#c0c1ff]/10 text-[#c0c1ff]">
+                                    <span className="material-symbols-outlined text-[32px]">forum</span>
+                                </div>
+                                <h3 className="text-2xl font-bold text-white" style={{ fontFamily: "var(--font-space-grotesk), sans-serif" }}>AI Interview Coach</h3>
+                                <p className="text-[#c7c4d7] leading-relaxed" style={{ fontFamily: "var(--font-inter), sans-serif" }}>
+                                    Get personalized interview questions and recommended answers based on your target role.
+                                </p>
+                                <Link href="/ai-tools/interview-generator" className="mt-4 flex items-center gap-2 text-[#c0c1ff] font-semibold group-hover:gap-4 transition-all text-decoration-none" style={{ fontFamily: "var(--font-inter), sans-serif" }}>
+                                    Practice Now <span className="material-symbols-outlined text-[18px]">east</span>
                                 </Link>
                             </div>
 

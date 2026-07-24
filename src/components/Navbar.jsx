@@ -7,7 +7,7 @@ import { auth } from "../firebase";
 import { signOut } from "firebase/auth";
 import { subscribeToAuthChanges } from "../authState";
 import { showToast } from "../utils/toast";
-import { Home, Palette, FileSignature, Target, Sparkles, FileText, X, ArrowRight, LogOut, ChevronDown, User } from "lucide-react";
+import { Home, Palette, FileSignature, Target, Sparkles, FileText, X, ArrowRight, LogOut, ChevronDown, User, Briefcase, KeyRound, HelpCircle, Crown, Share2 } from "lucide-react";
 
 const NAV_LINKS = [
     { label: "Home", href: "/" },
@@ -485,9 +485,9 @@ export default function Navbar() {
                                                                 </div>
                                                             </Link>
 
-                                                            {/* ATS Checker */}
+                                                            {/* Match Score Checker */}
                                                             <Link 
-                                                                href="/ats-checker" 
+                                                                href="/ai-tools/match-score" 
                                                                 onClick={() => setShowAiDropdown(false)}
                                                                 style={dropdownCardStyle}
                                                                 onMouseEnter={e => {
@@ -503,21 +503,21 @@ export default function Navbar() {
                                                                     e.currentTarget.querySelector(".arrow-icon").style.opacity = "0.5";
                                                                 }}
                                                             >
-                                                                <div style={iconContainerStyle("#10b981")}>
-                                                                    <Target size={18} color="#34d399" />
+                                                                <div style={iconContainerStyle("#3b82f6")}>
+                                                                    <Target size={18} color="#60a5fa" />
                                                                 </div>
                                                                 <div>
                                                                     <div style={cardTitleStyle}>
-                                                                        ATS Match Checker
+                                                                        Match Score Checker
                                                                         <span className="arrow-icon" style={arrowIconStyle}>→</span>
                                                                     </div>
-                                                                    <div style={cardDescStyle}>Compare your resume against descriptions and identify keyword gaps.</div>
+                                                                    <div style={cardDescStyle}>Calculate overall ATS job description alignment and gaps.</div>
                                                                 </div>
                                                             </Link>
 
-                                                            {/* AI Cover Letter */}
+                                                            {/* Keyword Optimizer */}
                                                             <Link 
-                                                                href="/cover-letter" 
+                                                                href="/ai-tools/keyword-optimizer" 
                                                                 onClick={() => setShowAiDropdown(false)}
                                                                 style={dropdownCardStyle}
                                                                 onMouseEnter={e => {
@@ -534,20 +534,50 @@ export default function Navbar() {
                                                                 }}
                                                             >
                                                                 <div style={iconContainerStyle("#ec4899")}>
-                                                                    <FileSignature size={18} color="#f472b6" />
+                                                                    <KeyRound size={18} color="#f472b6" />
                                                                 </div>
                                                                 <div>
                                                                     <div style={cardTitleStyle}>
-                                                                        Cover Letter Writer
+                                                                        Keyword Optimizer
                                                                         <span className="arrow-icon" style={arrowIconStyle}>→</span>
                                                                     </div>
-                                                                    <div style={cardDescStyle}>Draft high-converting cover letters matching target job specifications.</div>
+                                                                    <div style={cardDescStyle}>Find missing ATS terms and auto-inject them into resumes.</div>
                                                                 </div>
                                                             </Link>
 
-                                                            {/* PDF Parser */}
+                                                            {/* Job Description Analyzer */}
                                                             <Link 
-                                                                href="/builder" 
+                                                                href="/ai-tools/job-analyzer" 
+                                                                onClick={() => setShowAiDropdown(false)}
+                                                                style={dropdownCardStyle}
+                                                                onMouseEnter={e => {
+                                                                    e.currentTarget.style.background = "rgba(255, 255, 255, 0.03)";
+                                                                    e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.1)";
+                                                                    e.currentTarget.querySelector(".arrow-icon").style.transform = "translateX(4px)";
+                                                                    e.currentTarget.querySelector(".arrow-icon").style.opacity = "1";
+                                                                }}
+                                                                onMouseLeave={e => {
+                                                                    e.currentTarget.style.background = "transparent";
+                                                                    e.currentTarget.style.borderColor = "transparent";
+                                                                    e.currentTarget.querySelector(".arrow-icon").style.transform = "translateX(0)";
+                                                                    e.currentTarget.querySelector(".arrow-icon").style.opacity = "0.5";
+                                                                }}
+                                                            >
+                                                                <div style={iconContainerStyle("#10b981")}>
+                                                                    <Briefcase size={18} color="#34d399" />
+                                                                </div>
+                                                                <div>
+                                                                    <div style={cardTitleStyle}>
+                                                                        Job Post Parser
+                                                                        <span className="arrow-icon" style={arrowIconStyle}>→</span>
+                                                                    </div>
+                                                                    <div style={cardDescStyle}>Extract required experience, tech stack, and responsibilities.</div>
+                                                                </div>
+                                                            </Link>
+
+                                                            {/* AI Interview Prep */}
+                                                            <Link 
+                                                                href="/ai-tools/interview-generator" 
                                                                 onClick={() => setShowAiDropdown(false)}
                                                                 style={dropdownCardStyle}
                                                                 onMouseEnter={e => {
@@ -564,14 +594,74 @@ export default function Navbar() {
                                                                 }}
                                                             >
                                                                 <div style={iconContainerStyle("#f59e0b")}>
-                                                                    <FileText size={18} color="#fbbf24" />
+                                                                    <HelpCircle size={18} color="#fbbf24" />
                                                                 </div>
                                                                 <div>
                                                                     <div style={cardTitleStyle}>
-                                                                        Smart PDF Parser
+                                                                        Interview Q&A Prep
                                                                         <span className="arrow-icon" style={arrowIconStyle}>→</span>
                                                                     </div>
-                                                                    <div style={cardDescStyle}>Extract data from your current PDF resume to pre-fill templates.</div>
+                                                                    <div style={cardDescStyle}>Get role-specific questions and recommended expert answers.</div>
+                                                                </div>
+                                                            </Link>
+
+                                                            {/* Premium AI Portfolio */}
+                                                            <Link 
+                                                                href="/ai-tools/portfolio-builder" 
+                                                                onClick={() => setShowAiDropdown(false)}
+                                                                style={dropdownCardStyle}
+                                                                onMouseEnter={e => {
+                                                                    e.currentTarget.style.background = "rgba(255, 255, 255, 0.03)";
+                                                                    e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.1)";
+                                                                    e.currentTarget.querySelector(".arrow-icon").style.transform = "translateX(4px)";
+                                                                    e.currentTarget.querySelector(".arrow-icon").style.opacity = "1";
+                                                                }}
+                                                                onMouseLeave={e => {
+                                                                    e.currentTarget.style.background = "transparent";
+                                                                    e.currentTarget.style.borderColor = "transparent";
+                                                                    e.currentTarget.querySelector(".arrow-icon").style.transform = "translateX(0)";
+                                                                    e.currentTarget.querySelector(".arrow-icon").style.opacity = "0.5";
+                                                                }}
+                                                            >
+                                                                <div style={iconContainerStyle("#fb7185")}>
+                                                                    <Crown size={18} color="#fb7185" />
+                                                                </div>
+                                                                <div>
+                                                                    <div style={cardTitleStyle}>
+                                                                        Premium Portfolio
+                                                                        <span className="arrow-icon" style={arrowIconStyle}>→</span>
+                                                                    </div>
+                                                                    <div style={cardDescStyle}>Deploy a ready website with custom templates (₹499).</div>
+                                                                </div>
+                                                            </Link>
+
+                                                            {/* Public Resume Share */}
+                                                            <Link 
+                                                                href="/ai-tools/resume-sharing" 
+                                                                onClick={() => setShowAiDropdown(false)}
+                                                                style={dropdownCardStyle}
+                                                                onMouseEnter={e => {
+                                                                    e.currentTarget.style.background = "rgba(255, 255, 255, 0.03)";
+                                                                    e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.1)";
+                                                                    e.currentTarget.querySelector(".arrow-icon").style.transform = "translateX(4px)";
+                                                                    e.currentTarget.querySelector(".arrow-icon").style.opacity = "1";
+                                                                }}
+                                                                onMouseLeave={e => {
+                                                                    e.currentTarget.style.background = "transparent";
+                                                                    e.currentTarget.style.borderColor = "transparent";
+                                                                    e.currentTarget.querySelector(".arrow-icon").style.transform = "translateX(0)";
+                                                                    e.currentTarget.querySelector(".arrow-icon").style.opacity = "0.5";
+                                                                }}
+                                                            >
+                                                                <div style={iconContainerStyle("#6366f1")}>
+                                                                    <Share2 size={18} color="#818cf8" />
+                                                                </div>
+                                                                <div>
+                                                                    <div style={cardTitleStyle}>
+                                                                        Public URL Share
+                                                                        <span className="arrow-icon" style={arrowIconStyle}>→</span>
+                                                                    </div>
+                                                                    <div style={cardDescStyle}>Set custom handles, passcodes, and track access stats.</div>
                                                                 </div>
                                                             </Link>
 
@@ -989,40 +1079,58 @@ export default function Navbar() {
                                                 AI Hub Overview
                                             </Link>
                                             <Link 
-                                                href="/templates" 
+                                                href="/ai-tools/match-score" 
                                                 onClick={closeMenu} 
                                                 style={drawerSubLinkStyle}
                                                 onMouseEnter={e => e.currentTarget.style.color = "#fff"}
                                                 onMouseLeave={e => e.currentTarget.style.color = "rgba(255, 255, 255, 0.65)"}
                                             >
-                                                AI Resume Builder
+                                                Match Score Checker
                                             </Link>
                                             <Link 
-                                                href="/ats-checker" 
+                                                href="/ai-tools/keyword-optimizer" 
                                                 onClick={closeMenu} 
                                                 style={drawerSubLinkStyle}
                                                 onMouseEnter={e => e.currentTarget.style.color = "#fff"}
                                                 onMouseLeave={e => e.currentTarget.style.color = "rgba(255, 255, 255, 0.65)"}
                                             >
-                                                ATS Match Checker
+                                                Keyword Optimizer
                                             </Link>
                                             <Link 
-                                                href="/cover-letter" 
+                                                href="/ai-tools/job-analyzer" 
                                                 onClick={closeMenu} 
                                                 style={drawerSubLinkStyle}
                                                 onMouseEnter={e => e.currentTarget.style.color = "#fff"}
                                                 onMouseLeave={e => e.currentTarget.style.color = "rgba(255, 255, 255, 0.65)"}
                                             >
-                                                Cover Letter Writer
+                                                Job Post Parser
                                             </Link>
                                             <Link 
-                                                href="/builder" 
+                                                href="/ai-tools/interview-generator" 
                                                 onClick={closeMenu} 
                                                 style={drawerSubLinkStyle}
                                                 onMouseEnter={e => e.currentTarget.style.color = "#fff"}
                                                 onMouseLeave={e => e.currentTarget.style.color = "rgba(255, 255, 255, 0.65)"}
                                             >
-                                                Smart PDF Parser
+                                                Interview Q&A Prep
+                                            </Link>
+                                            <Link 
+                                                href="/ai-tools/portfolio-builder" 
+                                                onClick={closeMenu} 
+                                                style={drawerSubLinkStyle}
+                                                onMouseEnter={e => e.currentTarget.style.color = "#fff"}
+                                                onMouseLeave={e => e.currentTarget.style.color = "rgba(255, 255, 255, 0.65)"}
+                                            >
+                                                Premium Portfolio Builder
+                                            </Link>
+                                            <Link 
+                                                href="/ai-tools/resume-sharing" 
+                                                onClick={closeMenu} 
+                                                style={drawerSubLinkStyle}
+                                                onMouseEnter={e => e.currentTarget.style.color = "#fff"}
+                                                onMouseLeave={e => e.currentTarget.style.color = "rgba(255, 255, 255, 0.65)"}
+                                            >
+                                                Public URL Sharing
                                             </Link>
                                         </div>
                                     )}
@@ -1285,8 +1393,8 @@ const iconContainerStyle = (color) => ({
     width: "36px",
     height: "36px",
     borderRadius: "8px",
-    background: `rgba(${color === "#3b82f6" ? "59,130,246" : color === "#ec4899" ? "236,72,153" : color === "#10b981" ? "16,185,129" : color === "#f59e0b" ? "245,158,11" : color === "#6366f1" ? "99,102,241" : "139,92,246"}, 0.1)`,
-    border: `1px solid rgba(${color === "#3b82f6" ? "59,130,246" : color === "#ec4899" ? "236,72,153" : color === "#10b981" ? "16,185,129" : color === "#f59e0b" ? "245,158,11" : color === "#6366f1" ? "99,102,241" : "139,92,246"}, 0.2)`,
+    background: `rgba(${color === "#3b82f6" ? "59,130,246" : color === "#ec4899" ? "236,72,153" : color === "#10b981" ? "16,185,129" : color === "#f59e0b" ? "245,158,11" : color === "#fb7185" ? "251,113,133" : color === "#6366f1" ? "99,102,241" : "139,92,246"}, 0.1)`,
+    border: `1px solid rgba(${color === "#3b82f6" ? "59,130,246" : color === "#ec4899" ? "236,72,153" : color === "#10b981" ? "16,185,129" : color === "#f59e0b" ? "245,158,11" : color === "#fb7185" ? "251,113,133" : color === "#6366f1" ? "99,102,241" : "139,92,246"}, 0.2)`,
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
