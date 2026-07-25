@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import Navbar from "../../../components/Navbar";
 import Script from "next/script";
-import { Sparkles, LayoutTemplate, ShieldCheck, ArrowLeft, RefreshCw, Crown, Code, Eye, Download, Play, Save, Lock, Edit3 } from "lucide-react";
+import { Sparkles, LayoutTemplate, ShieldCheck, ArrowLeft, RefreshCw, Crown, Code, Eye, Download, Play, Save, Lock, Edit3, ExternalLink } from "lucide-react";
 import Link from "next/link";
 import { showToast } from "../../../utils/toast";
 import { subscribeToAuthChanges } from "../../../authState";
@@ -256,6 +256,30 @@ export default function PortfolioBuilderPage() {
         }
     };
 
+    // 6. Open in a new tab
+    const handleOpenInNewTab = () => {
+        if (!htmlCode) {
+            showToast("No portfolio code generated yet.", "warning");
+            return;
+        }
+        
+        try {
+            let compiledSource = htmlCode;
+            if (templateType === "dark_glass") {
+                compiledSource = compiledSource.replace("</head>", `<script src="https://cdn.tailwindcss.com"></script></head>`);
+            }
+            compiledSource = compiledSource.replace("</head>", `<style>${cssCode}</style></head>`);
+            compiledSource = compiledSource.replace("</body>", `<script>${jsCode}</script></body>`);
+
+            const blob = new Blob([compiledSource], { type: "text/html" });
+            const url = URL.createObjectURL(blob);
+            window.open(url, "_blank");
+        } catch (err) {
+            console.error(err);
+            showToast("Failed to open portfolio in a new tab.", "error");
+        }
+    };
+
     return (
         <div style={{ minHeight: "100vh", background: "#060610", color: "#fff", position: "relative", overflowX: "hidden" }}>
             <Script src="https://checkout.razorpay.com/v1/checkout.js" strategy="lazyOnload" />
@@ -342,12 +366,12 @@ export default function PortfolioBuilderPage() {
                                     {[
                                         { id: "classic", title: "Elegant Classic", desc: "Traditional typography, clean lines, professional business style." },
                                         { id: "dark_glass", title: "Glassmorphic Dark", desc: "Vibrant gradient spotlights, translucent blur card layouts, animations." },
-                                        { id: "dev_terminal", title: "Terminal monospaced", desc: "Command-line shell prompt theme with typewriter effects." }
+                                        { id: "minimalist", title: "Sleek Minimalist", desc: "High contrast sans-serif/monospace layouts, focused whitespace, and readability." }
                                     ].map(t => (
                                         <div className="col-sm-4" key={t.id}>
                                             <div 
                                                 onClick={() => setTemplateType(t.id)}
-                                                className={`p-3 text-center h-100 cursor-pointer border rounded-12 transition-all`}
+                                                className={`p-2 text-center h-100 cursor-pointer border rounded-12 transition-all d-flex flex-column justify-content-between`}
                                                 style={{
                                                     cursor: "pointer",
                                                     background: templateType === t.id ? "rgba(245, 158, 11, 0.05)" : "rgba(255,255,255,0.01)",
@@ -355,9 +379,16 @@ export default function PortfolioBuilderPage() {
                                                     borderRadius: "12px"
                                                 }}
                                             >
-                                                <LayoutTemplate size={20} className="mb-2" style={{ color: templateType === t.id ? "#f59e0b" : "rgba(255,255,255,0.4)" }} />
-                                                <h4 className="fw-bold mb-1" style={{ fontSize: "0.85rem", color: templateType === t.id ? "#fff" : "rgba(255,255,255,0.7)" }}>{t.title}</h4>
-                                                <p className="text-white-50 small mb-0" style={{ fontSize: "0.7rem", lineHeight: "1.3" }}>{t.desc}</p>
+                                                <div>
+                                                    <div style={{ height: "65px", width: "100%", overflow: "hidden", borderRadius: "8px", marginBottom: "8px", position: "relative", border: "1px solid rgba(255,255,255,0.08)" }}>
+                                                        <img src={`/portfolio_${t.id}.png`} alt={t.title} style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "top" }} />
+                                                        <div style={{ position: "absolute", top: "5px", right: "5px", background: "rgba(0,0,0,0.6)", borderRadius: "50%", padding: "4px", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                                                            <LayoutTemplate size={11} style={{ color: templateType === t.id ? "#f59e0b" : "rgba(255,255,255,0.6)" }} />
+                                                        </div>
+                                                    </div>
+                                                    <h4 className="fw-bold mb-1" style={{ fontSize: "0.82rem", color: templateType === t.id ? "#fff" : "rgba(255,255,255,0.7)" }}>{t.title}</h4>
+                                                </div>
+                                                <p className="text-white-50 small mb-0" style={{ fontSize: "0.68rem", lineHeight: "1.3" }}>{t.desc}</p>
                                             </div>
                                         </div>
                                     ))}
@@ -406,6 +437,64 @@ export default function PortfolioBuilderPage() {
                             >
                                 View Premium Unlock Modal
                             </button>
+                        </div>
+                    )}
+
+                    {/* Template Design Showcase (Shown before generation) */}
+                    {isPortfolioPaid && !htmlCode && (
+                        <div className="mt-5 p-4 p-md-5 rounded-16" style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.05)" }}>
+                            <div className="row align-items-center g-4">
+                                <div className="col-lg-6 text-start">
+                                    <div style={{ display: "inline-flex", alignItems: "center", gap: "8px", background: "rgba(245, 158, 11, 0.12)", border: "1px solid rgba(245, 158, 11, 0.3)", borderRadius: "999px", padding: "6px 16px", fontSize: "0.72rem", color: "#fbbf24", fontWeight: "600", textTransform: "uppercase", marginBottom: "16px" }}>
+                                        Selected Design Showcase
+                                    </div>
+                                    <h3 className="fw-bold text-white mb-3" style={{ fontSize: "1.5rem" }}>
+                                        {templateType === "classic" ? "Elegant Classic Layout" : templateType === "dark_glass" ? "Glassmorphic Dark Layout" : "Sleek Minimalist Layout"}
+                                    </h3>
+                                    <p className="text-white-50 mb-4" style={{ fontSize: "0.88rem", lineHeight: "1.6" }}>
+                                        {templateType === "classic" 
+                                            ? "A polished template built with refined typography, neat layout lines, and professional space. Tailored for classic corporate jobs, executive profiles, and clean resume presentation."
+                                            : templateType === "dark_glass"
+                                            ? "A cutting-edge modern UI layout featuring frosted translucent cards, glowing gradient ambient spotlights, and sleek futuristic micro-interactions."
+                                            : "An ultra-clean layout highlighting pure content structure. Utilizes highly legible monospace font accents, crisp light-gray backgrounds, and generous spacing for maximum professional clarity."
+                                        }
+                                    </p>
+                                    <div className="d-flex flex-wrap gap-2">
+                                        {(templateType === "classic" 
+                                            ? ["ATS Friendly", "Refined Serif", "Structured Grid"] 
+                                            : templateType === "dark_glass" 
+                                            ? ["Glassmorphic Card", "Vibrant Gradients", "Tech Dark Theme"] 
+                                            : ["Crisp Typography", "JetBrains Mono", "Minimalist Clean"]
+                                        ).map(badge => (
+                                            <span key={badge} className="badge bg-white/5 border border-white/10 px-2.5 py-1.5 rounded-8 text-white-50" style={{ fontSize: "0.75rem", borderRadius: "6px" }}>
+                                                {badge}
+                                            </span>
+                                        ))}
+                                    </div>
+                                </div>
+                                <div className="col-lg-6">
+                                    <div style={{ 
+                                        borderRadius: "12px", 
+                                        overflow: "hidden", 
+                                        border: "1px solid rgba(255,255,255,0.08)",
+                                        boxShadow: "0 15px 35px rgba(0,0,0,0.5)",
+                                        background: "#080b11",
+                                        position: "relative"
+                                    }}>
+                                        <img 
+                                            src={templateType === "classic" ? "/portfolio_classic.png" : templateType === "dark_glass" ? "/portfolio_dark_glass.png" : "/portfolio_minimalist.png"} 
+                                            alt="Template Preview"
+                                            style={{ width: "100%", height: "260px", objectFit: "cover", objectPosition: "top" }}
+                                        />
+                                        <div style={{ 
+                                            position: "absolute", 
+                                            inset: 0, 
+                                            background: "linear-gradient(to top, rgba(6,6,16,0.9) 0%, rgba(6,6,16,0) 40%)", 
+                                            pointerEvents: "none" 
+                                        }} />
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     )}
 
@@ -466,13 +555,22 @@ export default function PortfolioBuilderPage() {
                                     <span className="text-white-50 d-inline-flex align-items-center gap-1.5" style={{ fontSize: "0.8rem" }}>
                                         <Eye size={14} className="text-indigo-400" /> Interactive Live Preview
                                     </span>
-                                    <button 
-                                        onClick={handleDownloadZip}
-                                        className="btn btn-sm btn-gradient-premium d-flex align-items-center gap-2 px-4 py-2"
-                                        style={{ borderRadius: "8px", fontSize: "0.85rem", background: "linear-gradient(135deg, #10b981, #059669)", border: "none" }}
-                                    >
-                                        <Download size={14} /> Download ZIP Code
-                                    </button>
+                                    <div className="d-flex gap-2">
+                                        <button 
+                                            onClick={handleOpenInNewTab}
+                                            className="btn btn-sm btn-outline-light d-flex align-items-center gap-2 px-3 py-2"
+                                            style={{ borderRadius: "8px", fontSize: "0.85rem", border: "1px solid rgba(255,255,255,0.15)", background: "rgba(255,255,255,0.03)", color: "#fff" }}
+                                        >
+                                            <ExternalLink size={14} className="text-indigo-300" /> Open in New Tab
+                                        </button>
+                                        <button 
+                                            onClick={handleDownloadZip}
+                                            className="btn btn-sm btn-gradient-premium d-flex align-items-center gap-2 px-4 py-2"
+                                            style={{ borderRadius: "8px", fontSize: "0.85rem", background: "linear-gradient(135deg, #10b981, #059669)", border: "none" }}
+                                        >
+                                            <Download size={14} /> Download ZIP Code
+                                        </button>
+                                    </div>
                                 </div>
 
                                 <div style={{ border: "1px solid rgba(255,255,255,0.08)", borderRadius: "16px", overflow: "hidden", height: "460px", background: "#fff" }}>

@@ -1,19 +1,19 @@
 export const metadata = {
-    title: "Free AI ATS Resume Checker & Score Analyzer | CVGrid",
-    description: "Check your resume's ATS score for free. Our AI-powered ATS checker scans formatting, keywords, sections, and length to help you optimize your CV for job applications.",
+    title: "Free AI ATS Resume Checker & Scorer | Best ATS Score Analyzer – CVGrid",
+    description: "Check your resume's ATS score for free. Our AI-powered ATS checker and scorer scans formatting, keywords, sections, and length to help you optimize your CV for job applications.",
     keywords: [
-        "free resume checker", "ATS score checker", "ATS resume scanner",
-        "check resume ATS compatibility", "free ATS resume analyzer",
-        "beat applicant tracking system", "resume keyword match tool",
-        "best free ATS checker 2026", "AI resume checker",
-        "resume checker online free", "applicant tracking system score",
+        "best ats scorer", "best ats score checker", "free resume checker", 
+        "ATS score checker", "ATS resume scanner", "check resume ATS compatibility", 
+        "free ATS resume analyzer", "beat applicant tracking system", "resume keyword match tool",
+        "best free ATS checker 2026", "AI resume checker", "resume checker online free", 
+        "applicant tracking system score"
     ],
     alternates: {
         canonical: "/ats-checker",
     },
     openGraph: {
-        title: "Free AI ATS Resume Checker & Score Analyzer | CVGrid",
-        description: "Check your resume's ATS score for free. Get detailed formatting feedback and keyword match scores instantly.",
+        title: "Free AI ATS Resume Checker & Scorer | Best ATS Score Analyzer – CVGrid",
+        description: "Check your resume's ATS score for free with the best ATS scorer. Get detailed formatting feedback and keyword match scores instantly.",
         url: "https://cvgrid.in/ats-checker",
         type: "website",
         images: [
@@ -21,14 +21,14 @@ export const metadata = {
                 url: "https://cvgrid.in/logo.png",
                 width: 1200,
                 height: 630,
-                alt: "CVGrid ATS Resume Checker",
+                alt: "CVGrid ATS Resume Checker & Scorer",
             },
         ],
     },
     twitter: {
         card: "summary_large_image",
-        title: "Free AI ATS Resume Checker & Score Analyzer – CVGrid",
-        description: "Analyze your resume against ATS tracking systems for free. Optimize keywords and layout instantly.",
+        title: "Free AI ATS Resume Checker & Scorer | Best ATS Score Analyzer – CVGrid",
+        description: "Check your resume's ATS score for free with the best ATS scorer. Optimize keywords and layout instantly.",
         images: ["https://cvgrid.in/logo.png"],
     },
 };
@@ -39,8 +39,8 @@ export default function ATSCheckerLayout({ children }) {
         "@type": "WebPage",
         "@id": "https://cvgrid.in/ats-checker/#page",
         "url": "https://cvgrid.in/ats-checker",
-        "name": "Free AI ATS Resume Checker & Score Analyzer – CVGrid",
-        "description": "Check your resume's ATS score for free. Our AI-powered ATS checker scans formatting, keywords, sections, and length to help you optimize your CV for job applications.",
+        "name": "Free AI ATS Resume Checker & Scorer | Best ATS Score Analyzer – CVGrid",
+        "description": "Check your resume's ATS score for free with the best ATS scorer. Our AI-powered ATS checker and scorer scans formatting, keywords, sections, and length to help you optimize your CV for job applications.",
         "breadcrumb": {
             "@type": "BreadcrumbList",
             "itemListElement": [

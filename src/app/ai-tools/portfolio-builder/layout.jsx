@@ -1,7 +1,8 @@
 export const metadata = {
-    title: "AI Portfolio Website Generator & Code Downloader | CVGrid",
-    description: "Generate stunning premium personal portfolios with custom animations, templates, and download the full source code for hosting. Elevate your online presence.",
+    title: "Affordable AI Portfolio Builder & Website Generator | CVGrid",
+    description: "Generate stunning personal portfolios with custom layouts at a fraction of the cost. The most affordable, less expensive portfolio builder to generate and download full source code for hosting.",
     keywords: [
+        "less expensive portfolio builder", "affordable portfolio builder", "cheap portfolio builder",
         "portfolio builder", "AI portfolio", "download portfolio code",
         "developer portfolio generator", "resume website builder", "portfolio layout",
     ],
@@ -9,8 +10,8 @@ export const metadata = {
         canonical: "/ai-tools/portfolio-builder",
     },
     openGraph: {
-        title: "AI Portfolio Website Generator & Code Downloader | CVGrid",
-        description: "Generate stunning premium personal portfolios with custom animations, templates, and download the full source code for hosting. Elevate your online presence.",
+        title: "Affordable AI Portfolio Builder & Website Generator | CVGrid",
+        description: "Generate stunning personal portfolios with custom layouts at a fraction of the cost. The most affordable, less expensive portfolio builder.",
         url: "https://cvgrid.in/ai-tools/portfolio-builder",
         type: "website",
         images: [
@@ -18,14 +19,14 @@ export const metadata = {
                 url: "https://cvgrid.in/logo.png",
                 width: 1200,
                 height: 630,
-                alt: "CVGrid AI Portfolio Website Builder",
+                alt: "CVGrid Affordable AI Portfolio Website Builder",
             },
         ],
     },
     twitter: {
         card: "summary_large_image",
-        title: "AI Portfolio Website Generator & Code Downloader | CVGrid",
-        description: "Generate stunning premium personal portfolios with custom animations, templates, and download the full source code for hosting. Elevate your online presence.",
+        title: "Affordable AI Portfolio Builder & Website Generator | CVGrid",
+        description: "Generate stunning personal portfolios with custom layouts at a fraction of the cost. The most affordable, less expensive portfolio builder.",
         images: ["https://cvgrid.in/logo.png"],
     },
 };
@@ -36,8 +37,8 @@ export default function PortfolioBuilderLayout({ children }) {
         "@type": "WebPage",
         "@id": "https://cvgrid.in/ai-tools/portfolio-builder/#page",
         "url": "https://cvgrid.in/ai-tools/portfolio-builder",
-        "name": "AI Portfolio Website Generator & Code Downloader – CVGrid",
-        "description": "Generate stunning premium personal portfolios with custom animations, templates, and download the full source code.",
+        "name": "Affordable AI Portfolio Builder & Website Generator | CVGrid",
+        "description": "Generate stunning personal portfolios with custom layouts at a fraction of the cost. The most affordable, less expensive portfolio builder.",
         "breadcrumb": {
             "@type": "BreadcrumbList",
             "itemListElement": [

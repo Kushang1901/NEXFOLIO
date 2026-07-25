@@ -24,7 +24,7 @@ const spaceGrotesk = Space_Grotesk({
 // ─────────────────────────────────────────────
 const BASE_URL = "https://cvgrid.in";
 const SITE_NAME = "CVGrid";
-const SITE_TITLE = "Best Free AI Resume Builder & CV Maker Online – CVGrid";
+const SITE_TITLE = "CVGrid: Best Free AI Resume Builder & CV Maker Online";
 const SITE_DESC =
     "Build your career with CVGrid, the best free AI resume builder and professional CV maker online. Create an ATS-friendly resume in minutes. Choose from 18+ templates, generate AI content, and download instantly.";
 const OG_IMAGE = `${BASE_URL}/og-image.png`;
@@ -710,6 +710,20 @@ export default function RootLayout({ children }) {
                 <meta property="og:price:amount" content="0" />
                 <meta property="og:price:currency" content="USD" />
                 <meta property="og:availability" content="instock" />
+
+                {/* ── Google Search Site Name Structured Data ── */}
+                <script
+                    type="application/ld+json"
+                    dangerouslySetInnerHTML={{
+                        __html: JSON.stringify({
+                            "@context": "https://schema.org",
+                            "@type": "WebSite",
+                            "name": "CVGrid",
+                            "alternateName": ["CVGrid AI", "CV Grid"],
+                            "url": "https://cvgrid.in/"
+                        })
+                    }}
+                />
 
                 {/* ── Structured Data: JSON-LD ────────────────── */}
                 <script

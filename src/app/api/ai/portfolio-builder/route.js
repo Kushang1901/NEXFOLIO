@@ -49,7 +49,7 @@ Selected Template Type: ${templateType || "modern"}
 Instructions for the template type:
 1. "classic": Make it extremely elegant, use refined serif headers (like Playfair Display), clean borders, ample spacing, standard profile grids, perfect mobile responsiveness, and light/medium colors.
 2. "dark_glass" (or "modern"): Make a stunning, modern dark-theme website with glassmorphism (backdrop-filter: blur), vibrant gradient highlights (indigo to purple), hover animations, and a smooth scrolling layout.
-3. "dev_terminal": Make a retro-developer monospace terminal layout (green/cyan text on #0f131a background), mimicking a shell interface. Include terminal prompts for sections (e.g. "guest@cvgrid:~$ cat experience.txt"), a blinking cursor, and tab/sidebar navigation.
+3. "minimalist": Make a sleek, modern minimalist layout with clean sans-serif/monospace typography (like Inter and JetBrains Mono), plenty of whitespace, high-contrast dark gray text on a crisp light gray background (#f8fafc), thin borders, and structured section cards. No gradients or shadows, just pure clean layout focus.
 
 Ensure the generated code includes:
 - An introduction / hero section with name and role.

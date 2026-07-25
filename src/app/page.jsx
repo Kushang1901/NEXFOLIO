@@ -437,8 +437,11 @@ export default function HomePage() {
                                         </div>
                                         <div className="space-y-4">
                                             <div className="h-4 w-3/4 bg-white/5 rounded-full"></div>
-                                            <div className="h-32 w-full bg-white/5 rounded-xl border border-dashed border-white/10 flex items-center justify-center">
-                                                <span className="material-symbols-outlined text-[#c0c1ff]/40 text-4xl">auto_awesome</span>
+                                            <div className="h-32 w-full bg-white/5 rounded-xl border border-dashed border-white/10 flex flex-col items-center justify-center gap-2.5 p-4 text-center">
+                                                <span className="material-symbols-outlined text-[#c0c1ff]/50 text-2xl animate-pulse">auto_awesome</span>
+                                                <p className="text-[#c0c1ff] font-semibold text-[11px] md:text-[12px] leading-relaxed max-w-[200px]" style={{ fontFamily: "var(--font-space-grotesk), sans-serif", letterSpacing: "0.02em" }}>
+                                                    "You define your future. We help you build it."
+                                                </p>
                                             </div>
                                             <div className="space-y-2">
                                                 <div className="h-3 w-full bg-white/5 rounded-full"></div>
@@ -502,9 +505,9 @@ export default function HomePage() {
                                 <div className="p-4 rounded-xl bg-[#c0c1ff]/10 text-[#c0c1ff]">
                                     <span className="material-symbols-outlined text-[32px]">psychology</span>
                                 </div>
-                                <h3 className="text-2xl font-bold text-white" style={{ fontFamily: "var(--font-space-grotesk), sans-serif" }}>AI Resume Writer</h3>
+                                <h3 className="text-2xl font-bold text-white" style={{ fontFamily: "var(--font-space-grotesk), sans-serif" }}>Best Free AI Resume Maker</h3>
                                 <p className="text-[#c7c4d7] leading-relaxed" style={{ fontFamily: "var(--font-inter), sans-serif" }}>
-                                    Generate impactful summaries and action-oriented bullet points using models trained on successful job applications.
+                                    Generate impactful summaries and action-oriented bullet points with the best free AI resume maker online.
                                 </p>
                                 <button onClick={handleStartResume} className="mt-4 flex items-center gap-2 text-[#c0c1ff] font-semibold bg-transparent border-0 p-0 group-hover:gap-4 transition-all" style={{ fontFamily: "var(--font-inter), sans-serif" }}>
                                     Start Writing <span className="material-symbols-outlined text-[18px]">east</span>
@@ -516,9 +519,9 @@ export default function HomePage() {
                                 <div className="p-4 rounded-xl bg-[#c0c1ff]/10 text-[#c0c1ff]">
                                     <span className="material-symbols-outlined text-[32px]">fact_check</span>
                                 </div>
-                                <h3 className="text-2xl font-bold text-white" style={{ fontFamily: "var(--font-space-grotesk), sans-serif" }}>ATS Match Checker</h3>
+                                <h3 className="text-2xl font-bold text-white" style={{ fontFamily: "var(--font-space-grotesk), sans-serif" }}>Best ATS Scorer & Match Checker</h3>
                                 <p className="text-[#c7c4d7] leading-relaxed" style={{ fontFamily: "var(--font-inter), sans-serif" }}>
-                                    Compare your resume against descriptions and identify keyword gaps with our precision engine.
+                                    Compare your resume against descriptions and identify keyword gaps with our precision best ATS scorer.
                                 </p>
                                 <Link href="/ats-checker" className="mt-4 flex items-center gap-2 text-[#c0c1ff] font-semibold group-hover:gap-4 transition-all text-decoration-none" style={{ fontFamily: "var(--font-inter), sans-serif" }}>
                                     Scan My CV <span className="material-symbols-outlined text-[18px]">east</span>
@@ -544,9 +547,9 @@ export default function HomePage() {
                                 <div className="p-4 rounded-xl bg-[#c0c1ff]/10 text-[#c0c1ff]">
                                     <span className="material-symbols-outlined text-[32px]">percent</span>
                                 </div>
-                                <h3 className="text-2xl font-bold text-white" style={{ fontFamily: "var(--font-space-grotesk), sans-serif" }}>ATS Overlap Score</h3>
+                                <h3 className="text-2xl font-bold text-white" style={{ fontFamily: "var(--font-space-grotesk), sans-serif" }}>ATS Keywords Highlighter & Score</h3>
                                 <p className="text-[#c7c4d7] leading-relaxed" style={{ fontFamily: "var(--font-inter), sans-serif" }}>
-                                    Find match percentages, missing ATS keywords, and get suggestions to optimize your resume bullets.
+                                    Find match percentages, highlight missing ATS keywords, and get recommendations to optimize your CV.
                                 </p>
                                 <Link href="/ai-tools/match-score" className="mt-4 flex items-center gap-2 text-[#c0c1ff] font-semibold group-hover:gap-4 transition-all text-decoration-none" style={{ fontFamily: "var(--font-inter), sans-serif" }}>
                                     Get Match Score <span className="material-symbols-outlined text-[18px]">east</span>
@@ -558,9 +561,9 @@ export default function HomePage() {
                                 <div className="p-4 rounded-xl bg-[#c0c1ff]/10 text-[#c0c1ff]">
                                     <span className="material-symbols-outlined text-[32px]">language</span>
                                 </div>
-                                <h3 className="text-2xl font-bold text-white" style={{ fontFamily: "var(--font-space-grotesk), sans-serif" }}>AI Portfolio Builder</h3>
+                                <h3 className="text-2xl font-bold text-white" style={{ fontFamily: "var(--font-space-grotesk), sans-serif" }}>Affordable AI Portfolio Builder</h3>
                                 <p className="text-[#c7c4d7] leading-relaxed" style={{ fontFamily: "var(--font-inter), sans-serif" }}>
-                                    Convert your resume into a stunning, responsive portfolio website and download the source ZIP.
+                                    Convert your resume into a website. The most affordable, less expensive portfolio builder to download source code.
                                 </p>
                                 <Link href="/ai-tools/portfolio-builder" className="mt-4 flex items-center gap-2 text-[#c0c1ff] font-semibold group-hover:gap-4 transition-all text-decoration-none" style={{ fontFamily: "var(--font-inter), sans-serif" }}>
                                     Build Portfolio <span className="material-symbols-outlined text-[18px]">east</span>
