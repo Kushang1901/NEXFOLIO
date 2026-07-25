@@ -113,16 +113,16 @@ export default function Signup() {
 
                     // 🔴 ALREADY REGISTERED USER
                     if (!data.isNewUser) {
-                        console.log("🔍 SIGNUP PAGE: User already exists, redirecting to /builder...");
+                        console.log("🔍 SIGNUP PAGE: User already exists, redirecting to /...");
                         showToast("Welcome back!", "success");
-                        router.push("/builder");
+                        router.push("/");
                         return;
                     }
 
                     // 🟢 NEW USER
-                    console.log("🔍 SIGNUP PAGE: Signup successful, redirecting to /builder...");
+                    console.log("🔍 SIGNUP PAGE: Signup successful, redirecting to /...");
                     showToast("Signup successful!");
-                    router.push("/builder");
+                    router.push("/");
                 } catch (err) {
                     console.error("Google signup redirect error:", err);
                     showToast(err.message || "Signup failed. Please try again.", "error");
@@ -149,7 +149,7 @@ export default function Signup() {
             window.dispatchEvent(new Event("auth-state-change"));
         }
         showToast("Signup successful!");
-        router.push("/builder");
+        router.push("/");
     };
 
     // MANUAL EMAIL/PASSWORD SIGNUP
@@ -215,12 +215,12 @@ export default function Signup() {
                 const data = await response.json();
                 if (!data.isNewUser) {
                     showToast("Welcome back!", "success");
-                    router.push("/builder");
+                    router.push("/");
                     return;
                 }
 
                 showToast("Signup successful!");
-                router.push("/builder");
+                router.push("/");
             } finally {
                 apiCallingRef.current.delete(formData.email);
             }
@@ -257,6 +257,7 @@ export default function Signup() {
     const handleGithubSignup = async () => {
         try {
             const githubProvider = new GithubAuthProvider();
+            githubProvider.addScope("user:email");
             await signInWithRedirect(auth, githubProvider);
         } catch (err) {
             console.error("Firebase GitHub Signup Error:", err);
@@ -298,7 +299,7 @@ export default function Signup() {
 
         if (apiCallingRef.current.has(email)) {
             showToast("Signup successful!");
-            router.push("/builder");
+            router.push("/");
             return;
         }
         apiCallingRef.current.add(email);
@@ -326,7 +327,7 @@ export default function Signup() {
             const data = await response.json();
             if (!data.isNewUser) {
                 showToast("Welcome back!", "success");
-                router.push("/builder");
+                router.push("/");
                 return;
             }
 
@@ -344,7 +345,7 @@ export default function Signup() {
             }
 
             showToast("Signup successful!");
-            router.push("/builder");
+            router.push("/");
         } catch (err) {
             console.error("LinkedIn Signup Error:", err);
             try {
