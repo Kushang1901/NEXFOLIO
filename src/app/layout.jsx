@@ -205,7 +205,7 @@ export const metadata = {
 
     // ── Verification tokens ───────────────────
     verification: {
-        google: "add-your-google-search-console-token-here",
+        google: "ZN33n6Kcv99nzcC0QejmpdyibLv0xQP7mOR8vtqFwgs",
         yandex: "add-your-yandex-verification-token-here",
         bing: "add-your-bing-webmaster-token-here",
         other: {
@@ -217,7 +217,7 @@ export const metadata = {
     // ── Miscellaneous Next.js metadata ────────
     other: {
         // Search Console legacy
-        "google-site-verification": "add-your-google-search-console-token-here",
+        "google-site-verification": "ZN33n6Kcv99nzcC0QejmpdyibLv0xQP7mOR8vtqFwgs",
         // Referrer policy
         referrer: "origin-when-cross-origin",
         // Content rating
