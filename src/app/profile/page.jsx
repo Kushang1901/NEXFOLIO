@@ -80,15 +80,17 @@ export default function Profile() {
         const confirmDelete = window.confirm("Are you sure you want to delete this resume? This action cannot be undone.");
         if (!confirmDelete) return;
 
+        const userEmail = user.email || `github-${user.uid}@cvgrid.in`;
+
         try {
             setActionLoading(true);
-            const response = await fetch(`/api/resumes?email=${encodeURIComponent(user.email)}&id=${id}`, {
+            const response = await fetch(`/api/resumes?email=${encodeURIComponent(userEmail)}&id=${id}`, {
                 method: "DELETE"
             });
 
             if (response.ok) {
                 showToast("Resume deleted successfully!", "success");
-                await fetchUserResumes(user.email);
+                await fetchUserResumes(userEmail);
             } else {
                 showToast("Failed to delete resume.", "error");
             }
@@ -103,10 +105,11 @@ export default function Profile() {
     useEffect(() => {
         const unsubscribe = subscribeToAuthChanges(async (loggedUser) => {
             if (loggedUser) {
+                const userEmail = loggedUser.email || `github-${loggedUser.uid}@cvgrid.in`;
                 setUser(loggedUser);
                 // Fetch details from PostgreSQL
                 try {
-                    const response = await fetch(`/api/user?email=${encodeURIComponent(loggedUser.email)}`);
+                    const response = await fetch(`/api/user?email=${encodeURIComponent(userEmail)}`);
                     if (response.ok) {
                         const data = await response.json();
                         setDbUser(data);
@@ -128,7 +131,7 @@ export default function Profile() {
                 }
 
                 // Fetch resumes
-                await fetchUserResumes(loggedUser.email);
+                await fetchUserResumes(userEmail);
 
                 setLoading(false);
             } else {
@@ -215,7 +218,7 @@ export default function Profile() {
 
         setActionLoading(true);
         try {
-            const userEmail = user?.email;
+            const userEmail = user?.email || (user?.uid ? `github-${user.uid}@cvgrid.in` : null);
 
             // 1. Delete from DB
             if (userEmail) {

@@ -360,15 +360,16 @@ export default function ResumeBuilder() {
     useEffect(() => {
         let activeEmail = null;
         const unsubscribe = subscribeToAuthChanges(async (user) => {
-            if (user && user.email) {
-                activeEmail = user.email;
-                setUserEmail(user.email);
+            if (user) {
+                const emailVal = user.email || `github-${user.uid}@cvgrid.in`;
+                activeEmail = emailVal;
+                setUserEmail(emailVal);
 
                 const params = new URLSearchParams(window.location.search);
                 const id = params.get("id");
 
                 if (id) {
-                    await loadResumeFromDb(user.email, id);
+                    await loadResumeFromDb(emailVal, id);
                 } else {
                     const savedData = sessionStorage.getItem("resumeData");
                     if (savedData) {

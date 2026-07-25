@@ -24,8 +24,7 @@ export default function Login() {
         password: "",
     });
     const [showPassword, setShowPassword] = useState(false);
-    const [showLinkedInModal, setShowLinkedInModal] = useState(false);
-    const [linkedInForm, setLinkedInForm] = useState({ email: "", fullName: "" });
+
 
     const [loading, setLoading] = useState(false);
     const [tailwindLoaded, setTailwindLoaded] = useState(true);
@@ -233,78 +232,7 @@ export default function Login() {
         }
     };
 
-    // LINKEDIN LOGIN (SIMULATED OAUTH MODAL)
-    const handleLinkedInLogin = () => {
-        setShowLinkedInModal(true);
-    };
 
-    const handleLinkedInSubmit = async (e) => {
-        e.preventDefault();
-        setShowLinkedInModal(false);
-        setLoading(true);
-
-        const email = linkedInForm.email || "linkedin-demo@cvgrid.in";
-        const fullName = linkedInForm.fullName || "LinkedIn Demo User";
-
-        try {
-            // Check if user exists in database
-            const checkRes = await fetch(`/api/user?email=${encodeURIComponent(email)}&checkExistenceOnly=true`);
-            const checkData = await checkRes.json().catch(() => ({}));
-            if (!checkRes.ok || !checkData.exists) {
-                showToast("Account does not exist. Please sign up first!");
-                router.push("/signup");
-                setLoading(false);
-                return;
-            }
-
-            const recaptchaToken = await getRecaptchaToken("LOGIN").catch(() => "MOCK_TOKEN");
-            const response = await fetch("/api/login", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    firstName: fullName.split(" ")[0] || "",
-                    lastName: fullName.split(" ").slice(1).join(" ") || "User",
-                    email: email,
-                    provider: "linkedin",
-                    photoUrl: "",
-                    recaptchaToken
-                })
-            });
-
-            const data = response.ok ? await response.json().catch(() => ({})) : {};
-
-            // Set mock login state
-            const mockUser = {
-                uid: "mock_user_" + Math.floor(Math.random() * 100000),
-                email: email,
-                displayName: fullName,
-                photoURL: null,
-                emailVerified: true,
-                token: data.token
-            };
-            if (typeof window !== "undefined") {
-                localStorage.setItem("mock_user", JSON.stringify(mockUser));
-                window.dispatchEvent(new Event("auth-state-change"));
-            }
-
-            showToast("Login successful!");
-            router.push("/");
-        } catch (error) {
-            console.error("LinkedIn Login error:", error);
-            try {
-                const tokenRes = await fetch("/api/auth/mock-token", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ email })
-                }).then(r => r.json()).catch(() => ({}));
-                loginWithMockUser(email, fullName, tokenRes.token);
-            } catch (tokErr) {
-                loginWithMockUser(email, fullName);
-            }
-        } finally {
-            setLoading(false);
-        }
-    };
 
 
 
@@ -419,18 +347,7 @@ export default function Login() {
                                         <span className="font-semibold">Login with GitHub</span>
                                     </button>
                                     
-                                    {/* LinkedIn */}
-                                    <button 
-                                        onClick={handleLinkedInLogin}
-                                        className="w-full flex items-center justify-center gap-3 h-12 bg-[#0A66C2] hover:bg-[#0A66C2]/90 text-white font-medium text-sm rounded-lg transition-all duration-200 shadow-sm cursor-pointer" 
-                                        type="button"
-                                        suppressHydrationWarning
-                                    >
-                                        <svg className="w-5 h-5 fill-current flex-shrink-0" viewBox="0 0 24 24">
-                                            <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>
-                                        </svg>
-                                        <span className="font-semibold">Login with LinkedIn</span>
-                                    </button>
+
                                 </div>
                             </div>
 
@@ -531,59 +448,7 @@ export default function Login() {
                 <Footer />
             </div>
 
-            {/* LinkedIn Simulated Modal */}
-            {showLinkedInModal && (
-                <div className="fixed inset-0 flex items-center justify-center bg-black/60 backdrop-blur-sm z-[9999]">
-                    <div className="bg-[#1C2027] border border-[#3C404F] w-full max-w-sm rounded-xl p-6 shadow-2xl animate-fade-in text-white mx-4 text-left">
-                        <div className="flex flex-col items-center mb-6">
-                            <svg className="w-10 h-10 fill-[#0A66C2] mb-3" viewBox="0 0 24 24">
-                                <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>
-                            </svg>
-                            <h2 className="text-lg font-bold text-center">Login with LinkedIn</h2>
-                            <p className="text-xs text-gray-400 mt-1 text-center font-sans">Simulated secure authorization for development</p>
-                        </div>
-                        <form onSubmit={handleLinkedInSubmit} className="space-y-4 font-sans text-left">
-                            <div className="space-y-1">
-                                <label className="block text-xs font-semibold text-gray-300 text-left">LinkedIn Name / Display Name</label>
-                                <input 
-                                    type="text" 
-                                    className="w-full h-10 px-3 bg-white text-black rounded border border-gray-600 focus:outline-none focus:ring-2 focus:ring-[#0A66C2] font-sans" 
-                                    placeholder="Jane Doe" 
-                                    value={linkedInForm.fullName}
-                                    onChange={(e) => setLinkedInForm(prev => ({ ...prev, fullName: e.target.value }))}
-                                    required
-                                />
-                            </div>
-                            <div className="space-y-1">
-                                <label className="block text-xs font-semibold text-gray-300 text-left">LinkedIn Email</label>
-                                <input 
-                                    type="email" 
-                                    className="w-full h-10 px-3 bg-white text-black rounded border border-gray-600 focus:outline-none focus:ring-2 focus:ring-[#0A66C2] font-sans" 
-                                    placeholder="jane.doe@linkedin.com" 
-                                    value={linkedInForm.email}
-                                    onChange={(e) => setLinkedInForm(prev => ({ ...prev, email: e.target.value }))}
-                                    required
-                                />
-                            </div>
-                            <div className="flex gap-3 pt-2">
-                                <button 
-                                    type="button" 
-                                    onClick={() => setShowLinkedInModal(false)}
-                                    className="flex-1 h-10 bg-gray-700 hover:bg-gray-600 rounded text-sm font-semibold transition-colors cursor-pointer"
-                                >
-                                    Cancel
-                                </button>
-                                <button 
-                                    type="submit" 
-                                    className="flex-1 h-10 bg-[#0A66C2] hover:bg-[#0A66C2]/90 rounded text-sm font-semibold transition-colors cursor-pointer"
-                                >
-                                    Authorize
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            )}
+
         </>
     );
 }

@@ -43,14 +43,15 @@ export default function Navbar() {
         const unsubscribe = subscribeToAuthChanges(async (loggedUser) => {
             setUser(loggedUser);
             if (loggedUser) {
-                activeEmail = loggedUser.email;
-                setDisplayName(loggedUser.displayName || loggedUser.email);
+                const userEmail = loggedUser.email || `github-${loggedUser.uid}@cvgrid.in`;
+                activeEmail = userEmail;
+                setDisplayName(loggedUser.displayName || userEmail);
                 setPhotoUrl(loggedUser.photoURL || "");
                 try {
-                    const response = await fetch(`/api/user?email=${encodeURIComponent(loggedUser.email)}`);
+                    const response = await fetch(`/api/user?email=${encodeURIComponent(userEmail)}`);
                     if (response.ok) {
                         const data = await response.json();
-                        if (activeEmail === loggedUser.email) {
+                        if (activeEmail === userEmail) {
                             if (data.firstName || data.lastName) setDisplayName(`${data.firstName} ${data.lastName}`.trim());
                             if (data.photoUrl) setPhotoUrl(data.photoUrl);
                         }

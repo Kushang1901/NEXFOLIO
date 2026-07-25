@@ -179,9 +179,10 @@ export default function MyResumesPage() {
             if (!loggedUser) {
                 router.push("/?triggerAuth=true");
             } else {
+                const userEmail = loggedUser.email || `github-${loggedUser.uid}@cvgrid.in`;
                 try {
                     setLoading(true);
-                    const res = await fetch(`/api/resumes?email=${encodeURIComponent(loggedUser.email)}`);
+                    const res = await fetch(`/api/resumes?email=${encodeURIComponent(userEmail)}`);
                     if (res.ok) {
                         const data = await res.json();
                         setResumes(data);
@@ -201,8 +202,9 @@ export default function MyResumesPage() {
 
     const handleDelete = async (id) => {
         if (!user) return;
+        const userEmail = user.email || `github-${user.uid}@cvgrid.in`;
         try {
-            const res = await fetch(`/api/resumes?id=${id}&email=${encodeURIComponent(user.email)}`, {
+            const res = await fetch(`/api/resumes?id=${id}&email=${encodeURIComponent(userEmail)}`, {
                 method: "DELETE"
             });
             if (res.ok) {

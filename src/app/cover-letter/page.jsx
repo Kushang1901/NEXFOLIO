@@ -55,10 +55,11 @@ export default function CoverLetterGenerator() {
 
     useEffect(() => {
         const unsubscribe = subscribeToAuthChanges(async (user) => {
-            if (user && user.email) {
-                setUserEmail(user.email);
+            if (user) {
+                const emailVal = user.email || `github-${user.uid}@cvgrid.in`;
+                setUserEmail(emailVal);
                 setLoadingAuth(false);
-                await fetchSavedResumes(user.email);
+                await fetchSavedResumes(emailVal);
                 await fetchSavedLetters();
                 loadInitialResumeData();
             } else {
