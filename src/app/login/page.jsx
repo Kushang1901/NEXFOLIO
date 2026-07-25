@@ -89,29 +89,41 @@ export default function Login() {
 
     // HANDLE REDIRECT RESULT & AUTH STATE CHANGES
     useEffect(() => {
+        console.log("🔍 LOGIN PAGE: useEffect running...");
+
         // Catch any errors from full-page redirect authentication (e.g. account conflicts)
-        getRedirectResult(auth).catch((error) => {
-            console.error("Firebase Redirect Auth Error:", error);
-            if (error.code === "auth/account-exists-with-different-credential") {
-                showToast("An account already exists with this email address using a different sign-in method. Please login using that provider.", "error");
-            } else if (error.code !== "auth/popup-closed-by-user" && error.code !== "auth/cancelled-popup-request") {
-                showToast("Authentication failed: " + (error.message || error), "error");
-            }
-        });
+        getRedirectResult(auth)
+            .then((result) => {
+                console.log("🔍 LOGIN PAGE: getRedirectResult resolved with:", result);
+            })
+            .catch((error) => {
+                console.error("🔍 LOGIN PAGE: Firebase Redirect Auth Error:", error);
+                if (error.code === "auth/account-exists-with-different-credential") {
+                    showToast("An account already exists with this email address using a different sign-in method. Please login using that provider.", "error");
+                } else if (error.code !== "auth/popup-closed-by-user" && error.code !== "auth/cancelled-popup-request") {
+                    showToast("Authentication failed: " + (error.message || error), "error");
+                }
+            });
 
         const unsubscribe = subscribeToAuthChanges(async (user) => {
+            console.log("🔍 LOGIN PAGE: subscribeToAuthChanges fired with user:", user);
             if (user) {
+                console.log("🔍 LOGIN PAGE: user email =", user.email, "uid =", user.uid);
                 if (user.uid === "mock_user_12345") {
+                    console.log("🔍 LOGIN PAGE: user is mock user, redirecting to /...");
                     router.push("/");
                     return;
                 }
 
                 setLoading(true);
+                console.log("🔍 LOGIN PAGE: Checking database existence for:", user.email);
                 try {
                     // Double check database existence to handle Google sign-ins cleanly
                     const checkRes = await fetch(`/api/user?email=${encodeURIComponent(user.email)}&checkExistenceOnly=true`);
                     const checkData = await checkRes.json().catch(() => ({}));
+                    console.log("🔍 LOGIN PAGE: checkRes ok =", checkRes.ok, "checkData exists =", checkData.exists);
                     if (!checkRes.ok || !checkData.exists) {
+                        console.log("🔍 LOGIN PAGE: User does not exist in DB, signing out...");
                         const { signOut } = await import("firebase/auth");
                         await signOut(auth);
                         if (typeof window !== "undefined") {
@@ -123,6 +135,7 @@ export default function Login() {
                         return;
                     }
 
+                    console.log("🔍 LOGIN PAGE: Proceeding to fetch /api/login...");
                     const recaptchaToken = await getRecaptchaToken("LOGIN").catch(() => "MOCK_TOKEN");
                     const rawProvider = user.providerData[0]?.providerId;
                     const provider = rawProvider === "github.com" ? "github" : "google";
@@ -139,6 +152,7 @@ export default function Login() {
                         })
                     });
                     
+                    console.log("🔍 LOGIN PAGE: Login successful, redirecting to /...");
                     showToast("Login successful!");
                     router.push("/");
                 } catch (error) {

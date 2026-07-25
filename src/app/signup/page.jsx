@@ -52,22 +52,40 @@ export default function Signup() {
 
     // HANDLE REDIRECT RESULT & AUTH STATE CHANGES
     useEffect(() => {
+        console.log("🔍 SIGNUP PAGE: useEffect running...");
+
         // Catch any errors from full-page redirect authentication (e.g. account conflicts)
-        getRedirectResult(auth).catch((error) => {
-            console.error("Firebase Redirect Auth Error:", error);
-            if (error.code === "auth/account-exists-with-different-credential") {
-                showToast("An account already exists with this email address using a different sign-in method. Please login using that provider.", "error");
-            } else if (error.code !== "auth/popup-closed-by-user" && error.code !== "auth/cancelled-popup-request") {
-                showToast("Authentication failed: " + (error.message || error), "error");
-            }
-        });
+        getRedirectResult(auth)
+            .then((result) => {
+                console.log("🔍 SIGNUP PAGE: getRedirectResult resolved with:", result);
+            })
+            .catch((error) => {
+                console.error("🔍 SIGNUP PAGE: Firebase Redirect Auth Error:", error);
+                if (error.code === "auth/account-exists-with-different-credential") {
+                    showToast("An account already exists with this email address using a different sign-in method. Please login using that provider.", "error");
+                } else if (error.code !== "auth/popup-closed-by-user" && error.code !== "auth/cancelled-popup-request") {
+                    showToast("Authentication failed: " + (error.message || error), "error");
+                }
+            });
 
         const unsubscribe = subscribeToAuthChanges(async (user) => {
+            console.log("🔍 SIGNUP PAGE: subscribeToAuthChanges fired with user:", user);
             if (user) {
-                if (isGoogleSignupRef.current) return;
-                if (apiCallingRef.current.has(user.email)) return;
+                console.log("🔍 SIGNUP PAGE: user email =", user.email, "uid =", user.uid);
+                console.log("🔍 SIGNUP PAGE: isGoogleSignupRef =", isGoogleSignupRef.current);
+                console.log("🔍 SIGNUP PAGE: apiCallingRef has =", apiCallingRef.current.has(user.email));
+
+                if (isGoogleSignupRef.current) {
+                    console.log("🔍 SIGNUP PAGE: isGoogleSignupRef is true, returning early!");
+                    return;
+                }
+                if (apiCallingRef.current.has(user.email)) {
+                    console.log("🔍 SIGNUP PAGE: apiCallingRef already has email, returning early!");
+                    return;
+                }
                 apiCallingRef.current.add(user.email);
 
+                console.log("🔍 SIGNUP PAGE: Proceeding to fetch /api/signup...");
                 try {
                     const recaptchaToken = await getRecaptchaToken("SIGNUP").catch(() => "MOCK_TOKEN");
                     const rawProvider = user.providerData[0]?.providerId;
@@ -100,12 +118,14 @@ export default function Signup() {
 
                     // 🔴 ALREADY REGISTERED USER
                     if (!data.isNewUser) {
+                        console.log("🔍 SIGNUP PAGE: User already exists, redirecting to /builder...");
                         showToast("Welcome back!", "success");
                         router.push("/builder");
                         return;
                     }
 
                     // 🟢 NEW USER
+                    console.log("🔍 SIGNUP PAGE: Signup successful, redirecting to /builder...");
                     showToast("Signup successful!");
                     router.push("/builder");
                 } catch (err) {
