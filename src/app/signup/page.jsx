@@ -457,7 +457,7 @@ export default function Signup() {
                 <Navbar />
 
 
-                <main className="flex-grow flex items-center justify-center pt-24 pb-16 px-margin-mobile relative">
+                <main className="flex-grow flex flex-col items-center justify-center pt-24 pb-16 px-margin-mobile relative">
                     <div className="bg-glow -top-20 -left-20"></div>
                     <div className="bg-glow -bottom-20 -right-20"></div>
                     
@@ -493,7 +493,7 @@ export default function Signup() {
                                 <div className="hidden md:flex flex-col gap-4 text-left my-1">
                                     <div className="flex items-start gap-3">
                                         <div className="flex-shrink-0 w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
-                                            <span className="material-symbols-outlined select-none text-[18px] text-primary">sparkles</span>
+                                            <span className="material-symbols-outlined select-none text-[18px] text-primary">auto_awesome</span>
                                         </div>
                                         <div>
                                             <h4 className="text-xs font-bold text-on-surface">AI-Powered Tools</h4>
