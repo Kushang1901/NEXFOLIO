@@ -21,6 +21,14 @@ const nextConfig = {
     },
     compress: true,
     poweredByHeader: false,
+    async rewrites() {
+        return [
+            {
+                source: "/__/auth/:path*",
+                destination: "https://resumecraft-e16fe.firebaseapp.com/__/auth/:path*",
+            },
+        ];
+    },
     async headers() {
         return [
             {

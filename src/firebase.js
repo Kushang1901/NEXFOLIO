@@ -3,7 +3,7 @@ import { getAuth } from "firebase/auth";
 
 const firebaseConfig = {
     apiKey: "AIzaSyAY3MrKCl39WxCTAoK5bxNS_nlM4CVjNvw",
-    authDomain: "resumecraft-e16fe.firebaseapp.com",
+    authDomain: typeof window !== "undefined" && window.location.hostname !== "localhost" ? window.location.hostname : "resumecraft-e16fe.firebaseapp.com",
     projectId: "resumecraft-e16fe",
     storageBucket: "resumecraft-e16fe.firebasestorage.app",
     messagingSenderId: "432729463832",
