@@ -320,8 +320,13 @@ export default function Signup() {
             }
         } catch (err) {
             console.error("Firebase GitHub Signup Error:", err);
-            const randomId = Math.floor(Math.random() * 100000);
-            signupWithMockUser(`github-${randomId}@cvgrid.in`, "GitHub Demo User");
+            if (err.code === "auth/popup-closed-by-user") {
+                showToast("GitHub sign up cancelled.", "info");
+            } else {
+                showToast("GitHub Auth is not configured on Firebase. Falling back to Demo User.", "info");
+                const randomId = Math.floor(Math.random() * 100000);
+                signupWithMockUser(`github-${randomId}@cvgrid.in`, "GitHub Demo User");
+            }
         } finally {
             isGoogleSignupRef.current = false;
         }

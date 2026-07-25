@@ -160,8 +160,12 @@ export default function Login() {
             await signInWithPopup(auth, githubProvider);
         } catch (error) {
             console.error("Firebase GitHub Login Error:", error);
-            // Fallback to mock session
-            loginWithMockUser("github-demo@cvgrid.in", "GitHub Demo User");
+            if (error.code === "auth/popup-closed-by-user") {
+                showToast("GitHub login cancelled.", "info");
+            } else {
+                showToast("GitHub Auth is not configured on Firebase. Falling back to Demo User.", "info");
+                loginWithMockUser("github-demo@cvgrid.in", "GitHub Demo User");
+            }
         } finally {
             setLoading(false);
         }
