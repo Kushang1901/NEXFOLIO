@@ -71,14 +71,15 @@ export default function Signup() {
         const unsubscribe = subscribeToAuthChanges(async (user) => {
             console.log("🔍 SIGNUP PAGE: subscribeToAuthChanges fired with user:", user);
             if (user) {
-                console.log("🔍 SIGNUP PAGE: user email =", user.email, "uid =", user.uid);
-                console.log("🔍 SIGNUP PAGE: apiCallingRef has =", apiCallingRef.current.has(user.email));
+                const userEmail = user.email || `github-${user.uid}@cvgrid.in`;
+                console.log("🔍 SIGNUP PAGE: user email =", user.email, "using email fallback =", userEmail, "uid =", user.uid);
+                console.log("🔍 SIGNUP PAGE: apiCallingRef has =", apiCallingRef.current.has(userEmail));
 
-                if (apiCallingRef.current.has(user.email)) {
+                if (apiCallingRef.current.has(userEmail)) {
                     console.log("🔍 SIGNUP PAGE: apiCallingRef already has email, returning early!");
                     return;
                 }
-                apiCallingRef.current.add(user.email);
+                apiCallingRef.current.add(userEmail);
 
                 console.log("🔍 SIGNUP PAGE: Proceeding to fetch /api/signup...");
                 try {
@@ -96,7 +97,7 @@ export default function Signup() {
                             body: JSON.stringify({
                                 firstName: user.displayName?.split(" ")[0] || formData.fullName?.split(" ")[0] || "",
                                 lastName: user.displayName?.split(" ").slice(1).join(" ") || formData.fullName?.split(" ").slice(1).join(" ") || "User",
-                                email: user.email,
+                                email: userEmail,
                                 provider: provider,
                                 photoUrl: user.photoURL || "",
                                 recaptchaToken
@@ -127,7 +128,7 @@ export default function Signup() {
                     console.error("Google signup redirect error:", err);
                     showToast(err.message || "Signup failed. Please try again.", "error");
                 } finally {
-                    apiCallingRef.current.delete(user.email);
+                    apiCallingRef.current.delete(userEmail);
                 }
             }
         });

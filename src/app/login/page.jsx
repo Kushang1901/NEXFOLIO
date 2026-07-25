@@ -129,18 +129,20 @@ export default function Login() {
         const unsubscribe = subscribeToAuthChanges(async (user) => {
             console.log("🔍 LOGIN PAGE: subscribeToAuthChanges fired with user:", user);
             if (user) {
-                console.log("🔍 LOGIN PAGE: user email =", user.email, "uid =", user.uid);
                 if (user.uid === "mock_user_12345") {
                     console.log("🔍 LOGIN PAGE: user is mock user, redirecting to /...");
                     router.push("/");
                     return;
                 }
 
+                const userEmail = user.email || `github-${user.uid}@cvgrid.in`;
+                console.log("🔍 LOGIN PAGE: user email =", user.email, "using email fallback =", userEmail, "uid =", user.uid);
+
                 setLoading(true);
-                console.log("🔍 LOGIN PAGE: Checking database existence for:", user.email);
+                console.log("🔍 LOGIN PAGE: Checking database existence for:", userEmail);
                 try {
                     // Double check database existence to handle Google sign-ins cleanly
-                    const checkRes = await fetch(`/api/user?email=${encodeURIComponent(user.email)}&checkExistenceOnly=true`);
+                    const checkRes = await fetch(`/api/user?email=${encodeURIComponent(userEmail)}&checkExistenceOnly=true`);
                     const checkData = await checkRes.json().catch(() => ({}));
                     console.log("🔍 LOGIN PAGE: checkRes ok =", checkRes.ok, "checkData exists =", checkData.exists);
                     if (!checkRes.ok || !checkData.exists) {
@@ -166,7 +168,7 @@ export default function Login() {
                         body: JSON.stringify({
                             firstName: user.displayName?.split(" ")[0] || "",
                             lastName: user.displayName?.split(" ").slice(1).join(" ") || "User",
-                            email: user.email,
+                            email: userEmail,
                             provider: provider,
                             photoUrl: user.photoURL || "",
                             recaptchaToken
