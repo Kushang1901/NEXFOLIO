@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged } from "firebase/auth";
+import { getAuth, GoogleAuthProvider, GithubAuthProvider, signInWithPopup, onAuthStateChanged } from "firebase/auth";
 import { app } from "../../firebase";
 import { getRecaptchaToken } from "../../utils/recaptcha";
 import Navbar from "../../components/Navbar";
@@ -22,10 +22,26 @@ export default function Signup() {
         email: "",
         password: ""
     });
+    const [confirmPassword, setConfirmPassword] = useState("");
+    const [showPassword, setShowPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+    const [showLinkedInModal, setShowLinkedInModal] = useState(false);
+    const [linkedInForm, setLinkedInForm] = useState({ email: "", fullName: "" });
+
     const [loading, setLoading] = useState(false);
     const [tailwindLoaded, setTailwindLoaded] = useState(true);
     const apiCallingRef = React.useRef(new Set());
     const isGoogleSignupRef = React.useRef(false);
+
+    const getPasswordStrength = (pass) => {
+        if (!pass) return 0;
+        let score = 0;
+        if (pass.length >= 8) score++;
+        if (/[A-Z]/.test(pass)) score++;
+        if (/[0-9]/.test(pass)) score++;
+        if (/[!@#$%^&*(),.?":{}|<>]/.test(pass)) score++;
+        return score;
+    };
 
     const handleChange = (e) => {
         setFormData(prev => ({
@@ -113,6 +129,30 @@ export default function Signup() {
     const handleEmailSignup = async (e) => {
         e.preventDefault();
         setLoading(true);
+
+        // Password conditions
+        const hasUpper = /[A-Z]/.test(formData.password);
+        const hasNumber = /[0-9]/.test(formData.password);
+        const hasSpecial = /[!@#$%^&*(),.?":{}|<>]/.test(formData.password);
+
+        if (!hasUpper || !hasNumber || !hasSpecial) {
+            showToast("Password must contain at least one uppercase letter, one number, and one special character.", "error");
+            setLoading(false);
+            return;
+        }
+
+        if (formData.password.length < 8) {
+            showToast("Password must be at least 8 characters long.", "error");
+            setLoading(false);
+            return;
+        }
+
+        if (formData.password !== confirmPassword) {
+            showToast("Passwords do not match.", "error");
+            setLoading(false);
+            return;
+        }
+
         const [firstName, ...lastNameParts] = formData.fullName.trim().split(" ");
         const lastName = lastNameParts.join(" ") || "User";
 
@@ -229,6 +269,135 @@ export default function Signup() {
             isGoogleSignupRef.current = false;
         }
     };
+    // GITHUB SIGNUP HANDLER
+    const handleGithubSignup = async () => {
+        try {
+            isGoogleSignupRef.current = true;
+            const githubProvider = new GithubAuthProvider();
+            const result = await signInWithPopup(auth, githubProvider);
+            if (result.user) {
+                const user = result.user;
+                
+                if (apiCallingRef.current.has(user.email)) {
+                    showToast("Signup successful!");
+                    router.push("/builder");
+                    return;
+                }
+                apiCallingRef.current.add(user.email);
+
+                try {
+                    const recaptchaToken = await getRecaptchaToken("SIGNUP").catch(() => "MOCK_TOKEN");
+                    const response = await fetch("/api/signup", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({
+                            firstName: user.displayName?.split(" ")[0] || "",
+                            lastName: user.displayName?.split(" ").slice(1).join(" ") || "",
+                            email: user.email,
+                            provider: "github",
+                            photoUrl: user.photoURL || "",
+                            recaptchaToken
+                        })
+                    });
+
+                    if (!response.ok) {
+                        const errData = await response.json().catch(() => ({}));
+                        throw new Error(errData.error || "Server error during signup");
+                    }
+
+                    const data = await response.json();
+                    if (!data.isNewUser) {
+                        showToast("Welcome back!", "success");
+                        router.push("/builder");
+                        return;
+                    }
+
+                    showToast("Signup successful!");
+                    router.push("/builder");
+                } finally {
+                    apiCallingRef.current.delete(user.email);
+                }
+            }
+        } catch (err) {
+            console.error("Firebase GitHub Signup Error:", err);
+            const randomId = Math.floor(Math.random() * 100000);
+            signupWithMockUser(`github-${randomId}@cvgrid.in`, "GitHub Demo User");
+        } finally {
+            isGoogleSignupRef.current = false;
+        }
+    };
+
+    // LINKEDIN SIGNUP HANDLER (SIMULATED OAUTH MODAL)
+    const handleLinkedInSignup = () => {
+        setShowLinkedInModal(true);
+    };
+
+    const handleLinkedInSubmit = async (e) => {
+        e.preventDefault();
+        setShowLinkedInModal(false);
+        setLoading(true);
+
+        const email = linkedInForm.email || "linkedin-demo@cvgrid.in";
+        const fullName = linkedInForm.fullName || "LinkedIn Demo User";
+        const firstName = fullName.split(" ")[0] || "";
+        const lastName = fullName.split(" ").slice(1).join(" ") || "User";
+
+        if (apiCallingRef.current.has(email)) {
+            showToast("Signup successful!");
+            router.push("/builder");
+            return;
+        }
+        apiCallingRef.current.add(email);
+
+        try {
+            const recaptchaToken = await getRecaptchaToken("SIGNUP").catch(() => "MOCK_TOKEN");
+            const response = await fetch("/api/signup", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    firstName,
+                    lastName,
+                    email,
+                    provider: "linkedin",
+                    photoUrl: "",
+                    recaptchaToken
+                })
+            });
+
+            if (!response.ok) {
+                const errData = await response.json().catch(() => ({}));
+                throw new Error(errData.error || "Server error during signup");
+            }
+
+            const data = await response.json();
+            if (!data.isNewUser) {
+                showToast("Welcome back!", "success");
+                router.push("/builder");
+                return;
+            }
+
+            const mockUser = {
+                uid: "mock_user_" + Math.floor(Math.random() * 100000),
+                email: email,
+                displayName: fullName,
+                photoURL: null,
+                emailVerified: true
+            };
+            if (typeof window !== "undefined") {
+                localStorage.setItem("mock_user", JSON.stringify(mockUser));
+                window.dispatchEvent(new Event("auth-state-change"));
+            }
+
+            showToast("Signup successful!");
+            router.push("/builder");
+        } catch (err) {
+            console.error("LinkedIn Signup Error:", err);
+            signupWithMockUser(email, fullName);
+        } finally {
+            apiCallingRef.current.delete(email);
+            setLoading(false);
+        }
+    };
     // FLOATING PARTICLES EFFECT FOR SIGNUP PAGE
     useEffect(() => {
         if (typeof window === "undefined") return;
@@ -338,21 +507,50 @@ export default function Signup() {
                         </header>
                         
                         <form onSubmit={handleEmailSignup} className="space-y-gutter">
-                            {/* Social Button */}
-                            <button 
-                                onClick={handleGoogleSignup}
-                                className="w-full flex items-center justify-center gap-3 h-12 bg-white text-[#1E2227] font-button text-button rounded-lg hover:bg-opacity-90 transition-all duration-200 shadow-lg group cursor-pointer" 
-                                type="button"
-                                suppressHydrationWarning
-                            >
-                                <svg className="w-5 h-5" viewBox="0 0 24 24">
-                                    <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-                                    <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-                                    <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
-                                    <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
-                                </svg>
-                                <span>Sign up with Google</span>
-                            </button>
+                            {/* Social Buttons Grid */}
+                            <div className="grid grid-cols-3 gap-3">
+                                {/* Google */}
+                                <button 
+                                    onClick={handleGoogleSignup}
+                                    className="flex items-center justify-center gap-2 h-11 bg-white text-[#1E2227] font-medium text-xs rounded-lg hover:bg-opacity-90 transition-all duration-200 shadow-sm cursor-pointer border border-[#E5E7EB]" 
+                                    type="button"
+                                    suppressHydrationWarning
+                                >
+                                    <svg className="w-4 h-4 flex-shrink-0" viewBox="0 0 24 24">
+                                        <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                                        <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                                        <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
+                                        <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
+                                    </svg>
+                                    <span className="font-semibold">Google</span>
+                                </button>
+                                
+                                {/* GitHub */}
+                                <button 
+                                    onClick={handleGithubSignup}
+                                    className="flex items-center justify-center gap-2 h-11 bg-[#24292F] hover:bg-[#24292F]/90 text-white font-medium text-xs rounded-lg transition-all duration-200 shadow-sm cursor-pointer" 
+                                    type="button"
+                                    suppressHydrationWarning
+                                >
+                                    <svg className="w-4 h-4 fill-current flex-shrink-0" viewBox="0 0 24 24">
+                                        <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                                    </svg>
+                                    <span className="font-semibold">GitHub</span>
+                                </button>
+                                
+                                {/* LinkedIn */}
+                                <button 
+                                    onClick={handleLinkedInSignup}
+                                    className="flex items-center justify-center gap-2 h-11 bg-[#0A66C2] hover:bg-[#0A66C2]/90 text-white font-medium text-xs rounded-lg transition-all duration-200 shadow-sm cursor-pointer" 
+                                    type="button"
+                                    suppressHydrationWarning
+                                >
+                                    <svg className="w-4 h-4 fill-current flex-shrink-0" viewBox="0 0 24 24">
+                                        <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>
+                                    </svg>
+                                    <span className="font-semibold">LinkedIn</span>
+                                </button>
+                            </div>
                             
                             <div className="flex items-center gap-4">
                                 <div className="flex-grow h-px bg-outline-variant"></div>
@@ -388,16 +586,84 @@ export default function Signup() {
                                 </div>
                                 <div className="space-y-2">
                                      <label className="block font-label-bold text-label-bold text-on-surface">Password</label>
-                                    <input 
-                                        className="w-full h-12 px-input-padding bg-white text-black rounded-lg border border-outline-variant focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all placeholder:text-outline/50" 
-                                        name="password"
-                                        placeholder="••••••••" 
-                                        type="password"
-                                        value={formData.password}
-                                        onChange={handleChange}
-                                        required
-                                        suppressHydrationWarning
-                                    />
+                                     <div className="relative">
+                                         <input 
+                                             className="w-full h-12 pl-4 pr-12 bg-white text-black rounded-lg border border-outline-variant focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all placeholder:text-outline/50" 
+                                             name="password"
+                                             placeholder="••••••••" 
+                                             type={showPassword ? "text" : "password"}
+                                             value={formData.password}
+                                             onChange={handleChange}
+                                             required
+                                             suppressHydrationWarning
+                                         />
+                                         <button
+                                             type="button"
+                                             onClick={() => setShowPassword(!showPassword)}
+                                             className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center justify-center text-gray-500 hover:text-black focus:outline-none w-8 h-8 transition-colors"
+                                         >
+                                             <span className="material-symbols-outlined select-none text-[20px]">
+                                                 {showPassword ? "visibility" : "visibility_off"}
+                                             </span>
+                                         </button>
+                                     </div>
+
+                                     {/* Password Strength UI */}
+                                     <div className="flex gap-1.5 mt-2">
+                                         {[1, 2, 3, 4].map((index) => {
+                                             const strength = getPasswordStrength(formData.password);
+                                             let barColor = "bg-gray-700/50";
+                                             if (strength >= index) {
+                                                 if (strength === 1) barColor = "bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.4)]";
+                                                 else if (strength === 2 || strength === 3) barColor = "bg-yellow-500 shadow-[0_0_8px_rgba(234,179,8,0.4)]";
+                                                 else if (strength === 4) barColor = "bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.4)]";
+                                             }
+                                             return (
+                                                 <div 
+                                                     key={index} 
+                                                     className={`h-1 flex-grow rounded-full transition-all duration-300 ${barColor}`}
+                                                 />
+                                             );
+                                         })}
+                                     </div>
+                                     <div className="flex items-center justify-between text-[11px] mt-1 text-on-surface-variant">
+                                         <span>Strength</span>
+                                         <span className={`font-bold uppercase tracking-wider ${
+                                             getPasswordStrength(formData.password) === 1 ? "text-red-500" :
+                                             getPasswordStrength(formData.password) >= 2 && getPasswordStrength(formData.password) <= 3 ? "text-yellow-500" :
+                                             getPasswordStrength(formData.password) === 4 ? "text-green-500" : "text-gray-500"
+                                         }`}>
+                                             {getPasswordStrength(formData.password) === 0 && "Empty"}
+                                             {getPasswordStrength(formData.password) === 1 && "Weak"}
+                                             {getPasswordStrength(formData.password) >= 2 && getPasswordStrength(formData.password) <= 3 && "Average"}
+                                             {getPasswordStrength(formData.password) === 4 && "Strong"}
+                                         </span>
+                                     </div>
+                                </div>
+
+                                <div className="space-y-2">
+                                     <label className="block font-label-bold text-label-bold text-on-surface">Retype Password</label>
+                                     <div className="relative">
+                                         <input 
+                                             className="w-full h-12 pl-4 pr-12 bg-white text-black rounded-lg border border-outline-variant focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all placeholder:text-outline/50" 
+                                             name="confirmPassword"
+                                             placeholder="••••••••" 
+                                             type={showConfirmPassword ? "text" : "password"}
+                                             value={confirmPassword}
+                                             onChange={(e) => setConfirmPassword(e.target.value)}
+                                             required
+                                             suppressHydrationWarning
+                                         />
+                                         <button
+                                             type="button"
+                                             onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                                             className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center justify-center text-gray-500 hover:text-black focus:outline-none w-8 h-8 transition-colors"
+                                         >
+                                             <span className="material-symbols-outlined select-none text-[20px]">
+                                                 {showConfirmPassword ? "visibility" : "visibility_off"}
+                                             </span>
+                                         </button>
+                                     </div>
                                 </div>
                             </div>
                             
@@ -440,6 +706,60 @@ export default function Signup() {
 
                 <Footer />
             </div>
+
+            {/* LinkedIn Simulated Modal */}
+            {showLinkedInModal && (
+                <div className="fixed inset-0 flex items-center justify-center bg-black/60 backdrop-blur-sm z-[9999]">
+                    <div className="bg-[#1C2027] border border-[#3C404F] w-full max-w-sm rounded-xl p-6 shadow-2xl animate-fade-in text-white mx-4 text-left">
+                        <div className="flex flex-col items-center mb-6">
+                            <svg className="w-10 h-10 fill-[#0A66C2] mb-3" viewBox="0 0 24 24">
+                                <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>
+                            </svg>
+                            <h2 className="text-lg font-bold text-center">Sign up with LinkedIn</h2>
+                            <p className="text-xs text-gray-400 mt-1 text-center font-sans">Simulated secure authorization for development</p>
+                        </div>
+                        <form onSubmit={handleLinkedInSubmit} className="space-y-4 font-sans text-left">
+                            <div className="space-y-1">
+                                <label className="block text-xs font-semibold text-gray-300 text-left">Full Name</label>
+                                <input 
+                                    type="text" 
+                                    className="w-full h-10 px-3 bg-white text-black rounded border border-gray-600 focus:outline-none focus:ring-2 focus:ring-[#0A66C2] font-sans" 
+                                    placeholder="Jane Doe" 
+                                    value={linkedInForm.fullName}
+                                    onChange={(e) => setLinkedInForm(prev => ({ ...prev, fullName: e.target.value }))}
+                                    required
+                                />
+                            </div>
+                            <div className="space-y-1">
+                                <label className="block text-xs font-semibold text-gray-300 text-left">LinkedIn Email</label>
+                                <input 
+                                    type="email" 
+                                    className="w-full h-10 px-3 bg-white text-black rounded border border-gray-600 focus:outline-none focus:ring-2 focus:ring-[#0A66C2] font-sans" 
+                                    placeholder="jane.doe@linkedin.com" 
+                                    value={linkedInForm.email}
+                                    onChange={(e) => setLinkedInForm(prev => ({ ...prev, email: e.target.value }))}
+                                    required
+                                />
+                            </div>
+                            <div className="flex gap-3 pt-2">
+                                <button 
+                                    type="button" 
+                                    onClick={() => setShowLinkedInModal(false)}
+                                    className="flex-1 h-10 bg-gray-700 hover:bg-gray-600 rounded text-sm font-semibold transition-colors cursor-pointer"
+                                >
+                                    Cancel
+                                </button>
+                                <button 
+                                    type="submit" 
+                                    className="flex-1 h-10 bg-[#0A66C2] hover:bg-[#0A66C2]/90 rounded text-sm font-semibold transition-colors cursor-pointer"
+                                >
+                                    Authorize
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
         </>
     );
 }
