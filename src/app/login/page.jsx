@@ -5,7 +5,7 @@ import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { getAuth, signInWithEmailAndPassword, GoogleAuthProvider, GithubAuthProvider, signInWithPopup, onAuthStateChanged } from "firebase/auth";
+import { getAuth, signInWithEmailAndPassword, GoogleAuthProvider, GithubAuthProvider, signInWithRedirect, getRedirectResult, onAuthStateChanged } from "firebase/auth";
 import { app } from "../../firebase";
 import { getRecaptchaToken } from "../../utils/recaptcha";
 import { subscribeToAuthChanges } from "../../authState";
@@ -28,7 +28,6 @@ export default function Login() {
 
     const [loading, setLoading] = useState(false);
     const [tailwindLoaded, setTailwindLoaded] = useState(true);
-    const isLocalLoginRef = React.useRef(false);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -108,9 +107,23 @@ export default function Login() {
         }
     };
 
-    // HANDLE AUTH STATE CHANGES
+    // HANDLE REDIRECT RESULT & AUTH STATE CHANGES
     useEffect(() => {
         console.log("🔍 LOGIN PAGE: useEffect running...");
+
+        // Catch any errors from full-page redirect authentication (e.g. account conflicts)
+        getRedirectResult(auth)
+            .then((result) => {
+                console.log("🔍 LOGIN PAGE: getRedirectResult resolved with:", result);
+            })
+            .catch((error) => {
+                console.error("🔍 LOGIN PAGE: Firebase Redirect Auth Error:", error);
+                if (error.code === "auth/account-exists-with-different-credential") {
+                    showToast("An account already exists with this email address using a different sign-in method. Please login using that provider.", "error");
+                } else if (error.code !== "auth/popup-closed-by-user" && error.code !== "auth/cancelled-popup-request") {
+                    showToast("Authentication failed: " + (error.message || error), "error");
+                }
+            });
 
         const unsubscribe = subscribeToAuthChanges(async (user) => {
             console.log("🔍 LOGIN PAGE: subscribeToAuthChanges fired with user:", user);
@@ -119,10 +132,6 @@ export default function Login() {
                 if (user.uid === "mock_user_12345") {
                     console.log("🔍 LOGIN PAGE: user is mock user, redirecting to /...");
                     router.push("/");
-                    return;
-                }
-                if (isLocalLoginRef.current) {
-                    console.log("🔍 LOGIN PAGE: isLocalLoginRef is true, returning early!");
                     return;
                 }
 
@@ -179,93 +188,25 @@ export default function Login() {
 
     // GOOGLE LOGIN
     const handleGoogleLogin = async () => {
+        setLoading(true);
         try {
-            isLocalLoginRef.current = true;
-            setLoading(true);
-            const result = await signInWithPopup(auth, googleProvider);
-            if (result.user) {
-                const user = result.user;
-                console.log("🔍 LOGIN PAGE (Inline Google): Checking database existence for:", user.email);
-                const checkRes = await fetch(`/api/user?email=${encodeURIComponent(user.email)}&checkExistenceOnly=true`);
-                const checkData = await checkRes.json().catch(() => ({}));
-                if (!checkRes.ok || !checkData.exists) {
-                    const { signOut } = await import("firebase/auth");
-                    await signOut(auth);
-                    showToast("Account does not exist. Please sign up first!");
-                    router.push("/signup");
-                    return;
-                }
-
-                const recaptchaToken = await getRecaptchaToken("LOGIN").catch(() => "MOCK_TOKEN");
-                const rawProvider = user.providerData[0]?.providerId;
-                const provider = rawProvider === "github.com" ? "github" : "google";
-                await fetch("/api/login", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        firstName: user.displayName?.split(" ")[0] || "",
-                        lastName: user.displayName?.split(" ").slice(1).join(" ") || "User",
-                        email: user.email,
-                        provider: provider,
-                        photoUrl: user.photoURL || "",
-                        recaptchaToken
-                    })
-                });
-
-                showToast("Login successful!");
-                router.push("/");
-            }
+            await signInWithRedirect(auth, googleProvider);
         } catch (error) {
             console.error("Firebase Google Login Error:", error);
             if (error.code === "auth/account-exists-with-different-credential") {
                 showToast("An account already exists with this email address using a different sign-in method. Please login using that provider.", "error");
-            } else if (error.code !== "auth/popup-closed-by-user" && error.code !== "auth/cancelled-popup-request") {
+            } else {
                 showToast("Google login failed: " + (error.message || error));
             }
-        } finally {
-            isLocalLoginRef.current = false;
             setLoading(false);
         }
     };
 
     // GITHUB LOGIN
     const handleGithubLogin = async () => {
+        setLoading(true);
         try {
-            isLocalLoginRef.current = true;
-            setLoading(true);
-            const result = await signInWithPopup(auth, githubProvider);
-            if (result.user) {
-                const user = result.user;
-                console.log("🔍 LOGIN PAGE (Inline GitHub): Checking database existence for:", user.email);
-                const checkRes = await fetch(`/api/user?email=${encodeURIComponent(user.email)}&checkExistenceOnly=true`);
-                const checkData = await checkRes.json().catch(() => ({}));
-                if (!checkRes.ok || !checkData.exists) {
-                    const { signOut } = await import("firebase/auth");
-                    await signOut(auth);
-                    showToast("Account does not exist. Please sign up first!");
-                    router.push("/signup");
-                    return;
-                }
-
-                const recaptchaToken = await getRecaptchaToken("LOGIN").catch(() => "MOCK_TOKEN");
-                const rawProvider = user.providerData[0]?.providerId;
-                const provider = rawProvider === "github.com" ? "github" : "google";
-                await fetch("/api/login", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        firstName: user.displayName?.split(" ")[0] || "",
-                        lastName: user.displayName?.split(" ").slice(1).join(" ") || "User",
-                        email: user.email,
-                        provider: provider,
-                        photoUrl: user.photoURL || "",
-                        recaptchaToken
-                    })
-                });
-
-                showToast("Login successful!");
-                router.push("/");
-            }
+            await signInWithRedirect(auth, githubProvider);
         } catch (error) {
             console.error("Firebase GitHub Login Error:", error);
             if (error.code === "auth/popup-closed-by-user") {
@@ -285,8 +226,6 @@ export default function Login() {
                     loginWithMockUser("github-demo@cvgrid.in", "GitHub Demo User");
                 }
             }
-        } finally {
-            isLocalLoginRef.current = false;
             setLoading(false);
         }
     };

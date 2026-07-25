@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { getAuth, GoogleAuthProvider, GithubAuthProvider, signInWithPopup, onAuthStateChanged } from "firebase/auth";
+import { getAuth, GoogleAuthProvider, GithubAuthProvider, signInWithRedirect, getRedirectResult, onAuthStateChanged } from "firebase/auth";
 import { app } from "../../firebase";
 import { getRecaptchaToken } from "../../utils/recaptcha";
 import Navbar from "../../components/Navbar";
@@ -50,21 +50,30 @@ export default function Signup() {
         }));
     };
 
-    // HANDLE AUTH STATE CHANGES
+    // HANDLE REDIRECT RESULT & AUTH STATE CHANGES
     useEffect(() => {
         console.log("🔍 SIGNUP PAGE: useEffect running...");
+
+        // Catch any errors from full-page redirect authentication (e.g. account conflicts)
+        getRedirectResult(auth)
+            .then((result) => {
+                console.log("🔍 SIGNUP PAGE: getRedirectResult resolved with:", result);
+            })
+            .catch((error) => {
+                console.error("🔍 SIGNUP PAGE: Firebase Redirect Auth Error:", error);
+                if (error.code === "auth/account-exists-with-different-credential") {
+                    showToast("An account already exists with this email address using a different sign-in method. Please login using that provider.", "error");
+                } else if (error.code !== "auth/popup-closed-by-user" && error.code !== "auth/cancelled-popup-request") {
+                    showToast("Authentication failed: " + (error.message || error), "error");
+                }
+            });
 
         const unsubscribe = subscribeToAuthChanges(async (user) => {
             console.log("🔍 SIGNUP PAGE: subscribeToAuthChanges fired with user:", user);
             if (user) {
                 console.log("🔍 SIGNUP PAGE: user email =", user.email, "uid =", user.uid);
-                console.log("🔍 SIGNUP PAGE: isGoogleSignupRef =", isGoogleSignupRef.current);
                 console.log("🔍 SIGNUP PAGE: apiCallingRef has =", apiCallingRef.current.has(user.email));
 
-                if (isGoogleSignupRef.current) {
-                    console.log("🔍 SIGNUP PAGE: isGoogleSignupRef is true, returning early!");
-                    return;
-                }
                 if (apiCallingRef.current.has(user.email)) {
                     console.log("🔍 SIGNUP PAGE: apiCallingRef already has email, returning early!");
                     return;
@@ -233,105 +242,22 @@ export default function Signup() {
      // GOOGLE SIGNUP HANDLER
     const handleGoogleSignup = async () => {
         try {
-            isGoogleSignupRef.current = true;
-            setLoading(true);
-            const result = await signInWithPopup(auth, googleProvider);
-            if (result.user) {
-                const user = result.user;
-                if (apiCallingRef.current.has(user.email)) return;
-                apiCallingRef.current.add(user.email);
-
-                try {
-                    const recaptchaToken = await getRecaptchaToken("SIGNUP").catch(() => "MOCK_TOKEN");
-                    const response = await fetch("/api/signup", {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({
-                            firstName: user.displayName?.split(" ")[0] || "",
-                            lastName: user.displayName?.split(" ").slice(1).join(" ") || "User",
-                            email: user.email,
-                            provider: "google",
-                            photoUrl: user.photoURL || "",
-                            recaptchaToken
-                        })
-                    });
-
-                    if (!response.ok) {
-                        const errData = await response.json().catch(() => ({}));
-                        throw new Error(errData.error || "Server error during signup");
-                    }
-
-                    const data = await response.json();
-                    if (!data.isNewUser) {
-                        showToast("Welcome back!", "success");
-                        router.push("/builder");
-                        return;
-                    }
-
-                    showToast("Signup successful!");
-                    router.push("/builder");
-                } finally {
-                    apiCallingRef.current.delete(user.email);
-                }
-            }
+            await signInWithRedirect(auth, googleProvider);
         } catch (err) {
-            console.error("Firebase Google Signup Error:", err);
+            console.error("Firebase Signup Error:", err);
             if (err.code === "auth/account-exists-with-different-credential") {
                 showToast("An account already exists with this email address using a different sign-in method. Please login using that provider.", "error");
-            } else if (err.code !== "auth/popup-closed-by-user" && err.code !== "auth/cancelled-popup-request") {
+            } else {
                 showToast("Google signup failed: " + (err.message || err));
             }
-        } finally {
-            isGoogleSignupRef.current = false;
-            setLoading(false);
         }
     };
 
     // GITHUB SIGNUP HANDLER
     const handleGithubSignup = async () => {
         try {
-            isGoogleSignupRef.current = true;
-            setLoading(true);
             const githubProvider = new GithubAuthProvider();
-            const result = await signInWithPopup(auth, githubProvider);
-            if (result.user) {
-                const user = result.user;
-                if (apiCallingRef.current.has(user.email)) return;
-                apiCallingRef.current.add(user.email);
-
-                try {
-                    const recaptchaToken = await getRecaptchaToken("SIGNUP").catch(() => "MOCK_TOKEN");
-                    const response = await fetch("/api/signup", {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({
-                            firstName: user.displayName?.split(" ")[0] || "",
-                            lastName: user.displayName?.split(" ").slice(1).join(" ") || "User",
-                            email: user.email,
-                            provider: "github",
-                            photoUrl: user.photoURL || "",
-                            recaptchaToken
-                        })
-                    });
-
-                    if (!response.ok) {
-                        const errData = await response.json().catch(() => ({}));
-                        throw new Error(errData.error || "Server error during signup");
-                    }
-
-                    const data = await response.json();
-                    if (!data.isNewUser) {
-                        showToast("Welcome back!", "success");
-                        router.push("/builder");
-                        return;
-                    }
-
-                    showToast("Signup successful!");
-                    router.push("/builder");
-                } finally {
-                    apiCallingRef.current.delete(user.email);
-                }
-            }
+            await signInWithRedirect(auth, githubProvider);
         } catch (err) {
             console.error("Firebase GitHub Signup Error:", err);
             if (err.code === "auth/popup-closed-by-user") {
@@ -352,9 +278,6 @@ export default function Signup() {
                     signupWithMockUser(`github-${randomId}@cvgrid.in`, "GitHub Demo User");
                 }
             }
-        } finally {
-            isGoogleSignupRef.current = false;
-            setLoading(false);
         }
     };
 
