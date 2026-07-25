@@ -465,7 +465,7 @@ export default function Signup() {
                         {/* Decorative Accents */}
                         <div className="absolute top-0 left-0 w-1.5 h-full bg-primary"></div>
                         
-                        <div className="grid grid-cols-1 md:grid-cols-[1fr_auto_1fr] gap-8 items-stretch">
+                        <div className="grid grid-cols-1 md:grid-cols-[1.1fr_auto_0.9fr] gap-8 items-stretch">
                             {/* Left Column: Welcome & Social Logins */}
                             <div className="flex flex-col space-y-6 pt-2">
                                 <div className="flex items-center gap-2 mb-2 self-center md:self-start">
@@ -481,213 +481,307 @@ export default function Signup() {
                                     }}>CVGRID</span>
                                 </div>
                                 <header className="text-center md:text-left">
-                                    <h1 className="font-headline-lg text-headline-lg text-on-surface mb-2">Create your account</h1>
-                                    <p className="font-body-sm text-body-sm text-on-surface-variant">Sign up to start building professional resumes</p>
+                                    <h1 className="font-headline-lg text-headline-lg text-on-surface mb-2">
+                                        Create <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#4A72F3] to-[#9A75FF]">your account</span>
+                                    </h1>
+                                    <p className="text-xs text-on-surface-variant leading-relaxed">
+                                        Join thousands of professionals building standout resumes and landing their dream jobs.
+                                    </p>
                                 </header>
+                                
+                                {/* Feature Highlights List */}
+                                <div className="hidden md:flex flex-col gap-4 text-left my-1">
+                                    <div className="flex items-start gap-3">
+                                        <div className="flex-shrink-0 w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
+                                            <span className="material-symbols-outlined select-none text-[18px] text-primary">sparkles</span>
+                                        </div>
+                                        <div>
+                                            <h4 className="text-xs font-bold text-on-surface">AI-Powered Tools</h4>
+                                            <p className="text-[10px] text-on-surface-variant leading-normal">Get AI to write, optimize & improve your resume</p>
+                                        </div>
+                                    </div>
+
+                                    <div className="flex items-start gap-3">
+                                        <div className="flex-shrink-0 w-8 h-8 rounded-lg bg-[#064E3B]/40 flex items-center justify-center">
+                                            <span className="material-symbols-outlined select-none text-[18px] text-green-400">shield</span>
+                                        </div>
+                                        <div>
+                                            <h4 className="text-xs font-bold text-on-surface">ATS Friendly</h4>
+                                            <p className="text-[10px] text-on-surface-variant leading-normal">Build resumes that pass ATS checks and get you interviews</p>
+                                        </div>
+                                    </div>
+
+                                    <div className="flex items-start gap-3">
+                                        <div className="flex-shrink-0 w-8 h-8 rounded-lg bg-secondary-container/30 flex items-center justify-center">
+                                            <span className="material-symbols-outlined select-none text-[18px] text-secondary">lock</span>
+                                        </div>
+                                        <div>
+                                            <h4 className="text-xs font-bold text-on-surface">Secure & Private</h4>
+                                            <p className="text-[10px] text-on-surface-variant leading-normal">Your data is encrypted and always protected.</p>
+                                        </div>
+                                    </div>
+                                </div>
                                 
                                 <div className="flex flex-col gap-3">
                                     {/* Google */}
                                     <button 
                                         onClick={handleGoogleSignup}
-                                        className="w-full flex items-center justify-center gap-3 h-12 bg-white text-[#1E2227] font-medium text-sm rounded-lg hover:bg-opacity-90 transition-all duration-200 shadow-sm border border-[#E5E7EB] cursor-pointer" 
+                                        className="w-full flex items-center justify-center gap-3 h-11 bg-white text-[#1E2227] font-medium text-xs rounded-lg hover:bg-opacity-90 transition-all duration-200 shadow-sm border border-[#E5E7EB] cursor-pointer" 
                                         type="button"
                                         suppressHydrationWarning
                                     >
-                                        <svg className="w-5 h-5 flex-shrink-0" viewBox="0 0 24 24">
+                                        <svg className="w-4 h-4 flex-shrink-0" viewBox="0 0 24 24">
                                             <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
                                             <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
                                             <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
                                             <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
                                         </svg>
-                                        <span className="font-semibold">Sign up with Google</span>
+                                        <span className="font-semibold">Continue with Google</span>
                                     </button>
                                     
                                     {/* GitHub */}
                                     <button 
                                         onClick={handleGithubSignup}
-                                        className="w-full flex items-center justify-center gap-3 h-12 bg-[#24292F] hover:bg-[#24292F]/90 text-white font-medium text-sm rounded-lg transition-all duration-200 shadow-sm cursor-pointer" 
+                                        className="w-full flex items-center justify-center gap-3 h-11 bg-[#24292F] hover:bg-[#24292F]/90 text-white font-medium text-xs rounded-lg transition-all duration-200 shadow-sm cursor-pointer" 
                                         type="button"
                                         suppressHydrationWarning
                                     >
-                                        <svg className="w-5 h-5 fill-current flex-shrink-0" viewBox="0 0 24 24">
+                                        <svg className="w-4 h-4 fill-current flex-shrink-0" viewBox="0 0 24 24">
                                             <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
                                         </svg>
-                                        <span className="font-semibold">Sign up with GitHub</span>
+                                        <span className="font-semibold">Continue with GitHub</span>
                                     </button>
                                     
                                     {/* LinkedIn */}
                                     <button 
                                         onClick={handleLinkedInSignup}
-                                        className="w-full flex items-center justify-center gap-3 h-12 bg-[#0A66C2] hover:bg-[#0A66C2]/90 text-white font-medium text-sm rounded-lg transition-all duration-200 shadow-sm cursor-pointer" 
+                                        className="w-full flex items-center justify-center gap-3 h-11 bg-[#0A66C2] hover:bg-[#0A66C2]/90 text-white font-medium text-xs rounded-lg transition-all duration-200 shadow-sm cursor-pointer" 
                                         type="button"
                                         suppressHydrationWarning
                                     >
-                                        <svg className="w-5 h-5 fill-current flex-shrink-0" viewBox="0 0 24 24">
+                                        <svg className="w-4 h-4 fill-current flex-shrink-0" viewBox="0 0 24 24">
                                             <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>
                                         </svg>
-                                        <span className="font-semibold">Sign up with LinkedIn</span>
+                                        <span className="font-semibold">Continue with LinkedIn</span>
                                     </button>
                                 </div>
+                                <div className="text-[10px] text-on-surface-variant mt-2 font-sans">
+                                    By continuing, you agree to our <Link href="/terms" className="text-primary hover:underline">Terms of Service</Link> and <Link href="/privacy" className="text-primary hover:underline">Privacy Policy</Link>.
+                                </div>
                             </div>
-
+ 
                             {/* Center Divider */}
                             <div className="hidden md:flex flex-col items-center justify-center h-full min-h-[220px] relative px-2">
-                                <div className="w-px h-full min-h-[220px] bg-outline-variant"></div>
-                                <span className="absolute bg-[#1C2027] border border-outline-variant px-2 py-1 rounded-full font-label-bold text-label-bold text-outline uppercase tracking-widest text-[9px]">or</span>
+                                <div className="w-px h-full min-h-[220px] bg-outline-variant/30"></div>
+                                <span className="absolute bg-[#1C2027] border border-outline-variant/30 w-7 h-7 flex items-center justify-center rounded-full font-label-bold text-label-bold text-outline uppercase tracking-widest text-[8px]">or</span>
                             </div>
                             
                             <div className="flex md:hidden items-center gap-4 my-2">
-                                <div className="flex-grow h-px bg-outline-variant"></div>
-                                <span className="font-label-bold text-label-bold text-outline uppercase tracking-widest text-[9px]">or</span>
-                                <div className="flex-grow h-px bg-outline-variant"></div>
+                                <div className="flex-grow h-px bg-outline-variant/30"></div>
+                                <span className="font-label-bold text-label-bold text-outline uppercase tracking-widest text-[8px]">or</span>
+                                <div className="flex-grow h-px bg-outline-variant/30"></div>
                             </div>
-
+ 
                             {/* Right Column: Form Fields */}
-                            <form onSubmit={handleEmailSignup} className="space-y-4">
-                                <div className="space-y-3">
-                                    <div className="space-y-1">
-                                        <label className="block font-label-bold text-label-bold text-on-surface text-[12px]">Full Name</label>
-                                        <input 
-                                            className="w-full h-11 px-3 bg-white text-black rounded-lg border border-outline-variant focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all placeholder:text-outline/50 font-sans" 
-                                            name="fullName"
-                                            placeholder="John Doe" 
-                                            type="text"
-                                            value={formData.fullName}
-                                            onChange={handleChange}
-                                            required
-                                            suppressHydrationWarning
-                                        />
-                                    </div>
-                                    <div className="space-y-1">
-                                         <label className="block font-label-bold text-label-bold text-on-surface text-[12px]">Email Address</label>
-                                        <input 
-                                            className="w-full h-11 px-3 bg-white text-black rounded-lg border border-outline-variant focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all placeholder:text-outline/50 font-sans" 
-                                            name="email"
-                                            placeholder="name@company.com" 
-                                            type="email"
-                                            value={formData.email}
-                                            onChange={handleChange}
-                                            required
-                                            suppressHydrationWarning
-                                        />
-                                    </div>
-                                    <div className="space-y-1">
-                                         <label className="block font-label-bold text-label-bold text-on-surface text-[12px]">Password</label>
-                                         <div className="relative">
-                                             <input 
-                                                 className="w-full h-11 pl-3 pr-10 bg-white text-black rounded-lg border border-outline-variant focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all placeholder:text-outline/50 font-sans" 
-                                                 name="password"
-                                                 placeholder="••••••••" 
-                                                 type={showPassword ? "text" : "password"}
-                                                 value={formData.password}
-                                                 onChange={handleChange}
-                                                 required
-                                                 suppressHydrationWarning
-                                             />
-                                             <button
-                                                 type="button"
-                                                 onClick={() => setShowPassword(!showPassword)}
-                                                 className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center justify-center text-gray-500 hover:text-black focus:outline-none w-7 h-7 transition-colors"
-                                             >
-                                                 <span className="material-symbols-outlined select-none text-[18px]">
-                                                     {showPassword ? "visibility" : "visibility_off"}
+                            <div className="flex flex-col space-y-4">
+                                <h2 className="text-md font-semibold text-on-surface text-left">Sign up with email</h2>
+                                <form onSubmit={handleEmailSignup} className="space-y-4">
+                                    <div className="space-y-3 text-left">
+                                        <div className="space-y-1">
+                                            <label className="block font-label-bold text-label-bold text-on-surface text-[12px]">Full Name</label>
+                                            <div className="relative">
+                                                <span className="material-symbols-outlined select-none text-[18px] text-outline absolute left-3 top-1/2 -translate-y-1/2">person</span>
+                                                <input 
+                                                    className="w-full h-11 pl-10 pr-3 bg-white/[0.02] text-on-surface rounded-lg border border-outline-variant/30 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all placeholder:text-outline/50 font-sans" 
+                                                    name="fullName"
+                                                    placeholder="John Doe" 
+                                                    type="text"
+                                                    value={formData.fullName}
+                                                    onChange={handleChange}
+                                                    required
+                                                    suppressHydrationWarning
+                                                />
+                                            </div>
+                                        </div>
+                                        <div className="space-y-1">
+                                             <label className="block font-label-bold text-label-bold text-on-surface text-[12px]">Email Address</label>
+                                             <div className="relative">
+                                                <span className="material-symbols-outlined select-none text-[18px] text-outline absolute left-3 top-1/2 -translate-y-1/2">mail</span>
+                                                <input 
+                                                    className="w-full h-11 pl-10 pr-3 bg-white/[0.02] text-on-surface rounded-lg border border-outline-variant/30 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all placeholder:text-outline/50 font-sans" 
+                                                    name="email"
+                                                    placeholder="name@company.com" 
+                                                    type="email"
+                                                    value={formData.email}
+                                                    onChange={handleChange}
+                                                    required
+                                                    suppressHydrationWarning
+                                                />
+                                            </div>
+                                        </div>
+                                        <div className="space-y-1">
+                                             <label className="block font-label-bold text-label-bold text-on-surface text-[12px]">Password</label>
+                                             <div className="relative">
+                                                 <span className="material-symbols-outlined select-none text-[18px] text-outline absolute left-3 top-1/2 -translate-y-1/2">lock</span>
+                                                 <input 
+                                                     className="w-full h-11 pl-10 pr-10 bg-white/[0.02] text-on-surface rounded-lg border border-outline-variant/30 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all placeholder:text-outline/50 font-sans" 
+                                                     name="password"
+                                                     placeholder="••••••••" 
+                                                     type={showPassword ? "text" : "password"}
+                                                     value={formData.password}
+                                                     onChange={handleChange}
+                                                     required
+                                                     suppressHydrationWarning
+                                                 />
+                                                 <button
+                                                     type="button"
+                                                     onClick={() => setShowPassword(!showPassword)}
+                                                     className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center justify-center text-outline hover:text-on-surface focus:outline-none w-7 h-7 transition-colors"
+                                                 >
+                                                     <span className="material-symbols-outlined select-none text-[18px]">
+                                                         {showPassword ? "visibility" : "visibility_off"}
+                                                     </span>
+                                                 </button>
+                                             </div>
+ 
+                                             {/* Password Strength UI */}
+                                             <div className="flex gap-1 mt-1.5">
+                                                 {[1, 2, 3, 4].map((index) => {
+                                                     const strength = getPasswordStrength(formData.password);
+                                                     let barColor = "bg-gray-700/50";
+                                                     if (strength >= index) {
+                                                         if (strength === 1) barColor = "bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.4)]";
+                                                         else if (strength === 2 || strength === 3) barColor = "bg-yellow-500 shadow-[0_0_8px_rgba(234,179,8,0.4)]";
+                                                         else if (strength === 4) barColor = "bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.4)]";
+                                                     }
+                                                     return (
+                                                         <div 
+                                                             key={index} 
+                                                             className={`h-1 flex-grow rounded-full transition-all duration-300 ${barColor}`}
+                                                         />
+                                                     );
+                                                 })}
+                                             </div>
+                                             <div className="flex items-center justify-between text-[10px] mt-1 text-on-surface-variant font-sans">
+                                                 <span>Password strength</span>
+                                                 <span className={`font-bold uppercase tracking-wider ${
+                                                     getPasswordStrength(formData.password) === 1 ? "text-red-500" :
+                                                     getPasswordStrength(formData.password) >= 2 && getPasswordStrength(formData.password) <= 3 ? "text-yellow-500" :
+                                                     getPasswordStrength(formData.password) === 4 ? "text-green-500" : "text-gray-500"
+                                                 }`}>
+                                                     {getPasswordStrength(formData.password) === 0 && "Empty"}
+                                                     {getPasswordStrength(formData.password) === 1 && "Weak"}
+                                                     {getPasswordStrength(formData.password) >= 2 && getPasswordStrength(formData.password) <= 3 && "Average"}
+                                                     {getPasswordStrength(formData.password) === 4 && "Strong"}
                                                  </span>
-                                             </button>
-                                         </div>
-
-                                         {/* Password Strength UI */}
-                                         <div className="flex gap-1 mt-1.5">
-                                             {[1, 2, 3, 4].map((index) => {
-                                                 const strength = getPasswordStrength(formData.password);
-                                                 let barColor = "bg-gray-700/50";
-                                                 if (strength >= index) {
-                                                     if (strength === 1) barColor = "bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.4)]";
-                                                     else if (strength === 2 || strength === 3) barColor = "bg-yellow-500 shadow-[0_0_8px_rgba(234,179,8,0.4)]";
-                                                     else if (strength === 4) barColor = "bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.4)]";
-                                                 }
-                                                 return (
-                                                     <div 
-                                                         key={index} 
-                                                         className={`h-1 flex-grow rounded-full transition-all duration-300 ${barColor}`}
-                                                     />
-                                                 );
-                                             })}
-                                         </div>
-                                         <div className="flex items-center justify-between text-[10px] mt-1 text-on-surface-variant">
-                                             <span>Strength</span>
-                                             <span className={`font-bold uppercase tracking-wider ${
-                                                 getPasswordStrength(formData.password) === 1 ? "text-red-500" :
-                                                 getPasswordStrength(formData.password) >= 2 && getPasswordStrength(formData.password) <= 3 ? "text-yellow-500" :
-                                                 getPasswordStrength(formData.password) === 4 ? "text-green-500" : "text-gray-500"
-                                             }`}>
-                                                 {getPasswordStrength(formData.password) === 0 && "Empty"}
-                                                 {getPasswordStrength(formData.password) === 1 && "Weak"}
-                                                 {getPasswordStrength(formData.password) >= 2 && getPasswordStrength(formData.password) <= 3 && "Average"}
-                                                 {getPasswordStrength(formData.password) === 4 && "Strong"}
-                                             </span>
-                                         </div>
+                                             </div>
+                                        </div>
+ 
+                                        <div className="space-y-1">
+                                             <label className="block font-label-bold text-label-bold text-on-surface text-[12px]">Retype Password</label>
+                                             <div className="relative">
+                                                 <span className="material-symbols-outlined select-none text-[18px] text-outline absolute left-3 top-1/2 -translate-y-1/2">lock</span>
+                                                 <input 
+                                                     className="w-full h-11 pl-10 pr-10 bg-white/[0.02] text-on-surface rounded-lg border border-outline-variant/30 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all placeholder:text-outline/50 font-sans" 
+                                                     name="confirmPassword"
+                                                     placeholder="••••••••" 
+                                                     type={showConfirmPassword ? "text" : "password"}
+                                                     value={confirmPassword}
+                                                     onChange={(e) => setConfirmPassword(e.target.value)}
+                                                     required
+                                                     suppressHydrationWarning
+                                                 />
+                                                 <button
+                                                     type="button"
+                                                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                                                     className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center justify-center text-outline hover:text-on-surface focus:outline-none w-7 h-7 transition-colors"
+                                                 >
+                                                     <span className="material-symbols-outlined select-none text-[18px]">
+                                                         {showConfirmPassword ? "visibility" : "visibility_off"}
+                                                     </span>
+                                                 </button>
+                                             </div>
+                                        </div>
                                     </div>
-
-                                    <div className="space-y-1">
-                                         <label className="block font-label-bold text-label-bold text-on-surface text-[12px]">Retype Password</label>
-                                         <div className="relative">
-                                             <input 
-                                                 className="w-full h-11 pl-3 pr-10 bg-white text-black rounded-lg border border-outline-variant focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all placeholder:text-outline/50 font-sans" 
-                                                 name="confirmPassword"
-                                                 placeholder="••••••••" 
-                                                 type={showConfirmPassword ? "text" : "password"}
-                                                 value={confirmPassword}
-                                                 onChange={(e) => setConfirmPassword(e.target.value)}
-                                                 required
-                                                 suppressHydrationWarning
-                                             />
-                                             <button
-                                                 type="button"
-                                                 onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                                                 className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center justify-center text-gray-500 hover:text-black focus:outline-none w-7 h-7 transition-colors"
-                                             >
-                                                 <span className="material-symbols-outlined select-none text-[18px]">
-                                                     {showConfirmPassword ? "visibility" : "visibility_off"}
-                                                 </span>
-                                             </button>
-                                         </div>
+                                    
+                                    <div className="flex items-start gap-2 py-1 text-left">
+                                        <input 
+                                            className="w-4 h-4 mt-0.5 rounded border-outline-variant/30 text-primary focus:ring-primary bg-surface-container cursor-pointer" 
+                                            id="terms" 
+                                            type="checkbox"
+                                            required
+                                        />
+                                        <label className="text-[11px] text-on-surface-variant font-sans leading-tight select-none cursor-pointer" htmlFor="terms">
+                                            I agree to the <Link href="/terms" className="text-primary hover:underline">Terms of Service</Link> and <Link href="/privacy" className="text-primary hover:underline">Privacy Policy</Link>
+                                        </label>
                                     </div>
-                                </div>
-                                
-                                <div className="flex items-center gap-2 py-1">
-                                    <input 
-                                        className="w-4 h-4 rounded border-outline-variant text-primary focus:ring-primary bg-surface-container" 
-                                        id="terms" 
-                                        type="checkbox"
-                                        required
-                                    />
-                                    <label className="font-body-sm text-body-sm text-on-surface-variant text-[12px]" htmlFor="terms">
-                                        I agree to the <a className="text-primary hover:underline" href="#">Terms of Service</a>
-                                    </label>
-                                </div>
-                                
-                                <button 
-                                    className="w-full h-11 bg-[#4A72F3] text-white font-button text-button rounded-lg hover:brightness-110 active:scale-[0.98] transition-all shadow-[0_0_20px_rgba(74,114,243,0.3)] cursor-pointer" 
-                                    type="submit"
-                                    suppressHydrationWarning
-                                >
-                                    {loading ? (
-                                        <span className="flex items-center justify-center gap-2">
-                                            <i className="fas fa-sync fa-spin"></i>
-                                            Creating...
-                                        </span>
-                                    ) : "Create Account"}
-                                </button>
-                                
-                                <div className="text-center pt-2">
-                                    <p className="font-body-sm text-body-sm text-on-surface-variant text-[12px]">
-                                        Already have an account?{" "}
-                                        <Link href="/login" className="text-primary font-label-bold hover:underline">
-                                            Log in
-                                        </Link>
-                                    </p>
-                                </div>
-                            </form>
+                                    
+                                    <button 
+                                        className="w-full h-11 bg-gradient-to-r from-[#4A72F3] to-[#7B53FF] text-white font-medium text-xs rounded-lg hover:opacity-95 transition-all shadow-[0_0_20px_rgba(74,114,243,0.3)] cursor-pointer flex items-center justify-center" 
+                                        type="submit"
+                                        suppressHydrationWarning
+                                    >
+                                        {loading ? (
+                                            <span className="flex items-center justify-center gap-2">
+                                                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                                                Creating...
+                                            </span>
+                                        ) : "Create Account"}
+                                    </button>
+                                    
+                                    <div className="text-center pt-1">
+                                        <p className="text-[11px] text-on-surface-variant font-sans">
+                                            Already have an account?{" "}
+                                            <Link href="/login" className="text-primary font-semibold hover:underline">
+                                                Sign in
+                                            </Link>
+                                        </p>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Features Badges Below the Card */}
+                    <div className="w-full max-w-3xl mt-8 grid grid-cols-2 md:grid-cols-4 gap-4 px-4 relative z-10">
+                        <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 rounded-full bg-white/[0.02] border border-white/5 flex items-center justify-center text-primary">
+                                <span className="material-symbols-outlined select-none text-[20px]">verified</span>
+                            </div>
+                            <div className="text-left font-sans">
+                                <h5 className="text-[11px] font-bold text-on-surface leading-tight">Trusted by 50,000+</h5>
+                                <p className="text-[9px] text-on-surface-variant">Job Seekers</p>
+                            </div>
+                        </div>
+
+                        <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 rounded-full bg-white/[0.02] border border-white/5 flex items-center justify-center text-primary">
+                                <span className="material-symbols-outlined select-none text-[20px]">psychology</span>
+                            </div>
+                            <div className="text-left font-sans">
+                                <h5 className="text-[11px] font-bold text-on-surface leading-tight">AI Optimized</h5>
+                                <p className="text-[9px] text-on-surface-variant">Resumes</p>
+                            </div>
+                        </div>
+
+                        <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 rounded-full bg-white/[0.02] border border-white/5 flex items-center justify-center text-primary">
+                                <span className="material-symbols-outlined select-none text-[20px]">check_circle</span>
+                            </div>
+                            <div className="text-left font-sans">
+                                <h5 className="text-[11px] font-bold text-on-surface leading-tight">ATS Approved</h5>
+                                <p className="text-[9px] text-on-surface-variant">Templates</p>
+                            </div>
+                        </div>
+
+                        <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 rounded-full bg-white/[0.02] border border-white/5 flex items-center justify-center text-primary">
+                                <span className="material-symbols-outlined select-none text-[20px]">lock</span>
+                            </div>
+                            <div className="text-left font-sans">
+                                <h5 className="text-[11px] font-bold text-on-surface leading-tight">100% Secure</h5>
+                                <p className="text-[9px] text-on-surface-variant">Your Data</p>
+                            </div>
                         </div>
                     </div>
                 </main>
