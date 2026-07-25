@@ -99,8 +99,9 @@ export default function Login() {
                 setLoading(true);
                 try {
                     // Double check database existence to handle Google sign-ins cleanly
-                    const checkRes = await fetch(`/api/user?email=${encodeURIComponent(user.email)}`);
-                    if (!checkRes.ok) {
+                    const checkRes = await fetch(`/api/user?email=${encodeURIComponent(user.email)}&checkExistenceOnly=true`);
+                    const checkData = await checkRes.json().catch(() => ({}));
+                    if (!checkRes.ok || !checkData.exists) {
                         const { signOut } = await import("firebase/auth");
                         await signOut(auth);
                         if (typeof window !== "undefined") {
@@ -186,8 +187,9 @@ export default function Login() {
 
         try {
             // Check if user exists in database
-            const checkRes = await fetch(`/api/user?email=${encodeURIComponent(email)}`);
-            if (!checkRes.ok) {
+            const checkRes = await fetch(`/api/user?email=${encodeURIComponent(email)}&checkExistenceOnly=true`);
+            const checkData = await checkRes.json().catch(() => ({}));
+            if (!checkRes.ok || !checkData.exists) {
                 showToast("Account does not exist. Please sign up first!");
                 router.push("/signup");
                 setLoading(false);

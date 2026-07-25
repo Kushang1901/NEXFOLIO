@@ -3,6 +3,18 @@ import { getDb } from "../../../lib/db";
 
 export async function GET(request) {
     try {
+        const { searchParams } = new URL(request.url);
+        const email = searchParams.get("email");
+        const checkExistenceOnly = searchParams.get("checkExistenceOnly") === "true";
+
+        if (checkExistenceOnly && email) {
+            const db = await getDb();
+            const users = await db`
+                SELECT id FROM users WHERE email = ${email}
+            `;
+            return NextResponse.json({ exists: users.length > 0 });
+        }
+
         const { verifyAuth } = await import("../../../utils/authHelper");
         const authedEmail = await verifyAuth(request);
         if (!authedEmail) {
