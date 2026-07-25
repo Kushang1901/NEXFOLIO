@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { getAuth, GoogleAuthProvider, GithubAuthProvider, signInWithPopup, onAuthStateChanged } from "firebase/auth";
+import { getAuth, GoogleAuthProvider, GithubAuthProvider, signInWithRedirect, getRedirectResult, onAuthStateChanged } from "firebase/auth";
 import { app } from "../../firebase";
 import { getRecaptchaToken } from "../../utils/recaptcha";
 import Navbar from "../../components/Navbar";
@@ -50,8 +50,18 @@ export default function Signup() {
         }));
     };
 
-    // HANDLE AUTH REDIRECT/STATE CHANGES
+    // HANDLE REDIRECT RESULT & AUTH STATE CHANGES
     useEffect(() => {
+        // Catch any errors from full-page redirect authentication (e.g. account conflicts)
+        getRedirectResult(auth).catch((error) => {
+            console.error("Firebase Redirect Auth Error:", error);
+            if (error.code === "auth/account-exists-with-different-credential") {
+                showToast("An account already exists with this email address using a different sign-in method. Please login using that provider.", "error");
+            } else if (error.code !== "auth/popup-closed-by-user" && error.code !== "auth/cancelled-popup-request") {
+                showToast("Authentication failed: " + (error.message || error), "error");
+            }
+        });
+
         const unsubscribe = subscribeToAuthChanges(async (user) => {
             if (user) {
                 if (isGoogleSignupRef.current) return;
@@ -60,9 +70,10 @@ export default function Signup() {
 
                 try {
                     const recaptchaToken = await getRecaptchaToken("SIGNUP").catch(() => "MOCK_TOKEN");
+                    const rawProvider = user.providerData[0]?.providerId;
                     const provider = user.uid?.startsWith("mock_user_") 
                         ? "mock" 
-                        : (user.providerData[0]?.providerId === "google.com" ? "google" : "email");
+                        : (rawProvider === "google.com" ? "google" : (rawProvider === "github.com" ? "github" : "email"));
 
                     const response = await fetch(
                         "/api/signup",
@@ -109,13 +120,14 @@ export default function Signup() {
     }, [router, formData.fullName]);
 
     // MOCK SIGNUP BYPASS
-    const signupWithMockUser = (email = "demo@cvgrid.in", displayName = "Demo User") => {
+    const signupWithMockUser = (email = "demo@cvgrid.in", displayName = "Demo User", token = null) => {
         const mockUser = {
             uid: "mock_user_12345",
             email: email,
             displayName: displayName,
             photoURL: null,
-            emailVerified: true
+            emailVerified: true,
+            token: token
         };
         if (typeof window !== "undefined") {
             localStorage.setItem("mock_user", JSON.stringify(mockUser));
@@ -215,120 +227,42 @@ export default function Signup() {
     // GOOGLE SIGNUP HANDLER
     const handleGoogleSignup = async () => {
         try {
-            isGoogleSignupRef.current = true;
-            const result = await signInWithPopup(auth, googleProvider);
-            if (result.user) {
-                const user = result.user;
-                
-                // If already processing/signup occurred, skip duplicate API call
-                if (apiCallingRef.current.has(user.email)) {
-                    showToast("Signup successful!");
-                    router.push("/builder");
-                    return;
-                }
-                apiCallingRef.current.add(user.email);
-
-                try {
-                    // Call the mock backend signup route to simulate signup success
-                    const recaptchaToken = await getRecaptchaToken("SIGNUP").catch(() => "MOCK_TOKEN");
-                    const response = await fetch("/api/signup", {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({
-                            firstName: user.displayName?.split(" ")[0] || "",
-                            lastName: user.displayName?.split(" ").slice(1).join(" ") || "",
-                            email: user.email,
-                            provider: "google",
-                            photoUrl: user.photoURL || "",
-                            recaptchaToken
-                        })
-                    });
-
-                    if (!response.ok) {
-                        const errData = await response.json().catch(() => ({}));
-                        throw new Error(errData.error || "Server error during signup");
-                    }
-
-                    const data = await response.json();
-                    if (!data.isNewUser) {
-                        showToast("Welcome back!", "success");
-                        router.push("/builder");
-                        return;
-                    }
-
-                    showToast("Signup successful!");
-                    router.push("/builder");
-                } finally {
-                    apiCallingRef.current.delete(user.email);
-                }
-            }
+            await signInWithRedirect(auth, googleProvider);
         } catch (err) {
             console.error("Firebase Signup Error:", err);
-            showToast("Google signup failed: " + (err.message || err));
-        } finally {
-            isGoogleSignupRef.current = false;
+            if (err.code === "auth/account-exists-with-different-credential") {
+                showToast("An account already exists with this email address using a different sign-in method. Please login using that provider.", "error");
+            } else {
+                showToast("Google signup failed: " + (err.message || err));
+            }
         }
     };
+
     // GITHUB SIGNUP HANDLER
     const handleGithubSignup = async () => {
         try {
-            isGoogleSignupRef.current = true;
             const githubProvider = new GithubAuthProvider();
-            const result = await signInWithPopup(auth, githubProvider);
-            if (result.user) {
-                const user = result.user;
-                
-                if (apiCallingRef.current.has(user.email)) {
-                    showToast("Signup successful!");
-                    router.push("/builder");
-                    return;
-                }
-                apiCallingRef.current.add(user.email);
-
-                try {
-                    const recaptchaToken = await getRecaptchaToken("SIGNUP").catch(() => "MOCK_TOKEN");
-                    const response = await fetch("/api/signup", {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({
-                            firstName: user.displayName?.split(" ")[0] || "",
-                            lastName: user.displayName?.split(" ").slice(1).join(" ") || "",
-                            email: user.email,
-                            provider: "github",
-                            photoUrl: user.photoURL || "",
-                            recaptchaToken
-                        })
-                    });
-
-                    if (!response.ok) {
-                        const errData = await response.json().catch(() => ({}));
-                        throw new Error(errData.error || "Server error during signup");
-                    }
-
-                    const data = await response.json();
-                    if (!data.isNewUser) {
-                        showToast("Welcome back!", "success");
-                        router.push("/builder");
-                        return;
-                    }
-
-                    showToast("Signup successful!");
-                    router.push("/builder");
-                } finally {
-                    apiCallingRef.current.delete(user.email);
-                }
-            }
+            await signInWithRedirect(auth, githubProvider);
         } catch (err) {
             console.error("Firebase GitHub Signup Error:", err);
             if (err.code === "auth/popup-closed-by-user") {
                 showToast("GitHub sign up cancelled.", "info");
+            } else if (err.code === "auth/account-exists-with-different-credential") {
+                showToast("An account already exists with this email address using a different sign-in method. Please login using that provider.", "error");
             } else {
                 showToast("GitHub Auth is not configured on Firebase. Falling back to Demo User.", "info");
                 const randomId = Math.floor(Math.random() * 100000);
-                signupWithMockUser(`github-${randomId}@cvgrid.in`, "GitHub Demo User");
+                try {
+                    const tokenRes = await fetch("/api/auth/mock-token", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ email: `github-${randomId}@cvgrid.in` })
+                    }).then(r => r.json()).catch(() => ({}));
+                    signupWithMockUser(`github-${randomId}@cvgrid.in`, "GitHub Demo User", tokenRes.token);
+                } catch (tokErr) {
+                    signupWithMockUser(`github-${randomId}@cvgrid.in`, "GitHub Demo User");
+                }
             }
-        } finally {
-            isGoogleSignupRef.current = false;
         }
     };
 
@@ -386,7 +320,8 @@ export default function Signup() {
                 email: email,
                 displayName: fullName,
                 photoURL: null,
-                emailVerified: true
+                emailVerified: true,
+                token: data.token
             };
             if (typeof window !== "undefined") {
                 localStorage.setItem("mock_user", JSON.stringify(mockUser));
@@ -397,7 +332,16 @@ export default function Signup() {
             router.push("/builder");
         } catch (err) {
             console.error("LinkedIn Signup Error:", err);
-            signupWithMockUser(email, fullName);
+            try {
+                const tokenRes = await fetch("/api/auth/mock-token", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ email })
+                }).then(r => r.json()).catch(() => ({}));
+                signupWithMockUser(email, fullName, tokenRes.token);
+            } catch (tokErr) {
+                signupWithMockUser(email, fullName);
+            }
         } finally {
             apiCallingRef.current.delete(email);
             setLoading(false);
@@ -506,9 +450,21 @@ export default function Signup() {
                         {/* Decorative Accents */}
                         <div className="absolute top-0 left-0 w-1.5 h-full bg-primary"></div>
                         
-                        <div className="grid grid-cols-1 md:grid-cols-[1fr_auto_1fr] gap-8 items-center">
+                        <div className="grid grid-cols-1 md:grid-cols-[1fr_auto_1fr] gap-8 items-stretch">
                             {/* Left Column: Welcome & Social Logins */}
-                            <div className="flex flex-col space-y-6">
+                            <div className="flex flex-col space-y-6 pt-2">
+                                <div className="flex items-center gap-2 mb-2 self-center md:self-start">
+                                    <img src="/logo.png" alt="CVGrid Logo" className="h-9 w-9 object-contain" />
+                                    <span style={{
+                                        fontFamily: "var(--font-space-grotesk), sans-serif", 
+                                        fontWeight: "700",
+                                        letterSpacing: "0.08em",
+                                        background: "linear-gradient(90deg, #ffffff 0%, #b6c4ff 100%)",
+                                        WebkitBackgroundClip: "text", 
+                                        WebkitTextFillColor: "transparent",
+                                        fontSize: "1.4rem",
+                                    }}>CVGRID</span>
+                                </div>
                                 <header className="text-center md:text-left">
                                     <h1 className="font-headline-lg text-headline-lg text-on-surface mb-2">Create your account</h1>
                                     <p className="font-body-sm text-body-sm text-on-surface-variant">Sign up to start building professional resumes</p>

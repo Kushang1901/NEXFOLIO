@@ -5,7 +5,7 @@ import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { getAuth, signInWithEmailAndPassword, GoogleAuthProvider, GithubAuthProvider, signInWithPopup } from "firebase/auth";
+import { getAuth, signInWithEmailAndPassword, GoogleAuthProvider, GithubAuthProvider, signInWithRedirect, getRedirectResult } from "firebase/auth";
 import { app } from "../../firebase";
 import { getRecaptchaToken } from "../../utils/recaptcha";
 import { subscribeToAuthChanges } from "../../authState";
@@ -89,6 +89,16 @@ export default function Login() {
 
     // HANDLE REDIRECT RESULT & AUTH STATE CHANGES
     useEffect(() => {
+        // Catch any errors from full-page redirect authentication (e.g. account conflicts)
+        getRedirectResult(auth).catch((error) => {
+            console.error("Firebase Redirect Auth Error:", error);
+            if (error.code === "auth/account-exists-with-different-credential") {
+                showToast("An account already exists with this email address using a different sign-in method. Please login using that provider.", "error");
+            } else if (error.code !== "auth/popup-closed-by-user" && error.code !== "auth/cancelled-popup-request") {
+                showToast("Authentication failed: " + (error.message || error), "error");
+            }
+        });
+
         const unsubscribe = subscribeToAuthChanges(async (user) => {
             if (user) {
                 if (user.uid === "mock_user_12345") {
@@ -146,10 +156,14 @@ export default function Login() {
     const handleGoogleLogin = async () => {
         setLoading(true);
         try {
-            await signInWithPopup(auth, googleProvider);
+            await signInWithRedirect(auth, googleProvider);
         } catch (error) {
             console.error("Firebase Google Login Error:", error);
-            showToast("Google login failed: " + (error.message || error));
+            if (error.code === "auth/account-exists-with-different-credential") {
+                showToast("An account already exists with this email address using a different sign-in method. Please login using that provider.", "error");
+            } else {
+                showToast("Google login failed: " + (error.message || error));
+            }
             setLoading(false);
         }
     };
@@ -158,16 +172,26 @@ export default function Login() {
     const handleGithubLogin = async () => {
         setLoading(true);
         try {
-            await signInWithPopup(auth, githubProvider);
+            await signInWithRedirect(auth, githubProvider);
         } catch (error) {
             console.error("Firebase GitHub Login Error:", error);
             if (error.code === "auth/popup-closed-by-user") {
                 showToast("GitHub login cancelled.", "info");
+            } else if (error.code === "auth/account-exists-with-different-credential") {
+                showToast("An account already exists with this email address using a different sign-in method. Please login using that provider.", "error");
             } else {
                 showToast("GitHub Auth is not configured on Firebase. Falling back to Demo User.", "info");
-                loginWithMockUser("github-demo@cvgrid.in", "GitHub Demo User");
+                try {
+                    const tokenRes = await fetch("/api/auth/mock-token", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ email: "github-demo@cvgrid.in" })
+                    }).then(r => r.json()).catch(() => ({}));
+                    loginWithMockUser("github-demo@cvgrid.in", "GitHub Demo User", tokenRes.token);
+                } catch (tokErr) {
+                    loginWithMockUser("github-demo@cvgrid.in", "GitHub Demo User");
+                }
             }
-        } finally {
             setLoading(false);
         }
     };
@@ -197,7 +221,7 @@ export default function Login() {
             }
 
             const recaptchaToken = await getRecaptchaToken("LOGIN").catch(() => "MOCK_TOKEN");
-            await fetch("/api/login", {
+            const response = await fetch("/api/login", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
@@ -210,13 +234,16 @@ export default function Login() {
                 })
             });
 
+            const data = response.ok ? await response.json().catch(() => ({})) : {};
+
             // Set mock login state
             const mockUser = {
                 uid: "mock_user_" + Math.floor(Math.random() * 100000),
                 email: email,
                 displayName: fullName,
                 photoURL: null,
-                emailVerified: true
+                emailVerified: true,
+                token: data.token
             };
             if (typeof window !== "undefined") {
                 localStorage.setItem("mock_user", JSON.stringify(mockUser));
@@ -227,7 +254,16 @@ export default function Login() {
             router.push("/");
         } catch (error) {
             console.error("LinkedIn Login error:", error);
-            loginWithMockUser(email, fullName);
+            try {
+                const tokenRes = await fetch("/api/auth/mock-token", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ email })
+                }).then(r => r.json()).catch(() => ({}));
+                loginWithMockUser(email, fullName, tokenRes.token);
+            } catch (tokErr) {
+                loginWithMockUser(email, fullName);
+            }
         } finally {
             setLoading(false);
         }
@@ -296,9 +332,21 @@ export default function Login() {
                     {/* Login Card */}
                     <div className="w-full max-w-3xl glass-card p-8 rounded-xl shadow-2xl relative z-10">
                         
-                        <div className="grid grid-cols-1 md:grid-cols-[1fr_auto_1fr] gap-8 items-center">
+                        <div className="grid grid-cols-1 md:grid-cols-[1fr_auto_1fr] gap-8 items-stretch">
                             {/* Left Column: Greeting & Social Logins */}
-                            <div className="flex flex-col space-y-6">
+                            <div className="flex flex-col space-y-6 pt-2">
+                                <div className="flex items-center gap-2 mb-2 self-center md:self-start">
+                                    <img src="/logo.png" alt="CVGrid Logo" className="h-9 w-9 object-contain" />
+                                    <span style={{
+                                        fontFamily: "var(--font-space-grotesk), sans-serif", 
+                                        fontWeight: "700",
+                                        letterSpacing: "0.08em",
+                                        background: "linear-gradient(90deg, #ffffff 0%, #b6c4ff 100%)",
+                                        WebkitBackgroundClip: "text", 
+                                        WebkitTextFillColor: "transparent",
+                                        fontSize: "1.4rem",
+                                    }}>CVGRID</span>
+                                </div>
                                 <div className="text-center md:text-left">
                                     <h1 className="font-headline-lg text-headline-lg text-on-surface mb-2">Login</h1>
                                     <p className="font-body-sm text-body-sm text-on-surface-variant">Welcome back to professional excellence.</p>

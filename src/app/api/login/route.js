@@ -42,11 +42,15 @@ export async function POST(request) {
                 WHERE email = ${email}
                 RETURNING id, email, first_name AS "firstName", last_name AS "lastName", provider, photo_url AS "photoUrl", created_at AS "createdAt", last_login AS "lastLogin"
             `;
+            const { generateLocalToken } = await import("../../../utils/authHelper");
+            const token = generateLocalToken({ email: email });
+
             return NextResponse.json(
                 {
                     message: "Login successful",
                     isNewUser: false,
-                    user: updatedUsers[0]
+                    user: updatedUsers[0],
+                    token: token
                 },
                 { status: 200 }
             );
@@ -59,11 +63,15 @@ export async function POST(request) {
             RETURNING id, email, first_name AS "firstName", last_name AS "lastName", provider, photo_url AS "photoUrl", created_at AS "createdAt", last_login AS "lastLogin"
         `;
 
+        const { generateLocalToken } = await import("../../../utils/authHelper");
+        const token = generateLocalToken({ email: email });
+
         return NextResponse.json(
             {
                 message: "Login successful (auto-registered)",
                 isNewUser: true,
-                user: newUsers[0]
+                user: newUsers[0],
+                token: token
             },
             { status: 200 }
         );

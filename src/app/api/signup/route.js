@@ -33,11 +33,15 @@ export async function POST(request) {
         `;
 
         if (existingUsers.length > 0) {
+            const { generateLocalToken } = await import("../../../utils/authHelper");
+            const token = generateLocalToken({ email: email });
+
             return NextResponse.json(
                 {
                     message: "User already exists",
                     isNewUser: false,
-                    user: existingUsers[0]
+                    user: existingUsers[0],
+                    token: token
                 },
                 { status: 200 }
             );
@@ -51,11 +55,15 @@ export async function POST(request) {
             RETURNING id, email, first_name AS "firstName", last_name AS "lastName", provider, photo_url AS "photoUrl", date_of_birth AS "dateOfBirth", created_at AS "createdAt", last_login AS "lastLogin"
         `;
 
+        const { generateLocalToken } = await import("../../../utils/authHelper");
+        const token = generateLocalToken({ email: email });
+
         return NextResponse.json(
             {
                 message: "Signup successful",
                 isNewUser: true,
-                user: newUsers[0]
+                user: newUsers[0],
+                token: token
             },
             { status: 201 }
         );
