@@ -219,6 +219,7 @@ export const metadata = {
     other: {
         // Search Console legacy
         "google-site-verification": "ZN33n6Kcv99nzcC0QejmpdyibLv0xQP7mOR8vtqFwgs",
+        "google-adsense-account": "ca-pub-9564494037866343",
         // Referrer policy
         referrer: "origin-when-cross-origin",
         // Content rating
@@ -771,7 +772,7 @@ export default function RootLayout({ children }) {
                     async
                     src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9564494037866343"
                     crossOrigin="anonymous"
-                    strategy="afterInteractive"
+                    strategy="beforeInteractive"
                 />
             </head>
             <body>
