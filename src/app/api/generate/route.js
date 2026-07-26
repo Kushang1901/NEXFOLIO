@@ -1,12 +1,12 @@
 import { NextResponse } from "next/server";
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import { verifyRecaptcha } from "../../../utils/recaptchaVerify";
+import { verifyTurnstile } from "../../../utils/turnstileVerify";
 
 const apiKey = process.env.GEMINI_API_KEY;
 
 export async function POST(request) {
     try {
-        const { prompt, recaptchaToken } = await request.json();
+        const { prompt, turnstileToken } = await request.json();
 
         if (!prompt || typeof prompt !== "string") {
             return NextResponse.json(
@@ -15,13 +15,13 @@ export async function POST(request) {
             );
         }
 
-        // Verify reCAPTCHA
+        // Verify Turnstile
         const isApp = request.headers.get("x-app-request") === "true";
         if (!isApp) {
-            const recaptchaResult = await verifyRecaptcha(recaptchaToken, "GENERATE_RESUME");
-            if (!recaptchaResult.success) {
+            const turnstileResult = await verifyTurnstile(turnstileToken, "generate_resume");
+            if (!turnstileResult.success) {
                 return NextResponse.json(
-                    { error: `reCAPTCHA verification failed: ${recaptchaResult.reason || "Bot activity detected."}` },
+                    { error: `Security verification failed: ${turnstileResult.reason || "Bot activity detected."}` },
                     { status: 403 }
                 );
             }

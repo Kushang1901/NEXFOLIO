@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Navbar from "../../components/Navbar";
-import { getRecaptchaToken } from "../../utils/recaptcha";
+import TurnstileWidget from "../../components/TurnstileWidget";
 import { subscribeToAuthChanges } from "../../authState";
 import { showToast } from "../../utils/toast";
 
@@ -91,6 +91,13 @@ export default function ResumeBuilder() {
     const [cloudSaving, setCloudSaving] = useState(false);
     const [showSaveModal, setShowSaveModal] = useState(false);
     const [currentMessageIndex, setCurrentMessageIndex] = useState(0);
+    const [turnstileToken, setTurnstileToken] = useState(null);
+    const turnstileTokenRef = React.useRef(null);
+
+    const handleTurnstileVerify = (token) => {
+        setTurnstileToken(token);
+        turnstileTokenRef.current = token;
+    };
 
     const LOADING_MESSAGES = [
         "Analyzing your professional profile...",
@@ -626,8 +633,14 @@ export default function ResumeBuilder() {
         e.preventDefault();
         setIsLoading(true);
 
+        const token = turnstileToken || (process.env.NODE_ENV === "development" ? "MOCK_TOKEN" : null);
+        if (!token) {
+            showToast("Please complete the security check.", "error");
+            setIsLoading(false);
+            return;
+        }
+
         try {
-            const recaptchaToken = await getRecaptchaToken("GENERATE_RESUME").catch(() => "MOCK_TOKEN");
 
             // Save complete data
             sessionStorage.setItem("resumeData", JSON.stringify(formData));
@@ -700,7 +713,7 @@ ${formData.skills || "Not provided"}
                 {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ prompt, recaptchaToken })
+                    body: JSON.stringify({ prompt, turnstileToken: token })
                 }
             );
 
@@ -1604,6 +1617,8 @@ ${formData.skills || "Not provided"}
                                         </div>
                                     </div>
                                 </div>
+                                
+                                <TurnstileWidget onVerify={handleTurnstileVerify} action="generate_resume" />
 
                                 <div className="text-center">
                                     <button

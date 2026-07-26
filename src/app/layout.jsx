@@ -731,9 +731,9 @@ export default function RootLayout({ children }) {
                     dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
                 />
 
-                {/* ── reCAPTCHA Enterprise ────────────────────── */}
+                {/* ── Cloudflare Turnstile ────────────────────── */}
                 <Script
-                    src="https://www.google.com/recaptcha/enterprise.js?render=6LfIrjQsAAAAANY4PBe_oGp6mIFkTwyeAB_DdG81"
+                    src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit"
                     strategy="afterInteractive"
                 />
 

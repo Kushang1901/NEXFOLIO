@@ -1,10 +1,10 @@
 import { NextResponse } from "next/server";
 import { getDb } from "../../../lib/db";
-import { verifyRecaptcha } from "../../../utils/recaptchaVerify";
+import { verifyTurnstile } from "../../../utils/turnstileVerify";
 
 export async function POST(request) {
     try {
-        const { firstName, lastName, email, provider, photoUrl, recaptchaToken } = await request.json();
+        const { firstName, lastName, email, provider, photoUrl, turnstileToken } = await request.json();
 
         if (!email) {
             return NextResponse.json(
@@ -13,11 +13,11 @@ export async function POST(request) {
             );
         }
 
-        // Verify reCAPTCHA
-        const recaptchaResult = await verifyRecaptcha(recaptchaToken, "LOGIN");
-        if (!recaptchaResult.success) {
+        // Verify Turnstile
+        const turnstileResult = await verifyTurnstile(turnstileToken, "login");
+        if (!turnstileResult.success) {
             return NextResponse.json(
-                { error: `reCAPTCHA verification failed: ${recaptchaResult.reason || "Bot activity detected."}` },
+                { error: `Security verification failed: ${turnstileResult.reason || "Bot activity detected."}` },
                 { status: 403 }
             );
         }

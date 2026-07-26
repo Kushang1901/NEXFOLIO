@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { getAuth, signInWithEmailAndPassword, GoogleAuthProvider, GithubAuthProvider, signInWithRedirect, getRedirectResult, onAuthStateChanged } from "firebase/auth";
 import { app } from "../../firebase";
-import { getRecaptchaToken } from "../../utils/recaptcha";
+import TurnstileWidget from "../../components/TurnstileWidget";
 import { subscribeToAuthChanges } from "../../authState";
 import Script from "next/script";
 import { showToast } from "../../utils/toast";
@@ -24,6 +24,13 @@ export default function Login() {
         password: "",
     });
     const [showPassword, setShowPassword] = useState(false);
+    const [turnstileToken, setTurnstileToken] = useState(null);
+    const turnstileTokenRef = React.useRef(null);
+
+    const handleTurnstileVerify = (token) => {
+        setTurnstileToken(token);
+        turnstileTokenRef.current = token;
+    };
 
 
     const [loading, setLoading] = useState(false);
@@ -58,7 +65,12 @@ export default function Login() {
         setLoading(true);
 
         try {
-            const recaptchaToken = await getRecaptchaToken("LOGIN").catch(() => "MOCK_TOKEN");
+            const token = turnstileToken || (process.env.NODE_ENV === "development" ? "MOCK_TOKEN" : null);
+            if (!token) {
+                showToast("Please complete the security check.", "error");
+                setLoading(false);
+                return;
+            }
             try {
                 const response = await fetch("/api/login", {
                     method: "POST",
@@ -67,7 +79,7 @@ export default function Login() {
                         email: formData.email,
                         password: formData.password,
                         provider: "email",
-                        recaptchaToken
+                        turnstileToken: token
                     })
                 });
 
@@ -86,8 +98,7 @@ export default function Login() {
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({
                         email: formData.email,
-                        password: formData.password,
-                        recaptchaToken
+                        password: formData.password
                     })
                 });
 
@@ -158,7 +169,20 @@ export default function Login() {
                     }
 
                     console.log("🔍 LOGIN PAGE: Proceeding to fetch /api/login...");
-                    const recaptchaToken = await getRecaptchaToken("LOGIN").catch(() => "MOCK_TOKEN");
+                    const turnstileTokenVal = turnstileTokenRef.current || (process.env.NODE_ENV === "development" ? "MOCK_TOKEN" : null);
+                    const finalToken = turnstileTokenVal || await new Promise((resolve) => {
+                        const check = setInterval(() => {
+                            if (turnstileTokenRef.current) {
+                                clearInterval(check);
+                                resolve(turnstileTokenRef.current);
+                            }
+                        }, 100);
+                        setTimeout(() => {
+                            clearInterval(check);
+                            resolve("MOCK_TOKEN");
+                        }, 5000);
+                    });
+
                     const rawProvider = user.providerData[0]?.providerId;
                     const provider = rawProvider === "github.com" ? "github" : "google";
                     await fetch("/api/login", {
@@ -170,7 +194,7 @@ export default function Login() {
                             email: userEmail,
                             provider: provider,
                             photoUrl: user.photoURL || "",
-                            recaptchaToken
+                            turnstileToken: finalToken
                         })
                     });
                     
@@ -407,6 +431,8 @@ export default function Login() {
                                          </button>
                                      </div>
                                 </div>
+                                
+                                <TurnstileWidget onVerify={handleTurnstileVerify} action="login" />
                                 
                                 {/* Action Button */}
                                 <button 

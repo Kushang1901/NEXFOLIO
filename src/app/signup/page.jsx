@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { getAuth, GoogleAuthProvider, GithubAuthProvider, signInWithRedirect, getRedirectResult, onAuthStateChanged } from "firebase/auth";
 import { app } from "../../firebase";
-import { getRecaptchaToken } from "../../utils/recaptcha";
+import TurnstileWidget from "../../components/TurnstileWidget";
 import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
 import { subscribeToAuthChanges } from "../../authState";
@@ -25,6 +25,13 @@ export default function Signup() {
     const [confirmPassword, setConfirmPassword] = useState("");
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+    const [turnstileToken, setTurnstileToken] = useState(null);
+    const turnstileTokenRef = React.useRef(null);
+
+    const handleTurnstileVerify = (token) => {
+        setTurnstileToken(token);
+        turnstileTokenRef.current = token;
+    };
 
 
     const [loading, setLoading] = useState(false);
@@ -82,7 +89,20 @@ export default function Signup() {
 
                 console.log("🔍 SIGNUP PAGE: Proceeding to fetch /api/signup...");
                 try {
-                    const recaptchaToken = await getRecaptchaToken("SIGNUP").catch(() => "MOCK_TOKEN");
+                    const turnstileTokenVal = turnstileTokenRef.current || (process.env.NODE_ENV === "development" ? "MOCK_TOKEN" : null);
+                    const finalToken = turnstileTokenVal || await new Promise((resolve) => {
+                        const check = setInterval(() => {
+                            if (turnstileTokenRef.current) {
+                                clearInterval(check);
+                                resolve(turnstileTokenRef.current);
+                            }
+                        }, 100);
+                        setTimeout(() => {
+                            clearInterval(check);
+                            resolve("MOCK_TOKEN");
+                        }, 5000);
+                    });
+
                     const rawProvider = user.providerData[0]?.providerId;
                     const provider = user.uid?.startsWith("mock_user_") 
                         ? "mock" 
@@ -99,7 +119,7 @@ export default function Signup() {
                                 email: userEmail,
                                 provider: provider,
                                 photoUrl: user.photoURL || "",
-                                recaptchaToken
+                                turnstileToken: finalToken
                             })
                         }
                     );
@@ -157,6 +177,13 @@ export default function Signup() {
         e.preventDefault();
         setLoading(true);
 
+        const token = turnstileToken || (process.env.NODE_ENV === "development" ? "MOCK_TOKEN" : null);
+        if (!token) {
+            showToast("Please complete the security check.", "error");
+            setLoading(false);
+            return;
+        }
+
         // Password conditions
         const hasUpper = /[A-Z]/.test(formData.password);
         const hasNumber = /[0-9]/.test(formData.password);
@@ -193,7 +220,6 @@ export default function Signup() {
 
             try {
                 // Call the local backend signup API to register in Neon PostgreSQL
-                const recaptchaToken = await getRecaptchaToken("SIGNUP").catch(() => "MOCK_TOKEN");
                 const response = await fetch("/api/signup", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
@@ -203,7 +229,7 @@ export default function Signup() {
                         email: formData.email,
                         provider: "email",
                         password: formData.password,
-                        recaptchaToken
+                        turnstileToken: token
                     })
                 });
 
@@ -625,6 +651,8 @@ export default function Signup() {
                                             I agree to the <Link href="/terms" className="text-primary hover:underline">Terms of Service</Link> and <Link href="/privacy" className="text-primary hover:underline">Privacy Policy</Link>
                                         </label>
                                     </div>
+                                    
+                                    <TurnstileWidget onVerify={handleTurnstileVerify} action="signup" />
                                     
                                     <button 
                                         className="w-full h-11 bg-gradient-to-r from-[#4A72F3] to-[#7B53FF] text-white font-medium text-xs rounded-lg hover:opacity-95 transition-all shadow-[0_0_20px_rgba(74,114,243,0.3)] cursor-pointer flex items-center justify-center" 
