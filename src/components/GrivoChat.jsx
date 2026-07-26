@@ -538,7 +538,7 @@ export default function GrivoChat() {
                     {!isMinimized && (
                         <div style={styles.poweredBy}>
                             <SparkleIcon />
-                            <span>Powered by Google Gemini AI</span>
+                            <span>Powered by CVGrid Intelligence</span>
                         </div>
                     )}
 
