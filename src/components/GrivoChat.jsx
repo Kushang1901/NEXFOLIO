@@ -340,7 +340,19 @@ export default function GrivoChat() {
                 return part.split(/(\[[^\]]+\]\([^)]+\))/g).map((seg, j) => {
                     const linkMatch = seg.match(/\[([^\]]+)\]\(([^)]+)\)/);
                     if (linkMatch) {
-                        return <a key={j} href={linkMatch[2]} target="_blank" rel="noopener noreferrer" style={styles.inlineLink}>{linkMatch[1]}</a>;
+                        const href = linkMatch[2];
+                        if (href.startsWith("/")) {
+                            return (
+                                <button
+                                    key={j}
+                                    onClick={() => { router.push(href); handleClose(); }}
+                                    style={{ background: "none", border: "none", padding: 0, color: "#818cf8", textDecoration: "underline", cursor: "pointer", font: "inherit" }}
+                                >
+                                    {linkMatch[1]}
+                                </button>
+                            );
+                        }
+                        return <a key={j} href={href} target="_blank" rel="noopener noreferrer" style={styles.inlineLink}>{linkMatch[1]}</a>;
                     }
                     return seg;
                 });

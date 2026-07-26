@@ -118,6 +118,86 @@ export async function POST(request) {
                 return await model.generateContent(parts);
             });
 
+const VALID_ROUTES_MAP = {
+    "/": "/",
+    "/home": "/",
+    "/builder": "/builder",
+    "/create": "/builder",
+    "/create-resume": "/builder",
+    "/resume-builder": "/builder",
+    "/build": "/builder",
+    "/new-cv": "/builder",
+    "/ats": "/ats-checker",
+    "/ats-checker": "/ats-checker",
+    "/ats-score": "/ats-checker",
+    "/ats-check": "/ats-checker",
+    "/templates": "/templates",
+    "/template": "/templates",
+    "/cover-letter": "/cover-letter",
+    "/coverletter": "/cover-letter",
+    "/ai-tools": "/ai-tools",
+    "/tools": "/ai-tools",
+    "/ai-tools/keyword-optimizer": "/ai-tools/keyword-optimizer",
+    "/keyword-optimizer": "/ai-tools/keyword-optimizer",
+    "/keywords": "/ai-tools/keyword-optimizer",
+    "/ai-tools/match-score": "/ai-tools/match-score",
+    "/match-score": "/ai-tools/match-score",
+    "/ai-tools/interview-generator": "/ai-tools/interview-generator",
+    "/interview-generator": "/ai-tools/interview-generator",
+    "/interview": "/ai-tools/interview-generator",
+    "/ai-tools/job-analyzer": "/ai-tools/job-analyzer",
+    "/job-analyzer": "/ai-tools/job-analyzer",
+    "/ai-tools/portfolio-builder": "/ai-tools/portfolio-builder",
+    "/portfolio-builder": "/ai-tools/portfolio-builder",
+    "/portfolio": "/ai-tools/portfolio-builder",
+    "/ai-tools/resume-sharing": "/ai-tools/resume-sharing",
+    "/resume-sharing": "/ai-tools/resume-sharing",
+    "/my-resumes": "/my-resumes",
+    "/resumes": "/my-resumes",
+    "/profile": "/profile",
+    "/account": "/profile",
+    "/contact": "/contact",
+    "/privacy": "/privacy",
+    "/terms": "/terms",
+    "/login": "/login",
+    "/signup": "/signup"
+};
+
+function sanitizeAction(action) {
+    if (!action || typeof action !== "object" || action.type !== "navigate" || !action.route) {
+        return null;
+    }
+    let rawRoute = String(action.route).trim().toLowerCase();
+    if (!rawRoute.startsWith("/")) {
+        rawRoute = "/" + rawRoute;
+    }
+    if (rawRoute.length > 1 && rawRoute.endsWith("/")) {
+        rawRoute = rawRoute.slice(0, -1);
+    }
+
+    const matched = VALID_ROUTES_MAP[rawRoute];
+    if (matched) {
+        return {
+            type: "navigate",
+            route: matched,
+            label: action.label || "Open Feature",
+            icon: action.icon || "✨"
+        };
+    }
+
+    if (rawRoute.includes("ats")) return { type: "navigate", route: "/ats-checker", label: action.label || "Open ATS Checker", icon: "📊" };
+    if (rawRoute.includes("keyword")) return { type: "navigate", route: "/ai-tools/keyword-optimizer", label: action.label || "Try Keyword Optimizer", icon: "🔑" };
+    if (rawRoute.includes("build") || rawRoute.includes("create") || rawRoute.includes("resume")) return { type: "navigate", route: "/builder", label: action.label || "Build Resume", icon: "✨" };
+    if (rawRoute.includes("template")) return { type: "navigate", route: "/templates", label: action.label || "Browse Templates", icon: "🎨" };
+    if (rawRoute.includes("cover")) return { type: "navigate", route: "/cover-letter", label: action.label || "Cover Letter AI", icon: "📝" };
+    if (rawRoute.includes("interview")) return { type: "navigate", route: "/ai-tools/interview-generator", label: action.label || "Interview Generator", icon: "🎙️" };
+    if (rawRoute.includes("match")) return { type: "navigate", route: "/ai-tools/match-score", label: action.label || "Match Score", icon: "🎯" };
+    if (rawRoute.includes("job") || rawRoute.includes("analyz")) return { type: "navigate", route: "/ai-tools/job-analyzer", label: action.label || "Job Analyzer", icon: "🔍" };
+    if (rawRoute.includes("portfoli")) return { type: "navigate", route: "/ai-tools/portfolio-builder", label: action.label || "Portfolio Builder", icon: "🌐" };
+
+    return null;
+}
+
             const rawText = result.response.text();
             const cleaned = cleanJsonResponse(rawText);
 
@@ -133,6 +213,8 @@ export async function POST(request) {
                     action: { type: "navigate", route: "/builder", label: "Rebuild with AI", icon: "✨" },
                 };
             }
+
+            parsed.action = sanitizeAction(parsed.action);
 
             return NextResponse.json({ success: true, ...parsed });
         }
@@ -164,7 +246,6 @@ export async function POST(request) {
 
         const rawText = result.response.text();
         const cleaned = cleanJsonResponse(rawText);
-
         let parsed;
         try {
             parsed = JSON.parse(cleaned);
@@ -172,6 +253,8 @@ export async function POST(request) {
             // Fallback: treat as plain message
             parsed = { message: rawText.slice(0, 800), action: null };
         }
+
+        parsed.action = sanitizeAction(parsed.action);
 
         return NextResponse.json({ success: true, ...parsed });
 
