@@ -41,8 +41,16 @@ export async function POST(request) {
 
         // 1. CREATE RAZORPAY ORDER ACTION
         if (action === "create_order") {
-            const keyId = process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || "rzp_live_TDTM6sBKdckc4Y";
-            const keySecret = process.env.RAZORPAY_KEY_SECRET || "2xD6xcUPm4hJQ77v7oZBK7l4";
+            const keyId = process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID;
+            const keySecret = process.env.RAZORPAY_KEY_SECRET;
+
+            if (!keyId || !keySecret) {
+                console.error("Missing Razorpay Keys in server environment");
+                return NextResponse.json(
+                    { error: "Payment gateway is not configured on the server." },
+                    { status: 500, headers: corsHeaders }
+                );
+            }
 
             const authString = Buffer.from(`${keyId}:${keySecret}`).toString("base64");
 
@@ -87,7 +95,14 @@ export async function POST(request) {
                 );
             }
 
-            const keySecret = process.env.RAZORPAY_KEY_SECRET || "2xD6xcUPm4hJQ77v7oZBK7l4";
+            const keySecret = process.env.RAZORPAY_KEY_SECRET;
+            if (!keySecret) {
+                console.error("Missing Razorpay Secret Key in server environment");
+                return NextResponse.json(
+                    { error: "Payment verification configuration error on the server" },
+                    { status: 500, headers: corsHeaders }
+                );
+            }
 
             // Verify the Razorpay signature
             const hmac = crypto.createHmac("sha256", keySecret);

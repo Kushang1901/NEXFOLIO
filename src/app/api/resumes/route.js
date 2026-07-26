@@ -94,6 +94,7 @@ export async function GET(request) {
                 SELECT id, resume_name AS "resumeName", selected_template AS "selectedTemplate", 
                        resume_data AS "resumeData",
                        is_public AS "isPublic", shareable_link AS "shareableLink",
+                       is_paid AS "isPaid", is_portfolio_paid AS "isPortfolioPaid",
                        created_at AS "createdAt", updated_at AS "updatedAt"
                 FROM resumes
                 WHERE user_email = ${authedEmail}
