@@ -765,6 +765,14 @@ export default function RootLayout({ children }) {
                         gtag('config', 'G-J3TJ0ZE0GM', { anonymize_ip: true, cookie_flags: 'SameSite=None;Secure' });
                     `
                 }} />
+
+                {/* ── Google AdSense ─────────────────────────── */}
+                <Script
+                    async
+                    src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9564494037866343"
+                    crossOrigin="anonymous"
+                    strategy="afterInteractive"
+                />
             </head>
             <body>
                 {/* ── Google Tag Manager (noscript) ──────────── */}
