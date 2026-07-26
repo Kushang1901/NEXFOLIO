@@ -4,6 +4,7 @@ import ToastContainer from "../components/Toast";
 import PageLoader from "../components/PageLoader";
 import CookieConsent from "../components/CookieConsent";
 import BackToTop from "../components/BackToTop";
+import GrivoChatWrapper from "../components/GrivoChatWrapper";
 import { Inter, Space_Grotesk } from "next/font/google";
 import Script from "next/script";
 
@@ -780,6 +781,7 @@ export default function RootLayout({ children }) {
                 {children}
                 <CookieConsent />
                 <BackToTop />
+                <GrivoChatWrapper />
             </body>
         </html>
     );
