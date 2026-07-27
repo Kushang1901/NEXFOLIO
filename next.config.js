@@ -1,7 +1,7 @@
 /** @type {import('next').NextConfig} */
 const cspHeader = `
   default-src 'self';
-  script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.google.com https://www.gstatic.com https://www.googletagmanager.com https://apis.google.com https://checkout.razorpay.com https://cdn.razorpay.com https://challenges.cloudflare.com https://pagead2.googlesyndication.com https://adservice.google.com https://googleads.g.doubleclick.net;
+  script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.google.com https://www.gstatic.com https://www.googletagmanager.com https://apis.google.com https://checkout.razorpay.com https://cdn.razorpay.com https://challenges.cloudflare.com https://pagead2.googlesyndication.com https://adservice.google.com https://googleads.g.doubleclick.net https://*.adtrafficquality.google;
   style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com;
   img-src 'self' data: blob: https://lh3.googleusercontent.com https://*.githubusercontent.com https://images.unsplash.com https://www.google-analytics.com https://www.googletagmanager.com https://www.gstatic.com https://*.razorpay.com https://pagead2.googlesyndication.com https://adservice.google.com https://googleads.g.doubleclick.net;
   connect-src 'self' https://*.googleapis.com https://*.firebaseapp.com https://*.firebaseio.com https://www.google-analytics.com https://stats.g.doubleclick.net https://api.razorpay.com https://checkout.razorpay.com https://www.google.com https://*.google.com https://challenges.cloudflare.com https://pagead2.googlesyndication.com https://adservice.google.com https://googleads.g.doubleclick.net https://*.adtrafficquality.google;
