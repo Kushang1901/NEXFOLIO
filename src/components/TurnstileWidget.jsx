@@ -5,9 +5,16 @@ import React, { useEffect, useRef } from "react";
 export default function TurnstileWidget({ onVerify, action, theme = "dark" }) {
     const containerRef = useRef(null);
     const widgetIdRef = useRef(null);
+    const onVerifyRef = useRef(onVerify);
+
+    // Keep the callback ref updated on every render
+    useEffect(() => {
+        onVerifyRef.current = onVerify;
+    }, [onVerify]);
 
     useEffect(() => {
         let active = true;
+        let interval = null;
 
         const renderWidget = () => {
             if (!active) return;
@@ -17,7 +24,9 @@ export default function TurnstileWidget({ onVerify, action, theme = "dark" }) {
                     
                     // If a widget was already rendered in this container, remove it first
                     if (widgetIdRef.current) {
-                        window.turnstile.remove(widgetIdRef.current);
+                        try {
+                            window.turnstile.remove(widgetIdRef.current);
+                        } catch (e) {}
                         widgetIdRef.current = null;
                     }
 
@@ -26,13 +35,13 @@ export default function TurnstileWidget({ onVerify, action, theme = "dark" }) {
                         theme: theme,
                         action: action,
                         callback: (token) => {
-                            if (active) onVerify(token);
+                            if (active && onVerifyRef.current) onVerifyRef.current(token);
                         },
                         "expired-callback": () => {
-                            if (active) onVerify(null);
+                            if (active && onVerifyRef.current) onVerifyRef.current(null);
                         },
                         "error-callback": () => {
-                            if (active) onVerify(null);
+                            if (active && onVerifyRef.current) onVerifyRef.current(null);
                         }
                     });
                 } catch (err) {
@@ -45,23 +54,17 @@ export default function TurnstileWidget({ onVerify, action, theme = "dark" }) {
             renderWidget();
         } else {
             // Check if script is loaded every 100ms
-            const interval = setInterval(() => {
+            interval = setInterval(() => {
                 if (window.turnstile) {
                     clearInterval(interval);
                     renderWidget();
                 }
             }, 100);
-            return () => {
-                active = false;
-                clearInterval(interval);
-                if (widgetIdRef.current && window.turnstile) {
-                    window.turnstile.remove(widgetIdRef.current);
-                }
-            };
         }
 
         return () => {
             active = false;
+            if (interval) clearInterval(interval);
             if (widgetIdRef.current && window.turnstile) {
                 // Wrap in a try-catch in case the element has already been destroyed or cleaned up
                 try {
@@ -69,9 +72,10 @@ export default function TurnstileWidget({ onVerify, action, theme = "dark" }) {
                 } catch (e) {
                     // Ignore
                 }
+                widgetIdRef.current = null;
             }
         };
-    }, [action, theme, onVerify]);
+    }, [action, theme]); // Dependency onVerify removed to avoid widget recreation
 
     return (
         <div className="flex justify-center my-4">
