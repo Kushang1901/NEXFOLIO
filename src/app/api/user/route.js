@@ -32,10 +32,14 @@ export async function GET(request) {
         `;
 
         if (users.length === 0) {
-            return NextResponse.json(
-                { error: "User not found" },
-                { status: 404 }
-            );
+            console.log(`ℹ️ Auto-registering authenticated user in GET /api/user: ${authedEmail}`);
+            const defaultFirstName = authedEmail.split("@")[0];
+            const newUsers = await db`
+                INSERT INTO users (email, first_name, last_name, provider)
+                VALUES (${authedEmail}, ${defaultFirstName}, 'User', 'email')
+                RETURNING first_name AS "firstName", last_name AS "lastName", photo_url AS "photoUrl", date_of_birth AS "dateOfBirth"
+            `;
+            return NextResponse.json(newUsers[0]);
         }
 
         return NextResponse.json(users[0]);
