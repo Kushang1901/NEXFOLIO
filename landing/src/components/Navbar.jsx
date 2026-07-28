@@ -607,7 +607,7 @@ export default function Navbar() {
                     </div>
 
                     {/* ── Mobile: Hamburger ── */}
-                    <button className="lg:hidden" onClick={() => setMenuOpen(true)} aria-label="Open menu"
+                    <button className="flex lg:hidden flex-col gap-[5px]" onClick={() => setMenuOpen(true)} aria-label="Open menu"
                         style={{ ...hamburgerStyle, marginLeft: "auto" }}>
                         <span style={burgerLine} />
                         <span style={burgerLine} />
@@ -995,7 +995,7 @@ export default function Navbar() {
 const hamburgerStyle = {
     background: "rgba(255,255,255,0.07)", border: "1px solid rgba(255,255,255,0.15)",
     borderRadius: "10px", padding: "10px 12px",
-    display: "flex", flexDirection: "column", gap: "5px", cursor: "pointer",
+    cursor: "pointer",
 };
 const burgerLine = { display: "block", width: "22px", height: "2px", background: "#fff", borderRadius: "2px" };
 const drawerLinkStyle = {
