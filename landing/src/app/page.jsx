@@ -261,12 +261,12 @@ export default function HomePage() {
 
             <style>{`
                 body {
-                    background-color: #08080c !important;
+                    background-color: #000000 !important;
                     color: #e4e0f1 !important;
                     overflow-x: hidden;
                 }
                 .hero-gradient-bg {
-                    background: radial-gradient(circle at 75% 25%, #14162e 0%, #08080c 65%, #030409 100%);
+                    background: radial-gradient(circle at 75% 25%, #111126 0%, #07070d 65%, #000000 100%);
                 }
                 .ai-gradient-text {
                     background: linear-gradient(135deg, #6366F1 0%, #A855F7 100%);
@@ -325,7 +325,7 @@ export default function HomePage() {
                 }
             `}</style>
 
-            <div className="bg-[#12121d] text-[#e4e0f1] min-h-screen" style={{ opacity: tailwindLoaded ? 1 : 0, transition: "opacity 0.25s ease-in" }}>
+            <div className="bg-[#000000] text-[#e4e0f1] min-h-screen" style={{ opacity: tailwindLoaded ? 1 : 0, transition: "opacity 0.25s ease-in" }}>
                 <Navbar />
 
                 <main className="relative">

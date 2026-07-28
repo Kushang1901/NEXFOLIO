@@ -19,7 +19,7 @@ body {
   height: auto !important;
   overflow-y: visible !important;
   overflow-x: hidden !important;
-  background-color: #08080c;
+  background-color: #000000;
   color: #ffffff;
   font-family: var(--font-inter), -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
