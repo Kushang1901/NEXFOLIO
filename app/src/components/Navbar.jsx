@@ -155,7 +155,7 @@ export default function Navbar() {
                     height: "64px", gap: "32px",
                 }}>
                     {/* LOGO */}
-                    <Link href="/" onClick={closeMenu} style={{ textDecoration: "none", display: "flex", alignItems: "center", gap: "10px", flexShrink: 0 }}>
+                    <a href="https://cvgrid.in" onClick={closeMenu} style={{ textDecoration: "none", display: "flex", alignItems: "center", gap: "10px", flexShrink: 0 }}>
                         <img src="/logo.png" alt="CVGrid Logo" style={{ height: "32px", width: "32px" }} />
                         <span style={{
                             fontFamily: "var(--font-space-grotesk), sans-serif", fontWeight: "700",
@@ -164,7 +164,7 @@ export default function Navbar() {
                             WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",
                             fontSize: "1.3rem",
                         }}>CVGRID</span>
-                    </Link>
+                    </a>
 
                     {/* Divider */}
                     <div style={{ width: "1px", height: "28px", background: "rgba(255,255,255,0.12)", flexShrink: 0 }} className="d-none d-lg-block" />

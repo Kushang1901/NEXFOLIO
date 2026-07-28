@@ -19,7 +19,7 @@ export default function Footer() {
             <div className="max-w-[1280px] mx-auto px-6 grid grid-cols-1 lg:grid-cols-12 gap-12 items-start relative z-10">
                 {/* Branding Block */}
                 <div className="lg:col-span-5 flex flex-col gap-6">
-                    <Link href="/" className="flex items-center gap-3 text-decoration-none group">
+                    <a href="https://cvgrid.in" className="flex items-center gap-3 text-decoration-none group">
                         <img 
                             src="/logo.png" 
                             alt="CVGrid Logo" 
@@ -31,7 +31,7 @@ export default function Footer() {
                         >
                             CVGrid
                         </span>
-                    </Link>
+                    </a>
                     <p className="text-[#c7c4d7] text-sm md:text-base leading-relaxed max-w-sm" style={{ fontFamily: "var(--font-inter), sans-serif" }}>
                         The intelligent career platform for the modern era. Build, optimize, and export ATS-compliant resumes powered by advanced neural insights.
                     </p>
