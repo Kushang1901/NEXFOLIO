@@ -172,11 +172,93 @@ export default function PublicResumePage() {
 
     if (loading) {
         return (
-            <div className="bg-dark text-white min-vh-100 d-flex flex-column justify-content-center align-items-center">
-                <div className="spinner-border text-info mb-3" role="status">
-                    <span className="visually-hidden">Loading...</span>
+            <div 
+                style={{
+                    background: "radial-gradient(circle at center, #0e0e1e 0%, #05050a 100%)",
+                    minHeight: "100vh",
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    position: "relative",
+                    overflow: "hidden"
+                }}
+            >
+                {/* Decorative glows */}
+                <div style={{ position: "absolute", top: "20%", left: "30%", width: "400px", height: "400px", background: "radial-gradient(circle, rgba(99, 102, 241, 0.1) 0%, transparent 70%)", filter: "blur(40px)", pointerEvents: "none" }} />
+                <div style={{ position: "absolute", bottom: "20%", right: "30%", width: "400px", height: "400px", background: "radial-gradient(circle, rgba(168, 85, 247, 0.1) 0%, transparent 70%)", filter: "blur(40px)", pointerEvents: "none" }} />
+
+                <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "20px", zIndex: 10 }}>
+                    <div style={{ position: "relative", width: "64px", height: "64px" }}>
+                        {/* Outer glowing ring */}
+                        <div
+                            style={{
+                                position: "absolute",
+                                inset: 0,
+                                borderRadius: "50%",
+                                border: "3px solid rgba(99, 102, 241, 0.12)",
+                                borderTopColor: "#6366f1",
+                                animation: "cvgrid-spin 0.8s linear infinite",
+                            }}
+                        />
+                        {/* Middle ring */}
+                        <div
+                            style={{
+                                position: "absolute",
+                                inset: "8px",
+                                borderRadius: "50%",
+                                border: "2px solid rgba(139, 92, 246, 0.08)",
+                                borderTopColor: "#8b5cf6",
+                                animation: "cvgrid-spin-reverse 1.2s linear infinite",
+                            }}
+                        />
+                        {/* Center glowing orb */}
+                        <div
+                            style={{
+                                position: "absolute",
+                                inset: "20px",
+                                borderRadius: "50%",
+                                background: "linear-gradient(135deg, #6366f1, #a855f7)",
+                                boxShadow: "0 0 16px rgba(168, 85, 247, 0.7)",
+                                animation: "cvgrid-pulse 1s ease-in-out infinite",
+                            }}
+                        />
+                    </div>
+
+                    <p 
+                        style={{
+                            fontFamily: "var(--font-space-grotesk), sans-serif",
+                            fontSize: "1.1rem",
+                            fontWeight: "500",
+                            letterSpacing: "0.02em",
+                            background: "linear-gradient(90deg, #ffffff 0%, #b6c4ff 100%)",
+                            WebkitBackgroundClip: "text",
+                            WebkitTextFillColor: "transparent",
+                            margin: 0,
+                            animation: "cvgrid-text-fade 1.5s ease-in-out infinite alternate"
+                        }}
+                    >
+                        Loading resume details...
+                    </p>
                 </div>
-                <p className="fs-5">Loading resume details...</p>
+
+                {/* Inline animations */}
+                <style>{`
+                    @keyframes cvgrid-spin {
+                        to { transform: rotate(360deg); }
+                    }
+                    @keyframes cvgrid-spin-reverse {
+                        to { transform: rotate(-360deg); }
+                    }
+                    @keyframes cvgrid-pulse {
+                        0%, 100% { transform: scale(1); opacity: 1; }
+                        50% { transform: scale(1.25); opacity: 0.8; }
+                    }
+                    @keyframes cvgrid-text-fade {
+                        from { opacity: 0.6; }
+                        to { opacity: 1; }
+                    }
+                `}</style>
             </div>
         );
     }

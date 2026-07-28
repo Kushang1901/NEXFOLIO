@@ -933,12 +933,14 @@ export default function Navbar() {
                     text-decoration: none !important;
                     font-size: 0.85rem;
                     font-weight: 500;
-                    padding: 6px 14px;
-                    border-radius: 20px;
+                    height: 34px;
+                    padding: 0 16px;
+                    border-radius: 9999px;
                     transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
                     white-space: nowrap;
                     display: flex;
                     align-items: center;
+                    justify-content: center;
                     gap: 6px;
                     border: 1px solid transparent;
                     color: rgba(255, 255, 255, 0.65) !important;
