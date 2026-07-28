@@ -110,10 +110,10 @@ export default function Navbar() {
                     </a>
 
                     {/* Divider */}
-                    <div style={{ width: "1px", height: "28px", background: "rgba(255,255,255,0.12)", flexShrink: 0 }} className="d-none d-lg-block" />
+                    <div style={{ width: "1px", height: "28px", background: "rgba(255,255,255,0.12)", flexShrink: 0 }} className="hidden lg:block" />
 
                     {/* ── Desktop: Left Nav Links ── */}
-                    <div className="d-none d-lg-flex" style={{ gap: "4px", flex: 1, height: "100%", alignItems: "stretch", alignSelf: "stretch" }}>
+                    <div className="hidden lg:flex" style={{ gap: "4px", flex: 1, height: "100%", alignItems: "stretch", alignSelf: "stretch" }}>
                         {NAV_LINKS.map((link) => {
                             if (link.label === "Templates") {
                                 return (
@@ -601,13 +601,13 @@ export default function Navbar() {
                     </div>
 
                     {/* ── Desktop: Right Auth Buttons (Logged Out) ── */}
-                    <div className="d-none d-lg-flex" style={{ alignItems: "center", gap: "12px", marginLeft: "auto" }}>
+                    <div className="hidden lg:flex" style={{ alignItems: "center", gap: "12px", marginLeft: "auto" }}>
                         <a href="https://app.cvgrid.in/signup" style={{ color: "rgba(255,255,255,0.75)", textDecoration: "none", fontSize: "0.9rem", fontWeight: "500", padding: "7px 14px" }}>Sign Up</a>
                         <a href="https://app.cvgrid.in/login" style={{ background: "linear-gradient(135deg, #3b82f6, #6366f1)", color: "#fff", textDecoration: "none", fontSize: "0.9rem", fontWeight: "600", padding: "8px 20px", borderRadius: "8px", transition: "opacity 0.2s" }}>Login</a>
                     </div>
 
                     {/* ── Mobile: Hamburger ── */}
-                    <button className="d-lg-none" onClick={() => setMenuOpen(true)} aria-label="Open menu"
+                    <button className="lg:hidden" onClick={() => setMenuOpen(true)} aria-label="Open menu"
                         style={{ ...hamburgerStyle, marginLeft: "auto" }}>
                         <span style={burgerLine} />
                         <span style={burgerLine} />
