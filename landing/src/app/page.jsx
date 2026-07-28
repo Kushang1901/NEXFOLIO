@@ -5,20 +5,31 @@ import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import Link from "next/link";
 import Script from "next/script";
-import { useRouter } from "next/navigation";
-import { subscribeToAuthChanges } from "../authState";
 
 export default function HomePage() {
-    const router = useRouter();
-    const [user, setUser] = useState(null);
-    const [loadingAuth, setLoadingAuth] = useState(true);
-    const [showAuthModal, setShowAuthModal] = useState(false);
-    const [countdown, setCountdown] = useState(3);
     const [tailwindLoaded, setTailwindLoaded] = useState(true);
 
-    // Testimonials State
-    const [testimonials, setTestimonials] = useState([]);
-    const [loadingTestimonials, setLoadingTestimonials] = useState(true);
+    // Hardcoded static testimonials for high speed and zero network dependency
+    const testimonials = [
+        {
+            userName: "Anish Sharma",
+            role: "Software Engineer",
+            rating: 5,
+            feedback: "CVGrid is incredible. The AI bullet point rephraser helped me highlight my achievements. Landed 3 interviews in a week!"
+        },
+        {
+            userName: "Priya Patel",
+            role: "Product Manager",
+            rating: 5,
+            feedback: "I loved the classic template. The ATS optimization feature is a lifesaver. Extremely clean and professional UI."
+        },
+        {
+            userName: "Rahul Verma",
+            role: "College Graduate",
+            rating: 5,
+            feedback: "The PDF export was super fast and clean. No hidden charges or watermarks on the premium version. Highly recommend!"
+        }
+    ];
 
     // Typewriter effect state
     const phrases = ["Career", "ATS Resume", "AI Portfolio", "Interview Prep", "Job Search", "Professional CV"];
@@ -50,39 +61,6 @@ export default function HomePage() {
 
         return () => clearTimeout(timer);
     }, [typewriterText, isTypewriterDeleting, typewriterIndex]);
-
-    useEffect(() => {
-        const unsubscribe = subscribeToAuthChanges((loggedUser) => {
-            setUser(loggedUser);
-            setLoadingAuth(false);
-
-            // Check if redirect triggered the auth modal
-            if (!loggedUser && typeof window !== "undefined") {
-                const params = new URLSearchParams(window.location.search);
-                if (params.get("triggerAuth") === "true") {
-                    triggerAuthPopup();
-                }
-            }
-        });
-        return () => { if (typeof unsubscribe === "function") unsubscribe(); };
-    }, [router]);
-
-    useEffect(() => {
-        const fetchTestimonials = async () => {
-            try {
-                const res = await fetch("/api/testimonials");
-                if (res.ok) {
-                    const data = await res.json();
-                    setTestimonials(data);
-                }
-            } catch (err) {
-                console.error("Error fetching testimonials:", err);
-            } finally {
-                setLoadingTestimonials(false);
-            }
-        };
-        fetchTestimonials();
-    }, []);
 
     useEffect(() => {
         const canvas = document.getElementById("crystal-canvas");
@@ -198,7 +176,6 @@ export default function HomePage() {
             drawHexagon(ctx, width * 0.5, height * 0.8, 140);
 
             // 2. Draw flowing wave ribbons (diagonally sweeping top-right to bottom-left)
-            // Ribbon Group 1: Main diagonal wave sweep
             drawWave(
                 ctx, 
                 width * 1.15, -height * 0.15, 
@@ -211,7 +188,6 @@ export default function HomePage() {
                 0.06 // alpha
             );
 
-            // Ribbon Group 2: Secondary wave sweep for organic depth
             drawWave(
                 ctx, 
                 width * 1.25, -height * 0.05, 
@@ -274,29 +250,9 @@ export default function HomePage() {
         };
     }, [tailwindLoaded]);
 
-    const triggerAuthPopup = () => {
-        setShowAuthModal(true);
-        let timer = 3;
-        setCountdown(3);
-        const interval = setInterval(() => {
-            timer -= 1;
-            setCountdown(timer);
-            if (timer <= 0) {
-                clearInterval(interval);
-                router.push("/signup");
-            }
-        }, 1000);
-    };
-
     const handleStartResume = (e) => {
         e.preventDefault();
-        if (loadingAuth) return;
-
-        if (user) {
-            router.push("/templates");
-        } else {
-            triggerAuthPopup();
-        }
+        window.location.href = "https://app.cvgrid.in/login";
     };
 
     return (
@@ -305,12 +261,12 @@ export default function HomePage() {
 
             <style>{`
                 body {
-                    background-color: #090b16 !important;
+                    background-color: #08080c !important;
                     color: #e4e0f1 !important;
                     overflow-x: hidden;
                 }
                 .hero-gradient-bg {
-                    background: radial-gradient(circle at 75% 25%, #14162e 0%, #090b16 65%, #030409 100%);
+                    background: radial-gradient(circle at 75% 25%, #14162e 0%, #08080c 65%, #030409 100%);
                 }
                 .ai-gradient-text {
                     background: linear-gradient(135deg, #6366F1 0%, #A855F7 100%);
@@ -374,7 +330,7 @@ export default function HomePage() {
 
                 <main className="relative">
                     {/* Hero Section: Editorial Layout */}
-                    <section className="relative min-h-[calc(100vh-64px)] lg:h-[calc(100vh-64px)] flex items-center px-4 md:px-8 pt-6 pb-6 lg:py-0 overflow-hidden hero-gradient-bg">
+                    <section className="relative min-h-[calc(100vh-64px)] lg:h-[calc(100vh-64px)] flex items-center px-4 md:px-8 pt-6 pb-6 lg:py-0 overflow-hidden hero-gradient-bg" id="features">
                         {/* Background Elements */}
                         <canvas id="crystal-canvas" className="absolute inset-0 w-full h-full pointer-events-none z-0" style={{ mixBlendMode: "screen" }} />
                         <div className="absolute top-1/4 -right-20 w-[600px] h-[600px] gradient-blur rounded-full opacity-50 pointer-events-none" style={{ background: "radial-gradient(circle, rgba(239, 68, 68, 0.12) 0%, transparent 70%)" }}></div>
@@ -414,7 +370,7 @@ export default function HomePage() {
                                 <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-6">
                                     <button
                                         onClick={handleStartResume}
-                                        className="ai-gradient-bg text-white font-bold px-6 py-3 rounded-xl flex items-center justify-center gap-2 group glow-hover transition-all active:scale-95 border-0"
+                                        className="ai-gradient-bg text-white font-bold px-6 py-3 rounded-xl flex items-center justify-center gap-2 group glow-hover transition-all active:scale-95 border-0 cursor-pointer"
                                     >
                                         <span className="text-base">Build My Resume</span>
                                         <span className="material-symbols-outlined text-[20px] transition-transform group-hover:translate-x-1">trending_flat</span>
@@ -509,7 +465,7 @@ export default function HomePage() {
                                 <p className="text-[#c7c4d7] leading-relaxed" style={{ fontFamily: "var(--font-inter), sans-serif" }}>
                                     Generate impactful summaries and action-oriented bullet points with the best free AI resume maker online.
                                 </p>
-                                <button onClick={handleStartResume} className="mt-4 flex items-center gap-2 text-[#c0c1ff] font-semibold bg-transparent border-0 p-0 group-hover:gap-4 transition-all" style={{ fontFamily: "var(--font-inter), sans-serif" }}>
+                                <button onClick={handleStartResume} className="mt-4 flex items-center gap-2 text-[#c0c1ff] font-semibold bg-transparent border-0 p-0 group-hover:gap-4 transition-all cursor-pointer" style={{ fontFamily: "var(--font-inter), sans-serif" }}>
                                     Start Writing <span className="material-symbols-outlined text-[18px]">east</span>
                                 </button>
                             </div>
@@ -523,9 +479,9 @@ export default function HomePage() {
                                 <p className="text-[#c7c4d7] leading-relaxed" style={{ fontFamily: "var(--font-inter), sans-serif" }}>
                                     Compare your resume against descriptions and identify keyword gaps with our precision best ATS scorer.
                                 </p>
-                                <Link href="/ats-checker" className="mt-4 flex items-center gap-2 text-[#c0c1ff] font-semibold group-hover:gap-4 transition-all text-decoration-none" style={{ fontFamily: "var(--font-inter), sans-serif" }}>
+                                <a href="https://app.cvgrid.in/ats-checker" className="mt-4 flex items-center gap-2 text-[#c0c1ff] font-semibold group-hover:gap-4 transition-all no-underline" style={{ fontFamily: "var(--font-inter), sans-serif" }}>
                                     Scan My CV <span className="material-symbols-outlined text-[18px]">east</span>
-                                </Link>
+                                </a>
                             </div>
 
                             {/* Card 3 */}
@@ -537,9 +493,9 @@ export default function HomePage() {
                                 <p className="text-[#c7c4d7] leading-relaxed" style={{ fontFamily: "var(--font-inter), sans-serif" }}>
                                     Set custom handles, password locks, and track detailed real-time visitor counts and downloads.
                                 </p>
-                                <Link href="/ai-tools/resume-sharing" className="mt-4 flex items-center gap-2 text-[#c0c1ff] font-semibold group-hover:gap-4 transition-all text-decoration-none" style={{ fontFamily: "var(--font-inter), sans-serif" }}>
+                                <a href="https://app.cvgrid.in/login" className="mt-4 flex items-center gap-2 text-[#c0c1ff] font-semibold group-hover:gap-4 transition-all no-underline" style={{ fontFamily: "var(--font-inter), sans-serif" }}>
                                     Share Resume <span className="material-symbols-outlined text-[18px]">east</span>
-                                </Link>
+                                </a>
                             </div>
 
                             {/* Card 4 */}
@@ -551,9 +507,9 @@ export default function HomePage() {
                                 <p className="text-[#c7c4d7] leading-relaxed" style={{ fontFamily: "var(--font-inter), sans-serif" }}>
                                     Find match percentages, highlight missing ATS keywords, and get recommendations to optimize your CV.
                                 </p>
-                                <Link href="/ai-tools/match-score" className="mt-4 flex items-center gap-2 text-[#c0c1ff] font-semibold group-hover:gap-4 transition-all text-decoration-none" style={{ fontFamily: "var(--font-inter), sans-serif" }}>
+                                <a href="https://app.cvgrid.in/login" className="mt-4 flex items-center gap-2 text-[#c0c1ff] font-semibold group-hover:gap-4 transition-all no-underline" style={{ fontFamily: "var(--font-inter), sans-serif" }}>
                                     Get Match Score <span className="material-symbols-outlined text-[18px]">east</span>
-                                </Link>
+                                </a>
                             </div>
 
                             {/* Card 5 */}
@@ -565,9 +521,9 @@ export default function HomePage() {
                                 <p className="text-[#c7c4d7] leading-relaxed" style={{ fontFamily: "var(--font-inter), sans-serif" }}>
                                     Convert your resume into a website. The most affordable, less expensive portfolio builder to download source code.
                                 </p>
-                                <Link href="/ai-tools/portfolio-builder" className="mt-4 flex items-center gap-2 text-[#c0c1ff] font-semibold group-hover:gap-4 transition-all text-decoration-none" style={{ fontFamily: "var(--font-inter), sans-serif" }}>
+                                <a href="https://app.cvgrid.in/login" className="mt-4 flex items-center gap-2 text-[#c0c1ff] font-semibold group-hover:gap-4 transition-all no-underline" style={{ fontFamily: "var(--font-inter), sans-serif" }}>
                                     Build Portfolio <span className="material-symbols-outlined text-[18px]">east</span>
-                                </Link>
+                                </a>
                             </div>
 
                             {/* Card 6 */}
@@ -579,9 +535,9 @@ export default function HomePage() {
                                 <p className="text-[#c7c4d7] leading-relaxed" style={{ fontFamily: "var(--font-inter), sans-serif" }}>
                                     Get personalized interview questions and recommended answers based on your target role.
                                 </p>
-                                <Link href="/ai-tools/interview-generator" className="mt-4 flex items-center gap-2 text-[#c0c1ff] font-semibold group-hover:gap-4 transition-all text-decoration-none" style={{ fontFamily: "var(--font-inter), sans-serif" }}>
+                                <a href="https://app.cvgrid.in/login" className="mt-4 flex items-center gap-2 text-[#c0c1ff] font-semibold group-hover:gap-4 transition-all no-underline" style={{ fontFamily: "var(--font-inter), sans-serif" }}>
                                     Practice Now <span className="material-symbols-outlined text-[18px]">east</span>
-                                </Link>
+                                </a>
                             </div>
 
                         </div>
@@ -598,81 +554,34 @@ export default function HomePage() {
                             </p>
                         </div>
 
-                        {loadingTestimonials ? (
-                            <div className="flex justify-center py-10">
-                                <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-[#c0c1ff]"></div>
-                            </div>
-                        ) : (
-                            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                                {(testimonials.length > 0
-                                    ? [...testimonials, ...[
-                                        {
-                                            userName: "Anish Sharma",
-                                            role: "Software Engineer",
-                                            rating: 5,
-                                            feedback: "CVGrid is incredible. The AI bullet point rephraser helped me highlight my achievements. Landed 3 interviews in a week!"
-                                        },
-                                        {
-                                            userName: "Priya Patel",
-                                            role: "Product Manager",
-                                            rating: 5,
-                                            feedback: "I loved the classic template. The ATS optimization feature is a lifesaver. Extremely clean and professional UI."
-                                        },
-                                        {
-                                            userName: "Rahul Verma",
-                                            role: "College Graduate",
-                                            rating: 5,
-                                            feedback: "The PDF export was super fast and clean. No hidden charges or watermarks on the premium version. Highly recommend!"
-                                        }
-                                    ]].slice(0, 6)
-                                    : [
-                                        {
-                                            userName: "Anish Sharma",
-                                            role: "Software Engineer",
-                                            rating: 5,
-                                            feedback: "CVGrid is incredible. The AI bullet point rephraser helped me highlight my achievements. Landed 3 interviews in a week!"
-                                        },
-                                        {
-                                            userName: "Priya Patel",
-                                            role: "Product Manager",
-                                            rating: 5,
-                                            feedback: "I loved the classic template. The ATS optimization feature is a lifesaver. Extremely clean and professional UI."
-                                        },
-                                        {
-                                            userName: "Rahul Verma",
-                                            role: "College Graduate",
-                                            rating: 5,
-                                            feedback: "The PDF export was super fast and clean. No hidden charges or watermarks on the premium version. Highly recommend!"
-                                        }
-                                    ]
-                                ).map((item, i) => (
-                                    <div key={i} className="glass-card p-8 rounded-2xl flex flex-col justify-between gap-6 border border-indigo-500/10 hover:border-[#c0c1ff] transition-all group duration-300">
-                                        <div>
-                                            {/* Stars */}
-                                            <div className="flex gap-1 mb-4 text-[#ffb400]">
-                                                {Array.from({ length: item.rating || 5 }).map((_, idx) => (
-                                                    <span key={idx} className="material-symbols-outlined text-[20px]" style={{ fontVariationSettings: "'FILL' 1" }}>star</span>
-                                                ))}
-                                            </div>
-                                            {/* Feedback */}
-                                            <p className="text-[#e4e0f1] text-[15px] leading-relaxed italic" style={{ fontFamily: "var(--font-inter), sans-serif" }}>
-                                                "{item.feedback}"
-                                            </p>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                            {testimonials.map((item, i) => (
+                                <div key={i} className="glass-card p-8 rounded-2xl flex flex-col justify-between gap-6 border border-indigo-500/10 hover:border-[#c0c1ff] transition-all group duration-300">
+                                    <div>
+                                        {/* Stars */}
+                                        <div className="flex gap-1 mb-4 text-[#ffb400]">
+                                            {Array.from({ length: item.rating || 5 }).map((_, idx) => (
+                                                <span key={idx} className="material-symbols-outlined text-[20px]" style={{ fontVariationSettings: "'FILL' 1" }}>star</span>
+                                            ))}
                                         </div>
-                                        {/* User Details */}
-                                        <div className="flex items-center gap-3 pt-4 border-t border-white/5">
-                                            <div className="w-9 h-9 rounded-full bg-[#c0c1ff]/10 flex items-center justify-center text-[#c0c1ff] font-bold text-sm">
-                                                {item.userName ? item.userName.charAt(0).toUpperCase() : "U"}
-                                            </div>
-                                            <div>
-                                                <div className="text-[14px] font-bold text-white">{item.userName || "Verified User"}</div>
-                                                <div className="text-[11px] text-[#c7c4d7]">{item.role || "Job Seeker"}</div>
-                                            </div>
+                                        {/* Feedback */}
+                                        <p className="text-[#e4e0f1] text-[15px] leading-relaxed italic" style={{ fontFamily: "var(--font-inter), sans-serif" }}>
+                                            "{item.feedback}"
+                                        </p>
+                                    </div>
+                                    {/* User Details */}
+                                    <div className="flex items-center gap-3 pt-4 border-t border-white/5">
+                                        <div className="w-9 h-9 rounded-full bg-[#c0c1ff]/10 flex items-center justify-center text-[#c0c1ff] font-bold text-sm">
+                                            {item.userName ? item.userName.charAt(0).toUpperCase() : "U"}
+                                        </div>
+                                        <div>
+                                            <div className="text-[14px] font-bold text-white">{item.userName || "Verified User"}</div>
+                                            <div className="text-[11px] text-[#c7c4d7]">{item.role || "Job Seeker"}</div>
                                         </div>
                                     </div>
-                                ))}
-                            </div>
-                        )}
+                                </div>
+                            ))}
+                        </div>
                     </section>
 
                     {/* Final CTA Section */}
@@ -689,7 +598,7 @@ export default function HomePage() {
                                 <div className="flex flex-col items-center gap-6">
                                     <button
                                         onClick={handleStartResume}
-                                        className="bg-white text-[#12121d] font-bold text-lg px-12 py-5 rounded-2xl shadow-2xl hover:scale-105 transition-all active:scale-95 border-0"
+                                        className="bg-white text-[#12121d] font-bold text-lg px-12 py-5 rounded-2xl shadow-2xl hover:scale-105 transition-all active:scale-95 border-0 cursor-pointer"
                                     >
                                         Get Started Now
                                     </button>
@@ -731,7 +640,7 @@ export default function HomePage() {
                                     q: "Does CVGrid work for freshers and students?",
                                     a: "Yes. The builder has custom sections for internships, projects, and achievements. The AI writer is optimized to highlight transferable skills, making it perfect for students and career switchers.",
                                 },
-                            ].map((item, i) => (
+                             ].map((item, i) => (
                                 <details key={i} className="group glass-card rounded-2xl overflow-hidden border border-[rgba(255,255,255,0.1)] transition-all">
                                     <summary className="flex justify-between items-center p-6 cursor-pointer list-none">
                                         <span className="font-semibold text-white text-base md:text-lg" style={{ fontFamily: "var(--font-inter), sans-serif" }}>{item.q}</span>
@@ -748,47 +657,6 @@ export default function HomePage() {
 
                 <Footer />
             </div>
-
-            {/* AUTH REQUIRED MODAL */}
-            {showAuthModal && (
-                <div style={{
-                    position: "fixed",
-                    top: 0,
-                    left: 0,
-                    width: "100%",
-                    height: "100%",
-                    backgroundColor: "rgba(10, 14, 21, 0.8)",
-                    backdropFilter: "blur(8px)",
-                    zIndex: 9999,
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    transition: "opacity 0.3s ease"
-                }}>
-                    <div className="card text-center p-5 text-white animate-fade-in" style={{
-                        maxWidth: "450px",
-                        width: "90%",
-                        background: "linear-gradient(145deg, #1c2027 0%, #11141a 100%)",
-                        borderRadius: "20px",
-                        border: "1px solid rgba(142, 144, 160, 0.25)",
-                        boxShadow: "0 15px 35px rgba(0, 0, 0, 0.6)"
-                    }}>
-                        <div className="card-body">
-                            <div className="mb-4">
-                                <i className="fas fa-lock text-[#c0c1ff]" style={{ fontSize: "3rem" }}></i>
-                            </div>
-                            <h3 className="fw-bold mb-3" style={{ letterSpacing: "-0.01em" }}>Sign Up First</h3>
-                            <p className="text-white-50 mb-4" style={{ fontSize: "1.05rem", lineHeight: "1.5" }}>
-                                You have to sign up first to create your professional resume.
-                            </p>
-                            <div className="d-flex align-items-center justify-content-center gap-2 text-[#c0c1ff] fw-semibold">
-                                <i className="fas fa-sync fa-spin"></i>
-                                <span>Redirecting you to Sign Up in {countdown}s...</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            )}
         </>
     );
 }
