@@ -593,9 +593,11 @@ export default function Navbar() {
                             }
 
                             return (
-                                <a key={link.href} href={link.href} className={`nav-link-item ${isActive(link.href) ? 'active' : ''}`}>
-                                    {link.label}
-                                </a>
+                                <div key={link.href} className="nav-item-wrapper">
+                                    <a href={link.href} className={`nav-link-item ${isActive(link.href) ? 'active' : ''}`}>
+                                        {link.label}
+                                    </a>
+                                </div>
                             );
                         })}
                     </div>

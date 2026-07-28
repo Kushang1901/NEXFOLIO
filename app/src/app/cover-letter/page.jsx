@@ -475,8 +475,6 @@ export default function CoverLetterGenerator() {
                 <div style={{ position: "absolute", top: "20%", left: "30%", width: "400px", height: "400px", background: "radial-gradient(circle, rgba(99, 102, 241, 0.1) 0%, transparent 70%)", filter: "blur(40px)", pointerEvents: "none" }} />
                 <div style={{ position: "absolute", bottom: "20%", right: "30%", width: "400px", height: "400px", background: "radial-gradient(circle, rgba(168, 85, 247, 0.1) 0%, transparent 70%)", filter: "blur(40px)", pointerEvents: "none" }} />
 
-                <Navbar />
-
                 <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "20px", zIndex: 10 }}>
                     <div style={{ position: "relative", width: "64px", height: "64px" }}>
                         {/* Outer glowing ring */}
