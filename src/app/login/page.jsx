@@ -320,6 +320,13 @@ export default function Login() {
                 @keyframes spin {
                     to { transform: rotate(360deg); }
                 }
+                @keyframes cardFadeIn {
+                    from { opacity: 0; transform: scale(0.96); }
+                    to   { opacity: 1; transform: scale(1); }
+                }
+                .fade-in-transition {
+                    animation: cardFadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+                }
                 @keyframes successSlideIn {
                     from { opacity: 0; transform: translateY(-12px) scale(0.97); }
                     to   { opacity: 1; transform: translateY(0)   scale(1); }
@@ -363,198 +370,185 @@ export default function Login() {
                     
                     {/* Login Card */}
                     <div className="w-full max-w-3xl glass-card p-8 rounded-xl shadow-2xl relative z-10">
-                        
-                        <div className="grid grid-cols-1 md:grid-cols-[1fr_auto_1fr] gap-8 items-stretch">
-                            {/* Left Column: Greeting & Social Logins */}
-                            <div className="flex flex-col space-y-6 pt-2">
-                                <div className="flex items-center gap-2 mb-2 self-center md:self-start">
-                                    <img src="/logo.png" alt="CVGrid Logo" className="h-9 w-9 object-contain" />
-                                    <span style={{
-                                        fontFamily: "var(--font-space-grotesk), sans-serif", 
-                                        fontWeight: "700",
-                                        letterSpacing: "0.08em",
-                                        background: "linear-gradient(90deg, #ffffff 0%, #b6c4ff 100%)",
-                                        WebkitBackgroundClip: "text", 
-                                        WebkitTextFillColor: "transparent",
-                                        fontSize: "1.4rem",
-                                    }}>CVGRID</span>
+                        {successMessage ? (
+                            <div className="flex flex-col items-center justify-center text-center py-12 px-6 fade-in-transition">
+                                <div className="relative mb-8 flex items-center justify-center">
+                                    {/* Outer pulsing ring */}
+                                    <div className="absolute w-24 h-24 rounded-full border-2 border-[#22c55e]/20 animate-ping opacity-75"></div>
+                                    {/* Rotating loader ring */}
+                                    <div className="w-20 h-20 rounded-full border-4 border-[#22c55e]/20 border-t-[#22c55e] animate-spin"></div>
+                                    {/* Center Checkmark */}
+                                    <div className="absolute w-12 h-12 bg-[#22c55e]/10 border border-[#22c55e]/30 rounded-full flex items-center justify-center">
+                                        <svg width="24" height="24" viewBox="0 0 20 20" fill="none" className="text-[#22c55e]">
+                                            <path d="M4 10l4 4l8-8" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>
+                                        </svg>
+                                    </div>
                                 </div>
-                                <div className="text-center md:text-left">
-                                    <h1 className="font-headline-lg text-headline-lg text-on-surface mb-2">Login</h1>
-                                    <p className="font-body-sm text-body-sm text-on-surface-variant">Welcome back to professional excellence.</p>
+                                <h2 className="text-xl font-bold text-white mb-2 tracking-wide font-sans">
+                                    {successType === "signup" ? "Account Created!" : "Welcome Back!"}
+                                </h2>
+                                <p className="text-sm text-on-surface-variant max-w-md font-sans leading-relaxed" style={{ color: "rgba(255,255,255,0.7)" }}>
+                                    {successMessage}
+                                </p>
+                            </div>
+                        ) : (
+                            <div className="grid grid-cols-1 md:grid-cols-[1fr_auto_1fr] gap-8 items-stretch">
+                                {/* Left Column: Greeting & Social Logins */}
+                                <div className="flex flex-col space-y-6 pt-2">
+                                    <div className="flex items-center gap-2 mb-2 self-center md:self-start">
+                                        <img src="/logo.png" alt="CVGrid Logo" className="h-9 w-9 object-contain" />
+                                        <span style={{
+                                            fontFamily: "var(--font-space-grotesk), sans-serif", 
+                                            fontWeight: "700",
+                                            letterSpacing: "0.08em",
+                                            background: "linear-gradient(90deg, #ffffff 0%, #b6c4ff 100%)",
+                                            WebkitBackgroundClip: "text", 
+                                            WebkitTextFillColor: "transparent",
+                                            fontSize: "1.4rem",
+                                        }}>CVGRID</span>
+                                    </div>
+                                    <div className="text-center md:text-left">
+                                        <h1 className="font-headline-lg text-headline-lg text-on-surface mb-2">Login</h1>
+                                        <p className="font-body-sm text-body-sm text-on-surface-variant">Welcome back to professional excellence.</p>
+                                    </div>
+                                    
+                                    <div className="flex flex-col gap-3">
+                                        {/* Google */}
+                                        <button 
+                                            onClick={handleGoogleLogin}
+                                            disabled={googleLoading || githubLoading}
+                                            className="w-full flex items-center justify-center gap-3 h-12 bg-white text-[#1E2227] font-medium text-sm rounded-lg hover:bg-opacity-90 transition-all duration-200 shadow-sm border border-[#E5E7EB] cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed" 
+                                            type="button"
+                                            suppressHydrationWarning
+                                        >
+                                            {googleLoading ? (
+                                                <>
+                                                    <span className="btn-spinner btn-spinner-dark"></span>
+                                                    <span className="font-semibold">Connecting to Google...</span>
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <svg className="w-5 h-5 flex-shrink-0" viewBox="0 0 24 24">
+                                                        <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                                                        <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                                                        <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
+                                                        <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
+                                                    </svg>
+                                                    <span className="font-semibold">Login with Google</span>
+                                                </>
+                                            )}
+                                        </button>
+                                        
+                                        {/* GitHub */}
+                                        <button 
+                                            onClick={handleGithubLogin}
+                                            disabled={googleLoading || githubLoading}
+                                            className="w-full flex items-center justify-center gap-3 h-12 bg-[#24292F] hover:bg-[#24292F]/90 text-white font-medium text-sm rounded-lg transition-all duration-200 shadow-sm cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed" 
+                                            type="button"
+                                            suppressHydrationWarning
+                                        >
+                                            {githubLoading ? (
+                                                <>
+                                                    <span className="btn-spinner"></span>
+                                                    <span className="font-semibold">Connecting to GitHub...</span>
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <svg className="w-5 h-5 fill-current flex-shrink-0" viewBox="0 0 24 24">
+                                                        <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                                                    </svg>
+                                                    <span className="font-semibold">Login with GitHub</span>
+                                                </>
+                                            )}
+                                        </button>
+                                    </div>
+                                </div>
+
+                                {/* Center Divider */}
+                                <div className="hidden md:flex flex-col items-center justify-center h-full min-h-[200px] relative px-2">
+                                    <div className="w-px h-full min-h-[200px] bg-outline-variant"></div>
+                                    <span className="absolute bg-[#1C2027] border border-outline-variant px-2 py-1 rounded-full font-label-bold text-label-bold text-outline uppercase tracking-widest text-[9px]">or</span>
                                 </div>
                                 
-                                <div className="flex flex-col gap-3">
-                                    {/* Google */}
-                                    <button 
-                                        onClick={handleGoogleLogin}
-                                        disabled={googleLoading || githubLoading}
-                                        className="w-full flex items-center justify-center gap-3 h-12 bg-white text-[#1E2227] font-medium text-sm rounded-lg hover:bg-opacity-90 transition-all duration-200 shadow-sm border border-[#E5E7EB] cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed" 
-                                        type="button"
-                                        suppressHydrationWarning
-                                    >
-                                        {googleLoading ? (
-                                            <>
-                                                <span className="btn-spinner btn-spinner-dark"></span>
-                                                <span className="font-semibold">Connecting to Google...</span>
-                                            </>
-                                        ) : (
-                                            <>
-                                                <svg className="w-5 h-5 flex-shrink-0" viewBox="0 0 24 24">
-                                                    <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-                                                    <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-                                                    <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
-                                                    <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
-                                                </svg>
-                                                <span className="font-semibold">Login with Google</span>
-                                            </>
-                                        )}
-                                    </button>
+                                <div className="flex md:hidden items-center gap-4 my-2">
+                                    <div className="flex-grow h-px bg-outline-variant"></div>
+                                    <span className="font-label-bold text-label-bold text-outline uppercase tracking-widest text-[9px]">or</span>
+                                    <div className="flex-grow h-px bg-outline-variant"></div>
+                                </div>
+
+                                {/* Right Column: Form Fields */}
+                                <form onSubmit={handleEmailLogin} className="flex flex-col gap-3 font-sans">
+                                    <div className="flex flex-col gap-1.5">
+                                        <label className="font-label-bold text-label-bold text-on-surface text-[12px]" htmlFor="email">Email Address</label>
+                                        <input 
+                                            className="w-full bg-white text-black font-body-lg text-body-lg px-3 rounded border-none focus:ring-2 focus:ring-primary h-[44px] font-sans" 
+                                            id="email" 
+                                            name="email"
+                                            placeholder="name@company.com" 
+                                            type="email"
+                                            value={formData.email}
+                                            onChange={handleChange}
+                                            required
+                                            suppressHydrationWarning
+                                        />
+                                    </div>
+                                    <div className="flex flex-col gap-1.5">
+                                         <div className="flex justify-between items-center">
+                                             <label className="font-label-bold text-label-bold text-on-surface text-[12px]" htmlFor="password">Password</label>
+                                             <Link className="text-[11px] text-primary hover:underline" href="/forgot-password">Forgot password?</Link>
+                                         </div>
+                                         <div className="relative">
+                                             <input 
+                                                 className="w-full bg-white text-black font-body-lg text-body-lg pl-3 pr-10 rounded border-none focus:ring-2 focus:ring-primary h-[44px] font-sans" 
+                                                 id="password" 
+                                                 name="password"
+                                                 placeholder="••••••••" 
+                                                 type={showPassword ? "text" : "password"}
+                                                 value={formData.password}
+                                                 onChange={handleChange}
+                                                 required
+                                                 suppressHydrationWarning
+                                             />
+                                             <button
+                                                 type="button"
+                                                 onClick={() => setShowPassword(!showPassword)}
+                                                 className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center justify-center text-gray-500 hover:text-black focus:outline-none w-7 h-7 transition-colors"
+                                             >
+                                                 <span className="material-symbols-outlined select-none text-[18px]">
+                                                     {showPassword ? "visibility" : "visibility_off"}
+                                                 </span>
+                                             </button>
+                                         </div>
+                                    </div>
                                     
-                                    {/* GitHub */}
+                                    <TurnstileWidget onVerify={handleTurnstileVerify} action="login" />
+                                    
+                                    {/* Action Button */}
                                     <button 
-                                        onClick={handleGithubLogin}
-                                        disabled={googleLoading || githubLoading}
-                                        className="w-full flex items-center justify-center gap-3 h-12 bg-[#24292F] hover:bg-[#24292F]/90 text-white font-medium text-sm rounded-lg transition-all duration-200 shadow-sm cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed" 
-                                        type="button"
+                                        className="w-full bg-[#4A72F3] hover:brightness-110 active:scale-[0.98] text-white font-button text-button py-2.5 px-4 rounded transition-all duration-200 mt-2 h-[44px] cursor-pointer flex items-center justify-center gap-2" 
+                                        type="submit"
                                         suppressHydrationWarning
                                     >
-                                        {githubLoading ? (
+                                        {loading ? (
                                             <>
                                                 <span className="btn-spinner"></span>
-                                                <span className="font-semibold">Connecting to GitHub...</span>
+                                                Authenticating...
                                             </>
-                                        ) : (
-                                            <>
-                                                <svg className="w-5 h-5 fill-current flex-shrink-0" viewBox="0 0 24 24">
-                                                    <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
-                                                </svg>
-                                                <span className="font-semibold">Login with GitHub</span>
-                                            </>
-                                        )}
+                                        ) : "Login"}
                                     </button>
-                                    
 
-                                </div>
-
-                                {/* Success Banner */}
-                                {successMessage && (
-                                    <div className="auth-success-banner mt-3 flex items-center gap-3 rounded-xl px-4 py-3.5 border"
-                                        style={{
-                                            background: "linear-gradient(135deg, rgba(34,197,94,0.12) 0%, rgba(74,114,243,0.10) 100%)",
-                                            borderColor: "rgba(34,197,94,0.35)",
-                                            boxShadow: "0 0 24px rgba(34,197,94,0.12)"
-                                        }}
-                                    >
-                                        <div className="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center"
-                                            style={{ background: "rgba(34,197,94,0.18)" }}
-                                        >
-                                            <svg width="18" height="18" viewBox="0 0 20 20" fill="none">
-                                                <circle cx="10" cy="10" r="9" stroke="#22c55e" strokeWidth="1.5"/>
-                                                <path d="M6 10.5l2.5 2.5 5.5-5.5" stroke="#22c55e" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                                            </svg>
-                                        </div>
-                                        <div>
-                                            <p className="text-xs font-semibold" style={{ color: "#4ade80" }}>Login Successful!</p>
-                                            <p className="text-[11px]" style={{ color: "rgba(255,255,255,0.55)" }}>{successMessage}</p>
-                                        </div>
-                                        <div className="ml-auto flex-shrink-0">
-                                            <div style={{
-                                                width: "20px", height: "20px",
-                                                border: "2px solid rgba(34,197,94,0.25)",
-                                                borderTop: "2px solid #22c55e",
-                                                borderRadius: "50%",
-                                                animation: "btnSpinnerSpin 0.8s linear infinite"
-                                            }}></div>
-                                        </div>
+                                    {/* Footer Link */}
+                                    <div className="text-center mt-2">
+                                        <p className="font-body-sm text-body-sm text-on-surface-variant text-[12px]">
+                                            Don't have an account?{" "}
+                                            <Link href="/signup" className="text-primary font-bold hover:underline">
+                                                Sign up
+                                            </Link>
+                                        </p>
                                     </div>
-                                )}
+                                </form>
                             </div>
-
-                            {/* Center Divider */}
-                            <div className="hidden md:flex flex-col items-center justify-center h-full min-h-[200px] relative px-2">
-                                <div className="w-px h-full min-h-[200px] bg-outline-variant"></div>
-                                <span className="absolute bg-[#1C2027] border border-outline-variant px-2 py-1 rounded-full font-label-bold text-label-bold text-outline uppercase tracking-widest text-[9px]">or</span>
-                            </div>
-                            
-                            <div className="flex md:hidden items-center gap-4 my-2">
-                                <div className="flex-grow h-px bg-outline-variant"></div>
-                                <span className="font-label-bold text-label-bold text-outline uppercase tracking-widest text-[9px]">or</span>
-                                <div className="flex-grow h-px bg-outline-variant"></div>
-                            </div>
-
-                            {/* Right Column: Form Fields */}
-                            <form onSubmit={handleEmailLogin} className="flex flex-col gap-3 font-sans">
-                                <div className="flex flex-col gap-1.5">
-                                    <label className="font-label-bold text-label-bold text-on-surface text-[12px]" htmlFor="email">Email Address</label>
-                                    <input 
-                                        className="w-full bg-white text-black font-body-lg text-body-lg px-3 rounded border-none focus:ring-2 focus:ring-primary h-[44px] font-sans" 
-                                        id="email" 
-                                        name="email"
-                                        placeholder="name@company.com" 
-                                        type="email"
-                                        value={formData.email}
-                                        onChange={handleChange}
-                                        required
-                                        suppressHydrationWarning
-                                    />
-                                </div>
-                                <div className="flex flex-col gap-1.5">
-                                     <div className="flex justify-between items-center">
-                                         <label className="font-label-bold text-label-bold text-on-surface text-[12px]" htmlFor="password">Password</label>
-                                         <Link className="text-[11px] text-primary hover:underline" href="/forgot-password">Forgot password?</Link>
-                                     </div>
-                                     <div className="relative">
-                                         <input 
-                                             className="w-full bg-white text-black font-body-lg text-body-lg pl-3 pr-10 rounded border-none focus:ring-2 focus:ring-primary h-[44px] font-sans" 
-                                             id="password" 
-                                             name="password"
-                                             placeholder="••••••••" 
-                                             type={showPassword ? "text" : "password"}
-                                             value={formData.password}
-                                             onChange={handleChange}
-                                             required
-                                             suppressHydrationWarning
-                                         />
-                                         <button
-                                             type="button"
-                                             onClick={() => setShowPassword(!showPassword)}
-                                             className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center justify-center text-gray-500 hover:text-black focus:outline-none w-7 h-7 transition-colors"
-                                         >
-                                             <span className="material-symbols-outlined select-none text-[18px]">
-                                                 {showPassword ? "visibility" : "visibility_off"}
-                                             </span>
-                                         </button>
-                                     </div>
-                                </div>
-                                
-                                <TurnstileWidget onVerify={handleTurnstileVerify} action="login" />
-                                
-                                {/* Action Button */}
-                                <button 
-                                    className="w-full bg-[#4A72F3] hover:brightness-110 active:scale-[0.98] text-white font-button text-button py-2.5 px-4 rounded transition-all duration-200 mt-2 h-[44px] cursor-pointer flex items-center justify-center gap-2" 
-                                    type="submit"
-                                    suppressHydrationWarning
-                                >
-                                    {loading ? (
-                                        <>
-                                            <span className="btn-spinner"></span>
-                                            Authenticating...
-                                        </>
-                                    ) : "Login"}
-                                </button>
-
-                                {/* Footer Link */}
-                                <div className="text-center mt-2">
-                                    <p className="font-body-sm text-body-sm text-on-surface-variant text-[12px]">
-                                        Don't have an account?{" "}
-                                        <Link href="/signup" className="text-primary font-bold hover:underline">
-                                            Sign up
-                                        </Link>
-                                    </p>
-                                </div>
-                            </form>
-                        </div>
+                        )}
                     </div>
                     
                     {/* Decorative Image Context (Background Context) */}

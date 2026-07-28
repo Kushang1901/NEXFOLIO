@@ -39,8 +39,8 @@ export function verifyLocalToken(token) {
 
         const decoded = JSON.parse(Buffer.from(body, "base64url").toString("utf8"));
         
-        // Check expiry
-        if (decoded.exp && Date.now() / 1000 > decoded.exp) {
+        // Check expiry with leeway
+        if (decoded.exp && (Date.now() / 1000) - 120 > decoded.exp) {
             return null;
         }
 
@@ -103,8 +103,8 @@ export async function verifyFirebaseToken(token) {
             console.error("Firebase token check error: Invalid audience:", body.aud);
             return null;
         }
-        if (body.exp && Date.now() / 1000 > body.exp) {
-            console.error("Firebase token check error: Token expired");
+        if (body.exp && (Date.now() / 1000) - 120 > body.exp) {
+            console.error("Firebase token check error: Token expired. Expiry:", body.exp, "Current time:", Math.floor(Date.now() / 1000));
             return null;
         }
 
@@ -121,14 +121,16 @@ export async function verifyFirebaseToken(token) {
         // 3. Verify the signature using Node's crypto verify
         const verifier = crypto.createVerify("RSA-SHA256");
         verifier.update(`${headerB64}.${bodyB64}`);
-        const verified = verifier.verify(cert, signatureB64, "base64url");
+        
+        const signatureBuffer = Buffer.from(signatureB64, "base64url");
+        const verified = verifier.verify(cert, signatureBuffer);
 
         if (!verified) {
             console.error("Firebase token check error: Signature verification failed");
             return null;
         }
 
-        return { email: body.email };
+        return { email: body.email || `github-${body.user_id}@cvgrid.in` };
     } catch (err) {
         console.error("Firebase token check error:", err);
         return null;
