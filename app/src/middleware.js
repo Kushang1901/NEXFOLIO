@@ -40,8 +40,19 @@ export function middleware(req) {
         ) {
             return NextResponse.next();
         }
-        // Rewrite root requests to /docs, otherwise pass the path
-        return NextResponse.rewrite(new URL(`/docs${path === "/" ? "" : path}`, req.url));
+        
+        // If navigating to non-root pages (like /login, /signup, /templates) on the docs subdomain,
+        // redirect them to the main app/domain.
+        if (path !== "/") {
+            const proto = isLocalhost ? "http" : "https";
+            const targetHost = isLocalhost 
+                ? hostname.replace("docs.localhost", "localhost") 
+                : "app.cvgrid.in";
+            return NextResponse.redirect(new URL(`${proto}://${targetHost}${path}${url.search}`, req.url));
+        }
+
+        // Rewrite root requests to /docs
+        return NextResponse.rewrite(new URL("/docs", req.url));
     }
 
     // If we have a user subdomain (e.g. kushang.cvgrid.in)
