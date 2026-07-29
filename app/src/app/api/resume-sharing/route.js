@@ -128,10 +128,26 @@ export async function POST(request) {
 // GET endpoint to fetch sharing stats or check password protection
 export async function GET(request) {
     try {
+        const { verifyAuth } = await import("../../../utils/authHelper");
+        const authedEmail = await verifyAuth(request);
+        
+        if (!authedEmail) {
+            return NextResponse.json(
+                { error: "Unauthorized access: Invalid or missing token" },
+                { status: 401, headers: corsHeaders }
+            );
+        }
+
         const { searchParams } = new URL(request.url);
         const resumeId = searchParams.get("id");
         const slug = searchParams.get("slug");
-        const password = searchParams.get("password");
+
+        if (!resumeId && !slug) {
+            return NextResponse.json(
+                { error: "Resume ID or Slug is required" },
+                { status: 400, headers: corsHeaders }
+            );
+        }
 
         const db = await getDb();
         let resumes = [];
@@ -162,21 +178,12 @@ export async function GET(request) {
 
         const resume = resumes[0];
 
-        // If it is password protected, verify the password
-        if (resume.privacyOption === "password") {
-            if (!password) {
-                return NextResponse.json({ 
-                    isLocked: true, 
-                    id: resume.id,
-                    resumeName: resume.resumeName,
-                    userEmail: resume.userEmail
-                }, { headers: corsHeaders });
-            }
-
-            const inputHash = crypto.createHash("sha256").update(password).digest("hex");
-            if (inputHash !== resume.passwordHash) {
-                return NextResponse.json({ error: "Incorrect password" }, { status: 401, headers: corsHeaders });
-            }
+        // Ensure the authenticated user owns this resume
+        if (resume.userEmail !== authedEmail) {
+            return NextResponse.json(
+                { error: "Unauthorized: You do not own this resume" },
+                { status: 403, headers: corsHeaders }
+            );
         }
 
         // Return resume metadata

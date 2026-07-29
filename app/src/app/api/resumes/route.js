@@ -80,6 +80,16 @@ export async function GET(request) {
                     );
                 }
             }
+
+            // Enforce general Public/Private state (if not password protected)
+            if (resume.privacyOption !== "password" && !resume.isPublic && !isOwner) {
+                return NextResponse.json(
+                    { error: "Unauthorized: This resume is private." },
+                    { status: 401, headers: corsHeaders }
+                );
+            }
+
+            return NextResponse.json(resume, { headers: corsHeaders });
         } else {
             // If listing all, valid auth token is required
             if (!authedEmail) {
@@ -136,13 +146,16 @@ export async function POST(request) {
 
         if (id) {
             // Update existing resume (only if it belongs to the authenticated user)
+            const isPublicPassed = isPublic !== undefined;
+            const shareableLinkPassed = shareableLink !== undefined;
+
             const result = await db`
                 UPDATE resumes
                 SET resume_name = ${resumeName || "My Resume"},
                     resume_data = ${JSON.stringify(resumeData)},
                     selected_template = ${selectedTemplate || "classic"},
-                    is_public = ${isPublic !== undefined ? isPublic : false},
-                    shareable_link = ${shareableLink || null},
+                    is_public = CASE WHEN ${isPublicPassed} = FALSE THEN is_public ELSE ${isPublic} END,
+                    shareable_link = CASE WHEN ${shareableLinkPassed} = FALSE THEN shareable_link ELSE ${shareableLink} END,
                     updated_at = CURRENT_TIMESTAMP
                 WHERE id = ${id} AND user_email = ${authedEmail}
                 RETURNING id
