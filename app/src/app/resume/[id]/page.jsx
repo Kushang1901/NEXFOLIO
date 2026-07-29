@@ -51,6 +51,48 @@ export default function PublicResumePage() {
     const [password, setPassword] = useState("");
     const [realId, setRealId] = useState(null);
 
+    // Scaling for responsiveness
+    const [scale, setScale] = useState(1);
+    const [parentHeight, setParentHeight] = useState("auto");
+
+    // Dynamic Scaling Effect for Mobile Preview
+    useEffect(() => {
+        const previewEl = document.getElementById("resume-preview");
+        const containerEl = document.querySelector(".preview-viewport-container");
+        
+        if (!previewEl || !containerEl) return;
+
+        const updateScale = () => {
+            const containerWidth = containerEl.clientWidth;
+            const targetWidth = 794; // A4 width in pixels
+            
+            let newScale = 1;
+            if (containerWidth < targetWidth) {
+                newScale = Math.max(0.1, (containerWidth - 24) / targetWidth);
+            }
+            
+            setScale(newScale);
+            
+            // Calculate height based on scale
+            const previewHeight = previewEl.scrollHeight || previewEl.offsetHeight || 1123;
+            setParentHeight(`${previewHeight * newScale}px`);
+        };
+
+        const resizeObserver = new ResizeObserver(() => {
+            updateScale();
+        });
+
+        resizeObserver.observe(containerEl);
+        resizeObserver.observe(previewEl);
+
+        const timer = setTimeout(updateScale, 150);
+
+        return () => {
+            resizeObserver.disconnect();
+            clearTimeout(timer);
+        };
+    }, [selectedTemplate, resumeData]);
+
     const FREE_TEMPLATES = ["modern", "creative", "product_manager", "bento"];
     const isCurrentTemplatePremium = !FREE_TEMPLATES.includes(selectedTemplate);
 
@@ -459,55 +501,77 @@ export default function PublicResumePage() {
 
             {/* RESUME PREVIEW CONTAINER */}
             <div className="container py-5">
-                <div
-                    id="resume-preview"
-                    className="bg-white text-dark mx-auto"
-                    style={{
-                        borderRadius: "12px",
-                        boxShadow: "0 8px 30px rgba(0,0,0,0.5)",
-                        width: "794px",
-                        position: "relative",
-                        overflow: "hidden",
-                        fontFamily: "'Inter', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif"
-                    }}
+                <div 
+                    className="preview-viewport-container d-flex justify-content-center py-2"
+                    style={{ width: "100%", overflow: "hidden" }}
                 >
-                    {/* Watermark Overlay for Unpaid Resume */}
-                    {!isPaid && showWatermark && isCurrentTemplatePremium && (
-                        <div className="watermark-overlay" style={{
-                            position: "absolute",
-                            top: 0,
-                            left: 0,
-                            width: "100%",
-                            height: "100%",
-                            pointerEvents: "none",
-                            zIndex: 99,
-                            display: "flex",
-                            flexDirection: "column",
-                            justifyContent: "space-between",
-                            padding: "120px 0",
-                            boxSizing: "border-box",
-                            overflow: "hidden"
-                        }}>
-                            {Array.from({ length: 5 }).map((_, idx) => (
-                                <div key={idx} style={{
-                                    fontSize: "90px",
-                                    color: "rgba(128, 128, 128, 0.11)",
-                                    fontWeight: "900",
-                                    transform: "rotate(-30deg) scale(1.1)",
-                                    textAlign: "center",
-                                    whiteSpace: "nowrap",
+                    <div 
+                        className="preview-viewport-shadow"
+                        style={{
+                            width: `${794 * scale}px`,
+                            height: parentHeight,
+                            overflow: "hidden",
+                            position: "relative",
+                            transition: "width 0.15s ease, height 0.15s ease",
+                            borderRadius: "12px",
+                            boxShadow: "0 8px 30px rgba(0,0,0,0.5)"
+                        }}
+                    >
+                        <div
+                            id="resume-preview"
+                            className="bg-white text-dark"
+                            style={{
+                                width: "794px",
+                                minHeight: "1123px",
+                                boxSizing: "border-box",
+                                position: "absolute",
+                                top: 0,
+                                left: 0,
+                                transform: `scale(${scale})`,
+                                transformOrigin: "top left",
+                                overflow: "hidden",
+                                fontFamily: "'Inter', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif"
+                            }}
+                        >
+                            {/* Watermark Overlay for Unpaid Resume */}
+                            {!isPaid && showWatermark && isCurrentTemplatePremium && (
+                                <div className="watermark-overlay" style={{
+                                    position: "absolute",
+                                    top: 0,
+                                    left: 0,
                                     width: "100%",
-                                    userSelect: "none",
-                                    fontFamily: "'Inter', 'Helvetica Neue', Arial, sans-serif",
-                                    letterSpacing: "10px",
-                                    margin: "40px 0"
+                                    height: "100%",
+                                    pointerEvents: "none",
+                                    zIndex: 99,
+                                    display: "flex",
+                                    flexDirection: "column",
+                                    justifyContent: "space-between",
+                                    padding: "120px 0",
+                                    boxSizing: "border-box",
+                                    overflow: "hidden"
                                 }}>
-                                    CVGRID
+                                    {Array.from({ length: 5 }).map((_, idx) => (
+                                        <div key={idx} style={{
+                                            fontSize: "90px",
+                                            color: "rgba(128, 128, 128, 0.11)",
+                                            fontWeight: "900",
+                                            transform: "rotate(-30deg) scale(1.1)",
+                                            textAlign: "center",
+                                            whiteSpace: "nowrap",
+                                            width: "100%",
+                                            userSelect: "none",
+                                            fontFamily: "'Inter', 'Helvetica Neue', Arial, sans-serif",
+                                            letterSpacing: "10px",
+                                            margin: "40px 0"
+                                        }}>
+                                            CVGRID
+                                        </div>
+                                    ))}
                                 </div>
-                            ))}
+                            )}
+                            {renderTemplate()}
                         </div>
-                    )}
-                    {renderTemplate()}
+                    </div>
                 </div>
             </div>
 
