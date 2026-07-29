@@ -262,8 +262,37 @@ export default function ResumeSharingPage() {
                                     <label className="form-label text-white fw-bold mb-2 small d-block">
                                         Custom URL Slug <span className="text-white-50 fw-normal">(Optional)</span>
                                     </label>
-                                    <div className="input-group">
-                                        <span className="input-group-text bg-dark-subtle border-0 text-white-50 small font-monospace" style={{ background: "#0c0f16", border: "1px solid rgba(255,255,255,0.08)", borderRadius: "12px 0 0 12px", borderRight: "none", fontSize: "0.8rem", padding: "14px 16px" }}>
+                                    <div 
+                                        className="d-flex align-items-center"
+                                        style={{
+                                            backgroundColor: "rgba(11, 13, 23, 0.85)",
+                                            border: "1px solid rgba(255, 255, 255, 0.08)",
+                                            borderRadius: "12px",
+                                            padding: "14px 16px",
+                                            transition: "all 0.2s ease"
+                                        }}
+                                        onFocus={(e) => {
+                                            e.currentTarget.style.borderColor = "rgba(34, 211, 238, 0.45)";
+                                            e.currentTarget.style.boxShadow = "0 0 12px rgba(34, 211, 238, 0.15)";
+                                            e.currentTarget.style.backgroundColor = "rgba(11, 13, 23, 0.95)";
+                                        }}
+                                        onBlur={(e) => {
+                                            e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.08)";
+                                            e.currentTarget.style.boxShadow = "none";
+                                            e.currentTarget.style.backgroundColor = "rgba(11, 13, 23, 0.85)";
+                                        }}
+                                    >
+                                        <span 
+                                            className="font-monospace text-white-50"
+                                            style={{ 
+                                                fontSize: "0.85rem", 
+                                                userSelect: "none",
+                                                borderRight: "1px solid rgba(255, 255, 255, 0.12)",
+                                                paddingRight: "12px",
+                                                marginRight: "12px",
+                                                lineHeight: "1"
+                                            }}
+                                        >
                                             cvgrid.in/resume/
                                         </span>
                                         <input 
@@ -271,8 +300,12 @@ export default function ResumeSharingPage() {
                                             value={slug}
                                             onChange={(e) => setSlug(e.target.value)}
                                             placeholder="username-slug"
-                                            className="form-control glass-input-custom"
-                                            style={{ borderRadius: "0 12px 12px 0", borderLeft: "none", fontSize: "0.9rem" }}
+                                            className="border-0 bg-transparent text-white w-100 p-0"
+                                            style={{ 
+                                                outline: "none", 
+                                                fontSize: "0.9rem",
+                                                lineHeight: "1"
+                                            }}
                                         />
                                     </div>
                                     <small className="text-white-50 small mt-1.5 d-block">
