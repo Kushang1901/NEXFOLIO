@@ -5,9 +5,12 @@
     background-image: 
         radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.08) 0px, transparent 50%),
         radial-gradient(at 100% 0%, rgba(34, 211, 238, 0.05) 0px, transparent 50%);
-    min-height: 100vh;
+    height: 100vh;
+    overflow: hidden;
     color: #f3f4f6;
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    display: flex;
+    flex-direction: column;
 }
 
 /* Three-column layout */
@@ -19,13 +22,14 @@
     margin: 0 auto;
     padding: 2rem 1.5rem;
     align-items: start;
+    height: calc(100vh - 80px);
+    overflow: hidden;
+    width: 100%;
 }
 
 /* Left Sidebar - Table of Contents */
 .docs-sidebar-left {
-    position: sticky;
-    top: 5rem;
-    height: calc(100vh - 7rem);
+    height: 100%;
     overflow-y: auto;
     padding-right: 1rem;
     scrollbar-width: thin;
@@ -93,7 +97,10 @@
     max-width: 820px;
     width: 100%;
     margin: 0 auto;
+    height: 100%;
+    overflow-y: auto;
     padding-bottom: 5rem;
+    scroll-behavior: smooth;
 }
 
 .docs-article {
@@ -235,9 +242,7 @@ code.docs-inline-code {
 
 /* Right Sidebar - Scrollspy / "On this page" */
 .docs-sidebar-right {
-    position: sticky;
-    top: 5rem;
-    height: calc(100vh - 7rem);
+    height: 100%;
     overflow-y: auto;
     padding-left: 0.5rem;
 }
@@ -303,6 +308,7 @@ code.docs-inline-code {
     .docs-layout {
         grid-template-columns: 1fr;
         padding-top: 1rem;
+        height: calc(100vh - 140px);
     }
     .docs-sidebar-left {
         display: none;
