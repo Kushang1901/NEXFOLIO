@@ -29,6 +29,21 @@ export function middleware(req) {
         }
     }
 
+    // Special rewrite for the docs subdomain (docs.cvgrid.in -> /docs)
+    if (subdomain === "docs") {
+        const path = url.pathname;
+        if (
+            path.startsWith("/api") || 
+            path.startsWith("/_next") || 
+            path.startsWith("/static") || 
+            path.includes(".")
+        ) {
+            return NextResponse.next();
+        }
+        // Rewrite root requests to /docs, otherwise pass the path
+        return NextResponse.rewrite(new URL(`/docs${path === "/" ? "" : path}`, req.url));
+    }
+
     // If we have a user subdomain (e.g. kushang.cvgrid.in)
     if (subdomain) {
         const path = url.pathname;
