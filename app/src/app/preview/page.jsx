@@ -804,8 +804,9 @@ export default function Preview() {
                 throw new Error("Failed to update sharing settings.");
             }
 
+            const resData = await response.json();
             setIsPublic(checked);
-            setShareableLink(newLink);
+            setShareableLink(checked ? (resData.shareableLink || newLink) : "");
             showToast(checked ? "Resume is now publicly shareable!" : "Resume is now private.", "success");
         } catch (err) {
             console.error("Error updating sharing status:", err);

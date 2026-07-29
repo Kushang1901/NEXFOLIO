@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
-import { Lock, Home } from "lucide-react";
+import { Lock, Home, Eye, EyeOff } from "lucide-react";
 
 import ClassicTemplate from "../../../templates/ClassicTemplate";
 import ModernTemplate from "../../../templates/ModernTemplate";
@@ -49,6 +49,7 @@ export default function PublicResumePage() {
     // Privacy protection & statistics
     const [isLocked, setIsLocked] = useState(false);
     const [password, setPassword] = useState("");
+    const [showPassword, setShowPassword] = useState(false);
     const [realId, setRealId] = useState(null);
 
     // Scaling for responsiveness
@@ -327,25 +328,47 @@ export default function PublicResumePage() {
                             The owner has secured this resume. Please enter the password to view.
                         </p>
                         
-                        <div className="mb-4">
+                        <div 
+                            className="mb-4 d-flex align-items-center"
+                            style={{
+                                backgroundColor: "rgba(11, 13, 23, 0.85)",
+                                border: "1px solid rgba(255, 255, 255, 0.08)",
+                                borderRadius: "10px",
+                                padding: "12px 14px",
+                                transition: "all 0.2s ease"
+                            }}
+                            onFocusCapture={(e) => {
+                                e.currentTarget.style.borderColor = "rgba(34, 211, 238, 0.45)";
+                                e.currentTarget.style.boxShadow = "0 0 12px rgba(34, 211, 238, 0.15)";
+                            }}
+                            onBlurCapture={(e) => {
+                                e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.08)";
+                                e.currentTarget.style.boxShadow = "none";
+                            }}
+                        >
                             <input 
-                                type="password" 
+                                type={showPassword ? "text" : "password"} 
                                 value={password} 
                                 onChange={(e) => setPassword(e.target.value)} 
                                 placeholder="Enter password..." 
-                                className="form-control" 
+                                className="border-0 bg-transparent text-white w-100 p-0 text-center" 
                                 style={{
-                                    backgroundColor: "rgba(11, 13, 23, 0.85)",
-                                    border: "1px solid rgba(255, 255, 255, 0.08)",
-                                    color: "#fff",
-                                    borderRadius: "10px",
-                                    padding: "12px 14px",
-                                    textAlign: "center"
+                                    outline: "none",
+                                    fontSize: "0.95rem",
+                                    lineHeight: "1"
                                 }}
                                 onKeyDown={(e) => {
                                     if (e.key === "Enter") fetchPublicResume(password);
                                 }}
                             />
+                            <button
+                                type="button"
+                                onClick={() => setShowPassword(!showPassword)}
+                                className="border-0 bg-transparent text-white-50 p-0 ms-2 d-flex align-items-center transition-all"
+                                style={{ outline: "none", cursor: "pointer" }}
+                            >
+                                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                            </button>
                         </div>
 
                         <button 

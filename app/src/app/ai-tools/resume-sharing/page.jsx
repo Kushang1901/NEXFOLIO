@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import Navbar from "../../../components/Navbar";
-import { Share2, Lock, Eye, Download, ShieldCheck, ArrowLeft, RefreshCw, Copy, QrCode, Mail, MessageSquare } from "lucide-react";
+import { Share2, Lock, Eye, EyeOff, Download, ShieldCheck, ArrowLeft, RefreshCw, Copy, QrCode, Mail, MessageSquare } from "lucide-react";
 import Link from "next/link";
 import { showToast } from "../../../utils/toast";
 import { subscribeToAuthChanges } from "../../../authState";
@@ -18,6 +18,7 @@ export default function ResumeSharingPage() {
     // Sharing Settings Form States
     const [privacyOption, setPrivacyOption] = useState("public");
     const [password, setPassword] = useState("");
+    const [showPassword, setShowPassword] = useState(false);
     const [slug, setSlug] = useState("");
 
     // Statistics States
@@ -68,6 +69,7 @@ export default function ResumeSharingPage() {
                     setPrivacyOption(data.privacyOption || "public");
                     setSlug(data.slug || "");
                     setPassword(""); // Clear input password for security
+                    setShowPassword(false);
                     setStats({
                         viewCount: data.viewCount || 0,
                         downloadCount: data.downloadCount || 0,
@@ -246,14 +248,48 @@ export default function ResumeSharingPage() {
                                 {privacyOption === "password" && (
                                     <div className="mb-4" style={{ animation: "fadeUp 0.2s ease" }}>
                                         <label className="form-label text-white fw-bold mb-2 small d-block">Set View Password</label>
-                                        <input 
-                                            type="password"
-                                            value={password}
-                                            onChange={(e) => setPassword(e.target.value)}
-                                            placeholder="Enter view password..."
-                                            className="form-control glass-input-custom"
-                                            style={{ fontSize: "0.9rem" }}
-                                        />
+                                        <div 
+                                            className="d-flex align-items-center"
+                                            style={{
+                                                backgroundColor: "rgba(11, 13, 23, 0.85)",
+                                                border: "1px solid rgba(255, 255, 255, 0.08)",
+                                                borderRadius: "12px",
+                                                padding: "14px 16px",
+                                                transition: "all 0.2s ease",
+                                                position: "relative"
+                                            }}
+                                            onFocus={(e) => {
+                                                e.currentTarget.style.borderColor = "rgba(34, 211, 238, 0.45)";
+                                                e.currentTarget.style.boxShadow = "0 0 12px rgba(34, 211, 238, 0.15)";
+                                                e.currentTarget.style.backgroundColor = "rgba(11, 13, 23, 0.95)";
+                                            }}
+                                            onBlur={(e) => {
+                                                e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.08)";
+                                                e.currentTarget.style.boxShadow = "none";
+                                                e.currentTarget.style.backgroundColor = "rgba(11, 13, 23, 0.85)";
+                                            }}
+                                        >
+                                            <input 
+                                                type={showPassword ? "text" : "password"}
+                                                value={password}
+                                                onChange={(e) => setPassword(e.target.value)}
+                                                placeholder="Enter view password..."
+                                                className="border-0 bg-transparent text-white w-100 p-0"
+                                                style={{ 
+                                                    outline: "none", 
+                                                    fontSize: "0.9rem",
+                                                    lineHeight: "1"
+                                                }}
+                                            />
+                                            <button
+                                                type="button"
+                                                onClick={() => setShowPassword(!showPassword)}
+                                                className="border-0 bg-transparent text-white-50 p-0 ms-2 d-flex align-items-center transition-all hover-white"
+                                                style={{ outline: "none", cursor: "pointer" }}
+                                            >
+                                                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                                            </button>
+                                        </div>
                                     </div>
                                 )}
 
