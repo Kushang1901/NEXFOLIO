@@ -393,7 +393,6 @@ export default function DocsPage() {
                                 </section>
                             ))}
                         </article>
-                        <Footer />
                     </main>
 
                     {/* Right Sidebar - "On this page" outline */}
@@ -415,6 +414,8 @@ export default function DocsPage() {
                     </aside>
                 </div>
             </div>
+
+            <Footer />
         </div>
     );
 }
