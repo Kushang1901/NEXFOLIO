@@ -67,7 +67,33 @@ export default function ResumeSharingPage() {
                 if (res.ok) {
                     const data = await res.json();
                     setPrivacyOption(data.privacyOption || "public");
-                    setSlug(data.slug || "");
+                    
+                    if (data.slug) {
+                        setSlug(data.slug);
+                    } else {
+                        // Find the selected resume to pre-populate with default name-based slug
+                        const selectedResume = resumes.find(r => String(r.id) === String(selectedResumeId));
+                        if (selectedResume) {
+                            const parsedData = typeof selectedResume.resumeData === "string"
+                                ? JSON.parse(selectedResume.resumeData)
+                                : selectedResume.resumeData;
+                            const fullName = parsedData?.fullName || parsedData?.personalInfo?.fullName;
+                            if (fullName) {
+                                const defaultSlug = fullName
+                                    .toLowerCase()
+                                    .replace(/[^a-z0-9\s-]/g, "")
+                                    .trim()
+                                    .replace(/\s+/g, "-")
+                                    .substring(0, 40);
+                                setSlug(defaultSlug);
+                            } else {
+                                setSlug("");
+                            }
+                        } else {
+                            setSlug("");
+                        }
+                    }
+
                     setPassword(""); // Clear input password for security
                     setShowPassword(false);
                     setStats({
@@ -82,7 +108,7 @@ export default function ResumeSharingPage() {
         };
 
         fetchSharingStats();
-    }, [selectedResumeId]);
+    }, [selectedResumeId, resumes]);
 
     // 3. Render QR Code
     const publicUrl = typeof window !== "undefined"
