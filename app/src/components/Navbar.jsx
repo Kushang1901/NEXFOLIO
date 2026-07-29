@@ -15,6 +15,7 @@ const NAV_LINKS = [
     { label: "AI Cover Letter", href: "/cover-letter" },
     { label: "ATS Checker", href: "/ats-checker" },
     { label: "AI Tools", href: "/ai-tools" },
+    { label: "Docs", href: "https://docs.cvgrid.in" },
 ];
 
 export default function Navbar() {
@@ -1340,6 +1341,7 @@ const drawerIcons = {
     "/cover-letter": FileSignature,
     "/ats-checker": Target,
     "/ai-tools": Sparkles,
+    "https://docs.cvgrid.in": HelpCircle,
 };
 
 /* Mega Dropdown CSS Styling Constants */

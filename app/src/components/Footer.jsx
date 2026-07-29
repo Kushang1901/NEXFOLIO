@@ -111,9 +111,9 @@ export default function Footer() {
                     {/* Col 2 */}
                     <div className="flex flex-col gap-4">
                         <h3 className="text-sm font-bold text-white tracking-widest uppercase mb-2" style={{ fontFamily: "var(--font-space-grotesk), sans-serif" }}>Support</h3>
-                        <Link className="text-[#c7c4d7] hover:text-white transition-colors duration-200 text-decoration-none text-sm py-1" href="/contact" style={{ fontFamily: "var(--font-inter), sans-serif" }}>
-                            Help Center
-                        </Link>
+                        <a className="text-[#c7c4d7] hover:text-white transition-colors duration-200 text-decoration-none text-sm py-1" href="https://docs.cvgrid.in" style={{ fontFamily: "var(--font-inter), sans-serif" }}>
+                            Documentation
+                        </a>
                         <Link className="text-[#c7c4d7] hover:text-white transition-colors duration-200 text-decoration-none text-sm py-1" href="/contact" style={{ fontFamily: "var(--font-inter), sans-serif" }}>
                             Contact Support
                         </Link>

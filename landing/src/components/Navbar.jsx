@@ -11,6 +11,7 @@ const NAV_LINKS = [
     { label: "AI Cover Letter", href: "https://app.cvgrid.in/cover-letter" },
     { label: "ATS Checker", href: "https://app.cvgrid.in/ats-checker" },
     { label: "AI Tools", href: "https://app.cvgrid.in/ai-tools" },
+    { label: "Docs", href: "https://docs.cvgrid.in" },
 ];
 
 export default function Navbar() {
@@ -1015,6 +1016,7 @@ const drawerIcons = {
     "https://app.cvgrid.in/cover-letter": FileSignature,
     "https://app.cvgrid.in/ats-checker": Target,
     "https://app.cvgrid.in/ai-tools": Sparkles,
+    "https://docs.cvgrid.in": HelpCircle,
 };
 
 const megaDropdownContainerStyle = {
