@@ -20,9 +20,11 @@ export default function Footer() {
                 {/* Branding Block */}
                 <div className="lg:col-span-5 flex flex-col gap-6">
                     <Link href="/" className="flex items-center gap-3 no-underline group">
-                        <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-indigo-500 to-purple-500 flex items-center justify-center font-bold text-white shadow-lg shadow-indigo-500/20">
-                            C
-                        </div>
+                        <img 
+                            src="/logo.png" 
+                            alt="CVGrid Logo" 
+                            className="h-9 w-9 group-hover:rotate-12 transition-transform duration-300 object-contain" 
+                        />
                         <span 
                             className="font-bold tracking-wider text-2xl bg-clip-text text-transparent bg-gradient-to-r from-white via-white to-[#b6c4ff]"
                             style={{ fontFamily: "var(--font-space-grotesk), sans-serif" }}
