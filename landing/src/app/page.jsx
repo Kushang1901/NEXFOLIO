@@ -5,6 +5,7 @@ import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import Link from "next/link";
 import Script from "next/script";
+import { Brain, CheckSquare, Share2, Percent, Globe, MessagesSquare, Star, ChevronDown, Lock, ArrowRight } from "lucide-react";
 
 export default function HomePage() {
     const [tailwindLoaded, setTailwindLoaded] = useState(true);
@@ -276,10 +277,23 @@ export default function HomePage() {
                 .ai-gradient-bg {
                     background: linear-gradient(135deg, #6366F1 0%, #A855F7 100%);
                 }
+                .cta-gradient-bg {
+                    background: radial-gradient(circle at 100% 0%, rgba(99, 102, 241, 0.25) 0%, rgba(168, 85, 247, 0.1) 50%, rgba(6, 8, 19, 0.95) 100%);
+                    border: 1px solid rgba(255, 255, 255, 0.05);
+                    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+                }
                 .glass-card {
-                    background: rgba(17, 17, 30, 0.7);
-                    backdrop-filter: blur(12px);
-                    border: 1px solid rgba(255, 255, 255, 0.1);
+                    background: rgba(10, 11, 22, 0.55);
+                    backdrop-filter: blur(16px);
+                    -webkit-backdrop-filter: blur(16px);
+                    border: 1px solid rgba(255, 255, 255, 0.04);
+                    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
+                    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+                }
+                .glass-card:hover {
+                    transform: translateY(-5px);
+                    border-color: rgba(99, 102, 241, 0.35);
+                    box-shadow: 0 12px 40px rgba(99, 102, 241, 0.15), inset 0 0 15px rgba(255, 255, 255, 0.02);
                 }
                 .glow-hover:hover {
                     box-shadow: 0 0 25px rgba(99, 102, 241, 0.3);
@@ -302,11 +316,15 @@ export default function HomePage() {
                     0%, 100% { opacity: 1; }
                     50% { opacity: 0; }
                 }
-                details[open] summary .faq-icon-toggle {
-                    transform: rotate(45deg);
+                details[open] summary svg {
+                    transform: rotate(180deg);
                 }
-                .faq-icon-toggle {
-                    transition: transform 0.2s ease;
+                details summary svg {
+                    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+                }
+                details[open] {
+                    border-color: rgba(99, 102, 241, 0.25) !important;
+                    background: rgba(10, 11, 22, 0.75) !important;
                 }
                 .grid-bg {
                     background-image: 
@@ -449,94 +467,100 @@ export default function HomePage() {
                     </section>
 
                     {/* Bento Features */}
-                    <section className="px-4 md:px-8 py-24 max-w-[1280px] mx-auto">
-                        <div className="text-center mb-16">
-                            <h2 className="text-3xl md:text-5xl font-bold mb-4 text-white" style={{ fontFamily: "var(--font-space-grotesk), sans-serif" }}>Precision Tools for Professionals</h2>
+                    {/* Bento Features */}
+                    <section className="px-4 md:px-8 py-24 max-w-[1280px] mx-auto relative">
+                        {/* Background glowing spots */}
+                        <div className="absolute top-1/4 left-1/4 w-[350px] h-[350px] rounded-full bg-indigo-500/5 blur-[80px] pointer-events-none"></div>
+                        <div className="absolute bottom-1/4 right-1/4 w-[350px] h-[350px] rounded-full bg-purple-500/5 blur-[80px] pointer-events-none"></div>
+
+                        <div className="text-center mb-16 relative z-10">
+                            <h2 className="text-3xl md:text-5xl font-bold mb-4 text-white tracking-tight" style={{ fontFamily: "var(--font-space-grotesk), sans-serif" }}>Precision Tools for Professionals</h2>
                             <p className="text-base md:text-lg text-[#c7c4d7] max-w-2xl mx-auto" style={{ fontFamily: "var(--font-inter), sans-serif" }}>Our comprehensive toolkit is designed to optimize your resume, generate portfolios, and prepare you for interviews.</p>
                         </div>
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                        
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 relative z-10">
 
                             {/* Card 1 */}
-                            <div className="glass-card p-8 rounded-2xl flex flex-col items-start gap-4 hover:border-[#c0c1ff] transition-all group cursor-default">
-                                <div className="p-4 rounded-xl bg-[#c0c1ff]/10 text-[#c0c1ff]">
-                                    <span className="material-symbols-outlined text-[32px]">psychology</span>
+                            <div className="glass-card p-8 rounded-2xl flex flex-col items-start gap-4 hover:border-[#c0c1ff]/30 transition-all group cursor-default">
+                                <div className="p-4 rounded-xl bg-[#c0c1ff]/10 text-[#c0c1ff] transition-transform duration-300 group-hover:scale-110">
+                                    <Brain className="w-8 h-8 text-[#a5b4fc]" />
                                 </div>
-                                <h3 className="text-2xl font-bold text-white" style={{ fontFamily: "var(--font-space-grotesk), sans-serif" }}>Best Free AI Resume Maker</h3>
-                                <p className="text-[#c7c4d7] leading-relaxed" style={{ fontFamily: "var(--font-inter), sans-serif" }}>
+                                <h3 className="text-2xl font-bold text-white tracking-tight" style={{ fontFamily: "var(--font-space-grotesk), sans-serif" }}>Best Free AI Resume Maker</h3>
+                                <p className="text-[#c7c4d7] leading-relaxed text-[15px]" style={{ fontFamily: "var(--font-inter), sans-serif" }}>
                                     Generate impactful summaries and action-oriented bullet points with the best free AI resume maker online.
                                 </p>
-                                <button onClick={handleStartResume} className="mt-4 flex items-center gap-2 text-[#c0c1ff] font-semibold bg-transparent border-0 p-0 group-hover:gap-4 transition-all cursor-pointer" style={{ fontFamily: "var(--font-inter), sans-serif" }}>
-                                    Start Writing <span className="material-symbols-outlined text-[18px]">east</span>
+                                <button onClick={handleStartResume} className="mt-auto pt-4 flex items-center gap-2 text-[#c0c1ff] font-semibold bg-transparent border-0 p-0 transition-all cursor-pointer hover:text-white" style={{ fontFamily: "var(--font-inter), sans-serif" }}>
+                                    Start Writing <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
                                 </button>
                             </div>
 
                             {/* Card 2 */}
-                            <div className="glass-card p-8 rounded-2xl flex flex-col items-start gap-4 border-indigo-500/20 hover:border-[#c0c1ff] transition-all group cursor-default">
-                                <div className="p-4 rounded-xl bg-[#c0c1ff]/10 text-[#c0c1ff]">
-                                    <span className="material-symbols-outlined text-[32px]">fact_check</span>
+                            <div className="glass-card p-8 rounded-2xl flex flex-col items-start gap-4 hover:border-[#c0c1ff]/30 transition-all group cursor-default">
+                                <div className="p-4 rounded-xl bg-[#c0c1ff]/10 text-[#c0c1ff] transition-transform duration-300 group-hover:scale-110">
+                                    <CheckSquare className="w-8 h-8 text-[#a5b4fc]" />
                                 </div>
-                                <h3 className="text-2xl font-bold text-white" style={{ fontFamily: "var(--font-space-grotesk), sans-serif" }}>Best ATS Scorer & Match Checker</h3>
-                                <p className="text-[#c7c4d7] leading-relaxed" style={{ fontFamily: "var(--font-inter), sans-serif" }}>
+                                <h3 className="text-2xl font-bold text-white tracking-tight" style={{ fontFamily: "var(--font-space-grotesk), sans-serif" }}>Best ATS Scorer & Match Checker</h3>
+                                <p className="text-[#c7c4d7] leading-relaxed text-[15px]" style={{ fontFamily: "var(--font-inter), sans-serif" }}>
                                     Compare your resume against descriptions and identify keyword gaps with our precision best ATS scorer.
                                 </p>
-                                <a href="https://app.cvgrid.in/ats-checker" className="mt-4 flex items-center gap-2 text-[#c0c1ff] font-semibold group-hover:gap-4 transition-all no-underline" style={{ fontFamily: "var(--font-inter), sans-serif" }}>
-                                    Scan My CV <span className="material-symbols-outlined text-[18px]">east</span>
+                                <a href="https://app.cvgrid.in/ats-checker" className="mt-auto pt-4 flex items-center gap-2 text-[#c0c1ff] font-semibold transition-all no-underline hover:text-white" style={{ fontFamily: "var(--font-inter), sans-serif" }}>
+                                    Scan My CV <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
                                 </a>
                             </div>
 
                             {/* Card 3 */}
-                            <div className="glass-card p-8 rounded-2xl flex flex-col items-start gap-4 hover:border-[#c0c1ff] transition-all group cursor-default">
-                                <div className="p-4 rounded-xl bg-[#c0c1ff]/10 text-[#c0c1ff]">
-                                    <span className="material-symbols-outlined text-[32px]">share</span>
+                            <div className="glass-card p-8 rounded-2xl flex flex-col items-start gap-4 hover:border-[#c0c1ff]/30 transition-all group cursor-default">
+                                <div className="p-4 rounded-xl bg-[#c0c1ff]/10 text-[#c0c1ff] transition-transform duration-300 group-hover:scale-110">
+                                    <Share2 className="w-8 h-8 text-[#a5b4fc]" />
                                 </div>
-                                <h3 className="text-2xl font-bold text-white" style={{ fontFamily: "var(--font-space-grotesk), sans-serif" }}>Smart URL Sharing</h3>
-                                <p className="text-[#c7c4d7] leading-relaxed" style={{ fontFamily: "var(--font-inter), sans-serif" }}>
+                                <h3 className="text-2xl font-bold text-white tracking-tight" style={{ fontFamily: "var(--font-space-grotesk), sans-serif" }}>Smart URL Sharing</h3>
+                                <p className="text-[#c7c4d7] leading-relaxed text-[15px]" style={{ fontFamily: "var(--font-inter), sans-serif" }}>
                                     Set custom handles, password locks, and track detailed real-time visitor counts and downloads.
                                 </p>
-                                <a href="https://app.cvgrid.in/login" className="mt-4 flex items-center gap-2 text-[#c0c1ff] font-semibold group-hover:gap-4 transition-all no-underline" style={{ fontFamily: "var(--font-inter), sans-serif" }}>
-                                    Share Resume <span className="material-symbols-outlined text-[18px]">east</span>
+                                <a href="https://app.cvgrid.in/login" className="mt-auto pt-4 flex items-center gap-2 text-[#c0c1ff] font-semibold transition-all no-underline hover:text-white" style={{ fontFamily: "var(--font-inter), sans-serif" }}>
+                                    Share Resume <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
                                 </a>
                             </div>
 
                             {/* Card 4 */}
-                            <div className="glass-card p-8 rounded-2xl flex flex-col items-start gap-4 hover:border-[#c0c1ff] transition-all group cursor-default">
-                                <div className="p-4 rounded-xl bg-[#c0c1ff]/10 text-[#c0c1ff]">
-                                    <span className="material-symbols-outlined text-[32px]">percent</span>
+                            <div className="glass-card p-8 rounded-2xl flex flex-col items-start gap-4 hover:border-[#c0c1ff]/30 transition-all group cursor-default">
+                                <div className="p-4 rounded-xl bg-[#c0c1ff]/10 text-[#c0c1ff] transition-transform duration-300 group-hover:scale-110">
+                                    <Percent className="w-8 h-8 text-[#a5b4fc]" />
                                 </div>
-                                <h3 className="text-2xl font-bold text-white" style={{ fontFamily: "var(--font-space-grotesk), sans-serif" }}>ATS Keywords Highlighter & Score</h3>
-                                <p className="text-[#c7c4d7] leading-relaxed" style={{ fontFamily: "var(--font-inter), sans-serif" }}>
+                                <h3 className="text-2xl font-bold text-white tracking-tight" style={{ fontFamily: "var(--font-space-grotesk), sans-serif" }}>ATS Keywords Highlighter</h3>
+                                <p className="text-[#c7c4d7] leading-relaxed text-[15px]" style={{ fontFamily: "var(--font-inter), sans-serif" }}>
                                     Find match percentages, highlight missing ATS keywords, and get recommendations to optimize your CV.
                                 </p>
-                                <a href="https://app.cvgrid.in/login" className="mt-4 flex items-center gap-2 text-[#c0c1ff] font-semibold group-hover:gap-4 transition-all no-underline" style={{ fontFamily: "var(--font-inter), sans-serif" }}>
-                                    Get Match Score <span className="material-symbols-outlined text-[18px]">east</span>
+                                <a href="https://app.cvgrid.in/login" className="mt-auto pt-4 flex items-center gap-2 text-[#c0c1ff] font-semibold transition-all no-underline hover:text-white" style={{ fontFamily: "var(--font-inter), sans-serif" }}>
+                                    Get Match Score <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
                                 </a>
                             </div>
 
                             {/* Card 5 */}
-                            <div className="glass-card p-8 rounded-2xl flex flex-col items-start gap-4 hover:border-[#c0c1ff] transition-all group cursor-default">
-                                <div className="p-4 rounded-xl bg-[#c0c1ff]/10 text-[#c0c1ff]">
-                                    <span className="material-symbols-outlined text-[32px]">language</span>
+                            <div className="glass-card p-8 rounded-2xl flex flex-col items-start gap-4 hover:border-[#c0c1ff]/30 transition-all group cursor-default">
+                                <div className="p-4 rounded-xl bg-[#c0c1ff]/10 text-[#c0c1ff] transition-transform duration-300 group-hover:scale-110">
+                                    <Globe className="w-8 h-8 text-[#a5b4fc]" />
                                 </div>
-                                <h3 className="text-2xl font-bold text-white" style={{ fontFamily: "var(--font-space-grotesk), sans-serif" }}>Affordable AI Portfolio Builder</h3>
-                                <p className="text-[#c7c4d7] leading-relaxed" style={{ fontFamily: "var(--font-inter), sans-serif" }}>
+                                <h3 className="text-2xl font-bold text-white tracking-tight" style={{ fontFamily: "var(--font-space-grotesk), sans-serif" }}>AI Portfolio Builder</h3>
+                                <p className="text-[#c7c4d7] leading-relaxed text-[15px]" style={{ fontFamily: "var(--font-inter), sans-serif" }}>
                                     Convert your resume into a website. The most affordable, less expensive portfolio builder to download source code.
                                 </p>
-                                <a href="https://app.cvgrid.in/login" className="mt-4 flex items-center gap-2 text-[#c0c1ff] font-semibold group-hover:gap-4 transition-all no-underline" style={{ fontFamily: "var(--font-inter), sans-serif" }}>
-                                    Build Portfolio <span className="material-symbols-outlined text-[18px]">east</span>
+                                <a href="https://app.cvgrid.in/login" className="mt-auto pt-4 flex items-center gap-2 text-[#c0c1ff] font-semibold transition-all no-underline hover:text-white" style={{ fontFamily: "var(--font-inter), sans-serif" }}>
+                                    Build Portfolio <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
                                 </a>
                             </div>
 
                             {/* Card 6 */}
-                            <div className="glass-card p-8 rounded-2xl flex flex-col items-start gap-4 hover:border-[#c0c1ff] transition-all group cursor-default">
-                                <div className="p-4 rounded-xl bg-[#c0c1ff]/10 text-[#c0c1ff]">
-                                    <span className="material-symbols-outlined text-[32px]">forum</span>
+                            <div className="glass-card p-8 rounded-2xl flex flex-col items-start gap-4 hover:border-[#c0c1ff]/30 transition-all group cursor-default">
+                                <div className="p-4 rounded-xl bg-[#c0c1ff]/10 text-[#c0c1ff] transition-transform duration-300 group-hover:scale-110">
+                                    <MessagesSquare className="w-8 h-8 text-[#a5b4fc]" />
                                 </div>
-                                <h3 className="text-2xl font-bold text-white" style={{ fontFamily: "var(--font-space-grotesk), sans-serif" }}>AI Interview Coach</h3>
-                                <p className="text-[#c7c4d7] leading-relaxed" style={{ fontFamily: "var(--font-inter), sans-serif" }}>
+                                <h3 className="text-2xl font-bold text-white tracking-tight" style={{ fontFamily: "var(--font-space-grotesk), sans-serif" }}>AI Interview Coach</h3>
+                                <p className="text-[#c7c4d7] leading-relaxed text-[15px]" style={{ fontFamily: "var(--font-inter), sans-serif" }}>
                                     Get personalized interview questions and recommended answers based on your target role.
                                 </p>
-                                <a href="https://app.cvgrid.in/login" className="mt-4 flex items-center gap-2 text-[#c0c1ff] font-semibold group-hover:gap-4 transition-all no-underline" style={{ fontFamily: "var(--font-inter), sans-serif" }}>
-                                    Practice Now <span className="material-symbols-outlined text-[18px]">east</span>
+                                <a href="https://app.cvgrid.in/login" className="mt-auto pt-4 flex items-center gap-2 text-[#c0c1ff] font-semibold transition-all no-underline hover:text-white" style={{ fontFamily: "var(--font-inter), sans-serif" }}>
+                                    Practice Now <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
                                 </a>
                             </div>
 
@@ -544,9 +568,11 @@ export default function HomePage() {
                     </section>
 
                     {/* Testimonials Section (Wall of Love) */}
-                    <section className="px-4 md:px-8 py-24 max-w-[1280px] mx-auto border-t border-white/5">
-                        <div className="text-center mb-16">
-                            <h2 className="text-3xl md:text-5xl font-bold mb-4 text-white" style={{ fontFamily: "var(--font-space-grotesk), sans-serif" }}>
+                    <section className="px-4 md:px-8 py-24 max-w-[1280px] mx-auto border-t border-white/5 relative">
+                        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] rounded-full bg-indigo-500/5 blur-[100px] pointer-events-none"></div>
+
+                        <div className="text-center mb-16 relative z-10">
+                            <h2 className="text-3xl md:text-5xl font-bold mb-4 text-white tracking-tight" style={{ fontFamily: "var(--font-space-grotesk), sans-serif" }}>
                                 Loved by Career Builders
                             </h2>
                             <p className="text-base md:text-lg text-[#c7c4d7] max-w-2xl mx-auto" style={{ fontFamily: "var(--font-inter), sans-serif" }}>
@@ -554,14 +580,14 @@ export default function HomePage() {
                             </p>
                         </div>
 
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 relative z-10">
                             {testimonials.map((item, i) => (
-                                <div key={i} className="glass-card p-8 rounded-2xl flex flex-col justify-between gap-6 border border-indigo-500/10 hover:border-[#c0c1ff] transition-all group duration-300">
+                                <div key={i} className="glass-card p-8 rounded-2xl flex flex-col justify-between gap-6 border border-indigo-500/10 hover:border-[#c0c1ff]/30 transition-all group duration-300">
                                     <div>
                                         {/* Stars */}
-                                        <div className="flex gap-1 mb-4 text-[#ffb400]">
+                                        <div className="flex gap-1 mb-4">
                                             {Array.from({ length: item.rating || 5 }).map((_, idx) => (
-                                                <span key={idx} className="material-symbols-outlined text-[20px]" style={{ fontVariationSettings: "'FILL' 1" }}>star</span>
+                                                <Star key={idx} className="w-5 h-5 text-amber-400 fill-amber-400" />
                                             ))}
                                         </div>
                                         {/* Feedback */}
@@ -571,7 +597,7 @@ export default function HomePage() {
                                     </div>
                                     {/* User Details */}
                                     <div className="flex items-center gap-3 pt-4 border-t border-white/5">
-                                        <div className="w-9 h-9 rounded-full bg-[#c0c1ff]/10 flex items-center justify-center text-[#c0c1ff] font-bold text-sm">
+                                        <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-[#6366f1]/20 to-[#a855f7]/20 border border-indigo-500/20 flex items-center justify-center text-[#c0c1ff] font-bold text-sm">
                                             {item.userName ? item.userName.charAt(0).toUpperCase() : "U"}
                                         </div>
                                         <div>
@@ -586,24 +612,26 @@ export default function HomePage() {
 
                     {/* Final CTA Section */}
                     <section className="px-4 md:px-8 py-16">
-                        <div className="max-w-[1280px] mx-auto ai-gradient-bg rounded-[32px] p-12 md:p-20 relative overflow-hidden cta-text-align">
-                            <div className="absolute right-0 top-0 w-full h-full bg-black/20 backdrop-blur-[2px] -z-0"></div>
+                        <div className="max-w-[1280px] mx-auto cta-gradient-bg rounded-[32px] p-12 md:p-20 relative overflow-hidden cta-text-align border border-white/[0.06]">
+                            <div className="absolute -right-20 -top-20 w-[400px] h-[400px] rounded-full bg-[#6366F1]/10 blur-[80px] pointer-events-none"></div>
+                            <div className="absolute -left-20 -bottom-20 w-[400px] h-[400px] rounded-full bg-[#A855F7]/10 blur-[80px] pointer-events-none"></div>
+                            
                             <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-12">
                                 <div className="max-w-2xl">
-                                    <h2 className="text-3xl md:text-5xl font-bold mb-6 text-white" style={{ fontFamily: "var(--font-space-grotesk), sans-serif" }}>Ready to land your dream interview?</h2>
-                                    <p className="text-white/80 text-lg md:text-xl mb-0" style={{ fontFamily: "var(--font-inter), sans-serif" }}>
+                                    <h2 className="text-3xl md:text-5xl font-bold mb-6 text-white tracking-tight" style={{ fontFamily: "var(--font-space-grotesk), sans-serif" }}>Ready to land your dream interview?</h2>
+                                    <p className="text-[#c7c4d7]/90 text-lg md:text-xl mb-0" style={{ fontFamily: "var(--font-inter), sans-serif" }}>
                                         Join 10,000+ job seekers who leveled up their career with CVGrid. Create your resume now.
                                     </p>
                                 </div>
                                 <div className="flex flex-col items-center gap-6">
                                     <button
                                         onClick={handleStartResume}
-                                        className="bg-white text-[#12121d] font-bold text-lg px-12 py-5 rounded-2xl shadow-2xl hover:scale-105 transition-all active:scale-95 border-0 cursor-pointer"
+                                        className="bg-white text-[#12121d] font-bold text-lg px-12 py-5 rounded-2xl shadow-[0_10px_40px_rgba(255,255,255,0.1)] hover:shadow-[0_15px_45px_rgba(99,102,241,0.4)] hover:scale-[1.03] active:scale-[0.98] transition-all border-0 cursor-pointer"
                                     >
                                         Get Started Now
                                     </button>
                                     <div className="flex items-center gap-2 text-white/70 text-sm">
-                                        <span className="material-symbols-outlined text-[18px]">lock</span>
+                                        <Lock className="w-4 h-4 text-white/60" />
                                         No credit card required
                                     </div>
                                 </div>
@@ -613,7 +641,7 @@ export default function HomePage() {
 
                     {/* FAQ Section */}
                     <section className="px-4 md:px-8 py-16 max-w-3xl mx-auto" id="faq">
-                        <h2 className="text-3xl md:text-5xl font-bold mb-12 text-center text-white" style={{ fontFamily: "var(--font-space-grotesk), sans-serif" }}>FAQs</h2>
+                        <h2 className="text-3xl md:text-5xl font-bold mb-12 text-center text-white tracking-tight" style={{ fontFamily: "var(--font-space-grotesk), sans-serif" }}>FAQs</h2>
                         <div className="space-y-4">
                             {[
                                 {
@@ -640,13 +668,13 @@ export default function HomePage() {
                                     q: "Does CVGrid work for freshers and students?",
                                     a: "Yes. The builder has custom sections for internships, projects, and achievements. The AI writer is optimized to highlight transferable skills, making it perfect for students and career switchers.",
                                 },
-                             ].map((item, i) => (
-                                <details key={i} className="group glass-card rounded-2xl overflow-hidden border border-[rgba(255,255,255,0.1)] transition-all">
+                            ].map((item, i) => (
+                                <details key={i} className="group glass-card rounded-2xl overflow-hidden transition-all duration-300">
                                     <summary className="flex justify-between items-center p-6 cursor-pointer list-none">
                                         <span className="font-semibold text-white text-base md:text-lg" style={{ fontFamily: "var(--font-inter), sans-serif" }}>{item.q}</span>
-                                        <span className="material-symbols-outlined faq-icon-toggle text-[#c0c1ff]">expand_more</span>
+                                        <ChevronDown className="w-5 h-5 text-[#c0c1ff] transition-transform duration-300 group-open:rotate-180" />
                                     </summary>
-                                    <div className="p-6 pt-0 text-[#c7c4d7] border-t border-[rgba(255,255,255,0.1)]/30 text-sm md:text-base leading-relaxed" style={{ fontFamily: "var(--font-inter), sans-serif" }}>
+                                    <div className="p-6 pt-0 text-[#c7c4d7] border-t border-[rgba(255,255,255,0.06)] text-sm md:text-base leading-relaxed" style={{ fontFamily: "var(--font-inter), sans-serif" }}>
                                         {item.a}
                                     </div>
                                 </details>
