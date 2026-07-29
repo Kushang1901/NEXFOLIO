@@ -9,6 +9,7 @@ import CoverLetterPreview from "../../components/CoverLetterPreview";
 import { normalizeResumeData } from "../../utils/resumeAdapter";
 import Link from "next/link";
 import { Sparkles, SlidersHorizontal, Loader2, FileDown, Eye, FileSignature, Briefcase, ChevronRight } from "lucide-react";
+import AiWorkflowProgress from "../../components/AiWorkflowProgress";
 
 export default function CoverLetterGenerator() {
     const router = useRouter();
@@ -560,6 +561,8 @@ export default function CoverLetterGenerator() {
             <div className="bg-glow-spot-2" aria-hidden="true"></div>
 
             <Navbar />
+
+            <AiWorkflowProgress currentStep={5} />
 
             <div className="container-fluid px-4 py-4 flex-grow-1 position-relative" style={{ zIndex: 5 }}>
                 <div className="row g-4 h-100">

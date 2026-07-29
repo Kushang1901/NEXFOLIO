@@ -3,6 +3,7 @@
 import React, { useState, useRef } from "react";
 import Navbar from "../../components/Navbar";
 import { ListChecks, KeyRound, LayoutTemplate, Type, FileText, HardDrive, Sparkles, CheckCircle, UploadCloud, Target, Lightbulb, AlertTriangle, XCircle, Check } from "lucide-react";
+import AiWorkflowProgress from "../../components/AiWorkflowProgress";
 
 const TIPS = [
     { Icon: ListChecks,     color: "#6366f1", title: "Use Standard Section Headings",          desc: "ATS bots look for keywords like 'Experience', 'Education', 'Skills'. Avoid creative names like 'My Journey'." },
@@ -87,6 +88,8 @@ export default function ATSCheckerPage() {
             <div className="bg-glow-spot-2" aria-hidden="true"></div>
 
             <Navbar />
+
+            <AiWorkflowProgress currentStep={2} />
 
             {/* Hero */}
             <section style={{ padding: "80px 24px 40px", textAlign: "center", position: "relative", zIndex: 10 }}>

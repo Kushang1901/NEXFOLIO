@@ -16,7 +16,7 @@ export async function OPTIONS() {
 export async function POST(request) {
     try {
         console.log("📥 Next.js /api/ai/keyword-optimizer: Received request");
-        const { fileBase64, resumeText, jobDesc } = await request.json();
+        const { fileBase64, resumeText, jobDesc, jobUrl, options = {}, scope = "entire" } = await request.json();
 
         if (!fileBase64 && !resumeText) {
             return NextResponse.json(
@@ -25,9 +25,9 @@ export async function POST(request) {
             );
         }
 
-        if (!jobDesc) {
+        if (!jobDesc && !jobUrl) {
             return NextResponse.json(
-                { error: "jobDesc is required" },
+                { error: "jobDesc or jobUrl is required" },
                 { status: 400, headers: corsHeaders }
             );
         }
@@ -40,6 +40,54 @@ export async function POST(request) {
             );
         }
 
+        let finalJobDesc = jobDesc;
+
+        if (jobUrl) {
+            console.log(`🌐 Keyword Optimizer Scraper: Fetching URL: ${jobUrl}`);
+            try {
+                const response = await fetch(jobUrl, {
+                    headers: {
+                        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+                        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
+                    }
+                });
+                if (!response.ok) {
+                    throw new Error(`Failed to fetch the URL (Status code: ${response.status})`);
+                }
+                const rawHtml = await response.text();
+                
+                // Clean HTML to save tokens
+                const cleanText = rawHtml
+                    .replace(/<script[^>]*>([\s\S]*?)<\/script>/gi, "")
+                    .replace(/<style[^>]*>([\s\S]*?)<\/style>/gi, "")
+                    .replace(/<[^>]+>/g, " ")
+                    .replace(/\s+/g, " ")
+                    .trim()
+                    .substring(0, 30000);
+
+                const genAI = new GoogleGenerativeAI(apiKey);
+                const tempModel = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+                const extractPrompt = `
+You are a job scraper assistant. Extract ONLY the job description text (including title, company, requirements, duties, skills) from this raw webpage text:
+
+${cleanText}
+
+Return only the clean extracted job description.
+`;
+                const tempRes = await tempModel.generateContent(extractPrompt);
+                finalJobDesc = tempRes.response.text().trim();
+                if (!finalJobDesc || finalJobDesc.length < 50) {
+                    throw new Error("Could not extract a meaningful job description from the page content.");
+                }
+            } catch (err) {
+                console.error("Scraping error:", err);
+                return NextResponse.json(
+                    { error: `Could not load job description from the URL. Please copy and paste the text directly. (Error: ${err.message})` },
+                    { status: 400, headers: corsHeaders }
+                );
+            }
+        }
+
         const genAI = new GoogleGenerativeAI(apiKey);
         const models = ["gemini-2.5-flash", "gemini-2.0-flash", "gemini-flash-latest"];
         let result = null;
@@ -49,16 +97,25 @@ export async function POST(request) {
 You are an expert ATS Optimization AI. Analyze the attached Resume (either PDF or text) and the Job Description below to do keyword matching, gap analysis, and density calculation.
 
 Job Description:
-${jobDesc}
+${finalJobDesc}
 
 If resume text is provided directly, here it is:
 ${resumeText || ""}
 
+Please customize the analysis based on these options:
+- Optimization scope: ${scope} (focus matching on this part of the resume)
+- Target keywords types:
+  * ATS Keywords: ${options.atsKeywords ? "Yes" : "No"}
+  * Technical Skills: ${options.techSkills ? "Yes" : "No"}
+  * Soft Skills: ${options.softSkills ? "Yes" : "No"}
+  * Certifications: ${options.certifications ? "Yes" : "No"}
+  * Action Verbs: ${options.actionVerbs ? "Yes" : "No"}
+
 Please output your response strictly in the following JSON format (no markdown codeblocks, no text before or after):
 {
   "keywordsFound": [
-    { "keyword": "React", "count": 3 },
-    { "keyword": "JavaScript", "count": 2 }
+    { "keyword": "React", "count": 8, "density": 2.5, "status": "Good" },
+    { "keyword": "Node.js", "count": 1, "density": 0.3, "status": "Needs improvement" }
   ],
   "missingKeywords": [
     "Docker", "AWS", "CI/CD"
@@ -66,10 +123,16 @@ Please output your response strictly in the following JSON format (no markdown c
   "suggestedKeywords": [
     "Typescript", "Next.js", "Redis"
   ],
-  "keywordDensity": [
-    { "keyword": "React", "density": 4.5 },
-    { "keyword": "JavaScript", "density": 3.0 },
-    { "keyword": "CSS", "density": 1.5 }
+  "weakKeywords": [
+    { "weak": "Worked on", "suggested": "Developed" },
+    { "weak": "Helped", "suggested": "Designed" },
+    { "weak": "Responsible", "suggested": "Implemented" }
+  ],
+  "rewriteSuggestions": [
+    {
+      "original": "Worked on APIs",
+      "suggested": "Developed and integrated REST APIs"
+    }
   ]
 }
 `;
