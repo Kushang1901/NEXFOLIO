@@ -15,7 +15,7 @@ export const metadata = {
     openGraph: {
         title: "Sign Up Free – CVGrid AI Resume Builder",
         description: "Create a free account and start building your professional resume with AI. No credit card required.",
-        url: "https://cvgrid.in/signup",
+        url: "https://app.cvgrid.in/signup",
         type: "website",
     },
 };
@@ -23,3 +23,4 @@ export const metadata = {
 export default function SignupLayout({ children }) {
     return <>{children}</>;
 }
+

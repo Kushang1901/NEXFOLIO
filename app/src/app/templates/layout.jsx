@@ -15,11 +15,11 @@ export const metadata = {
     openGraph: {
         title: "ATS Resume Templates – 18+ Free & Premium Designs | CVGrid",
         description: "Browse 18+ professional resume templates. All ATS-optimized. Pick a design and generate your resume with AI in seconds. Free and premium options available.",
-        url: "https://cvgrid.in/templates",
+        url: "https://app.cvgrid.in/templates",
         type: "website",
         images: [
             {
-                url: "https://cvgrid.in/logo.png",
+                url: "https://app.cvgrid.in/logo.png",
                 width: 1200,
                 height: 630,
                 alt: "CVGrid Resume Templates",
@@ -30,7 +30,7 @@ export const metadata = {
         card: "summary_large_image",
         title: "18+ Professional ATS Resume Templates – CVGrid",
         description: "Classic, Modern, Creative, Executive, Developer, Minimalist and many more. All ATS-optimized. Free & premium templates.",
-        images: ["https://cvgrid.in/logo.png"],
+        images: ["https://app.cvgrid.in/logo.png"],
     },
 };
 
@@ -38,8 +38,8 @@ export default function TemplatesLayout({ children }) {
     const jsonLd = {
         "@context": "https://schema.org",
         "@type": "CollectionPage",
-        "@id": "https://cvgrid.in/templates/#page",
-        "url": "https://cvgrid.in/templates",
+        "@id": "https://app.cvgrid.in/templates/#page",
+        "url": "https://app.cvgrid.in/templates",
         "name": "ATS Resume Templates – CVGrid",
         "description": "Browse 18+ professional, ATS-friendly resume templates. Choose from Classic, Modern, Creative, Executive, Developer, Minimalist, Elegant and more. Free and premium tiers available.",
         "breadcrumb": {
@@ -55,7 +55,7 @@ export default function TemplatesLayout({ children }) {
                     "@type": "ListItem",
                     "position": 2,
                     "name": "Resume Templates",
-                    "item": "https://cvgrid.in/templates",
+                    "item": "https://app.cvgrid.in/templates",
                 },
             ],
         },
@@ -96,3 +96,4 @@ export default function TemplatesLayout({ children }) {
         </>
     );
 }
+

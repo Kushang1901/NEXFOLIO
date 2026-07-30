@@ -14,7 +14,7 @@ export const metadata = {
     openGraph: {
         title: "Terms of Service – CVGrid AI Resume Builder",
         description: "Review the terms and conditions for building and downloading resumes on CVGrid.",
-        url: "https://cvgrid.in/terms",
+        url: "https://app.cvgrid.in/terms",
         type: "website",
     },
 };
@@ -22,3 +22,4 @@ export const metadata = {
 export default function TermsLayout({ children }) {
     return <>{children}</>;
 }
+

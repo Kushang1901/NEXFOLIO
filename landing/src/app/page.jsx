@@ -567,6 +567,77 @@ export default function HomePage() {
                         </div>
                     </section>
 
+                    {/* Competitor Comparison / Less Expensive CV Maker Section */}
+                    <section className="px-4 md:px-8 py-24 max-w-[1280px] mx-auto border-t border-white/5 relative">
+                        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[350px] h-[350px] rounded-full bg-purple-500/5 blur-[80px] pointer-events-none"></div>
+
+                        <div className="text-center mb-16 relative z-10">
+                            <h2 className="text-3xl md:text-5xl font-bold mb-4 text-white tracking-tight" style={{ fontFamily: "var(--font-space-grotesk), sans-serif" }}>
+                                The Best & Most Less Expensive AI CV Maker
+                            </h2>
+                            <p className="text-base md:text-lg text-[#c7c4d7] max-w-2xl mx-auto" style={{ fontFamily: "var(--font-inter), sans-serif" }}>
+                                Compare CVGrid with other expensive tools. We offer the best value, premium templates, and advanced features for a fraction of the cost.
+                            </p>
+                        </div>
+
+                        <div className="glass-card p-6 md:p-10 rounded-[32px] border border-indigo-500/10 relative z-10 overflow-x-auto">
+                            <table className="w-full text-left border-collapse min-w-[600px]">
+                                <thead>
+                                    <tr className="border-b border-white/10 text-white font-bold text-sm md:text-base">
+                                        <th className="pb-4 pt-2">Feature / Pricing</th>
+                                        <th className="pb-4 pt-2 text-[#c0c1ff]">CVGrid (Us)</th>
+                                        <th className="pb-4 pt-2 text-white/60">Resume.io</th>
+                                        <th className="pb-4 pt-2 text-white/60">Rezi</th>
+                                        <th className="pb-4 pt-2 text-white/60">Kickresume</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="text-[#c7c4d7] text-sm md:text-base">
+                                    <tr className="border-b border-white/5">
+                                        <td className="py-4 font-semibold text-white">Starting Price</td>
+                                        <td className="py-4 text-[#c0c1ff] font-bold">100% Free Tier</td>
+                                        <td className="py-4">$2.90 (7-day trial)</td>
+                                        <td className="py-4">$29.00 / month</td>
+                                        <td className="py-4">$19.00 / month</td>
+                                    </tr>
+                                    <tr className="border-b border-white/5">
+                                        <td className="py-4 font-semibold text-white">Premium Template Export</td>
+                                        <td className="py-4 text-[#c0c1ff] font-bold">₹150 ($1.80) / lifetime</td>
+                                        <td className="py-4">$24.95 / month renewal</td>
+                                        <td className="py-4">$29.00 / month subscription</td>
+                                        <td className="py-4">$19.00 / month subscription</td>
+                                    </tr>
+                                    <tr className="border-b border-white/5">
+                                        <td className="py-4 font-semibold text-white">Best ATS Scorer & Matcher</td>
+                                        <td className="py-4 text-green-400 font-bold">
+                                            <span className="material-symbols-outlined text-sm align-middle mr-1" style={{ fontVariationSettings: "'FILL' 1" }}>check_circle</span> Included Free
+                                        </td>
+                                        <td className="py-4">Not available</td>
+                                        <td className="py-4">Subscription only</td>
+                                        <td className="py-4">Not available</td>
+                                    </tr>
+                                    <tr className="border-b border-white/5">
+                                        <td className="py-4 font-semibold text-white">Best Keyword Generator</td>
+                                        <td className="py-4 text-green-400 font-bold">
+                                            <span className="material-symbols-outlined text-sm align-middle mr-1" style={{ fontVariationSettings: "'FILL' 1" }}>check_circle</span> Included Free
+                                        </td>
+                                        <td className="py-4">Basic matching</td>
+                                        <td className="py-4">Subscription only</td>
+                                        <td className="py-4">Limited keywords</td>
+                                    </tr>
+                                    <tr>
+                                        <td className="py-4 font-semibold text-white">Watermark-Free PDF</td>
+                                        <td className="py-4 text-green-400 font-bold">
+                                            <span className="material-symbols-outlined text-sm align-middle mr-1" style={{ fontVariationSettings: "'FILL' 1" }}>check_circle</span> Yes (100% Free)
+                                        </td>
+                                        <td className="py-4">Paid only</td>
+                                        <td className="py-4">Paid only</td>
+                                        <td className="py-4">Paid only</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </section>
+
                     {/* Testimonials Section (Wall of Love) */}
                     <section className="px-4 md:px-8 py-24 max-w-[1280px] mx-auto border-t border-white/5 relative">
                         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] rounded-full bg-indigo-500/5 blur-[100px] pointer-events-none"></div>
@@ -667,6 +738,14 @@ export default function HomePage() {
                                 {
                                     q: "Does CVGrid work for freshers and students?",
                                     a: "Yes. The builder has custom sections for internships, projects, and achievements. The AI writer is optimized to highlight transferable skills, making it perfect for students and career switchers.",
+                                },
+                                {
+                                    q: "Why is CVGrid considered the best and less expensive CV maker?",
+                                    a: "CVGrid is designed to be both the best AI resume builder and the most less expensive CV maker online. While other tools bind you to expensive subscriptions (like $20-$30/month), CVGrid offers a full-featured 100% free tier. Upgrading to our premium resume layouts costs only a tiny, one-time payment of ₹150 for lifetime access.",
+                                },
+                                {
+                                    q: "What makes CVGrid the best ATS scorer and keyword generator?",
+                                    a: "We provide the best ATS scorer and keyword generator built directly into our career tools suite. Our scanner scores your resume against any job description and lists the exact missing keywords and skills you need to add to pass recruiter screens.",
                                 },
                             ].map((item, i) => (
                                 <details key={i} className="group glass-card rounded-2xl overflow-hidden transition-all duration-300">

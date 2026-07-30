@@ -12,11 +12,11 @@ export const metadata = {
     openGraph: {
         title: "Affordable AI Portfolio Builder & Website Generator | CVGrid",
         description: "Generate stunning personal portfolios with custom layouts at a fraction of the cost. The most affordable, less expensive portfolio builder.",
-        url: "https://cvgrid.in/ai-tools/portfolio-builder",
+        url: "https://app.cvgrid.in/ai-tools/portfolio-builder",
         type: "website",
         images: [
             {
-                url: "https://cvgrid.in/logo.png",
+                url: "https://app.cvgrid.in/logo.png",
                 width: 1200,
                 height: 630,
                 alt: "CVGrid Affordable AI Portfolio Website Builder",
@@ -27,7 +27,7 @@ export const metadata = {
         card: "summary_large_image",
         title: "Affordable AI Portfolio Builder & Website Generator | CVGrid",
         description: "Generate stunning personal portfolios with custom layouts at a fraction of the cost. The most affordable, less expensive portfolio builder.",
-        images: ["https://cvgrid.in/logo.png"],
+        images: ["https://app.cvgrid.in/logo.png"],
     },
 };
 
@@ -35,8 +35,8 @@ export default function PortfolioBuilderLayout({ children }) {
     const jsonLd = {
         "@context": "https://schema.org",
         "@type": "WebPage",
-        "@id": "https://cvgrid.in/ai-tools/portfolio-builder/#page",
-        "url": "https://cvgrid.in/ai-tools/portfolio-builder",
+        "@id": "https://app.cvgrid.in/ai-tools/portfolio-builder/#page",
+        "url": "https://app.cvgrid.in/ai-tools/portfolio-builder",
         "name": "Affordable AI Portfolio Builder & Website Generator | CVGrid",
         "description": "Generate stunning personal portfolios with custom layouts at a fraction of the cost. The most affordable, less expensive portfolio builder.",
         "breadcrumb": {
@@ -52,13 +52,13 @@ export default function PortfolioBuilderLayout({ children }) {
                     "@type": "ListItem",
                     "position": 2,
                     "name": "AI Tools",
-                    "item": "https://cvgrid.in/ai-tools",
+                    "item": "https://app.cvgrid.in/ai-tools",
                 },
                 {
                     "@type": "ListItem",
                     "position": 3,
                     "name": "AI Portfolio Builder",
-                    "item": "https://cvgrid.in/ai-tools/portfolio-builder",
+                    "item": "https://app.cvgrid.in/ai-tools/portfolio-builder",
                 },
             ],
         },
@@ -74,3 +74,4 @@ export default function PortfolioBuilderLayout({ children }) {
         </>
     );
 }
+

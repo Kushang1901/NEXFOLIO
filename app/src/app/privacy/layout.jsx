@@ -14,7 +14,7 @@ export const metadata = {
     openGraph: {
         title: "Privacy Policy – CVGrid AI Resume Builder",
         description: "Learn how CVGrid protects your privacy and handles personal resume data securely.",
-        url: "https://cvgrid.in/privacy",
+        url: "https://app.cvgrid.in/privacy",
         type: "website",
     },
 };
@@ -22,3 +22,4 @@ export const metadata = {
 export default function PrivacyLayout({ children }) {
     return <>{children}</>;
 }
+

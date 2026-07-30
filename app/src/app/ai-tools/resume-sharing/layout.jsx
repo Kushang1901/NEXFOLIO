@@ -11,11 +11,11 @@ export const metadata = {
     openGraph: {
         title: "AI Resume Sharing URL, Passcode Protection & Tracking | CVGrid",
         description: "Share your resume via a secure custom URL with passcode protection, and track views, downloads, and location analytics in real-time.",
-        url: "https://cvgrid.in/ai-tools/resume-sharing",
+        url: "https://app.cvgrid.in/ai-tools/resume-sharing",
         type: "website",
         images: [
             {
-                url: "https://cvgrid.in/logo.png",
+                url: "https://app.cvgrid.in/logo.png",
                 width: 1200,
                 height: 630,
                 alt: "CVGrid AI Resume Sharing & Tracking",
@@ -26,7 +26,7 @@ export const metadata = {
         card: "summary_large_image",
         title: "AI Resume Sharing URL, Passcode Protection & Tracking | CVGrid",
         description: "Share your resume via a secure custom URL with passcode protection, and track views, downloads, and location analytics in real-time.",
-        images: ["https://cvgrid.in/logo.png"],
+        images: ["https://app.cvgrid.in/logo.png"],
     },
 };
 
@@ -34,8 +34,8 @@ export default function ResumeSharingLayout({ children }) {
     const jsonLd = {
         "@context": "https://schema.org",
         "@type": "WebPage",
-        "@id": "https://cvgrid.in/ai-tools/resume-sharing/#page",
-        "url": "https://cvgrid.in/ai-tools/resume-sharing",
+        "@id": "https://app.cvgrid.in/ai-tools/resume-sharing/#page",
+        "url": "https://app.cvgrid.in/ai-tools/resume-sharing",
         "name": "AI Resume Sharing & Tracking – CVGrid",
         "description": "Share your resume via a secure custom URL with passcode protection, and track views, downloads, and location analytics in real-time.",
         "breadcrumb": {
@@ -51,13 +51,13 @@ export default function ResumeSharingLayout({ children }) {
                     "@type": "ListItem",
                     "position": 2,
                     "name": "AI Tools",
-                    "item": "https://cvgrid.in/ai-tools",
+                    "item": "https://app.cvgrid.in/ai-tools",
                 },
                 {
                     "@type": "ListItem",
                     "position": 3,
                     "name": "Resume Sharing & Analytics",
-                    "item": "https://cvgrid.in/ai-tools/resume-sharing",
+                    "item": "https://app.cvgrid.in/ai-tools/resume-sharing",
                 },
             ],
         },
@@ -73,3 +73,4 @@ export default function ResumeSharingLayout({ children }) {
         </>
     );
 }
+

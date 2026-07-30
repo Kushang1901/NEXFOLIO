@@ -722,7 +722,7 @@ export default function RootLayout({ children }) {
                             "@type": "WebSite",
                             "name": "CVGrid",
                             "alternateName": ["CVGrid AI", "CV Grid"],
-                            "url": "https://cvgrid.in/"
+                            "url": "https://app.cvgrid.in/"
                         })
                     }}
                 />
@@ -795,3 +795,4 @@ export default function RootLayout({ children }) {
         </html>
     );
 }
+

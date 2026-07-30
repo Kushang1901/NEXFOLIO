@@ -14,11 +14,11 @@ export const metadata = {
     openGraph: {
         title: "AI Cover Letter Generator – Free & Professional | CVGrid",
         description: "Generate a tailored, professional cover letter in seconds using AI. Free, no watermark, download instantly.",
-        url: "https://cvgrid.in/cover-letter",
+        url: "https://app.cvgrid.in/cover-letter",
         type: "website",
         images: [
             {
-                url: "https://cvgrid.in/logo.png",
+                url: "https://app.cvgrid.in/logo.png",
                 width: 1200,
                 height: 630,
                 alt: "CVGrid AI Cover Letter Generator",
@@ -29,7 +29,7 @@ export const metadata = {
         card: "summary_large_image",
         title: "Free AI Cover Letter Generator – CVGrid",
         description: "Write a professional, personalized cover letter instantly with AI. 100% free.",
-        images: ["https://cvgrid.in/logo.png"],
+        images: ["https://app.cvgrid.in/logo.png"],
     },
 };
 
@@ -37,8 +37,8 @@ export default function CoverLetterLayout({ children }) {
     const jsonLd = {
         "@context": "https://schema.org",
         "@type": "WebPage",
-        "@id": "https://cvgrid.in/cover-letter/#page",
-        "url": "https://cvgrid.in/cover-letter",
+        "@id": "https://app.cvgrid.in/cover-letter/#page",
+        "url": "https://app.cvgrid.in/cover-letter",
         "name": "Free AI Cover Letter Generator – CVGrid",
         "description": "Generate professional, personalized cover letters with AI in seconds. Free to use, no credit card required.",
         "breadcrumb": {
@@ -54,7 +54,7 @@ export default function CoverLetterLayout({ children }) {
                     "@type": "ListItem",
                     "position": 2,
                     "name": "AI Cover Letter Generator",
-                    "item": "https://cvgrid.in/cover-letter",
+                    "item": "https://app.cvgrid.in/cover-letter",
                 },
             ],
         },
@@ -70,3 +70,4 @@ export default function CoverLetterLayout({ children }) {
         </>
     );
 }
+

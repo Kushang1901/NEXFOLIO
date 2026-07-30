@@ -15,7 +15,7 @@ export const metadata = {
     openGraph: {
         title: "Contact CVGrid – Customer Support & Inquiries",
         description: "Have questions or need help? Contact CVGrid customer support. We are here to help you build your professional career.",
-        url: "https://cvgrid.in/contact",
+        url: "https://app.cvgrid.in/contact",
         type: "website",
     },
 };
@@ -23,3 +23,4 @@ export const metadata = {
 export default function ContactLayout({ children }) {
     return <>{children}</>;
 }
+

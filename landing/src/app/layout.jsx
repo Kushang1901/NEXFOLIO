@@ -53,6 +53,9 @@ export const metadata = {
 
     // ── Keywords ──────────────────────────────
     keywords: [
+        "best AI cv maker", "cool resume builder", "less expensive cv maker",
+        "best ATS scorer", "best keyword generator", "best ATS resume scanner",
+        "resume keyword optimizer", "cheapest AI resume builder", "affordable CV maker",
         "free resume maker", "AI resume builder", "free AI resume builder",
         "online resume maker", "resume generator free", "AI CV maker",
         "resume creator online", "create resume online free",
@@ -574,6 +577,22 @@ export default function RootLayout({ children }) {
                         "acceptedAnswer": {
                             "@type": "Answer",
                             "text": "Yes! CVGrid has a free AI cover letter generator. Just enter your job title, company, and key highlights — and the AI will write a compelling, personalized cover letter in seconds.",
+                        },
+                    },
+                    {
+                        "@type": "Question",
+                        "name": "Why is CVGrid considered the best and less expensive CV maker?",
+                        "acceptedAnswer": {
+                            "@type": "Answer",
+                            "text": "CVGrid is designed to be the best and most less expensive CV maker on the market. We offer a 100% free tier with watermark-free PDF downloads. Premium templates are unlocked for a tiny, one-time payment of ₹150, making it much cheaper than monthly subscriptions of $20+ from competitors.",
+                        },
+                    },
+                    {
+                        "@type": "Question",
+                        "name": "What makes CVGrid the best ATS scorer and keyword generator?",
+                        "acceptedAnswer": {
+                            "@type": "Answer",
+                            "text": "CVGrid includes the best ATS scorer and best keyword generator to scan your resume against target job descriptions. The AI calculates an overall match score, highlights keyword gaps, and recommends how to write and optimize them.",
                         },
                     },
                 ],

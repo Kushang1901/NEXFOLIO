@@ -11,11 +11,11 @@ export const metadata = {
     openGraph: {
         title: "AI Job Description Parser & ATS Stack Extractor | CVGrid",
         description: "Instantly extract required experience, technical tools, responsibilities, and key challenges from any job posting with our advanced AI parser.",
-        url: "https://cvgrid.in/ai-tools/job-analyzer",
+        url: "https://app.cvgrid.in/ai-tools/job-analyzer",
         type: "website",
         images: [
             {
-                url: "https://cvgrid.in/logo.png",
+                url: "https://app.cvgrid.in/logo.png",
                 width: 1200,
                 height: 630,
                 alt: "CVGrid Job Description Parser",
@@ -26,7 +26,7 @@ export const metadata = {
         card: "summary_large_image",
         title: "AI Job Description Parser & ATS Stack Extractor | CVGrid",
         description: "Instantly extract required experience, technical tools, responsibilities, and key challenges from any job posting with our advanced AI parser.",
-        images: ["https://cvgrid.in/logo.png"],
+        images: ["https://app.cvgrid.in/logo.png"],
     },
 };
 
@@ -34,8 +34,8 @@ export default function JobAnalyzerLayout({ children }) {
     const jsonLd = {
         "@context": "https://schema.org",
         "@type": "WebPage",
-        "@id": "https://cvgrid.in/ai-tools/job-analyzer/#page",
-        "url": "https://cvgrid.in/ai-tools/job-analyzer",
+        "@id": "https://app.cvgrid.in/ai-tools/job-analyzer/#page",
+        "url": "https://app.cvgrid.in/ai-tools/job-analyzer",
         "name": "AI Job Description Parser – CVGrid",
         "description": "Instantly extract required experience, technical tools, responsibilities, and key challenges from any job posting with our advanced AI parser.",
         "breadcrumb": {
@@ -51,13 +51,13 @@ export default function JobAnalyzerLayout({ children }) {
                     "@type": "ListItem",
                     "position": 2,
                     "name": "AI Tools",
-                    "item": "https://cvgrid.in/ai-tools",
+                    "item": "https://app.cvgrid.in/ai-tools",
                 },
                 {
                     "@type": "ListItem",
                     "position": 3,
                     "name": "Job Parser & Analyzer",
-                    "item": "https://cvgrid.in/ai-tools/job-analyzer",
+                    "item": "https://app.cvgrid.in/ai-tools/job-analyzer",
                 },
             ],
         },
@@ -73,3 +73,4 @@ export default function JobAnalyzerLayout({ children }) {
         </>
     );
 }
+
