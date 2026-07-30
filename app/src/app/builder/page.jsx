@@ -404,6 +404,36 @@ export default function ResumeBuilder() {
                     }
                 }
 
+                // Check for LinkedIn redirect parameters after loading the resume
+                const errParam = params.get("error");
+                const linkedinParam = params.get("linkedin_import");
+
+                if (errParam) {
+                    showToast(errParam, "error");
+                    const newUrl = window.location.pathname + (id ? `?id=${id}` : "");
+                    window.history.replaceState({ path: newUrl }, "", newUrl);
+                } else if (linkedinParam) {
+                    const first = params.get("first") || "";
+                    const last = params.get("last") || "";
+                    const email = params.get("email") || "";
+                    const photo = params.get("photo") || "";
+
+                    setFormData(prev => {
+                        const updated = {
+                            ...prev,
+                            fullName: `${first} ${last}`.trim() || prev.fullName,
+                            email: email || prev.email,
+                            profilePhoto: photo || prev.profilePhoto
+                        };
+                        sessionStorage.setItem("resumeData", JSON.stringify(updated));
+                        return updated;
+                    });
+                    showToast("Imported profile info from LinkedIn!", "success");
+
+                    const newUrl = window.location.pathname + (id ? `?id=${id}` : "");
+                    window.history.replaceState({ path: newUrl }, "", newUrl);
+                }
+
 // NOTE: profilePhoto is NOT auto-populated from user account.
                 // Only the photo the user explicitly uploads in the builder is used.
             } else {
@@ -553,6 +583,11 @@ export default function ResumeBuilder() {
             showToast("Failed to read the PDF file.", "error");
             setIsImporting(false);
         }
+    };
+
+    const handleLinkedInImport = () => {
+        sessionStorage.setItem("resumeData", JSON.stringify(formData));
+        window.location.href = `/api/auth/linkedin${resumeId ? `?id=${resumeId}` : ""}`;
     };
 
     const handleChange = (e) => {
@@ -794,7 +829,7 @@ ${formData.skills || "Not provided"}
                                     <p className="text-white-50 small mb-4 px-3" style={{ maxWidth: "450px", margin: "0 auto" }}>
                                         Upload your PDF resume, and our AI will pre-fill the form fields below.
                                     </p>
-                                    <div className="d-flex justify-content-center">
+                                    <div className="d-flex flex-wrap justify-content-center gap-3">
                                         <input
                                             type="file"
                                             accept="application/pdf"
@@ -805,7 +840,7 @@ ${formData.skills || "Not provided"}
                                         />
                                         <label
                                             htmlFor="pdf-resume-import"
-                                            className={`btn-upload-premium ${isImporting ? 'disabled' : ''} px-4 py-2 fw-semibold d-flex align-items-center gap-2`}
+                                            className={`btn-upload-premium ${isImporting ? 'disabled' : ''} px-4 py-2 fw-semibold d-flex align-items-center gap-2 mb-0`}
                                             style={{ cursor: isImporting || isLoading ? 'not-allowed' : 'pointer' }}
                                         >
                                             {isImporting ? (
@@ -820,6 +855,26 @@ ${formData.skills || "Not provided"}
                                                 </>
                                             )}
                                         </label>
+                                        <button
+                                            type="button"
+                                            onClick={handleLinkedInImport}
+                                            disabled={isImporting || isLoading}
+                                            className="px-4 py-2 fw-semibold d-flex align-items-center gap-2 border-0"
+                                            style={{
+                                                cursor: isImporting || isLoading ? 'not-allowed' : 'pointer',
+                                                borderRadius: '50px',
+                                                backgroundColor: '#0a66c2',
+                                                color: '#ffffff',
+                                                fontSize: '0.9rem',
+                                                transition: 'all 0.2s',
+                                                opacity: isImporting || isLoading ? 0.6 : 1
+                                            }}
+                                            onMouseOver={(e) => { if (!isImporting && !isLoading) e.currentTarget.style.filter = 'brightness(1.15)'; }}
+                                            onMouseOut={(e) => { e.currentTarget.style.filter = 'none'; }}
+                                        >
+                                            <i className="fab fa-linkedin" style={{ fontSize: '1.1rem' }}></i>
+                                            Apply with LinkedIn
+                                        </button>
                                     </div>
                                 </div>
                             </div>
