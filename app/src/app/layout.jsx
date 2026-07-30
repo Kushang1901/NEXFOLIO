@@ -23,7 +23,7 @@ const spaceGrotesk = Space_Grotesk({
 // ─────────────────────────────────────────────
 // SITE CONSTANTS
 // ─────────────────────────────────────────────
-const BASE_URL = "https://cvgrid.in";
+const BASE_URL = "https://app.cvgrid.in";
 const SITE_NAME = "CVGrid";
 const SITE_TITLE = "CVGrid: Best Free AI Resume Builder & CV Maker Online";
 const SITE_DESC =

@@ -13,8 +13,8 @@ export default function robots() {
                 crawlDelay: 0,
             },
         ],
-        sitemap: "https://cvgrid.in/sitemap.xml",
-        host: "https://cvgrid.in",
+        sitemap: "https://app.cvgrid.in/sitemap.xml",
+        host: "https://app.cvgrid.in",
     };
 }
 

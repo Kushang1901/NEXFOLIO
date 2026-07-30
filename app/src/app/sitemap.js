@@ -1,5 +1,5 @@
 export default function sitemap() {
-    const baseUrl = "https://cvgrid.in";
+    const baseUrl = "https://app.cvgrid.in";
     const today = new Date().toISOString().split("T")[0];
 
     return [
