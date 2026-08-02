@@ -101,8 +101,17 @@ export default function PublicResumePage() {
         try {
             setLoading(true);
             setError(null);
+            
+            // Check for temporary auth token from search params (e.g., from mobile app WebView)
+            const params = new URLSearchParams(window.location.search);
+            const token = params.get("token");
+            
             const query = pass ? `&password=${encodeURIComponent(pass)}` : "";
-            const res = await fetch(`/api/resumes?id=${id}${query}`);
+            const res = await fetch(`/api/resumes?id=${id}${query}`, {
+                headers: {
+                    ...(token ? { "Authorization": `Bearer ${token}` } : {})
+                }
+            });
             
             const data = await res.json();
             if (!res.ok) {
@@ -169,32 +178,10 @@ export default function PublicResumePage() {
             await new Promise((resolve) => setTimeout(resolve, 150));
         }
         try {
-            const resume = document.getElementById("resume-preview");
-            if (!resume) return;
-
-            const html2canvas = (await import("html2canvas")).default;
-            const jsPDF = (await import("jspdf")).default;
-
-            // Wait for all custom web fonts to be fully loaded
-            if (typeof document !== "undefined" && document.fonts) {
-                await document.fonts.ready;
-            }
-
-            const canvas = await html2canvas(resume, {
-                scale: 2,
-                useCORS: true
-            });
-
-            const imgData = canvas.toDataURL("image/png");
-            
-            const imgWidth = 210; // A4 width in mm
-            const imgHeight = (canvas.height * imgWidth) / canvas.width; // Proportional height in mm
-            
-            const pdf = new jsPDF("p", "mm", [imgWidth, imgHeight]);
-            pdf.addImage(imgData, "PNG", 0, 0, imgWidth, imgHeight);
-
-            pdf.save(`${resumeData?.fullName ? resumeData.fullName.replace(/\s+/g, "_") : "Resume"}.pdf`);
-            showToast("Resume downloaded as PDF successfully!", "success");
+            // Wait brief moment for styling paints
+            await new Promise((resolve) => setTimeout(resolve, 150));
+            window.print();
+            showToast("Print preview opened successfully!", "success");
 
             // Log download stat
             if (realId) {
@@ -206,7 +193,7 @@ export default function PublicResumePage() {
             }
         } catch (err) {
             console.error(err);
-            showToast("Failed to download as PDF. Please try again.", "error");
+            showToast("Failed to print resume. Please try again.", "error");
         } finally {
             setIsDownloading(false);
             setShowWatermark(false);
@@ -601,15 +588,44 @@ export default function PublicResumePage() {
             {/* PRINT STYLES */}
             <style>{`
                 @media print {
-                    .no-print {
+                    .no-print, nav, .navbar, .modal, .modal-backdrop, .toast-container, header, footer {
                         display: none !important;
                     }
                     body {
-                        background-color: white !important;
+                        background: white !important;
+                        color: black !important;
+                        margin: 0 !important;
+                        padding: 0 !important;
+                    }
+                    .container {
+                        max-width: 100% !important;
+                        width: 100% !important;
+                        padding: 0 !important;
+                        margin: 0 !important;
+                    }
+                    .preview-viewport-container {
+                        padding: 0 !important;
+                        margin: 0 !important;
+                        display: block !important;
+                        width: 100% !important;
+                        height: auto !important;
+                    }
+                    .preview-viewport-shadow {
+                        box-shadow: none !important;
+                        width: 100% !important;
+                        height: auto !important;
+                        overflow: visible !important;
+                        border-radius: 0 !important;
                     }
                     #resume-preview {
+                        width: 100% !important;
+                        min-height: 100vh !important;
                         box-shadow: none !important;
                         border-radius: 0 !important;
+                        margin: 0 !important;
+                        padding: 0 !important;
+                        position: relative !important;
+                        transform: none !important;
                     }
                 }
             `}</style>

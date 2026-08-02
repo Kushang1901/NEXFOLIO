@@ -478,47 +478,23 @@ export default function Preview() {
 
         setIsDownloading(true);
         setDownloadType("pdf");
+        setShowDownloadModal(false);
 
         try {
-            const resume = document.getElementById("resume-preview");
-            if (!resume) return;
-
-
-            const html2canvas = (await import("html2canvas")).default;
-            const jsPDF = (await import("jspdf")).default;
-
-            // Wait for all custom web fonts to be fully loaded
-            if (typeof document !== "undefined" && document.fonts) {
-                await document.fonts.ready;
-            }
-
-            const canvas = await html2canvas(resume, {
-                scale: 2,
-                useCORS: true
-            });
-
-            const imgData = canvas.toDataURL("image/png");
-            
-            const imgWidth = 210; // A4 width in mm
-            const imgHeight = (canvas.height * imgWidth) / canvas.width; // Proportional height in mm
-            
-            const pdf = new jsPDF("p", "mm", [imgWidth, imgHeight]);
-            pdf.addImage(imgData, "PNG", 0, 0, imgWidth, imgHeight);
-
-            pdf.save(`${resumeData?.fullName ? resumeData.fullName.replace(/\s+/g, "_") : "Resume"}.pdf`);
-            setShowDownloadModal(false);
-            showToast("Resume downloaded as PDF successfully!", "success");
+            // Wait brief moment for modal animations to clear
+            await new Promise((resolve) => setTimeout(resolve, 150));
+            window.print();
+            showToast("Print preview opened successfully!", "success");
 
             setTimeout(() => {
                 triggerReviewPrompt();
             }, 1200);
         } catch (err) {
             console.error(err);
-            showToast("Failed to download as PDF. Please try again.", "error");
+            showToast("Failed to print resume. Please try again.", "error");
         } finally {
             setIsDownloading(false);
             setDownloadType(null);
-            setShowWatermark(false); // Hide the watermark again
         }
     };
 
@@ -1047,7 +1023,7 @@ export default function Preview() {
                 </div>
 
                 {/* Viewport for the A4 sheet */}
-                <div className="preview-viewport-container d-flex justify-content-center py-2 no-print">
+                <div className="preview-viewport-container d-flex justify-content-center py-2">
                     <div 
                         className="preview-viewport-shadow"
                         style={{
@@ -1538,12 +1514,33 @@ export default function Preview() {
                 }
 
                 @media print {
-                    .no-print {
+                    .no-print, nav, .navbar, .modal, .modal-backdrop, .toast-container, header, footer {
                         display: none !important;
                     }
                     body {
                         background: white !important;
                         color: black !important;
+                        margin: 0 !important;
+                        padding: 0 !important;
+                    }
+                    .container {
+                        max-width: 100% !important;
+                        width: 100% !important;
+                        padding: 0 !important;
+                        margin: 0 !important;
+                    }
+                    .preview-viewport-container {
+                        padding: 0 !important;
+                        margin: 0 !important;
+                        display: block !important;
+                        width: 100% !important;
+                        height: auto !important;
+                    }
+                    .preview-viewport-shadow {
+                        box-shadow: none !important;
+                        width: 100% !important;
+                        height: auto !important;
+                        overflow: visible !important;
                     }
                     #resume-preview {
                         width: 100% !important;
@@ -1552,6 +1549,8 @@ export default function Preview() {
                         border-radius: 0 !important;
                         margin: 0 !important;
                         padding: 0 !important;
+                        position: relative !important;
+                        transform: none !important;
                     }
                 }
             `}</style>
