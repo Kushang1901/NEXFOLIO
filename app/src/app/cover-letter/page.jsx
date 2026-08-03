@@ -249,7 +249,8 @@ export default function CoverLetterGenerator() {
                 tone,
                 selectedTemplate,
                 letterText: coverLetterText,
-                candidateData: isManualMode ? getActiveResumeData() : null
+                candidateData: isManualMode ? getActiveResumeData() : null,
+                isPaid
             };
             
             if (selectedLetterId !== "new") {
@@ -329,19 +330,7 @@ export default function CoverLetterGenerator() {
             return;
         }
 
-        let currentLetterId = selectedLetterId;
-
-        // Auto-save if it's a new unsaved cover letter draft
-        if (currentLetterId === "new") {
-            try {
-                showToast("Saving cover letter to cloud before upgrade...", "info");
-                currentLetterId = await autoSaveCoverLetter();
-            } catch (err) {
-                console.error("Error auto-saving cover letter:", err);
-                showToast("Failed to save cover letter. Please try saving manually first.", "error");
-                return;
-            }
-        }
+        const currentLetterId = selectedLetterId === "new" ? null : selectedLetterId;
 
         try {
             // 1. Create order on the backend (₹99 cover letter payment)

@@ -30,9 +30,9 @@ export async function POST(request) {
         const isPortfolio = type === "portfolio";
         const isCoverLetter = type === "cover_letter";
 
-        if (!resumeId && !coverLetterId) {
+        if (!isCoverLetter && !resumeId) {
             return NextResponse.json(
-                { error: "Resume ID or Cover Letter ID is required" },
+                { error: "Resume ID is required" },
                 { status: 400, headers: corsHeaders }
             );
         }
@@ -42,7 +42,7 @@ export async function POST(request) {
         const receiptId = isPortfolio 
             ? `receipt_portfolio_${resumeId}` 
             : isCoverLetter 
-                ? `receipt_cl_${coverLetterId}` 
+                ? `receipt_cl_${coverLetterId || "session_" + Date.now()}` 
                 : `receipt_resume_${resumeId}`;
 
         // 1. CREATE RAZORPAY ORDER ACTION
@@ -134,13 +134,17 @@ export async function POST(request) {
                     RETURNING id
                 `;
             } else if (isCoverLetter) {
-                result = await db`
-                    UPDATE cover_letters
-                    SET is_paid = TRUE,
-                        updated_at = CURRENT_TIMESTAMP
-                    WHERE id = ${coverLetterId} AND user_email = ${authedEmail}
-                    RETURNING id
-                `;
+                if (coverLetterId) {
+                    result = await db`
+                        UPDATE cover_letters
+                        SET is_paid = TRUE,
+                            updated_at = CURRENT_TIMESTAMP
+                        WHERE id = ${coverLetterId} AND user_email = ${authedEmail}
+                        RETURNING id
+                    `;
+                } else {
+                    result = [{ id: null }];
+                }
             } else {
                 result = await db`
                     UPDATE resumes

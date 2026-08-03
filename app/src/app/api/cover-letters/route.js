@@ -83,7 +83,7 @@ export async function POST(request) {
             );
         }
 
-        const { id, letterName, jobTitle, companyName, hiringManager, tone, selectedTemplate, letterText, candidateData } = await request.json();
+        const { id, letterName, jobTitle, companyName, hiringManager, tone, selectedTemplate, letterText, candidateData, isPaid } = await request.json();
 
         if (!jobTitle || !companyName || !letterText) {
             return NextResponse.json(
@@ -106,6 +106,7 @@ export async function POST(request) {
                     selected_template = ${selectedTemplate || "classic"},
                     letter_text = ${letterText},
                     candidate_data = ${candidateData ? JSON.stringify(candidateData) : null},
+                    is_paid = COALESCE(is_paid, FALSE) OR ${isPaid === true},
                     updated_at = CURRENT_TIMESTAMP
                 WHERE id = ${id} AND user_email = ${authedEmail}
                 RETURNING id
@@ -125,8 +126,8 @@ export async function POST(request) {
         } else {
             // Insert new cover letter
             const result = await db`
-                INSERT INTO cover_letters (user_email, letter_name, job_title, company_name, hiring_manager, tone, selected_template, letter_text, candidate_data)
-                VALUES (${authedEmail}, ${letterName || "My Cover Letter"}, ${jobTitle}, ${companyName}, ${hiringManager || null}, ${tone || "Professional"}, ${selectedTemplate || "classic"}, ${letterText}, ${candidateData ? JSON.stringify(candidateData) : null})
+                INSERT INTO cover_letters (user_email, letter_name, job_title, company_name, hiring_manager, tone, selected_template, letter_text, candidate_data, is_paid)
+                VALUES (${authedEmail}, ${letterName || "My Cover Letter"}, ${jobTitle}, ${companyName}, ${hiringManager || null}, ${tone || "Professional"}, ${selectedTemplate || "classic"}, ${letterText}, ${candidateData ? JSON.stringify(candidateData) : null}, ${isPaid === true})
                 RETURNING id
             `;
 
