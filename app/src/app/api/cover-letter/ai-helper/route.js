@@ -5,7 +5,7 @@ const apiKey = process.env.GEMINI_API_KEY;
 
 export async function POST(request) {
     try {
-        const { action, jobTitle, companyName, candidateInfo, jobDescription } = await request.json();
+        const { action, jobTitle, companyName, candidateInfo, jobDescription, resumeData, resumeMimeType } = await request.json();
 
         if (!action) {
             return NextResponse.json(
@@ -30,26 +30,57 @@ export async function POST(request) {
         let prompt = "";
 
         if (action === "job-description") {
-            if (!jobTitle || !companyName) {
+            if (!jobTitle) {
                 return NextResponse.json(
-                    { error: "Job title and company name are required to generate a job description" },
+                    { error: "Job title is required to generate a sample job description" },
                     { status: 400 }
                 );
             }
             prompt = `
 You are an expert HR manager. Write a realistic, professional job description for the following position:
-- Job Title: ${jobTitle}
-- Company: ${companyName}
+- Job Title: ${jobTitle}${companyName ? `\n- Company: ${companyName}` : ""}
 
 Provide 3-4 key responsibilities and requirements that would typically be expected for this role.
 Keep it concise, realistic, and formatted in clear bullet points (using hyphens or asterisks). Do NOT include any markdown codeblocks, greeting, or introduction text. Return only the bullet points.
 `;
         } else if (action === "focus-instructions") {
-            if (!candidateInfo) {
+            if (!candidateInfo && !resumeData) {
                 return NextResponse.json(
-                    { error: "Candidate info is required to generate focus instructions" },
+                    { error: "Candidate info or uploaded resume is required to generate focus instructions" },
                     { status: 400 }
                 );
+            }
+
+            // If an uploaded resume file is available, use multimodal to read it
+            if (resumeData) {
+                const focusPrompt = `You are a professional resume advisor. The user has uploaded their resume (see attached file).
+Based on the resume and the target job below, suggest 2-3 specific, tailored focus instructions that the candidate should use to guide their cover letter.
+
+Target Job Details:
+- Title: ${jobTitle || "Not specified"}
+- Company: ${companyName || "Not specified"}
+- Job Description:\n${jobDescription || "Not provided"}
+
+Identify the strongest matches between the candidate's background and the target role.
+Suggest what specific experience, skills, or projects to highlight in the cover letter.
+Keep the advice short, direct, and actionable (e.g. "Focus on your React migration work at X, as it directly matches their frontend requirements").
+Keep the output under 100 words total. Do NOT include markdown codeblocks, greeting, or introduction text. Return only the direct advice.`;
+
+                for (const m of models) {
+                    try {
+                        const model = genAI.getGenerativeModel({ model: m });
+                        const fileResult = await model.generateContent([
+                            focusPrompt,
+                            { inlineData: { mimeType: resumeMimeType || "application/pdf", data: resumeData } }
+                        ]);
+                        const text = fileResult.response.text();
+                        return NextResponse.json({ result: text.trim() });
+                    } catch (err) {
+                        console.warn(`⚠️ Focus (upload) failed with model ${m}:`, err.message);
+                        lastError = err;
+                    }
+                }
+                throw lastError || new Error("All models failed for focus-instructions with uploaded CV.");
             }
 
             const fullName = candidateInfo.fullName || candidateInfo.basics?.name || "The Candidate";

@@ -34,7 +34,7 @@ export async function GET(request) {
                        job_title AS "jobTitle", company_name AS "companyName", 
                        hiring_manager AS "hiringManager", tone, 
                        selected_template AS "selectedTemplate", letter_text AS "letterText", 
-                       candidate_data AS "candidateData",
+                       candidate_data AS "candidateData", is_paid AS "isPaid",
                        created_at AS "createdAt", updated_at AS "updatedAt"
                 FROM cover_letters
                 WHERE id = ${id} AND user_email = ${authedEmail}
@@ -54,7 +54,7 @@ export async function GET(request) {
                        job_title AS "jobTitle", company_name AS "companyName", 
                        hiring_manager AS "hiringManager", tone, 
                        selected_template AS "selectedTemplate", letter_text AS "letterText",
-                       candidate_data AS "candidateData",
+                       candidate_data AS "candidateData", is_paid AS "isPaid",
                        created_at AS "createdAt", updated_at AS "updatedAt"
                 FROM cover_letters
                 WHERE user_email = ${authedEmail}

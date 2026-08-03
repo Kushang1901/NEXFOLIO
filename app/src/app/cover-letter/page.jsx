@@ -1,6 +1,7 @@
-﻿"use client";
+"use client";
 
 import React, { useEffect, useState } from "react";
+import Script from "next/script";
 import Navbar from "../../components/Navbar";
 import { useRouter } from "next/navigation";
 import { subscribeToAuthChanges } from "../../authState";
@@ -72,6 +73,8 @@ export default function CoverLetterGenerator() {
     const [coverLetterText, setCoverLetterText] = useState("");
     const [isDownloading, setIsDownloading] = useState(false);
     const [downloadType, setDownloadType] = useState(null); // 'png' or 'pdf'
+    const [showPreviewModal, setShowPreviewModal] = useState(false);
+    const [isPaid, setIsPaid] = useState(false);
 
     // Upload & GRIVO states
     const [uploadedFile, setUploadedFile] = useState(null);
@@ -81,6 +84,7 @@ export default function CoverLetterGenerator() {
     const [grivoStatus, setGrivoStatus] = useState("idle"); // 'idle' | 'generating' | 'success' | 'error'
     const [grivoMessage, setGrivoMessage] = useState("");
     const uploadFileRef = React.useRef(null);
+
 
     useEffect(() => {
         const unsubscribe = subscribeToAuthChanges(async (user) => {
@@ -195,6 +199,7 @@ export default function CoverLetterGenerator() {
             setCoverLetterText("");
             setCustomInstructions("");
             setIsManualMode(false);
+            setIsPaid(false);
             return;
         }
 
@@ -209,6 +214,7 @@ export default function CoverLetterGenerator() {
                 setTone(data.tone || "Professional");
                 setSelectedTemplate(data.selectedTemplate || "classic");
                 setCoverLetterText(data.letterText || "");
+                setIsPaid(data.isPaid || false);
                 
                 if (data.candidateData) {
                     setIsManualMode(true);
@@ -276,6 +282,148 @@ export default function CoverLetterGenerator() {
         }
     };
 
+    const autoSaveCoverLetter = async () => {
+        if (!jobTitle || !companyName || !coverLetterText) {
+            throw new Error("Missing required cover letter fields.");
+        }
+        
+        let currentLetterId = selectedLetterId;
+        const body = {
+            letterName,
+            jobTitle,
+            companyName,
+            hiringManager,
+            tone,
+            selectedTemplate,
+            letterText: coverLetterText,
+            candidateData: isManualMode ? getActiveResumeData() : null
+        };
+        
+        if (currentLetterId !== "new") {
+            body.id = currentLetterId;
+        }
+        
+        const response = await fetch("/api/cover-letters", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(body)
+        });
+        
+        if (!response.ok) {
+            throw new Error("Failed to auto-save cover letter before purchase.");
+        }
+        
+        const result = await response.json();
+        if (currentLetterId === "new") {
+            setSelectedLetterId(result.id);
+            currentLetterId = result.id;
+        }
+        
+        await fetchSavedLetters();
+        return currentLetterId;
+    };
+
+    const handleRazorpayPayment = async () => {
+        if (!userEmail) {
+            showToast("You must be logged in to purchase premium cover letter templates.", "error");
+            return;
+        }
+
+        let currentLetterId = selectedLetterId;
+
+        // Auto-save if it's a new unsaved cover letter draft
+        if (currentLetterId === "new") {
+            try {
+                showToast("Saving cover letter to cloud before upgrade...", "info");
+                currentLetterId = await autoSaveCoverLetter();
+            } catch (err) {
+                console.error("Error auto-saving cover letter:", err);
+                showToast("Failed to save cover letter. Please try saving manually first.", "error");
+                return;
+            }
+        }
+
+        try {
+            // 1. Create order on the backend (₹99 cover letter payment)
+            const response = await fetch("/api/payments", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    action: "create_order",
+                    coverLetterId: currentLetterId,
+                    type: "cover_letter"
+                })
+            });
+
+            if (!response.ok) {
+                const errData = await response.json();
+                throw new Error(errData.error || "Failed to create payment order");
+            }
+
+            const { orderId, amount, currency } = await response.json();
+
+            // 2. Open Razorpay checkout
+            const options = {
+                key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || "rzp_live_TDTM6sBKdckc4Y",
+                amount: amount,
+                currency: currency,
+                name: "CVGrid Premium",
+                description: "Unlock Premium Cover Letter Template",
+                order_id: orderId,
+                handler: async function (response) {
+                    try {
+                        setIsDownloading(true);
+                        // 3. Verify payment on backend
+                        const verifyRes = await fetch("/api/payments", {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({
+                                action: "verify_payment",
+                                coverLetterId: currentLetterId,
+                                type: "cover_letter",
+                                razorpayPaymentId: response.razorpay_payment_id,
+                                razorpayOrderId: response.razorpay_order_id,
+                                razorpaySignature: response.razorpay_signature
+                            })
+                        });
+
+                        const verifyData = await verifyRes.json();
+                        if (verifyRes.ok && verifyData.success) {
+                            setIsPaid(true);
+                            showToast("Payment Successful! Premium template unlocked.", "success");
+                        } else {
+                            throw new Error(verifyData.error || "Payment verification failed");
+                        }
+                    } catch (err) {
+                        console.error("Verification Error:", err);
+                        showToast(err.message || "Payment verification failed. Please contact support.", "error");
+                    } finally {
+                        setIsDownloading(false);
+                    }
+                },
+                prefill: {
+                    email: userEmail
+                },
+                theme: {
+                    color: "#6366f1"
+                },
+                modal: {
+                    ondismiss: function () {
+                        showToast("Payment cancelled.", "warning");
+                    }
+                }
+            };
+
+            const rzp = new window.Razorpay(options);
+            rzp.open();
+
+        } catch (err) {
+            console.error("Razorpay error:", err);
+            showToast(err.message || "Could not launch payment gateway.", "error");
+        }
+    };
+
+
     const handleDeleteLetter = async (id) => {
         if (!confirm("Are you sure you want to delete this saved cover letter?")) return;
         
@@ -299,8 +447,8 @@ export default function CoverLetterGenerator() {
     };
 
     const handleAIJobDescription = async () => {
-        if (!jobTitle || !companyName) {
-            showToast("Please enter Target Job Title and Company Name first.", "error");
+        if (!jobTitle) {
+            showToast("Please enter a Target Job Title first.", "error");
             return;
         }
         setIsGeneratingJobDesc(true);
@@ -331,12 +479,12 @@ export default function CoverLetterGenerator() {
 
     const handleAIFocusInstructions = async () => {
         const activeResume = getActiveResumeData();
-        if (!activeResume) {
-            showToast("Please load a resume or toggle Manual Details first.", "error");
+        if (!activeResume && !uploadedFileBase64) {
+            showToast("Upload a CV or load a resume profile / manual details first.", "error");
             return;
         }
-        if (isManualMode && !manualName) {
-            showToast("Please enter Candidate Name first.", "error");
+        if (isManualMode && !manualName && !uploadedFileBase64) {
+            showToast("Please enter Candidate Name in Manual Mode.", "error");
             return;
         }
         setIsGeneratingFocus(true);
@@ -348,8 +496,11 @@ export default function CoverLetterGenerator() {
                     action: "focus-instructions",
                     jobTitle,
                     companyName,
-                    candidateInfo: activeResume,
-                    jobDescription
+                    jobDescription,
+                    ...(uploadedFileBase64
+                        ? { resumeData: uploadedFileBase64, resumeMimeType: uploadedFile?.type || "application/pdf" }
+                        : { candidateInfo: activeResume }
+                    )
                 })
             });
             if (!response.ok) {
@@ -398,6 +549,13 @@ export default function CoverLetterGenerator() {
             showToast("Failed to read file.", "error");
         };
         reader.readAsDataURL(file);
+    };
+
+    const clearUploadedFile = () => {
+        setUploadedFile(null);
+        setUploadedFileBase64(null);
+        if (uploadFileRef.current) uploadFileRef.current.value = "";
+        showToast("Upload cleared.", "info");
     };
 
     const handleGenerate = async (e) => {
@@ -466,6 +624,7 @@ export default function CoverLetterGenerator() {
             } else {
                 setCoverLetterText(data.result);
                 showToast("Cover letter drafted successfully!", "success");
+                setShowPreviewModal(true);
             }
         } catch (err) {
             console.error(err);
@@ -481,6 +640,11 @@ export default function CoverLetterGenerator() {
 
     // HTML2Canvas & jsPDF exports
     const downloadAsPNG = async () => {
+        if (selectedTemplate !== "classic" && !isPaid) {
+            showToast("This premium template requires a ₹99 upgrade.", "error");
+            handleRazorpayPayment();
+            return;
+        }
         setIsDownloading(true);
         setDownloadType("png");
         try {
@@ -512,6 +676,11 @@ export default function CoverLetterGenerator() {
     };
 
     const downloadAsPDF = async () => {
+        if (selectedTemplate !== "classic" && !isPaid) {
+            showToast("This premium template requires a ₹99 upgrade.", "error");
+            handleRazorpayPayment();
+            return;
+        }
         setIsDownloading(true);
         setDownloadType("pdf");
         try {
@@ -655,12 +824,11 @@ export default function CoverLetterGenerator() {
             <Navbar />
             <AiWorkflowProgress currentStep={5} />
 
-            <div className="container-fluid px-4 py-4 flex-grow-1 position-relative" style={{ zIndex: 5 }}>
-                <div className="row g-4 h-100">
+            <div className="container px-3 px-md-4 py-4 flex-grow-1 position-relative" style={{ zIndex: 5 }}>
+                <div className="row justify-content-center">
 
-                    {/* ── LEFT SIDEBAR ─────────────────────────────────────── */}
-                    <div className="col-lg-5 d-flex flex-column">
-                        <div className="cl-glass-panel p-4 flex-grow-1 d-flex flex-column" style={{ minHeight: "85vh" }}>
+                    <div className="col-xl-8 col-lg-10 col-md-12 d-flex flex-column">
+                        <div className="cl-glass-panel p-4 p-md-5 flex-grow-1 d-flex flex-column" style={{ minHeight: "80vh" }}>
 
                             {/* Header */}
                             <div className="d-flex align-items-center gap-2 mb-1">
@@ -915,96 +1083,126 @@ export default function CoverLetterGenerator() {
                                                 required style={{ fontSize: "0.85rem" }} />
                                         </div>
 
-                                        {/* Generate Button */}
-                                        <div className="col-12 pt-1">
+                                        {/* Generate Button & View Preview Button */}
+                                        <div className="col-12 pt-2 d-flex flex-column flex-sm-row gap-3">
                                             <button type="submit" disabled={isGenerating || !canGenerate}
-                                                className="cl-generate-btn w-100 d-flex align-items-center justify-content-center gap-2">
+                                                className="cl-generate-btn flex-grow-1 d-flex align-items-center justify-content-center gap-2"
+                                                style={{ height: "48px" }}>
                                                 {isGenerating
                                                     ? <><Loader2 size={18} className="cl-spin" /> AI is Drafting Letter...</>
                                                     : <><Sparkles size={16} /> Generate Styled Cover Letter</>
                                                 }
                                             </button>
-                                            {!canGenerate && (
-                                                <small className="text-danger mt-2 d-block text-center fw-semibold" style={{ fontSize: "0.77rem" }}>
-                                                    * Upload a resume OR select / enter profile details above to generate.
-                                                </small>
+
+                                            {coverLetterText && (
+                                                <button type="button" onClick={() => setShowPreviewModal(true)}
+                                                    className="cl-save-btn d-flex align-items-center justify-content-center gap-2 px-4"
+                                                    style={{ height: "48px", borderRadius: "12px", border: "1px solid rgba(99,102,241,0.5)", background: "rgba(99,102,241,0.12)", color: "#fff", fontWeight: "600" }}>
+                                                    <Eye size={18} /> View Preview &amp; Download
+                                                </button>
                                             )}
                                         </div>
+
+                                        {!canGenerate && (
+                                            <div className="col-12">
+                                                <small className="text-danger mt-1 d-block text-center fw-semibold" style={{ fontSize: "0.77rem" }}>
+                                                    * Upload a resume OR select / enter profile details above to generate.
+                                                </small>
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
-
-                                {/* Inline text editor */}
-                                {coverLetterText && (
-                                    <div className="pt-3" style={{ borderTop: "1px solid rgba(255,255,255,0.06)" }}>
-                                        <label className="cl-field-label d-flex justify-content-between mb-1">
-                                            <span>Edit Generated Text</span>
-                                            <span className="text-white-50 fw-normal" style={{ fontSize: "0.73rem" }}>Changes update preview instantly</span>
-                                        </label>
-                                        <textarea className="form-control cl-input" rows="8"
-                                            value={coverLetterText} onChange={(e) => setCoverLetterText(e.target.value)}
-                                            style={{ fontSize: "0.88rem", lineHeight: "1.5" }} />
-                                    </div>
-                                )}
 
                             </form>
                         </div>
                     </div>
 
-                    {/* ── RIGHT PANEL: PREVIEW ─────────────────────────────── */}
-                    <div className="col-lg-7 d-flex flex-column h-100">
-                        <div className="cl-glass-panel p-4 flex-grow-1 d-flex flex-column" style={{ minHeight: "85vh" }}>
-                            <div className="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
-                                <h4 className="fw-bold mb-0 text-white d-flex align-items-center gap-2">
-                                    <div className="cl-icon-badge" style={{ width: "32px", height: "32px" }}><Eye size={15} /></div>
-                                    Styled Print Preview
-                                </h4>
-                                {coverLetterText && (
-                                    <div className="d-flex gap-2">
-                                        <button onClick={downloadAsPDF} className="cl-dl-btn cl-dl-btn-pdf">
-                                            <i className="fas fa-file-pdf" /> PDF
-                                        </button>
-                                        <button onClick={downloadAsPNG} className="cl-dl-btn cl-dl-btn-png">
-                                            <i className="fas fa-file-image" /> PNG
-                                        </button>
-                                    </div>
-                                )}
-                            </div>
+                </div>
+            </div>
 
-                            <div className="cl-preview-wrapper overflow-auto flex-grow-1">
-                                {normalizedData ? (
-                                    <div id="cover-letter-printable" className="bg-white text-dark mx-auto" style={{
-                                        width: "210mm", minHeight: "297mm",
-                                        boxShadow: "0 10px 40px rgba(0,0,0,0.6)",
-                                        boxSizing: "border-box", position: "relative", overflow: "hidden"
-                                    }}>
-                                        <CoverLetterPreview data={normalizedData} selectedTemplate={selectedTemplate} coverLetterText={coverLetterText} />
-                                    </div>
-                                ) : (
-                                    <div className="text-center py-5 d-flex flex-column align-items-center justify-content-center h-100">
-                                        <div className="cl-preview-placeholder-icon mb-4">
-                                            <FileSignature size={30} style={{ color: "#6366f1" }} />
+            {/* ── PREVIEW POPUP MODAL ────────────────────────────────────── */}
+            {showPreviewModal && (
+                <div style={{ position: "fixed", inset: 0, backgroundColor: "rgba(6,7,12,0.85)", backdropFilter: "blur(18px)", zIndex: 9999, display: "flex", alignItems: "center", justifyContent: "center", padding: "20px" }}>
+                    <div style={{ width: "95vw", height: "90vh", background: "linear-gradient(145deg, #111425, #080912)", borderRadius: "24px", border: "1px solid rgba(255, 255, 255, 0.1)", boxShadow: "0 25px 60px rgba(0,0,0,0.8)", display: "flex", flexDirection: "column", overflow: "hidden" }}>
+                        
+                        {/* Modal Header */}
+                        <div className="d-flex justify-content-between align-items-center px-4 py-3" style={{ borderBottom: "1px solid rgba(255,255,255,0.08)", background: "rgba(15,18,32,0.5)" }}>
+                            <div className="d-flex align-items-center gap-2">
+                                <div className="cl-icon-badge" style={{ width: "32px", height: "32px" }}><Eye size={15} /></div>
+                                <h4 className="fw-bold mb-0 text-white" style={{ fontSize: "1.15rem" }}>Styled Cover Letter Preview</h4>
+                            </div>
+                            
+                            <div className="d-flex align-items-center gap-3">
+                                {/* Razorpay Unlock button */}
+                                {selectedTemplate !== "classic" && !isPaid && (
+                                    <button onClick={handleRazorpayPayment} className="btn py-2 px-3 fw-bold d-flex align-items-center gap-2" 
+                                        style={{ background: "linear-gradient(135deg, #6366f1 0%, #a855f7 100%)", color: "#fff", borderRadius: "10px", border: "none", boxShadow: "0 4px 15px rgba(139, 92, 246, 0.4)", fontSize: "0.85rem" }}>
+                                        <i className="fas fa-crown text-warning" /> Unlock Premium Template (₹99)
+                                    </button>
+                                )}
+
+                                {/* Download buttons */}
+                                <div className="d-flex gap-2">
+                                    <button onClick={downloadAsPDF} className="cl-dl-btn cl-dl-btn-pdf py-2 px-3 d-flex align-items-center gap-1.5">
+                                        {selectedTemplate !== "classic" && !isPaid && <i className="fas fa-lock small text-white-50" />}
+                                        <i className="fas fa-file-pdf" /> Download PDF
+                                    </button>
+                                    <button onClick={downloadAsPNG} className="cl-dl-btn cl-dl-btn-png py-2 px-3 d-flex align-items-center gap-1.5">
+                                        {selectedTemplate !== "classic" && !isPaid && <i className="fas fa-lock small text-white-50" />}
+                                        <i className="fas fa-file-image" /> Download PNG
+                                    </button>
+                                </div>
+                                
+                                {/* Close Button */}
+                                <button onClick={() => setShowPreviewModal(false)} className="btn btn-sm btn-outline-secondary d-flex align-items-center justify-content-center" style={{ width: "32px", height: "32px", borderRadius: "50%", padding: 0, color: "#fff", borderColor: "rgba(255,255,255,0.2)" }}>
+                                    <i className="fas fa-times" />
+                                </button>
+                            </div>
+                        </div>
+                        
+                        {/* Modal Body */}
+                        <div className="flex-grow-1 p-4 overflow-hidden" style={{ minHeight: 0 }}>
+                            <div className="row h-100 g-4">
+                                
+                                {/* Left Column: Editor */}
+                                <div className="col-lg-5 d-flex flex-column h-100" style={{ minHeight: 0 }}>
+                                    <div className="d-flex flex-column h-100 p-3" style={{ background: "rgba(0,0,0,0.2)", border: "1px solid rgba(255,255,255,0.06)", borderRadius: "16px" }}>
+                                        <div className="d-flex justify-content-between align-items-center mb-2">
+                                            <span className="fw-bold text-white-50" style={{ fontSize: "0.85rem" }}>Edit Generated Text</span>
+                                            <span className="text-white-50" style={{ fontSize: "0.72rem" }}>Changes update preview instantly</span>
                                         </div>
-                                        <p className="fs-5 mb-2 fw-bold text-white">Preview not ready yet</p>
-                                        <p className="text-white-50 small px-4 text-center mb-4">
-                                            {uploadedFileBase64
-                                                ? "Generate a cover letter — your profile will be extracted from the uploaded file."
-                                                : "Build a resume draft first, or enable Manual Mode to preview the styled letterhead."}
-                                        </p>
-                                        {!uploadedFileBase64 && !activeResumeData && (
-                                            <div className="cl-placeholder-steps">
-                                                <div className="cl-step"><span className="cl-step-num">1</span> Upload your CV <strong>or</strong> enable Manual Profile on the left</div>
-                                                <div className="cl-step"><span className="cl-step-num">2</span> Fill in Job Title &amp; Job Description</div>
-                                                <div className="cl-step"><span className="cl-step-num">3</span> Hit Generate &amp; watch the magic happen ✨</div>
+                                        <textarea 
+                                            className="form-control cl-input flex-grow-1" 
+                                            value={coverLetterText} 
+                                            onChange={(e) => setCoverLetterText(e.target.value)} 
+                                            style={{ fontSize: "0.88rem", lineHeight: "1.6", resize: "none", background: "rgba(11,13,23,0.95)" }} 
+                                        />
+                                    </div>
+                                </div>
+                                
+                                {/* Right Column: Preview wrapper */}
+                                <div className="col-lg-7 d-flex flex-column h-100" style={{ minHeight: 0 }}>
+                                    <div className="cl-preview-wrapper flex-grow-1 overflow-auto p-3" style={{ background: "#1e2230" }}>
+                                        {normalizedData ? (
+                                            <div id="cover-letter-printable" className="bg-white text-dark mx-auto" style={{
+                                                width: "210mm", minHeight: "297mm",
+                                                boxShadow: "0 10px 40px rgba(0,0,0,0.6)",
+                                                boxSizing: "border-box", position: "relative", overflow: "hidden"
+                                            }}>
+                                                <CoverLetterPreview data={normalizedData} selectedTemplate={selectedTemplate} coverLetterText={coverLetterText} />
                                             </div>
+                                        ) : (
+                                            <div className="text-center py-5 text-white-50">Preview is loading...</div>
                                         )}
                                     </div>
-                                )}
+                                </div>
+                                
                             </div>
                         </div>
                     </div>
-
                 </div>
-            </div>
+            )}
+            <Script src="https://checkout.razorpay.com/v1/checkout.js" strategy="lazyOnload" />
 
             {/* ── STYLES ──────────────────────────────────────────────────── */}
             <style>{`
@@ -1310,7 +1508,7 @@ export default function CoverLetterGenerator() {
                                         <CheckCircle size={20} color="#4ade80" />
                                         <span className="fw-bold">Cover Letter Ready!</span>
                                     </div>
-                                    <button onClick={() => setShowGrivoModal(false)} className="cl-generate-btn w-100">
+                                    <button onClick={() => { setShowGrivoModal(false); setShowPreviewModal(true); }} className="cl-generate-btn w-100">
                                         View My Cover Letter ✨
                                     </button>
                                 </div>

@@ -150,8 +150,22 @@ export async function initDb() {
                 letter_text TEXT NOT NULL,
                 candidate_data JSONB,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             );
+        `;
+
+        // Alter cover_letters to add is_paid status column
+        await sql`
+            ALTER TABLE cover_letters ADD COLUMN IF NOT EXISTS is_paid BOOLEAN DEFAULT FALSE;
+        `;
+
+        // Make resume_id nullable in payments table for cover letter payments
+        await sql`
+            ALTER TABLE payments ALTER COLUMN resume_id DROP NOT NULL;
+        `;
+
+        // Add cover_letter_id column to payments if it doesn't exist
+        await sql`
+            ALTER TABLE payments ADD COLUMN IF NOT EXISTS cover_letter_id INT REFERENCES cover_letters(id) ON DELETE CASCADE;
         `;
 
         console.log("✅ Database initialized successfully (users, resumes, cookie_consents, payments, testimonials, and cover_letters tables checked/created/migrated)");

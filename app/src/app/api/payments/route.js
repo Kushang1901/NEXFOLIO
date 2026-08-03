@@ -25,19 +25,25 @@ export async function POST(request) {
         }
 
         const body = await request.json();
-        const { action, resumeId, type } = body;
+        const { action, resumeId, coverLetterId, type } = body;
 
-        if (!resumeId) {
+        const isPortfolio = type === "portfolio";
+        const isCoverLetter = type === "cover_letter";
+
+        if (!resumeId && !coverLetterId) {
             return NextResponse.json(
-                { error: "Resume ID is required" },
+                { error: "Resume ID or Cover Letter ID is required" },
                 { status: 400, headers: corsHeaders }
             );
         }
 
         const db = await getDb();
-        const isPortfolio = type === "portfolio";
-        const orderAmount = isPortfolio ? 49900 : 15000;
-        const receiptId = isPortfolio ? `receipt_portfolio_${resumeId}` : `receipt_resume_${resumeId}`;
+        const orderAmount = isPortfolio ? 49900 : isCoverLetter ? 9900 : 15000;
+        const receiptId = isPortfolio 
+            ? `receipt_portfolio_${resumeId}` 
+            : isCoverLetter 
+                ? `receipt_cl_${coverLetterId}` 
+                : `receipt_resume_${resumeId}`;
 
         // 1. CREATE RAZORPAY ORDER ACTION
         if (action === "create_order") {
@@ -127,6 +133,14 @@ export async function POST(request) {
                     WHERE id = ${resumeId} AND user_email = ${authedEmail}
                     RETURNING id
                 `;
+            } else if (isCoverLetter) {
+                result = await db`
+                    UPDATE cover_letters
+                    SET is_paid = TRUE,
+                        updated_at = CURRENT_TIMESTAMP
+                    WHERE id = ${coverLetterId} AND user_email = ${authedEmail}
+                    RETURNING id
+                `;
             } else {
                 result = await db`
                     UPDATE resumes
@@ -139,7 +153,7 @@ export async function POST(request) {
 
             if (result.length === 0) {
                 return NextResponse.json(
-                    { error: "Resume not found or unauthorized to update" },
+                    { error: (isCoverLetter ? "Cover letter" : "Resume") + " not found or unauthorized to update" },
                     { status: 404, headers: corsHeaders }
                 );
             }
@@ -152,12 +166,20 @@ export async function POST(request) {
                 const userId = userResult[0]?.id;
 
                 if (userId) {
-                    const pricePaid = isPortfolio ? 499.00 : 150.00;
-                    await db`
-                        INSERT INTO payments (resume_id, user_id, payment_status, payment_id, order_id, amount)
-                        VALUES (${resumeId}, ${userId}, 'paid', ${razorpayPaymentId}, ${razorpayOrderId}, ${pricePaid})
-                        ON CONFLICT (payment_id) DO NOTHING
-                    `;
+                    const pricePaid = isPortfolio ? 499.00 : isCoverLetter ? 99.00 : 150.00;
+                    if (isCoverLetter) {
+                        await db`
+                            INSERT INTO payments (cover_letter_id, resume_id, user_id, payment_status, payment_id, order_id, amount)
+                            VALUES (${coverLetterId}, NULL, ${userId}, 'paid', ${razorpayPaymentId}, ${razorpayOrderId}, ${pricePaid})
+                            ON CONFLICT (payment_id) DO NOTHING
+                        `;
+                    } else {
+                        await db`
+                            INSERT INTO payments (resume_id, user_id, payment_status, payment_id, order_id, amount)
+                            VALUES (${resumeId}, ${userId}, 'paid', ${razorpayPaymentId}, ${razorpayOrderId}, ${pricePaid})
+                            ON CONFLICT (payment_id) DO NOTHING
+                        `;
+                    }
                 }
             } catch (payErr) {
                 console.error("⚠️ Failed to record payment details in database:", payErr);
@@ -167,7 +189,9 @@ export async function POST(request) {
                 success: true,
                 message: isPortfolio 
                     ? "Payment successfully verified and premium portfolio builder unlocked!" 
-                    : "Payment successfully verified and resume upgraded to premium!"
+                    : isCoverLetter
+                        ? "Payment successfully verified and premium cover letter template unlocked!"
+                        : "Payment successfully verified and resume upgraded to premium!"
             }, { headers: corsHeaders });
         }
 
