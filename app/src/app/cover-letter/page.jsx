@@ -8,8 +8,28 @@ import { showToast } from "../../utils/toast";
 import CoverLetterPreview from "../../components/CoverLetterPreview";
 import { normalizeResumeData } from "../../utils/resumeAdapter";
 import Link from "next/link";
-import { Sparkles, SlidersHorizontal, Loader2, FileDown, Eye, FileSignature, Briefcase, ChevronRight } from "lucide-react";
+import { Sparkles, SlidersHorizontal, Loader2, FileDown, Eye, FileSignature, Briefcase, ChevronRight, UploadCloud, CheckCircle, XCircle } from "lucide-react";
 import AiWorkflowProgress from "../../components/AiWorkflowProgress";
+
+// ─── Grivo mascot SVG ───────────────────────────────────────────────────────
+const GrivoIcon = ({ size = 24, style = {} }) => (
+    <svg width={size} height={size} viewBox="0 0 36 36" fill="none" style={style}>
+        <defs>
+            <linearGradient id="grivo-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stopColor="#6366f1" />
+                <stop offset="100%" stopColor="#8b5cf6" />
+            </linearGradient>
+        </defs>
+        <rect width="36" height="36" rx="10" fill="url(#grivo-grad)" />
+        <rect x="8" y="10" width="4" height="4" rx="1" fill="white" />
+        <rect x="24" y="10" width="4" height="4" rx="1" fill="white" />
+        <rect x="6" y="18" width="24" height="10" rx="5" fill="white" opacity="0.9" />
+        <circle cx="12" cy="23" r="2" fill="#6366f1" />
+        <circle cx="18" cy="23" r="2" fill="#8b5cf6" />
+        <circle cx="24" cy="23" r="2" fill="#6366f1" />
+        <path d="M13 10 L18 6 L23 10" stroke="white" strokeWidth="1.5" strokeLinecap="round" fill="none" />
+    </svg>
+);
 
 export default function CoverLetterGenerator() {
     const router = useRouter();
@@ -53,6 +73,15 @@ export default function CoverLetterGenerator() {
     const [coverLetterText, setCoverLetterText] = useState("");
     const [isDownloading, setIsDownloading] = useState(false);
     const [downloadType, setDownloadType] = useState(null); // 'png' or 'pdf'
+
+    // Upload & GRIVO states
+    const [uploadedFile, setUploadedFile] = useState(null);
+    const [uploadedFileBase64, setUploadedFileBase64] = useState(null);
+    const [isDraggingUpload, setIsDraggingUpload] = useState(false);
+    const [showGrivoModal, setShowGrivoModal] = useState(false);
+    const [grivoStatus, setGrivoStatus] = useState("idle"); // 'idle' | 'generating' | 'success' | 'error'
+    const [grivoMessage, setGrivoMessage] = useState("");
+    const uploadFileRef = React.useRef(null);
 
     useEffect(() => {
         const unsubscribe = subscribeToAuthChanges(async (user) => {
@@ -339,11 +368,48 @@ export default function CoverLetterGenerator() {
         }
     };
 
+    const handleUploadResumeFile = (file) => {
+        const MAX_SIZE = 10 * 1024 * 1024; // 10MB
+        const allowedTypes = [
+            "application/pdf",
+            "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+            "application/msword",
+        ];
+
+        if (file.size > MAX_SIZE) {
+            showToast(`File size is ${(file.size / (1024 * 1024)).toFixed(1)}MB. Max limit is 10MB.`, "error");
+            return;
+        }
+
+        if (!allowedTypes.includes(file.type) && !file.name.endsWith(".pdf") && !file.name.endsWith(".docx") && !file.name.endsWith(".doc")) {
+            showToast("Invalid file format. Please upload PDF or DOCX.", "error");
+            return;
+        }
+
+        setUploadedFile(file);
+        
+        // Convert file to base64
+        const reader = new FileReader();
+        reader.onload = () => {
+            const base64 = reader.result.split(",")[1];
+            setUploadedFileBase64(base64);
+            showToast("Resume uploaded successfully!", "success");
+        };
+        reader.onerror = () => {
+            showToast("Failed to read file.", "error");
+        };
+        reader.readAsDataURL(file);
+    };
+
     const handleGenerate = async (e) => {
         e.preventDefault();
         const activeResume = getActiveResumeData();
-        if (!activeResume) {
+        if (!activeResume && selectedResumeId !== "upload") {
             showToast("No resume data found. Please build a resume first or toggle Manual Details.", "error");
+            return;
+        }
+        if (selectedResumeId === "upload" && !uploadedFileBase64) {
+            showToast("Please upload a resume file first.", "error");
             return;
         }
         if (isManualMode && !manualName) {
@@ -356,19 +422,33 @@ export default function CoverLetterGenerator() {
         }
 
         setIsGenerating(true);
+        if (selectedResumeId === "upload") {
+            setShowGrivoModal(true);
+            setGrivoStatus("generating");
+            setGrivoMessage(`Hi! I'm GRIVO. 🤖 I am reading your uploaded resume "${uploadedFile?.name || 'file.pdf'}" and drafting a professional cover letter specifically for the ${jobTitle} position at ${companyName}. Please hold on for a moment!`);
+        }
+
         try {
+            const body = {
+                jobTitle,
+                companyName,
+                jobDescription,
+                hiringManager,
+                tone,
+                customInstructions
+            };
+
+            if (selectedResumeId === "upload") {
+                body.resumeData = uploadedFileBase64;
+                body.resumeMimeType = uploadedFile.type;
+            } else {
+                body.candidateInfo = activeResume;
+            }
+
             const response = await fetch("/api/cover-letter", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    candidateInfo: activeResume,
-                    jobTitle,
-                    companyName,
-                    jobDescription,
-                    hiringManager,
-                    tone,
-                    customInstructions
-                })
+                body: JSON.stringify(body)
             });
 
             if (!response.ok) {
@@ -377,10 +457,25 @@ export default function CoverLetterGenerator() {
             }
 
             const data = await response.json();
-            setCoverLetterText(data.result);
-            showToast("Cover letter drafted successfully!", "success");
+            
+            if (selectedResumeId === "upload") {
+                setCoverLetterText(data.result);
+                if (data.basics) {
+                    setSelectedResumeData({ basics: data.basics });
+                }
+                setGrivoStatus("success");
+                setGrivoMessage(`Hurrah! Your cover letter is ready! 🎉 I've successfully extracted your profile details and tailored the cover letter to match ${companyName}'s requirements. Feel free to view or download it!`);
+                showToast("Cover letter generated by GRIVO!", "success");
+            } else {
+                setCoverLetterText(data.result);
+                showToast("Cover letter drafted successfully!", "success");
+            }
         } catch (err) {
             console.error(err);
+            if (selectedResumeId === "upload") {
+                setGrivoStatus("error");
+                setGrivoMessage(`Oops! I hit a snag while generating your cover letter: ${err.message || "Unknown error"}. Please check your connection and try again!`);
+            }
             showToast(err.message || "Failed to generate cover letter.", "error");
         } finally {
             setIsGenerating(false);
@@ -640,11 +735,60 @@ export default function CoverLetterGenerator() {
                                             style={{ borderRadius: "8px", height: "42px" }}
                                         >
                                             <option value="session">Active Session Resume (Latest Draft)</option>
+                                            <option value="upload">Upload Existing Resume (PDF/DOCX)</option>
                                             {resumesList.map((res) => (
                                                 <option key={res.id} value={res.id}>{res.resumeName} (Cloud Save)</option>
                                             ))}
                                         </select>
                                     </div>
+
+                                    {/* Upload Drop Zone */}
+                                    {selectedResumeId === "upload" && (
+                                        <div className="col-12">
+                                            <div
+                                                onDragOver={(e) => { e.preventDefault(); setIsDraggingUpload(true); }}
+                                                onDragLeave={() => setIsDraggingUpload(false)}
+                                                onDrop={(e) => {
+                                                     e.preventDefault();
+                                                     setIsDraggingUpload(false);
+                                                     const file = e.dataTransfer.files[0];
+                                                     if (file) handleUploadResumeFile(file);
+                                                }}
+                                                onClick={() => uploadFileRef.current?.click()}
+                                                className="p-3 mb-1 text-center cursor-pointer border-glass"
+                                                style={{
+                                                     border: `1.5px dashed ${isDraggingUpload ? "#6366f1" : uploadedFile ? "#22c55e" : "rgba(255, 255, 255, 0.15)"}`,
+                                                     background: isDraggingUpload ? "rgba(99, 102, 241, 0.08)" : uploadedFile ? "rgba(34, 197, 94, 0.04)" : "rgba(255, 255, 255, 0.02)",
+                                                     borderRadius: "10px",
+                                                     transition: "all 0.2s ease"
+                                                }}
+                                            >
+                                                <input
+                                                     ref={uploadFileRef}
+                                                     type="file"
+                                                     accept=".pdf,.doc,.docx"
+                                                     style={{ display: "none" }}
+                                                     onChange={(e) => {
+                                                         if (e.target.files[0]) handleUploadResumeFile(e.target.files[0]);
+                                                     }}
+                                                />
+                                                <div className="d-flex flex-column align-items-center gap-1">
+                                                     <UploadCloud size={20} className={uploadedFile ? "text-success" : "text-indigo"} />
+                                                     {uploadedFile ? (
+                                                         <>
+                                                             <span className="text-success fw-semibold small text-truncate" style={{ maxWidth: "250px" }}>{uploadedFile.name}</span>
+                                                             <span className="text-white-50" style={{ fontSize: "0.75rem" }}>Click or drag a new file to replace</span>
+                                                         </>
+                                                     ) : (
+                                                         <>
+                                                             <span className="text-white fw-semibold small">Click or drag resume file</span>
+                                                             <span className="text-white-50" style={{ fontSize: "0.75rem" }}>Supports PDF or DOCX (max 10MB)</span>
+                                                         </>
+                                                     )}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )}
 
                                     {/* Manual Mode Toggle */}
                                     <div className="col-12 d-flex align-items-center justify-content-between py-2 bg-dark-custom px-3 rounded-3 border-glass">
@@ -1066,6 +1210,14 @@ export default function CoverLetterGenerator() {
                     from { transform: rotate(0deg); }
                     to { transform: rotate(360deg); }
                 }
+                @keyframes cvgrid-spin {
+                    from { transform: rotate(0deg); }
+                    to { transform: rotate(360deg); }
+                }
+                @keyframes cvgrid-pulse {
+                    0%, 100% { transform: scale(1); opacity: 0.2; }
+                    50% { transform: scale(1.15); opacity: 0.45; }
+                }
             `}</style>
 
             {/* DOWNLOAD PROGRESS OVERLAY */}
@@ -1103,6 +1255,160 @@ export default function CoverLetterGenerator() {
                                     ? "Exporting cover letter layout to high-res PNG image..." 
                                     : "Structuring styles and creating a printable vector PDF..."}
                             </p>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* GRIVO AI MODAL POPUP */}
+            {showGrivoModal && (
+                <div style={{
+                    position: "fixed",
+                    top: 0,
+                    left: 0,
+                    width: "100%",
+                    height: "100%",
+                    backgroundColor: "rgba(6, 7, 12, 0.8)",
+                    backdropFilter: "blur(12px)",
+                    zIndex: 10000,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center"
+                }}>
+                    <div 
+                        className="animate-fade-in"
+                        style={{
+                            maxWidth: "480px",
+                            width: "90%",
+                            background: "linear-gradient(145deg, #111322 0%, #080911 100%)",
+                            borderRadius: "24px",
+                            border: "1px solid rgba(99, 102, 241, 0.25)",
+                            boxShadow: "0 25px 60px rgba(0, 0, 0, 0.8), 0 0 40px rgba(99, 102, 241, 0.1) inset",
+                            padding: "32px",
+                            position: "relative",
+                            overflow: "hidden"
+                        }}
+                    >
+                        {/* Glow effect */}
+                        <div style={{ position: "absolute", top: "-20%", left: "-20%", width: "150px", height: "150px", background: "radial-gradient(circle, rgba(99, 102, 241, 0.2) 0%, transparent 70%)", filter: "blur(20px)", pointerEvents: "none" }} />
+                        <div style={{ position: "absolute", bottom: "-20%", right: "-20%", width: "150px", height: "150px", background: "radial-gradient(circle, rgba(139, 92, 246, 0.15) 0%, transparent 70%)", filter: "blur(20px)", pointerEvents: "none" }} />
+
+                        <div className="d-flex flex-column align-items-center text-center">
+                            
+                            {/* GRIVO Mascot Icon with animations */}
+                            <div className="mb-4 position-relative" style={{ width: "90px", height: "90px" }}>
+                                {/* Spinning orbit ring */}
+                                <div
+                                    style={{
+                                        position: "absolute",
+                                        inset: "-8px",
+                                        borderRadius: "22px",
+                                        border: "2px dashed rgba(99, 102, 241, 0.4)",
+                                        animation: grivoStatus === "generating" ? "cvgrid-spin 10s linear infinite" : "none",
+                                    }}
+                                />
+                                {/* Pulsing background glow */}
+                                <div
+                                    style={{
+                                        position: "absolute",
+                                        inset: 0,
+                                        borderRadius: "16px",
+                                        background: "linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(139, 92, 246, 0.2))",
+                                        filter: "blur(8px)",
+                                        animation: "cvgrid-pulse 1.5s ease-in-out infinite",
+                                    }}
+                                />
+                                {/* Grivo Logo */}
+                                <div 
+                                    style={{ 
+                                        position: "relative", 
+                                        width: "100%", 
+                                        height: "100%", 
+                                        display: "flex", 
+                                        alignItems: "center", 
+                                        justifyContent: "center",
+                                        background: "rgba(15, 18, 36, 0.8)",
+                                        borderRadius: "16px",
+                                        border: "1px solid rgba(99, 102, 241, 0.3)"
+                                    }}
+                                >
+                                    <GrivoIcon size={48} />
+                                </div>
+                            </div>
+
+                            {/* GRIVO Speech Bubble */}
+                            <div 
+                                style={{
+                                    background: "rgba(255, 255, 255, 0.03)",
+                                    border: "1px solid rgba(255, 255, 255, 0.06)",
+                                    borderRadius: "16px",
+                                    padding: "20px",
+                                    width: "100%",
+                                    marginBottom: "24px",
+                                    position: "relative"
+                                }}
+                            >
+                                <h5 className="fw-bold mb-2 text-indigo" style={{ color: "#818cf8" }}>GRIVO AI</h5>
+                                <p className="mb-0 text-white-50 small" style={{ lineHeight: "1.6" }}>
+                                    {grivoMessage}
+                                </p>
+                            </div>
+
+                            {/* Progress bar or complete state */}
+                            {grivoStatus === "generating" ? (
+                                <div className="w-100 mb-2">
+                                    <div className="progress bg-dark" style={{ height: "6px", borderRadius: "3px" }}>
+                                        <div 
+                                            className="progress-bar progress-bar-striped progress-bar-animated bg-indigo" 
+                                            role="progressbar" 
+                                            style={{ 
+                                                width: "100%", 
+                                                background: "linear-gradient(90deg, #6366f1, #8b5cf6)",
+                                                borderRadius: "3px"
+                                            }}
+                                        />
+                                    </div>
+                                    <span className="text-white-50 mt-2 d-inline-block" style={{ fontSize: "0.75rem" }}>
+                                        Reading resume · Tailoring experience · Polishing tone
+                                    </span>
+                                </div>
+                            ) : grivoStatus === "success" ? (
+                                <div className="w-100">
+                                    <div className="mb-3 text-success d-flex align-items-center justify-content-center gap-2">
+                                        <CheckCircle size={20} color="#22c55e" />
+                                        <span className="fw-semibold">Generation Completed!</span>
+                                    </div>
+                                    <button
+                                        onClick={() => {
+                                            setShowGrivoModal(false);
+                                        }}
+                                        className="btn btn-indigo py-2.5 w-100 fw-bold text-white"
+                                        style={{ 
+                                            borderRadius: "10px", 
+                                            backgroundColor: "#4f46e5", 
+                                            border: "none",
+                                            boxShadow: "0 4px 12px rgba(99, 102, 241, 0.3)"
+                                        }}
+                                    >
+                                        View My Cover Letter
+                                    </button>
+                                </div>
+                            ) : (
+                                <div className="w-100">
+                                    <div className="mb-3 text-danger d-flex align-items-center justify-content-center gap-2">
+                                        <XCircle size={20} color="#ef4444" />
+                                        <span className="fw-semibold">Something went wrong</span>
+                                    </div>
+                                    <button
+                                        onClick={() => setShowGrivoModal(false)}
+                                        className="btn btn-secondary py-2.5 w-100 fw-bold"
+                                        style={{ borderRadius: "10px" }}
+                                    >
+                                        Close
+                                    </button>
+                                </div>
+                            )}
+
                         </div>
                     </div>
                 </div>
