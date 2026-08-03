@@ -32,9 +32,9 @@ export async function POST(request) {
             );
         }
 
-        if (!jobTitle || !companyName || !jobDescription) {
+        if (!jobTitle || !jobDescription) {
             return NextResponse.json(
-                { error: "Job title, company name, and job description are required" },
+                { error: "Job title and job description are required" },
                 { status: 400 }
             );
         }
@@ -60,7 +60,7 @@ Analyze the candidate's resume attached in the file and write a high-converting,
 
 Target Job Information:
 - Role: ${jobTitle}
-- Company: ${companyName}
+- Company: ${companyName || "the company"}
 - Hiring Manager: ${hiringManager || "Hiring Manager"}
 - Job Description:
 ${jobDescription}
@@ -175,7 +175,7 @@ Candidate Information:
 
 Target Job Information:
 - Role: ${jobTitle}
-- Company: ${companyName}
+- Company: ${companyName || "the company"}
 - Hiring Manager: ${hiringManager || "Hiring Manager"}
 - Job Description:
 ${jobDescription}
@@ -186,7 +186,7 @@ ${customInstructions ? `\nAdditional Focus / Special Instructions:\n${customInst
 Requirements:
 1. Address the cover letter directly to the Hiring Manager or Company.
 2. Structure the letter with:
-   - A warm, attention-grabbing opening paragraph stating the candidate's enthusiasm for the ${jobTitle} role at ${companyName}.
+   - A warm, attention-grabbing opening paragraph stating the candidate's enthusiasm for the ${jobTitle} role${companyName ? ` at ${companyName}` : ""}.
    - 1-2 body paragraphs detailing exactly how the candidate's background, skills, and specific achievements (mentioning company experience/projects) make them a perfect fit. Do NOT just list tasks; focus on value and metrics where possible.
    - A polite, proactive closing paragraph with a clear call to action (e.g. requesting an interview).
    - A professional sign-off (e.g. Sincerely, \\n\\n${fullName}).
