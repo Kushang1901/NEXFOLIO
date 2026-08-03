@@ -672,6 +672,74 @@ export default function CoverLetterGenerator() {
                                 </div>
                                 <p className="text-white-50 small mb-3">Tailor a professional cover letter specifically to your target job using AI.</p>
 
+                                {/* Upload Existing CV Uploader at the Top */}
+                                <div className="mb-4 bg-dark-custom p-3 rounded-3 border-glass">
+                                    <div className="d-flex justify-content-between align-items-center mb-2">
+                                        <label className="form-label text-white fw-bold small mb-0 d-flex align-items-center gap-1.5">
+                                            <UploadCloud size={16} className="text-indigo" />
+                                            Upload Existing Resume (Tailor with AI)
+                                        </label>
+                                        {uploadedFile && (
+                                            <button
+                                                type="button"
+                                                onClick={() => {
+                                                    setUploadedFile(null);
+                                                    setUploadedFileBase64(null);
+                                                    showToast("Uploaded resume cleared.", "info");
+                                                }}
+                                                className="btn btn-sm btn-outline-danger py-0 px-2 fw-semibold"
+                                                style={{ fontSize: "0.75rem", borderRadius: "4px" }}
+                                            >
+                                                Clear
+                                            </button>
+                                        )}
+                                    </div>
+                                    
+                                    <div
+                                        onDragOver={(e) => { e.preventDefault(); setIsDraggingUpload(true); }}
+                                        onDragLeave={() => setIsDraggingUpload(false)}
+                                        onDrop={(e) => {
+                                             e.preventDefault();
+                                             setIsDraggingUpload(false);
+                                             const file = e.dataTransfer.files[0];
+                                             if (file) handleUploadResumeFile(file);
+                                        }}
+                                        onClick={() => uploadFileRef.current?.click()}
+                                        className="p-3 text-center cursor-pointer border-glass"
+                                        style={{
+                                             border: `1.5px dashed ${isDraggingUpload ? "#6366f1" : uploadedFile ? "#22c55e" : "rgba(255, 255, 255, 0.15)"}`,
+                                             background: isDraggingUpload ? "rgba(99, 102, 241, 0.08)" : uploadedFile ? "rgba(34, 197, 94, 0.04)" : "rgba(255, 255, 255, 0.02)",
+                                             borderRadius: "10px",
+                                             transition: "all 0.2s ease"
+                                        }}
+                                    >
+                                        <input
+                                             ref={uploadFileRef}
+                                             type="file"
+                                             accept=".pdf,.doc,.docx"
+                                             style={{ display: "none" }}
+                                             onChange={(e) => {
+                                                 if (e.target.files[0]) handleUploadResumeFile(e.target.files[0]);
+                                             }}
+                                        />
+                                        <div className="d-flex flex-column align-items-center gap-1">
+                                             {uploadedFile ? (
+                                                 <>
+                                                     <CheckCircle size={20} className="text-success" />
+                                                     <span className="text-success fw-semibold small text-truncate" style={{ maxWidth: "250px" }}>{uploadedFile.name}</span>
+                                                     <span className="text-white-50" style={{ fontSize: "0.75rem" }}>Using this resume to generate. Click or drag to replace.</span>
+                                                 </>
+                                             ) : (
+                                                 <>
+                                                     <UploadCloud size={20} className="text-indigo" />
+                                                     <span className="text-white fw-semibold small">Click or drag resume file (PDF/DOCX)</span>
+                                                     <span className="text-white-50" style={{ fontSize: "0.72rem" }}>Optional — Uploading overrides selected resume profile below</span>
+                                                 </>
+                                             )}
+                                        </div>
+                                    </div>
+                                </div>
+
                                 {/* Saved Letters Management Dropdown */}
                                 {userEmail && (
                                     <div className="col-12 bg-dark-custom p-3 rounded-3 border-glass mb-4 d-flex flex-column gap-2">
@@ -735,60 +803,11 @@ export default function CoverLetterGenerator() {
                                             style={{ borderRadius: "8px", height: "42px" }}
                                         >
                                             <option value="session">Active Session Resume (Latest Draft)</option>
-                                            <option value="upload">Upload Existing Resume (PDF/DOCX)</option>
                                             {resumesList.map((res) => (
                                                 <option key={res.id} value={res.id}>{res.resumeName} (Cloud Save)</option>
                                             ))}
                                         </select>
                                     </div>
-
-                                    {/* Upload Drop Zone */}
-                                    {selectedResumeId === "upload" && (
-                                        <div className="col-12">
-                                            <div
-                                                onDragOver={(e) => { e.preventDefault(); setIsDraggingUpload(true); }}
-                                                onDragLeave={() => setIsDraggingUpload(false)}
-                                                onDrop={(e) => {
-                                                     e.preventDefault();
-                                                     setIsDraggingUpload(false);
-                                                     const file = e.dataTransfer.files[0];
-                                                     if (file) handleUploadResumeFile(file);
-                                                }}
-                                                onClick={() => uploadFileRef.current?.click()}
-                                                className="p-3 mb-1 text-center cursor-pointer border-glass"
-                                                style={{
-                                                     border: `1.5px dashed ${isDraggingUpload ? "#6366f1" : uploadedFile ? "#22c55e" : "rgba(255, 255, 255, 0.15)"}`,
-                                                     background: isDraggingUpload ? "rgba(99, 102, 241, 0.08)" : uploadedFile ? "rgba(34, 197, 94, 0.04)" : "rgba(255, 255, 255, 0.02)",
-                                                     borderRadius: "10px",
-                                                     transition: "all 0.2s ease"
-                                                }}
-                                            >
-                                                <input
-                                                     ref={uploadFileRef}
-                                                     type="file"
-                                                     accept=".pdf,.doc,.docx"
-                                                     style={{ display: "none" }}
-                                                     onChange={(e) => {
-                                                         if (e.target.files[0]) handleUploadResumeFile(e.target.files[0]);
-                                                     }}
-                                                />
-                                                <div className="d-flex flex-column align-items-center gap-1">
-                                                     <UploadCloud size={20} className={uploadedFile ? "text-success" : "text-indigo"} />
-                                                     {uploadedFile ? (
-                                                         <>
-                                                             <span className="text-success fw-semibold small text-truncate" style={{ maxWidth: "250px" }}>{uploadedFile.name}</span>
-                                                             <span className="text-white-50" style={{ fontSize: "0.75rem" }}>Click or drag a new file to replace</span>
-                                                         </>
-                                                     ) : (
-                                                         <>
-                                                             <span className="text-white fw-semibold small">Click or drag resume file</span>
-                                                             <span className="text-white-50" style={{ fontSize: "0.75rem" }}>Supports PDF or DOCX (max 10MB)</span>
-                                                         </>
-                                                     )}
-                                                </div>
-                                            </div>
-                                        </div>
-                                    )}
 
                                     {/* Manual Mode Toggle */}
                                     <div className="col-12 d-flex align-items-center justify-content-between py-2 bg-dark-custom px-3 rounded-3 border-glass">
