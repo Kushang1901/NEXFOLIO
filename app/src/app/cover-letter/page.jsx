@@ -8,7 +8,7 @@ import { subscribeToAuthChanges } from "../../authState";
 import { showToast } from "../../utils/toast";
 import CoverLetterPreview from "../../components/CoverLetterPreview";
 import { normalizeResumeData } from "../../utils/resumeAdapter";
-import { Sparkles, SlidersHorizontal, Loader2, Eye, FileSignature, Briefcase, UploadCloud, CheckCircle, XCircle } from "lucide-react";
+import { Sparkles, SlidersHorizontal, Loader2, Eye, FileSignature, Briefcase, UploadCloud, CheckCircle, XCircle, Lock, Unlock } from "lucide-react";
 import AiWorkflowProgress from "../../components/AiWorkflowProgress";
 
 // ─── Grivo mascot SVG ───────────────────────────────────────────────────────
@@ -65,6 +65,7 @@ export default function CoverLetterGenerator() {
     const [jobDescription, setJobDescription] = useState("");
     const [tone, setTone] = useState("Professional");
     const [selectedTemplate, setSelectedTemplate] = useState("classic");
+    const [isTemplateDropdownOpen, setIsTemplateDropdownOpen] = useState(false);
 
     // Output & UX states
     const [isGenerating, setIsGenerating] = useState(false);
@@ -1033,17 +1034,101 @@ export default function CoverLetterGenerator() {
                                             </select>
                                         </div>
                                         <div className="col-12">
-                                            <label className="cl-field-label">Letterhead Design Theme</label>
-                                            <select className="form-select cl-input" value={selectedTemplate} onChange={(e) => setSelectedTemplate(e.target.value)}>
-                                                <option value="classic">Classic (Clean Accent)</option>
-                                                <option value="modern">Modern (Sidebar layout)</option>
-                                                <option value="executive">Executive (Deep Navy Banner)</option>
-                                                <option value="developer">Developer (Syntax terminal)</option>
-                                                <option value="elegant">Elegant (Georgia Double-Border)</option>
-                                                <option value="accent">Accent Line (Gradient top line)</option>
-                                                <option value="navy_elegance">Navy Elegance (Corporate Banner)</option>
-                                                <option value="emerald">Emerald Professional (Teal accent)</option>
-                                            </select>
+                                            <div className="position-relative w-100">
+                                                <label className="cl-field-label">Letterhead Design Theme</label>
+                                                <button
+                                                    type="button"
+                                                    onClick={() => setIsTemplateDropdownOpen(!isTemplateDropdownOpen)}
+                                                    className="form-select cl-input d-flex align-items-center justify-content-between text-start w-100 px-3"
+                                                    style={{ height: "42px", cursor: "pointer", background: "rgba(11,13,23,0.85)", borderColor: "rgba(255,255,255,0.08)", borderRadius: "8px" }}
+                                                >
+                                                    <div className="d-flex align-items-center gap-2">
+                                                        {selectedTemplate === "classic" ? (
+                                                            <Unlock size={14} className="text-success" />
+                                                        ) : (
+                                                            <Lock size={14} style={{ color: "#f97316" }} />
+                                                        )}
+                                                        <span className="text-white">
+                                                            {selectedTemplate === "classic" && "Classic (Clean Accent)"}
+                                                            {selectedTemplate === "modern" && "Modern (Sidebar layout)"}
+                                                            {selectedTemplate === "executive" && "Executive (Deep Navy Banner)"}
+                                                            {selectedTemplate === "developer" && "Developer (Syntax terminal)"}
+                                                            {selectedTemplate === "elegant" && "Elegant (Georgia Double-Border)"}
+                                                            {selectedTemplate === "accent" && "Accent Line (Gradient top line)"}
+                                                            {selectedTemplate === "navy_elegance" && "Navy Elegance (Corporate Banner)"}
+                                                            {selectedTemplate === "emerald" && "Emerald Professional (Teal accent)"}
+                                                        </span>
+                                                    </div>
+                                                </button>
+
+                                                {isTemplateDropdownOpen && (
+                                                    <>
+                                                        <div 
+                                                            onClick={() => setIsTemplateDropdownOpen(false)} 
+                                                            style={{ position: "fixed", inset: 0, zIndex: 998 }}
+                                                        />
+                                                        <div
+                                                            className="position-absolute w-100 mt-1"
+                                                            style={{
+                                                                background: "#111425",
+                                                                border: "1px solid rgba(255, 255, 255, 0.08)",
+                                                                borderRadius: "10px",
+                                                                boxShadow: "0 10px 30px rgba(0, 0, 0, 0.5)",
+                                                                zIndex: 999,
+                                                                maxHeight: "300px",
+                                                                overflowY: "auto",
+                                                                padding: "6px"
+                                                            }}
+                                                        >
+                                                            {[
+                                                                { value: "classic", label: "Classic (Clean Accent)", isPremium: false },
+                                                                { value: "modern", label: "Modern (Sidebar layout)", isPremium: true },
+                                                                { value: "executive", label: "Executive (Deep Navy Banner)", isPremium: true },
+                                                                { value: "developer", label: "Developer (Syntax terminal)", isPremium: true },
+                                                                { value: "elegant", label: "Elegant (Georgia Double-Border)", isPremium: true },
+                                                                { value: "accent", label: "Accent Line (Gradient top line)", isPremium: true },
+                                                                { value: "navy_elegance", label: "Navy Elegance (Corporate Banner)", isPremium: true },
+                                                                { value: "emerald", label: "Emerald Professional (Teal accent)", isPremium: true }
+                                                            ].map((opt) => (
+                                                                <button
+                                                                    key={opt.value}
+                                                                    type="button"
+                                                                    onClick={() => {
+                                                                        setSelectedTemplate(opt.value);
+                                                                        setIsTemplateDropdownOpen(false);
+                                                                    }}
+                                                                    className="w-100 text-start px-3 py-2 d-flex align-items-center gap-2 transition-all"
+                                                                    style={{
+                                                                        background: opt.value === selectedTemplate ? "rgba(99, 102, 241, 0.15)" : "transparent",
+                                                                        border: "none",
+                                                                        borderRadius: "6px",
+                                                                        color: opt.value === selectedTemplate ? "#818cf8" : "#fff",
+                                                                        fontSize: "0.85rem",
+                                                                        margin: "2px 0"
+                                                                    }}
+                                                                    onMouseEnter={(e) => {
+                                                                        if (opt.value !== selectedTemplate) {
+                                                                            e.currentTarget.style.background = "rgba(255, 255, 255, 0.04)";
+                                                                        }
+                                                                    }}
+                                                                    onMouseLeave={(e) => {
+                                                                        if (opt.value !== selectedTemplate) {
+                                                                            e.currentTarget.style.background = "transparent";
+                                                                        }
+                                                                    }}
+                                                                >
+                                                                    {opt.isPremium ? (
+                                                                        <Lock size={14} style={{ color: "#f97316" }} />
+                                                                    ) : (
+                                                                        <Unlock size={14} className="text-success" />
+                                                                    )}
+                                                                    <span>{opt.label}</span>
+                                                                </button>
+                                                            ))}
+                                                        </div>
+                                                    </>
+                                                )}
+                                            </div>
                                         </div>
                                         <div className="col-12">
                                             <div className="d-flex justify-content-between align-items-center mb-1">

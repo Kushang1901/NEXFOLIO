@@ -149,7 +149,7 @@ export async function initDb() {
                 selected_template VARCHAR(100) DEFAULT 'classic',
                 letter_text TEXT NOT NULL,
                 candidate_data JSONB,
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             );
         `;
 

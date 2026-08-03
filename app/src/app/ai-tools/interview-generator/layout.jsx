@@ -1,16 +1,13 @@
 export const metadata = {
-    title: "AI Interview Questions & Recommended Answers Generator | CVGrid",
-    description: "Generate targeted technical and behavioral interview questions based on your resume and job description, along with recommended expert answers.",
-    keywords: [
-        "interview generator", "mock interview prep", "custom interview questions",
-        "career prep", "AI interview helper", "interview questions and answers",
-    ],
+    title: "Free AI Mock Interview Questions & Answers Generator – CVGrid",
+    description: "Generate targeted technical and behavioral interview questions and expert answers based on your resume and target job description using AI.",
+    keywords: ["interview generator","mock interview prep","custom interview questions","career prep","AI interview helper","interview questions and answers","behavioral interview prep generator","technical interview answers ai"],
     alternates: {
         canonical: "/ai-tools/interview-generator",
     },
     openGraph: {
-        title: "AI Interview Questions & Recommended Answers Generator | CVGrid",
-        description: "Generate targeted technical and behavioral interview questions based on your resume and job description, along with recommended expert answers.",
+        title: "Free AI Mock Interview Questions & Answers Generator – CVGrid",
+        description: "Generate targeted technical and behavioral interview questions and expert answers based on your resume and target job description using AI.",
         url: "https://app.cvgrid.in/ai-tools/interview-generator",
         type: "website",
         images: [
@@ -24,8 +21,8 @@ export const metadata = {
     },
     twitter: {
         card: "summary_large_image",
-        title: "AI Interview Questions & Recommended Answers Generator | CVGrid",
-        description: "Generate targeted technical and behavioral interview questions based on your resume and job description, along with recommended expert answers.",
+        title: "Free AI Mock Interview Questions & Answers Generator – CVGrid",
+        description: "Generate targeted technical and behavioral interview questions and expert answers based on your resume and target job description using AI.",
         images: ["https://app.cvgrid.in/logo.png"],
     },
 };
@@ -36,27 +33,27 @@ export default function InterviewGeneratorLayout({ children }) {
         "@type": "WebPage",
         "@id": "https://app.cvgrid.in/ai-tools/interview-generator/#page",
         "url": "https://app.cvgrid.in/ai-tools/interview-generator",
-        "name": "AI Interview Q&A Prep Generator – CVGrid",
-        "description": "Generate targeted technical and behavioral interview questions based on your resume and job description.",
+        "name": "Free AI Mock Interview Questions & Answers Generator – CVGrid",
+        "description": "Generate targeted technical and behavioral interview questions and expert answers based on your resume and target job description using AI.",
         "breadcrumb": {
             "@type": "BreadcrumbList",
             "itemListElement": [
                 {
                     "@type": "ListItem",
                     "position": 1,
-                    "name": "Home",
+                    "name": "Free AI Mock Interview Questions & Answers Generator – CVGrid",
                     "item": "https://cvgrid.in",
                 },
                 {
                     "@type": "ListItem",
                     "position": 2,
-                    "name": "AI Tools",
+                    "name": "Free AI Mock Interview Questions & Answers Generator – CVGrid",
                     "item": "https://app.cvgrid.in/ai-tools",
                 },
                 {
                     "@type": "ListItem",
                     "position": 3,
-                    "name": "Interview Preparation",
+                    "name": "Free AI Mock Interview Questions & Answers Generator – CVGrid",
                     "item": "https://app.cvgrid.in/ai-tools/interview-generator",
                 },
             ],

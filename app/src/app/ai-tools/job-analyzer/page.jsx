@@ -359,13 +359,19 @@ Qualifications:
                                     (inputType === "url" && !jobUrl.trim()) ||
                                     (inputType === "file" && !fileData)
                                 }
-                                className="btn btn-lg btn-gradient-premium w-100 py-3 mt-2"
+                                className="btn btn-lg w-100 py-3 mt-2"
                                 style={{
                                     display: "flex",
                                     alignItems: "center",
                                     justifyContent: "center",
                                     gap: "10px",
-                                    fontSize: "1rem"
+                                    fontSize: "1rem",
+                                    background: "#4f46e5",
+                                    border: "none",
+                                    color: "#fff",
+                                    borderRadius: "12px",
+                                    fontWeight: "600",
+                                    transition: "all 0.2s"
                                 }}
                             >
                                 {loading ? (
@@ -375,7 +381,7 @@ Qualifications:
                                     </>
                                 ) : (
                                     <>
-                                        <Sparkles size={18} /> ✨ Analyze Job Description
+                                        Analyze Job Description
                                     </>
                                 )}
                             </button>
@@ -564,12 +570,7 @@ Qualifications:
                                 </div>
 
                             </div>
-                        ) : (
-                            <div className="col-lg-7 d-none d-lg-flex flex-column align-items-center justify-content-center text-center p-5 text-white-50">
-                                <Briefcase size={48} className="mb-3 text-white-30" style={{ opacity: 0.3 }} />
-                                <div>Click "Analyze Job Description" to parse the blueprint parameters.</div>
-                            </div>
-                        )}
+                        ) : null}
                     </div>
                 </div>
             </section>

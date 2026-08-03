@@ -1,16 +1,13 @@
 export const metadata = {
-    title: "AI Job Description Parser & ATS Stack Extractor | CVGrid",
-    description: "Instantly extract required experience, technical tools, responsibilities, and key challenges from any job posting with our advanced AI parser.",
-    keywords: [
-        "job parser", "parse job description", "extract tech stack",
-        "job requirement analyzer", "key responsibilities extractor", "ATS description extractor",
-    ],
+    title: "Free AI Job Description Parser & Job posting Analyzer – CVGrid",
+    description: "Parse any job posting instantly. Extract required experience, technical tools, primary duties, and key challenges from job descriptions with our advanced free AI parser.",
+    keywords: ["job parser","parse job description","extract tech stack","job requirement analyzer","key responsibilities extractor","ATS description extractor","ats job description analyzer"],
     alternates: {
         canonical: "/ai-tools/job-analyzer",
     },
     openGraph: {
-        title: "AI Job Description Parser & ATS Stack Extractor | CVGrid",
-        description: "Instantly extract required experience, technical tools, responsibilities, and key challenges from any job posting with our advanced AI parser.",
+        title: "Free AI Job Description Parser & Job posting Analyzer – CVGrid",
+        description: "Parse any job posting instantly. Extract required experience, technical tools, primary duties, and key challenges from job descriptions with our advanced free AI parser.",
         url: "https://app.cvgrid.in/ai-tools/job-analyzer",
         type: "website",
         images: [
@@ -24,8 +21,8 @@ export const metadata = {
     },
     twitter: {
         card: "summary_large_image",
-        title: "AI Job Description Parser & ATS Stack Extractor | CVGrid",
-        description: "Instantly extract required experience, technical tools, responsibilities, and key challenges from any job posting with our advanced AI parser.",
+        title: "Free AI Job Description Parser & Job posting Analyzer – CVGrid",
+        description: "Parse any job posting instantly. Extract required experience, technical tools, primary duties, and key challenges from job descriptions with our advanced free AI parser.",
         images: ["https://app.cvgrid.in/logo.png"],
     },
 };
@@ -36,27 +33,27 @@ export default function JobAnalyzerLayout({ children }) {
         "@type": "WebPage",
         "@id": "https://app.cvgrid.in/ai-tools/job-analyzer/#page",
         "url": "https://app.cvgrid.in/ai-tools/job-analyzer",
-        "name": "AI Job Description Parser – CVGrid",
-        "description": "Instantly extract required experience, technical tools, responsibilities, and key challenges from any job posting with our advanced AI parser.",
+        "name": "Free AI Job Description Parser & Job posting Analyzer – CVGrid",
+        "description": "Parse any job posting instantly. Extract required experience, technical tools, primary duties, and key challenges from job descriptions with our advanced free AI parser.",
         "breadcrumb": {
             "@type": "BreadcrumbList",
             "itemListElement": [
                 {
                     "@type": "ListItem",
                     "position": 1,
-                    "name": "Home",
+                    "name": "Free AI Job Description Parser & Job posting Analyzer – CVGrid",
                     "item": "https://cvgrid.in",
                 },
                 {
                     "@type": "ListItem",
                     "position": 2,
-                    "name": "AI Tools",
+                    "name": "Free AI Job Description Parser & Job posting Analyzer – CVGrid",
                     "item": "https://app.cvgrid.in/ai-tools",
                 },
                 {
                     "@type": "ListItem",
                     "position": 3,
-                    "name": "Job Parser & Analyzer",
+                    "name": "Free AI Job Description Parser & Job posting Analyzer – CVGrid",
                     "item": "https://app.cvgrid.in/ai-tools/job-analyzer",
                 },
             ],
