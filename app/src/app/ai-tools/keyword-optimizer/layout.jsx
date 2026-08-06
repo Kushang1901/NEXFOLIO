@@ -1,13 +1,13 @@
 export const metadata = {
     title: "Free AI Resume Keyword Optimizer & ATS Keywords Highlighter – CVGrid",
-    description: "Find and highlight missing critical ATS keywords on your resume. Optimize your resume for applicant tracking systems with free contextual AI suggestions.",
+    description: "Find and optimize critical missing ATS keywords on your resume.",
     keywords: ["keywords highlighter","resume keywords highlighter","ATS keyword highlighter","resume keyword optimizer","ATS keywords","missing skills search","resume keyword finder","career optimizer","ATS optimization","best keyword generator","best resume keyword generator","free keywords generator","resume keywords optimizer","scan resume for keywords"],
     alternates: {
         canonical: "/ai-tools/keyword-optimizer",
     },
     openGraph: {
         title: "Free AI Resume Keyword Optimizer & ATS Keywords Highlighter – CVGrid",
-        description: "Find and highlight missing critical ATS keywords on your resume. Optimize your resume for applicant tracking systems with free contextual AI suggestions.",
+        description: "Find and optimize critical missing ATS keywords on your resume.",
         url: "https://app.cvgrid.in/ai-tools/keyword-optimizer",
         type: "website",
         images: [
@@ -22,7 +22,7 @@ export const metadata = {
     twitter: {
         card: "summary_large_image",
         title: "Free AI Resume Keyword Optimizer & ATS Keywords Highlighter – CVGrid",
-        description: "Find and highlight missing critical ATS keywords on your resume. Optimize your resume for applicant tracking systems with free contextual AI suggestions.",
+        description: "Find and optimize critical missing ATS keywords on your resume.",
         images: ["https://app.cvgrid.in/logo.png"],
     },
 };
@@ -34,7 +34,7 @@ export default function KeywordOptimizerLayout({ children }) {
         "@id": "https://app.cvgrid.in/ai-tools/keyword-optimizer/#page",
         "url": "https://app.cvgrid.in/ai-tools/keyword-optimizer",
         "name": "Free AI Resume Keyword Optimizer & ATS Keywords Highlighter – CVGrid",
-        "description": "Find and highlight missing critical ATS keywords on your resume. Optimize your resume for applicant tracking systems with free contextual AI suggestions.",
+        "description": "Find and optimize critical missing ATS keywords on your resume.",
         "breadcrumb": {
             "@type": "BreadcrumbList",
             "itemListElement": [

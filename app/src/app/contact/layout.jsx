@@ -1,6 +1,6 @@
 export const metadata = {
     title: "Contact Us & Customer Support | CVGrid",
-    description: "Get in touch with the CVGrid support team. Contact us for inquiries, feedback, or technical assistance with our AI resume builder.",
+    description: "Get in touch with the CVGrid support team for assistance.",
     keywords: [
         "contact CVGrid", "CVGrid support email", "resume builder customer service",
         "CVGrid customer support", "help with resume builder",
@@ -14,7 +14,7 @@ export const metadata = {
     },
     openGraph: {
         title: "Contact CVGrid – Customer Support & Inquiries",
-        description: "Have questions or need help? Contact CVGrid customer support. We are here to help you build your professional career.",
+        description: "Get in touch with the CVGrid support team for assistance.",
         url: "https://app.cvgrid.in/contact",
         type: "website",
     },

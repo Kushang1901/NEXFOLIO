@@ -1,6 +1,6 @@
 export const metadata = {
     title: "Free AI Resume & Career Tools Suite | CVGrid",
-    description: "Explore CVGrid's full suite of free AI tools for job seekers. Build an ATS-friendly resume, check your ATS score, generate cover letters, and parse PDF resumes for free.",
+    description: "Explore CVGrid's suite of free AI resume and career prep tools.",
     keywords: [
         "AI resume tools", "free career tools", "AI cover letter generator",
         "free ATS checker", "PDF resume parser", "CVGrid AI tools",
@@ -11,7 +11,7 @@ export const metadata = {
     },
     openGraph: {
         title: "Free AI Resume & Career Tools Suite | CVGrid",
-        description: "Explore CVGrid's full suite of free AI tools. Build an ATS-friendly resume, check your ATS score, generate cover letters, and parse PDF resumes for free.",
+        description: "Explore CVGrid's suite of free AI resume and career prep tools.",
         url: "https://app.cvgrid.in/ai-tools",
         type: "website",
         images: [
@@ -26,7 +26,7 @@ export const metadata = {
     twitter: {
         card: "summary_large_image",
         title: "Free AI Resume & Career Tools Suite – CVGrid",
-        description: "Access our suite of AI tools: Resume Builder, ATS Score Checker, Cover Letter Generator, and PDF Parser. 100% free.",
+        description: "Explore CVGrid's suite of free AI resume and career prep tools.",
         images: ["https://app.cvgrid.in/logo.png"],
     },
 };
@@ -38,7 +38,7 @@ export default function AIToolsLayout({ children }) {
         "@id": "https://app.cvgrid.in/ai-tools/#page",
         "url": "https://app.cvgrid.in/ai-tools",
         "name": "Free AI Resume & Career Tools Suite – CVGrid",
-        "description": "Explore CVGrid's full suite of free AI tools for job seekers. Build an ATS-friendly resume, check your ATS score, generate cover letters, and parse PDF resumes for free.",
+        "description": "Explore CVGrid's suite of free AI resume and career prep tools.",
         "breadcrumb": {
             "@type": "BreadcrumbList",
             "itemListElement": [

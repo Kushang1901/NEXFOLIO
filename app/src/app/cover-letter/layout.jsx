@@ -1,6 +1,6 @@
 export const metadata = {
     title: "AI Cover Letter Generator – Free & Professional | CVGrid",
-    description: "Generate a compelling, personalized AI cover letter in seconds. CVGrid's free AI cover letter generator helps you write tailored letters that match job descriptions and impress recruiters.",
+    description: "Generate a personalized, professional AI cover letter in seconds.",
     keywords: [
         "free cover letter generator", "AI cover letter writer", "cover letter maker free",
         "professional cover letter generator", "AI cover letter for job application",
@@ -13,7 +13,7 @@ export const metadata = {
     },
     openGraph: {
         title: "AI Cover Letter Generator – Free & Professional | CVGrid",
-        description: "Generate a tailored, professional cover letter in seconds using AI. Free, no watermark, download instantly.",
+        description: "Generate a personalized, professional AI cover letter in seconds.",
         url: "https://app.cvgrid.in/cover-letter",
         type: "website",
         images: [
@@ -28,7 +28,7 @@ export const metadata = {
     twitter: {
         card: "summary_large_image",
         title: "Free AI Cover Letter Generator – CVGrid",
-        description: "Write a professional, personalized cover letter instantly with AI. 100% free.",
+        description: "Generate a personalized, professional AI cover letter in seconds.",
         images: ["https://app.cvgrid.in/logo.png"],
     },
 };
@@ -40,7 +40,7 @@ export default function CoverLetterLayout({ children }) {
         "@id": "https://app.cvgrid.in/cover-letter/#page",
         "url": "https://app.cvgrid.in/cover-letter",
         "name": "Free AI Cover Letter Generator – CVGrid",
-        "description": "Generate professional, personalized cover letters with AI in seconds. Free to use, no credit card required.",
+        "description": "Generate a personalized, professional AI cover letter in seconds.",
         "breadcrumb": {
             "@type": "BreadcrumbList",
             "itemListElement": [

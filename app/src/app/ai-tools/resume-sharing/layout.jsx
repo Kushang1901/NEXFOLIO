@@ -1,6 +1,6 @@
 export const metadata = {
     title: "AI Resume Sharing URL, Passcode Protection & Tracking | CVGrid",
-    description: "Share your resume via a secure custom URL with passcode protection, and track views, downloads, and location analytics in real-time.",
+    description: "Share your resume securely and track real-time view analytics.",
     keywords: [
         "resume sharing", "track resume views", "passcode protected resume",
         "public resume url", "resume analytics", "job tracker",
@@ -10,7 +10,7 @@ export const metadata = {
     },
     openGraph: {
         title: "AI Resume Sharing URL, Passcode Protection & Tracking | CVGrid",
-        description: "Share your resume via a secure custom URL with passcode protection, and track views, downloads, and location analytics in real-time.",
+        description: "Share your resume securely and track real-time view analytics.",
         url: "https://app.cvgrid.in/ai-tools/resume-sharing",
         type: "website",
         images: [
@@ -25,7 +25,7 @@ export const metadata = {
     twitter: {
         card: "summary_large_image",
         title: "AI Resume Sharing URL, Passcode Protection & Tracking | CVGrid",
-        description: "Share your resume via a secure custom URL with passcode protection, and track views, downloads, and location analytics in real-time.",
+        description: "Share your resume securely and track real-time view analytics.",
         images: ["https://app.cvgrid.in/logo.png"],
     },
 };
@@ -37,7 +37,7 @@ export default function ResumeSharingLayout({ children }) {
         "@id": "https://app.cvgrid.in/ai-tools/resume-sharing/#page",
         "url": "https://app.cvgrid.in/ai-tools/resume-sharing",
         "name": "AI Resume Sharing & Tracking – CVGrid",
-        "description": "Share your resume via a secure custom URL with passcode protection, and track views, downloads, and location analytics in real-time.",
+        "description": "Share your resume securely and track real-time view analytics.",
         "breadcrumb": {
             "@type": "BreadcrumbList",
             "itemListElement": [

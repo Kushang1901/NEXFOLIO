@@ -1,13 +1,13 @@
 export const metadata = {
     title: "Free AI Job Description Parser & Job posting Analyzer – CVGrid",
-    description: "Parse any job posting instantly. Extract required experience, technical tools, primary duties, and key challenges from job descriptions with our advanced free AI parser.",
+    description: "Extract required experience, skills, and duties from job posts.",
     keywords: ["job parser","parse job description","extract tech stack","job requirement analyzer","key responsibilities extractor","ATS description extractor","ats job description analyzer"],
     alternates: {
         canonical: "/ai-tools/job-analyzer",
     },
     openGraph: {
         title: "Free AI Job Description Parser & Job posting Analyzer – CVGrid",
-        description: "Parse any job posting instantly. Extract required experience, technical tools, primary duties, and key challenges from job descriptions with our advanced free AI parser.",
+        description: "Extract required experience, skills, and duties from job posts.",
         url: "https://app.cvgrid.in/ai-tools/job-analyzer",
         type: "website",
         images: [
@@ -22,7 +22,7 @@ export const metadata = {
     twitter: {
         card: "summary_large_image",
         title: "Free AI Job Description Parser & Job posting Analyzer – CVGrid",
-        description: "Parse any job posting instantly. Extract required experience, technical tools, primary duties, and key challenges from job descriptions with our advanced free AI parser.",
+        description: "Extract required experience, skills, and duties from job posts.",
         images: ["https://app.cvgrid.in/logo.png"],
     },
 };
@@ -34,7 +34,7 @@ export default function JobAnalyzerLayout({ children }) {
         "@id": "https://app.cvgrid.in/ai-tools/job-analyzer/#page",
         "url": "https://app.cvgrid.in/ai-tools/job-analyzer",
         "name": "Free AI Job Description Parser & Job posting Analyzer – CVGrid",
-        "description": "Parse any job posting instantly. Extract required experience, technical tools, primary duties, and key challenges from job descriptions with our advanced free AI parser.",
+        "description": "Extract required experience, skills, and duties from job posts.",
         "breadcrumb": {
             "@type": "BreadcrumbList",
             "itemListElement": [

@@ -1,13 +1,13 @@
 export const metadata = {
     title: "Free AI ATS Resume Checker & Scorer Online | Check Resume Score Free – CVGrid",
-    description: "Scan your resume for ATS compatibility free. CVGrid's best AI-powered ATS resume checker and scorer evaluates formatting, keywords, sections, and length to help you beat applicant tracking systems.",
+    description: "Scan your resume to check its ATS compatibility score for free.",
     keywords: ["best ats scorer","best ats score checker","free resume checker","ATS score checker","ATS resume scanner","check resume ATS compatibility","free ATS resume analyzer","beat applicant tracking system","resume keyword match tool","best free ATS checker 2026","AI resume checker","resume checker online free","applicant tracking system score","best ATS score analyzer","check resume ats rating online"],
     alternates: {
         canonical: "/ats-checker",
     },
     openGraph: {
         title: "Free AI ATS Resume Checker & Scorer Online | Check Resume Score Free – CVGrid",
-        description: "Scan your resume for ATS compatibility free. CVGrid's best AI-powered ATS resume checker and scorer evaluates formatting, keywords, sections, and length to help you beat applicant tracking systems.",
+        description: "Scan your resume to check its ATS compatibility score for free.",
         url: "https://app.cvgrid.in/ats-checker",
         type: "website",
         images: [
@@ -22,7 +22,7 @@ export const metadata = {
     twitter: {
         card: "summary_large_image",
         title: "Free AI ATS Resume Checker & Scorer Online | Check Resume Score Free – CVGrid",
-        description: "Scan your resume for ATS compatibility free. CVGrid's best AI-powered ATS resume checker and scorer evaluates formatting, keywords, sections, and length to help you beat applicant tracking systems.",
+        description: "Scan your resume to check its ATS compatibility score for free.",
         images: ["https://app.cvgrid.in/logo.png"],
     },
 };
@@ -34,7 +34,7 @@ export default function ATSCheckerLayout({ children }) {
         "@id": "https://app.cvgrid.in/ats-checker/#page",
         "url": "https://app.cvgrid.in/ats-checker",
         "name": "Free AI ATS Resume Checker & Scorer Online | Check Resume Score Free – CVGrid",
-        "description": "Scan your resume for ATS compatibility free. CVGrid's best AI-powered ATS resume checker and scorer evaluates formatting, keywords, sections, and length to help you beat applicant tracking systems.",
+        "description": "Scan your resume to check its ATS compatibility score for free.",
         "breadcrumb": {
             "@type": "BreadcrumbList",
             "itemListElement": [

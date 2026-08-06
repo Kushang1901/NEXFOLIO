@@ -1,13 +1,13 @@
 export const metadata = {
     title: "Free AI Mock Interview Questions & Answers Generator – CVGrid",
-    description: "Generate targeted technical and behavioral interview questions and expert answers based on your resume and target job description using AI.",
+    description: "Generate custom mock interview questions and answers using AI.",
     keywords: ["interview generator","mock interview prep","custom interview questions","career prep","AI interview helper","interview questions and answers","behavioral interview prep generator","technical interview answers ai"],
     alternates: {
         canonical: "/ai-tools/interview-generator",
     },
     openGraph: {
         title: "Free AI Mock Interview Questions & Answers Generator – CVGrid",
-        description: "Generate targeted technical and behavioral interview questions and expert answers based on your resume and target job description using AI.",
+        description: "Generate custom mock interview questions and answers using AI.",
         url: "https://app.cvgrid.in/ai-tools/interview-generator",
         type: "website",
         images: [
@@ -22,7 +22,7 @@ export const metadata = {
     twitter: {
         card: "summary_large_image",
         title: "Free AI Mock Interview Questions & Answers Generator – CVGrid",
-        description: "Generate targeted technical and behavioral interview questions and expert answers based on your resume and target job description using AI.",
+        description: "Generate custom mock interview questions and answers using AI.",
         images: ["https://app.cvgrid.in/logo.png"],
     },
 };
@@ -34,7 +34,7 @@ export default function InterviewGeneratorLayout({ children }) {
         "@id": "https://app.cvgrid.in/ai-tools/interview-generator/#page",
         "url": "https://app.cvgrid.in/ai-tools/interview-generator",
         "name": "Free AI Mock Interview Questions & Answers Generator – CVGrid",
-        "description": "Generate targeted technical and behavioral interview questions and expert answers based on your resume and target job description using AI.",
+        "description": "Generate custom mock interview questions and answers using AI.",
         "breadcrumb": {
             "@type": "BreadcrumbList",
             "itemListElement": [

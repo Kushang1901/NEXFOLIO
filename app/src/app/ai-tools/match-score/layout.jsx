@@ -1,13 +1,13 @@
 export const metadata = {
     title: "Free AI Resume Match Score Checker & ATS Alignment Scorer – CVGrid",
-    description: "Calculate overall ATS alignment, skill gaps, and resume match score against any job description using advanced AI. Optimize your resume for ATS screening.",
+    description: "Check your resume match score and alignment against any job post.",
     keywords: ["ATS match score","resume alignment","skill gap analysis","job description match","ATS compatibility checker","resume score","check resume fit for job description"],
     alternates: {
         canonical: "/ai-tools/match-score",
     },
     openGraph: {
         title: "Free AI Resume Match Score Checker & ATS Alignment Scorer – CVGrid",
-        description: "Calculate overall ATS alignment, skill gaps, and resume match score against any job description using advanced AI. Optimize your resume for ATS screening.",
+        description: "Check your resume match score and alignment against any job post.",
         url: "https://app.cvgrid.in/ai-tools/match-score",
         type: "website",
         images: [
@@ -22,7 +22,7 @@ export const metadata = {
     twitter: {
         card: "summary_large_image",
         title: "Free AI Resume Match Score Checker & ATS Alignment Scorer – CVGrid",
-        description: "Calculate overall ATS alignment, skill gaps, and resume match score against any job description using advanced AI. Optimize your resume for ATS screening.",
+        description: "Check your resume match score and alignment against any job post.",
         images: ["https://app.cvgrid.in/logo.png"],
     },
 };
@@ -34,7 +34,7 @@ export default function MatchScoreLayout({ children }) {
         "@id": "https://app.cvgrid.in/ai-tools/match-score/#page",
         "url": "https://app.cvgrid.in/ai-tools/match-score",
         "name": "Free AI Resume Match Score Checker & ATS Alignment Scorer – CVGrid",
-        "description": "Calculate overall ATS alignment, skill gaps, and resume match score against any job description using advanced AI. Optimize your resume for ATS screening.",
+        "description": "Check your resume match score and alignment against any job post.",
         "breadcrumb": {
             "@type": "BreadcrumbList",
             "itemListElement": [

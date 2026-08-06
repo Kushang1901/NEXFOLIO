@@ -1,6 +1,6 @@
 export const metadata = {
     title: "Privacy Policy – CVGrid",
-    description: "Read the CVGrid privacy policy. Learn how we handle your personal data, secure your resumes, and protect your privacy.",
+    description: "Read CVGrid's privacy policy and learn how we protect your personal data.",
     keywords: [
         "CVGrid privacy policy", "data privacy resume builder", "resume safety CVGrid",
     ],
@@ -13,7 +13,7 @@ export const metadata = {
     },
     openGraph: {
         title: "Privacy Policy – CVGrid AI Resume Builder",
-        description: "Learn how CVGrid protects your privacy and handles personal resume data securely.",
+        description: "Read CVGrid's privacy policy and learn how we protect your personal data.",
         url: "https://app.cvgrid.in/privacy",
         type: "website",
     },

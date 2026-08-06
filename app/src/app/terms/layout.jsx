@@ -1,6 +1,6 @@
 export const metadata = {
     title: "Terms of Service – CVGrid",
-    description: "Read the terms and conditions for using CVGrid's AI resume builder and professional career services.",
+    description: "Read the terms and conditions for using CVGrid's resume builder.",
     keywords: [
         "CVGrid terms of service", "terms and conditions resume builder", "CVGrid usage terms",
     ],
@@ -13,7 +13,7 @@ export const metadata = {
     },
     openGraph: {
         title: "Terms of Service – CVGrid AI Resume Builder",
-        description: "Review the terms and conditions for building and downloading resumes on CVGrid.",
+        description: "Read the terms and conditions for using CVGrid's resume builder.",
         url: "https://app.cvgrid.in/terms",
         type: "website",
     },

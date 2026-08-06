@@ -1,6 +1,6 @@
 export const metadata = {
     title: "Affordable AI Portfolio Builder & Website Generator | CVGrid",
-    description: "Generate stunning personal portfolios with custom layouts at a fraction of the cost. The most affordable, less expensive portfolio builder to generate and download full source code for hosting.",
+    description: "Generate and download professional personal portfolio websites.",
     keywords: [
         "less expensive portfolio builder", "affordable portfolio builder", "cheap portfolio builder",
         "portfolio builder", "AI portfolio", "download portfolio code",
@@ -11,7 +11,7 @@ export const metadata = {
     },
     openGraph: {
         title: "Affordable AI Portfolio Builder & Website Generator | CVGrid",
-        description: "Generate stunning personal portfolios with custom layouts at a fraction of the cost. The most affordable, less expensive portfolio builder.",
+        description: "Generate and download professional personal portfolio websites.",
         url: "https://app.cvgrid.in/ai-tools/portfolio-builder",
         type: "website",
         images: [
@@ -26,7 +26,7 @@ export const metadata = {
     twitter: {
         card: "summary_large_image",
         title: "Affordable AI Portfolio Builder & Website Generator | CVGrid",
-        description: "Generate stunning personal portfolios with custom layouts at a fraction of the cost. The most affordable, less expensive portfolio builder.",
+        description: "Generate and download professional personal portfolio websites.",
         images: ["https://app.cvgrid.in/logo.png"],
     },
 };
@@ -38,7 +38,7 @@ export default function PortfolioBuilderLayout({ children }) {
         "@id": "https://app.cvgrid.in/ai-tools/portfolio-builder/#page",
         "url": "https://app.cvgrid.in/ai-tools/portfolio-builder",
         "name": "Affordable AI Portfolio Builder & Website Generator | CVGrid",
-        "description": "Generate stunning personal portfolios with custom layouts at a fraction of the cost. The most affordable, less expensive portfolio builder.",
+        "description": "Generate and download professional personal portfolio websites.",
         "breadcrumb": {
             "@type": "BreadcrumbList",
             "itemListElement": [

@@ -1,6 +1,6 @@
 export const metadata = {
     title: "ATS Resume Templates – 18+ Free & Premium Designs | CVGrid",
-    description: "Browse 18+ professional resume templates — Classic, Modern, Creative, Executive, Developer, Minimalist, Elegant, Nordic, Aurora, and more. All ATS-optimized with free and premium options.",
+    description: "Browse 18+ free & premium ATS-optimized resume templates.",
     keywords: [
         "free resume templates", "ATS resume templates", "professional resume templates",
         "modern resume template", "classic resume template", "creative resume template",
@@ -14,7 +14,7 @@ export const metadata = {
     },
     openGraph: {
         title: "ATS Resume Templates – 18+ Free & Premium Designs | CVGrid",
-        description: "Browse 18+ professional resume templates. All ATS-optimized. Pick a design and generate your resume with AI in seconds. Free and premium options available.",
+        description: "Browse 18+ free & premium ATS-optimized resume templates.",
         url: "https://app.cvgrid.in/templates",
         type: "website",
         images: [
@@ -29,7 +29,7 @@ export const metadata = {
     twitter: {
         card: "summary_large_image",
         title: "18+ Professional ATS Resume Templates – CVGrid",
-        description: "Classic, Modern, Creative, Executive, Developer, Minimalist and many more. All ATS-optimized. Free & premium templates.",
+        description: "Browse 18+ free & premium ATS-optimized resume templates.",
         images: ["https://app.cvgrid.in/logo.png"],
     },
 };
@@ -41,7 +41,7 @@ export default function TemplatesLayout({ children }) {
         "@id": "https://app.cvgrid.in/templates/#page",
         "url": "https://app.cvgrid.in/templates",
         "name": "ATS Resume Templates – CVGrid",
-        "description": "Browse 18+ professional, ATS-friendly resume templates. Choose from Classic, Modern, Creative, Executive, Developer, Minimalist, Elegant and more. Free and premium tiers available.",
+        "description": "Browse 18+ free & premium ATS-optimized resume templates.",
         "breadcrumb": {
             "@type": "BreadcrumbList",
             "itemListElement": [
