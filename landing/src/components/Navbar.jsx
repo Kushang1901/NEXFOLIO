@@ -6,8 +6,9 @@ import { useRouter, usePathname } from "next/navigation";
 import { Home, Palette, FileSignature, Target, Sparkles, FileText, X, ArrowRight, ChevronDown, User, Briefcase, KeyRound, HelpCircle, Crown, Share2 } from "lucide-react";
 
 const NAV_LINKS = [
-    { label: "Home", href: "https://cvgrid.in" },
+    { label: "Home", href: "/" },
     { label: "Templates", href: "https://app.cvgrid.in/templates" },
+    { label: "Blog", href: "/blog" },
     { label: "AI Cover Letter", href: "https://app.cvgrid.in/cover-letter" },
     { label: "ATS Checker", href: "https://app.cvgrid.in/ats-checker" },
     { label: "AI Tools", href: "https://app.cvgrid.in/ai-tools" },
@@ -76,7 +77,8 @@ export default function Navbar() {
 
     const closeMenu = () => setMenuOpen(false);
     const isActive = (href) => {
-        if (href === "https://cvgrid.in" && pathname === "/") return true;
+        if (href === "/" && pathname === "/") return true;
+        if (href === "/blog" && pathname.startsWith("/blog")) return true;
         return false;
     };
 
@@ -593,11 +595,18 @@ export default function Navbar() {
                                 );
                             }
 
+                            const isLocal = link.href.startsWith("/");
                             return (
                                 <div key={link.href} className="nav-item-wrapper">
-                                    <a href={link.href} className={`nav-link-item ${isActive(link.href) ? 'active' : ''}`}>
-                                        {link.label}
-                                    </a>
+                                    {isLocal ? (
+                                        <Link href={link.href} className={`nav-link-item ${isActive(link.href) ? 'active' : ''}`}>
+                                            {link.label}
+                                        </Link>
+                                    ) : (
+                                        <a href={link.href} className={`nav-link-item ${isActive(link.href) ? 'active' : ''}`}>
+                                            {link.label}
+                                        </a>
+                                    )}
                                 </div>
                             );
                         })}
@@ -893,7 +902,21 @@ export default function Navbar() {
                             );
                         }
                         
-                        return (
+                        const isLocal = link.href.startsWith("/");
+                        return isLocal ? (
+                            <Link key={link.href} href={link.href} onClick={closeMenu} style={{
+                                ...drawerLinkStyle,
+                                color: isActive(link.href) ? "#fff" : "rgba(255,255,255,0.75)",
+                                background: isActive(link.href) ? "rgba(111,157,255,0.1)" : "transparent",
+                                borderLeft: isActive(link.href) ? "3px solid #6f9dff" : "3px solid transparent",
+                                display: "flex",
+                                alignItems: "center",
+                                gap: "10px",
+                            }}>
+                                {Icon ? <Icon size={16} /> : null}
+                                {link.label}
+                            </Link>
+                        ) : (
                             <a key={link.href} href={link.href} onClick={closeMenu} style={{
                                 ...drawerLinkStyle,
                                 color: isActive(link.href) ? "#fff" : "rgba(255,255,255,0.75)",
@@ -1013,6 +1036,7 @@ const drawerLinkStyle = {
 const drawerIcons = {
     "/": Home,
     "https://app.cvgrid.in/templates": Palette,
+    "/blog": FileText,
     "https://app.cvgrid.in/cover-letter": FileSignature,
     "https://app.cvgrid.in/ats-checker": Target,
     "https://app.cvgrid.in/ai-tools": Sparkles,

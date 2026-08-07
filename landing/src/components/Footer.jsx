@@ -77,9 +77,12 @@ export default function Footer() {
                         <a className="text-[#c7c4d7] hover:text-white transition-colors duration-200 no-underline text-sm py-1" href="https://docs.cvgrid.in" style={{ fontFamily: "var(--font-inter), sans-serif" }}>
                             Documentation
                         </a>
-                        <a className="text-[#c7c4d7] hover:text-white transition-colors duration-200 no-underline text-sm py-1" href="https://app.cvgrid.in/contact" style={{ fontFamily: "var(--font-inter), sans-serif" }}>
-                            Contact Support
-                        </a>
+                        <Link className="text-[#c7c4d7] hover:text-white transition-colors duration-200 no-underline text-sm py-1" href="/contact" style={{ fontFamily: "var(--font-inter), sans-serif" }}>
+                            Contact Us
+                        </Link>
+                        <Link className="text-[#c7c4d7] hover:text-white transition-colors duration-200 text-sm py-1 no-underline" href="/blog" style={{ fontFamily: "var(--font-inter), sans-serif" }}>
+                            Resources &amp; Blog
+                        </Link>
                     </div>
 
                     {/* Col 3: Social & Media */}
@@ -129,16 +132,22 @@ export default function Footer() {
                 </div>
                 
                 {/* Right side Policy Links */}
-                <div className="flex gap-6 font-medium order-1 md:order-2">
-                    <a className="text-[#c7c4d7] hover:text-white transition-colors duration-200 no-underline" href="https://app.cvgrid.in/privacy">
+                <div className="flex flex-wrap gap-4 md:gap-6 font-medium order-1 md:order-2">
+                    <Link className="text-[#c7c4d7] hover:text-white transition-colors duration-200 no-underline" href="/about">
+                        About Us
+                    </Link>
+                    <Link className="text-[#c7c4d7] hover:text-white transition-colors duration-200 no-underline" href="/blog">
+                        Blog
+                    </Link>
+                    <Link className="text-[#c7c4d7] hover:text-white transition-colors duration-200 no-underline" href="/privacy">
                         Privacy Policy
-                    </a>
-                    <a className="text-[#c7c4d7] hover:text-white transition-colors duration-200 no-underline" href="https://app.cvgrid.in/terms">
+                    </Link>
+                    <Link className="text-[#c7c4d7] hover:text-white transition-colors duration-200 no-underline" href="/terms">
                         Terms of Service
-                    </a>
-                    <a className="text-[#c7c4d7] hover:text-white transition-colors duration-200 no-underline" href="https://app.cvgrid.in/contact">
-                        Contact Support
-                    </a>
+                    </Link>
+                    <Link className="text-[#c7c4d7] hover:text-white transition-colors duration-200 no-underline" href="/contact">
+                        Contact Us
+                    </Link>
                 </div>
             </div>
         </footer>
