@@ -737,13 +737,7 @@ export default function Navbar() {
                                 </div>
                             );
                         })}
-                        {user && (
-                            <div className="nav-item-wrapper">
-                                <Link href="/my-resumes" className={`nav-link-item ${isActive("/my-resumes") ? 'active' : ''}`}>
-                                    My Resumes
-                                </Link>
-                            </div>
-                        )}
+
                     </div>
 
                     {/* ── Desktop: Right Auth Actions ── */}
@@ -1211,19 +1205,7 @@ export default function Navbar() {
                             </Link>
                         );
                     })}
-                    {user && (
-                        <Link href="/my-resumes" onClick={closeMenu} style={{
-                            ...drawerLinkStyle,
-                            color: isActive("/my-resumes") ? "#fff" : "rgba(255,255,255,0.75)",
-                            background: isActive("/my-resumes") ? "rgba(111,157,255,0.1)" : "transparent",
-                            borderLeft: isActive("/my-resumes") ? "3px solid #6f9dff" : "3px solid transparent",
-                            display: "flex",
-                            alignItems: "center",
-                            gap: "10px",
-                        }}>
-                            <FileText size={16} /> My Resumes
-                        </Link>
-                    )}
+
                     {user && (
                         <Link href="/profile" onClick={closeMenu} style={{
                             ...drawerLinkStyle,
