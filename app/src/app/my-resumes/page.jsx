@@ -353,13 +353,26 @@ export default function MyResumesPage() {
             {/* Tips banner */}
             {resumes.length > 0 && (
                 <div style={{ maxWidth: "1040px", margin: "0 auto 48px", padding: "0 24px" }}>
-                    <div style={{ background: "rgba(99,102,241,0.06)", border: "1px solid rgba(99,102,241,0.2)", borderRadius: "14px", padding: "20px 24px", display: "flex", gap: "16px", alignItems: "flex-start", flexWrap: "wrap" }}>
-                        <Lightbulb size={22} color="#a5b4fc" style={{ flexShrink: 0 }} />
-                        <div style={{ flex: 1 }}>
-                            <p style={{ fontWeight: "700", marginBottom: "4px", color: "#a5b4fc", fontSize: "0.9rem" }}>Pro Tip</p>
-                            <p style={{ color: "rgba(255,255,255,0.5)", fontSize: "0.86rem", margin: 0, lineHeight: "1.6" }}>
-                                Tailor a different resume for each job application. Use our <Link href="/ats-checker" style={{ color: "#6366f1", fontWeight: "600" }}>ATS Checker</Link> to optimize your resume for each role before applying.
-                            </p>
+                    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: "20px" }}>
+                        {/* Tip 1 */}
+                        <div style={{ background: "rgba(99,102,241,0.06)", border: "1px solid rgba(99,102,241,0.2)", borderRadius: "14px", padding: "20px 24px", display: "flex", gap: "16px", alignItems: "flex-start" }}>
+                            <Lightbulb size={22} color="#a5b4fc" style={{ flexShrink: 0, marginTop: "2px" }} />
+                            <div>
+                                <p style={{ fontWeight: "700", marginBottom: "4px", color: "#a5b4fc", fontSize: "0.9rem" }}>Optimize Score</p>
+                                <p style={{ color: "rgba(255,255,255,0.5)", fontSize: "0.86rem", margin: 0, lineHeight: "1.6" }}>
+                                    Tailor a different resume for each application. Use our <Link href="/ats-checker" style={{ color: "#818cf8", fontWeight: "600" }}>ATS Checker</Link> to scan for matching keywords.
+                                </p>
+                            </div>
+                        </div>
+                        {/* Tip 2 */}
+                        <div style={{ background: "rgba(168,85,247,0.06)", border: "1px solid rgba(168,85,247,0.2)", borderRadius: "14px", padding: "20px 24px", display: "flex", gap: "16px", alignItems: "flex-start" }}>
+                            <FileText size={22} color="#c084fc" style={{ flexShrink: 0, marginTop: "2px" }} />
+                            <div>
+                                <p style={{ fontWeight: "700", marginBottom: "4px", color: "#c084fc", fontSize: "0.9rem" }}>PDF &amp; File Utilities</p>
+                                <p style={{ color: "rgba(255,255,255,0.5)", fontSize: "0.86rem", margin: 0, lineHeight: "1.6" }}>
+                                    Need to merge your cover letter, compress your PDF, or convert portfolio images? Use our 100% private, free <a href="https://convert.cvgrid.in" target="_blank" rel="noopener noreferrer" style={{ color: "#a855f7", fontWeight: "600" }}>PDF Tools Suite</a>.
+                                </p>
+                            </div>
                         </div>
                     </div>
                 </div>

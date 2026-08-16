@@ -12,6 +12,7 @@ const NAV_LINKS = [
     { label: "AI Cover Letter", href: "https://app.cvgrid.in/cover-letter" },
     { label: "ATS Checker", href: "https://app.cvgrid.in/ats-checker" },
     { label: "AI Tools", href: "https://app.cvgrid.in/ai-tools" },
+    { label: "PDF Tools", href: "https://convert.cvgrid.in" },
     { label: "Docs", href: "https://docs.cvgrid.in" },
 ];
 

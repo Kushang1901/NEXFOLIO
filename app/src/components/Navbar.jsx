@@ -15,6 +15,7 @@ const NAV_LINKS = [
     { label: "AI Cover Letter", href: "/cover-letter" },
     { label: "ATS Checker", href: "/ats-checker" },
     { label: "AI Tools", href: "/ai-tools" },
+    { label: "PDF Tools", href: "https://convert.cvgrid.in" },
     { label: "Docs", href: "https://docs.cvgrid.in" },
 ];
 

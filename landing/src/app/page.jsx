@@ -592,6 +592,98 @@ export default function HomePage() {
                         </div>
                     </section>
 
+                    {/* PDF & File Conversion Tools Section */}
+                    <section className="px-4 md:px-8 py-24 max-w-[1280px] mx-auto border-t border-white/5 relative">
+                        <div className="absolute top-1/2 left-1/4 w-[400px] h-[400px] rounded-full bg-indigo-500/5 blur-[100px] pointer-events-none"></div>
+                        <div className="absolute bottom-1/4 right-1/4 w-[300px] h-[300px] rounded-full bg-purple-500/5 blur-[100px] pointer-events-none"></div>
+
+                        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center relative z-10">
+                            {/* Left Text Block */}
+                            <div className="lg:col-span-5">
+                                <ScrollReveal delay={100}>
+                                    <span className="px-3.5 py-1.5 rounded-full bg-[#a855f7]/10 border border-[#a855f7]/30 text-[#c084fc] text-xs font-semibold tracking-wider uppercase mb-4 inline-block">
+                                        🔒 Local-First processing
+                                    </span>
+                                    <h2 className="text-3xl md:text-5xl font-bold mb-6 text-white tracking-tight leading-tight" style={{ fontFamily: "var(--font-space-grotesk), sans-serif" }}>
+                                        Power tools for <br className="hidden md:inline" />
+                                        your document <span className="font-light italic">workflows</span>.
+                                    </h2>
+                                    <p className="text-[#c7c4d7] text-base leading-relaxed mb-8" style={{ fontFamily: "var(--font-inter), sans-serif" }}>
+                                        We built a suite of document helpers that run entirely in your browser. Since files are never sent to a server, your sensitive contact details and credentials remain completely secure.
+                                    </p>
+                                    <a 
+                                        href="https://convert.cvgrid.in" 
+                                        target="_blank" 
+                                        rel="noopener noreferrer"
+                                        className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl text-white font-bold text-sm bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 shadow-md shadow-indigo-600/20 hover:scale-102 transition-all duration-200 no-underline"
+                                    >
+                                        Launch File Convert Suite <ArrowRight className="w-4 h-4" />
+                                    </a>
+                                </ScrollReveal>
+                            </div>
+
+                            {/* Right Grid Block (Tools list) */}
+                            <div className="lg:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-6">
+                                {[
+                                    {
+                                        title: "PDF to PNG Converter",
+                                        desc: "Export clean, high-res page images to upload to online portals.",
+                                        icon: "image",
+                                        border: "border-blue-500/20 hover:border-blue-500/40",
+                                        badge: "Free"
+                                    },
+                                    {
+                                        title: "PNG to PDF Compiler",
+                                        desc: "Combine screenshots of degrees or projects into a single document.",
+                                        icon: "images",
+                                        border: "border-emerald-500/20 hover:border-emerald-500/40",
+                                        badge: "Multi-file"
+                                    },
+                                    {
+                                        title: "PDF Merge Tool",
+                                        desc: "Combine cover letters, resumes, and certificates in seconds.",
+                                        icon: "file_copy",
+                                        border: "border-purple-500/20 hover:border-purple-500/40",
+                                        badge: "Popular"
+                                    },
+                                    {
+                                        title: "PDF Splitter & Optimizer",
+                                        desc: "Extract specific pages or page ranges from larger portfolios.",
+                                        icon: "content_cut",
+                                        border: "border-amber-500/20 hover:border-amber-500/40",
+                                        badge: "Precise"
+                                    }
+                                ].map((tool, idx) => (
+                                    <ScrollReveal key={idx} delay={idx * 100}>
+                                        <a 
+                                            href="https://convert.cvgrid.in"
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className={`glass-card p-6 rounded-2xl border ${tool.border} flex flex-col gap-4 text-left group no-underline h-full`}
+                                        >
+                                            <div className="flex justify-between items-center">
+                                                <span className="material-symbols-outlined text-[#c0c1ff] text-2xl group-hover:scale-110 transition-transform duration-300">
+                                                    {tool.icon}
+                                                </span>
+                                                <span className="text-[9px] font-bold text-gray-500 uppercase tracking-widest bg-white/5 border border-white/10 px-2 py-0.5 rounded-full">
+                                                    {tool.badge}
+                                                </span>
+                                            </div>
+                                            <div>
+                                                <h4 className="text-base font-bold text-white mb-2 font-space-grotesk group-hover:text-indigo-300 transition-colors">
+                                                    {tool.title}
+                                                </h4>
+                                                <p className="text-gray-400 text-xs leading-relaxed" style={{ fontFamily: "var(--font-inter), sans-serif" }}>
+                                                    {tool.desc}
+                                                </p>
+                                            </div>
+                                        </a>
+                                    </ScrollReveal>
+                                ))}
+                            </div>
+                        </div>
+                    </section>
+
                     {/* Competitor Comparison / Less Expensive CV Maker Section */}
                     <section className="px-4 md:px-8 py-24 max-w-[1280px] mx-auto border-t border-white/5 relative">
                         <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[350px] h-[350px] rounded-full bg-purple-500/5 blur-[80px] pointer-events-none"></div>
