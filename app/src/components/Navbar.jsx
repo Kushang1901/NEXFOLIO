@@ -747,15 +747,16 @@ export default function Navbar() {
                                 <button 
                                     onClick={() => setProfileDropdownOpen(prev => !prev)}
                                     style={{
-                                        ...profileCapsuleStyle,
                                         background: profileDropdownOpen ? "rgba(255, 255, 255, 0.09)" : "rgba(255, 255, 255, 0.05)",
                                         borderColor: profileDropdownOpen ? "rgba(255, 255, 255, 0.15)" : "rgba(255, 255, 255, 0.08)",
+                                        border: "1px solid rgba(255, 255, 255, 0.08)",
+                                        borderRadius: "50%",
+                                        width: "36px",
+                                        height: "36px",
                                         display: "flex",
                                         alignItems: "center",
-                                        gap: "8px",
-                                        padding: "4px 8px 4px 4px",
-                                        border: "1px solid rgba(255, 255, 255, 0.08)",
-                                        borderRadius: "30px",
+                                        justifyContent: "center",
+                                        padding: 0,
                                         transition: "all 0.2s ease",
                                         cursor: "pointer",
                                         color: "inherit"
@@ -766,10 +767,6 @@ export default function Navbar() {
                                     ) : (
                                         <div style={avatarStyle}>{(displayName || user.email).charAt(0).toUpperCase()}</div>
                                     )}
-                                    <span style={{ color: "rgba(255, 255, 255, 0.9)", fontSize: "0.85rem", fontWeight: "500", maxWidth: "120px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                                        {displayName || user.email}
-                                    </span>
-                                    <ChevronDown size={14} style={{ color: "rgba(255,255,255,0.5)", transition: "transform 0.2s", transform: profileDropdownOpen ? "rotate(180deg)" : "rotate(0)" }} />
                                 </button>
 
                                 {profileDropdownOpen && (
