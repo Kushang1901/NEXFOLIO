@@ -12,6 +12,7 @@ import { Home, Palette, FileSignature, Target, Sparkles, FileText, X, ArrowRight
 const NAV_LINKS = [
     { label: "Home", href: "/" },
     { label: "Templates", href: "/templates" },
+    { label: "Blog", href: "https://cvgrid.in/blog" },
     { label: "AI Cover Letter", href: "/cover-letter" },
     { label: "ATS Checker", href: "/ats-checker" },
     { label: "AI Tools", href: "/ai-tools" },
@@ -1393,6 +1394,7 @@ const drawerLinkStyle = {
 const drawerIcons = {
     "/": Home,
     "/templates": Palette,
+    "https://cvgrid.in/blog": FileText,
     "/cover-letter": FileSignature,
     "/ats-checker": Target,
     "/ai-tools": Sparkles,
