@@ -615,6 +615,7 @@ export default function Navbar() {
                                             boxShadow: "0 2px 10px rgba(168,85,247,0.3)",
                                             transition: "all 0.2s ease",
                                             border: "none",
+                                            whiteSpace: "nowrap",
                                         }}
                                         onMouseEnter={e => {
                                             e.currentTarget.style.transform = "translateY(-1px)";
@@ -1012,10 +1013,10 @@ export default function Navbar() {
                 }
                 .nav-link-item {
                     text-decoration: none !important;
-                    font-size: 0.85rem;
+                    font-size: 0.82rem;
                     font-weight: 500;
                     height: 34px;
-                    padding: 0 16px;
+                    padding: 0 12px;
                     border-radius: 9999px;
                     transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
                     white-space: nowrap;
