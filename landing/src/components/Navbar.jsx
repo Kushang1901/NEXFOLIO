@@ -596,6 +596,42 @@ export default function Navbar() {
                                 );
                             }
 
+                            if (link.label === "PDF Tools") {
+                                return (
+                                    <div key={link.href} className="nav-item-wrapper" style={{ padding: "0 4px" }}>
+                                        <a href={link.href} target="_blank" rel="noopener noreferrer" style={{
+                                            textDecoration: "none",
+                                            fontSize: "0.82rem",
+                                            fontWeight: "700",
+                                            height: "34px",
+                                            padding: "0 16px",
+                                            borderRadius: "9999px",
+                                            display: "flex",
+                                            alignItems: "center",
+                                            justifyContent: "center",
+                                            gap: "6px",
+                                            background: "linear-gradient(135deg, #a855f7, #6366f1)",
+                                            color: "#ffffff",
+                                            boxShadow: "0 2px 10px rgba(168,85,247,0.3)",
+                                            transition: "all 0.2s ease",
+                                            border: "none",
+                                        }}
+                                        onMouseEnter={e => {
+                                            e.currentTarget.style.transform = "translateY(-1px)";
+                                            e.currentTarget.style.boxShadow = "0 4px 15px rgba(168,85,247,0.5)";
+                                        }}
+                                        onMouseLeave={e => {
+                                            e.currentTarget.style.transform = "translateY(0)";
+                                            e.currentTarget.style.boxShadow = "0 2px 10px rgba(168,85,247,0.3)";
+                                        }}
+                                        >
+                                            <FileText size={13} />
+                                            {link.label}
+                                        </a>
+                                    </div>
+                                );
+                            }
+
                             const isLocal = link.href.startsWith("/");
                             return (
                                 <div key={link.href} className="nav-item-wrapper">
@@ -903,6 +939,24 @@ export default function Navbar() {
                             );
                         }
                         
+                        if (link.label === "PDF Tools") {
+                            return (
+                                <a key={link.href} href={link.href} target="_blank" rel="noopener noreferrer" onClick={closeMenu} style={{
+                                    ...drawerLinkStyle,
+                                    color: "#fff",
+                                    background: "linear-gradient(135deg, rgba(168,85,247,0.15), rgba(99,102,241,0.15))",
+                                    borderLeft: "3px solid #a855f7",
+                                    display: "flex",
+                                    alignItems: "center",
+                                    gap: "10px",
+                                    fontWeight: "600",
+                                }}>
+                                    <FileText size={16} color="#c084fc" />
+                                    {link.label}
+                                </a>
+                            );
+                        }
+
                         const isLocal = link.href.startsWith("/");
                         return isLocal ? (
                             <Link key={link.href} href={link.href} onClick={closeMenu} style={{
