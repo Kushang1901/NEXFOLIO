@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import {
   Image as ImageIcon,
@@ -9,63 +9,81 @@ import {
   Scissors,
   Zap,
   Lock,
-  Compass,
   ArrowRight,
   ChevronDown,
   ShieldCheck,
   CheckCircle,
+  FileText,
+  Wifi,
+  Clock,
+  Star,
 } from "lucide-react";
 
 const TOOLS = [
   {
-    title: "PDF to PNG Converter",
+    title: "PDF to PNG",
+    subtitle: "PDF Converter",
     description:
-      "Convert your PDF pages into high-quality PNG or JPG images instantly. Ideal for sharing resume pages on LinkedIn or portfolio sites.",
+      "Convert any PDF page into a crisp PNG or JPG. Share resume pages on LinkedIn, embed them in portfolios, or extract diagrams for presentations.",
     href: "/pdf-to-image",
     Icon: ImageIcon,
     badge: "100% Free",
-    color: "from-blue-500 to-indigo-600",
-    glowColor: "rgba(59, 130, 246, 0.15)",
+    accent: "#3b82f6",
+    accentDim: "rgba(59,130,246,0.12)",
+    accentBorder: "rgba(59,130,246,0.25)",
+    tag: "Most Popular",
   },
   {
-    title: "PNG to PDF Converter",
+    title: "Images to PDF",
+    subtitle: "Image Combiner",
     description:
-      "Combine PNG, JPG, or WebP images into a single clean PDF. Perfect for turning scanned degree certificates or project screenshots into an attachment.",
+      "Stack PNG, JPG, or WebP images into one clean PDF — turn scanned certificates, offer letters, or project screenshots into a single shareable file.",
     href: "/image-to-pdf",
     Icon: Images,
     badge: "Multi-file",
-    color: "from-emerald-500 to-teal-600",
-    glowColor: "rgba(16, 185, 129, 0.15)",
+    accent: "#10b981",
+    accentDim: "rgba(16,185,129,0.12)",
+    accentBorder: "rgba(16,185,129,0.25)",
+    tag: null,
   },
   {
-    title: "Merge PDF Documents",
+    title: "Merge PDFs",
+    subtitle: "PDF Combiner",
     description:
-      "Combine multiple PDF files into one single document. Easily merge your resume, cover letter, and references into one application package.",
+      "Stitch multiple PDF files into one document. Bundle your resume, cover letter, and references into a single polished application package.",
     href: "/merge",
     Icon: FileStack,
     badge: "Most Used",
-    color: "from-purple-500 to-pink-600",
-    glowColor: "rgba(168, 85, 247, 0.15)",
+    accent: "#a855f7",
+    accentDim: "rgba(168,85,247,0.12)",
+    accentBorder: "rgba(168,85,247,0.25)",
+    tag: null,
   },
   {
-    title: "Split PDF Pages",
+    title: "Split PDF",
+    subtitle: "Page Extractor",
     description:
-      "Extract specific pages or page ranges from a PDF. Separate a single page CV from a multi-page portfolio in seconds.",
+      "Pick and pull specific pages or ranges from any PDF. Instantly separate a one-page CV from a multi-page portfolio in seconds.",
     href: "/split",
     Icon: Scissors,
-    badge: "Highly Precise",
-    color: "from-amber-500 to-orange-600",
-    glowColor: "rgba(245, 158, 11, 0.15)",
+    badge: "Precise",
+    accent: "#f59e0b",
+    accentDim: "rgba(245,158,11,0.12)",
+    accentBorder: "rgba(245,158,11,0.25)",
+    tag: null,
   },
   {
-    title: "Compress PDF Size",
+    title: "Compress PDF",
+    subtitle: "File Optimizer",
     description:
-      "Reduce the file size of your PDF while maintaining text and image quality. Beat job portal upload limits (e.g., <2MB) easily.",
+      "Shrink PDF file size without visible quality loss. Beat job portal limits like the common 2MB cap — ATS-friendly output guaranteed.",
     href: "/compress",
     Icon: Zap,
     badge: "ATS Ready",
-    color: "from-rose-500 to-red-600",
-    glowColor: "rgba(244, 63, 94, 0.15)",
+    accent: "#ef4444",
+    accentDim: "rgba(239,68,68,0.12)",
+    accentBorder: "rgba(239,68,68,0.25)",
+    tag: null,
   },
 ];
 
@@ -80,7 +98,7 @@ const FAQS = [
   },
   {
     q: "Will the formatting of my resume change during PDF merging or splitting?",
-    a: "No. Our tools use high-fidelity PDF manipulation engines (`pdf-lib` and `pdf.js`) that read and edit the existing PDF structures directly without re-rendering or changing your resume's layouts, fonts, or styling.",
+    a: "No. Our tools use high-fidelity PDF manipulation engines (pdf-lib and pdf.js) that read and edit the existing PDF structures directly without re-rendering or changing your resume's layouts, fonts, or styling.",
   },
   {
     q: "Can I convert MS Word (.docx) or Excel (.xlsx) files?",
@@ -88,75 +106,560 @@ const FAQS = [
   },
 ];
 
+function AnimatedNumber({ target, suffix = "" }) {
+  const [count, setCount] = useState(0);
+  const ref = useRef(null);
+  const started = useRef(false);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && !started.current) {
+          started.current = true;
+          let start = 0;
+          const duration = 1800;
+          const step = (timestamp) => {
+            if (!start) start = timestamp;
+            const progress = Math.min((timestamp - start) / duration, 1);
+            const ease = 1 - Math.pow(1 - progress, 3);
+            setCount(Math.floor(ease * target));
+            if (progress < 1) requestAnimationFrame(step);
+          };
+          requestAnimationFrame(step);
+        }
+      },
+      { threshold: 0.5 }
+    );
+    if (ref.current) observer.observe(ref.current);
+    return () => observer.disconnect();
+  }, [target]);
+
+  return (
+    <span ref={ref}>
+      {count.toLocaleString()}
+      {suffix}
+    </span>
+  );
+}
+
 export default function Home() {
   const [openFaq, setOpenFaq] = useState(null);
-
-  const toggleFaq = (index) => {
-    setOpenFaq(openFaq === index ? null : index);
-  };
+  const toggleFaq = (index) => setOpenFaq(openFaq === index ? null : index);
 
   return (
     <div className="flex-grow flex flex-col relative overflow-hidden">
-      {/* Background Gradients */}
-      <div className="absolute top-20 left-1/2 -translate-x-1/2 w-[800px] h-[350px] bg-gradient-to-r from-indigo-500/10 via-purple-500/5 to-pink-500/10 blur-[120px] rounded-full pointer-events-none -z-10 animate-pulse-slow"></div>
+      {/* ── Ambient Background ── */}
+      <div className="pointer-events-none fixed inset-0 -z-10">
+        <div
+          style={{
+            position: "absolute",
+            top: "-10%",
+            left: "55%",
+            width: "600px",
+            height: "600px",
+            background:
+              "radial-gradient(circle, rgba(99,102,241,0.08) 0%, transparent 70%)",
+            borderRadius: "50%",
+          }}
+        />
+        <div
+          style={{
+            position: "absolute",
+            top: "30%",
+            left: "-5%",
+            width: "400px",
+            height: "400px",
+            background:
+              "radial-gradient(circle, rgba(168,85,247,0.06) 0%, transparent 70%)",
+            borderRadius: "50%",
+          }}
+        />
+      </div>
 
-      {/* Hero Section */}
-      <section className="text-center pt-20 pb-16 px-6 max-w-4xl mx-auto">
-        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-indigo-500/10 border border-indigo-500/30 text-indigo-300 text-xs font-semibold mb-6 tracking-wide uppercase">
-          <Lock className="w-3.5 h-3.5" /> 100% Private Client-Side Conversion
+      {/* ══════════════════════════════════════
+          HERO — Split Layout
+      ══════════════════════════════════════ */}
+      <section
+        style={{
+          maxWidth: "1200px",
+          margin: "0 auto",
+          padding: "80px 24px 64px",
+          width: "100%",
+          display: "grid",
+          gridTemplateColumns: "1fr 1fr",
+          gap: "64px",
+          alignItems: "center",
+        }}
+        className="hero-grid"
+      >
+        {/* Left — Copy */}
+        <div>
+          {/* Eyebrow */}
+          <div
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: "8px",
+              background: "rgba(99,102,241,0.08)",
+              border: "1px solid rgba(99,102,241,0.2)",
+              borderRadius: "999px",
+              padding: "6px 14px",
+              marginBottom: "28px",
+            }}
+          >
+            <span
+              style={{
+                width: "6px",
+                height: "6px",
+                borderRadius: "50%",
+                background: "#6366f1",
+                display: "inline-block",
+                boxShadow: "0 0 8px rgba(99,102,241,0.8)",
+              }}
+            />
+            <span
+              style={{
+                fontSize: "11px",
+                fontWeight: 600,
+                letterSpacing: "0.08em",
+                color: "#a5b4fc",
+                textTransform: "uppercase",
+              }}
+            >
+              Browser-native · Zero uploads
+            </span>
+          </div>
+
+          {/* Headline */}
+          <h1
+            style={{
+              fontSize: "clamp(36px, 5vw, 58px)",
+              fontWeight: 800,
+              lineHeight: 1.1,
+              color: "#fff",
+              marginBottom: "20px",
+              letterSpacing: "-0.02em",
+            }}
+            className="font-space-grotesk"
+          >
+            PDF tools that{" "}
+            <span
+              style={{
+                background: "linear-gradient(135deg, #6366f1 0%, #c084fc 100%)",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+              }}
+            >
+              respect
+            </span>
+            <br />
+            your privacy.
+          </h1>
+
+          {/* Sub-copy */}
+          <p
+            style={{
+              fontSize: "16px",
+              color: "#9ca3af",
+              lineHeight: 1.7,
+              marginBottom: "36px",
+              maxWidth: "440px",
+            }}
+          >
+            Convert, merge, split and compress PDFs — entirely inside your
+            browser. No account, no server, no data leaving your machine.
+          </p>
+
+          {/* CTA Row */}
+          <div style={{ display: "flex", gap: "12px", flexWrap: "wrap" }}>
+            <Link
+              href="/merge"
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "8px",
+                padding: "13px 26px",
+                borderRadius: "10px",
+                background: "linear-gradient(135deg, #6366f1, #8b5cf6)",
+                color: "#fff",
+                fontWeight: 600,
+                fontSize: "14px",
+                textDecoration: "none",
+                transition: "opacity 0.2s, transform 0.2s",
+                boxShadow: "0 4px 24px rgba(99,102,241,0.35)",
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.opacity = "0.9";
+                e.currentTarget.style.transform = "translateY(-1px)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.opacity = "1";
+                e.currentTarget.style.transform = "translateY(0)";
+              }}
+            >
+              Merge PDFs <ArrowRight size={15} />
+            </Link>
+            <Link
+              href="/pdf-to-image"
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "8px",
+                padding: "13px 26px",
+                borderRadius: "10px",
+                background: "rgba(255,255,255,0.04)",
+                border: "1px solid rgba(255,255,255,0.1)",
+                color: "#e5e7eb",
+                fontWeight: 500,
+                fontSize: "14px",
+                textDecoration: "none",
+                transition: "background 0.2s, border-color 0.2s",
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = "rgba(255,255,255,0.08)";
+                e.currentTarget.style.borderColor = "rgba(255,255,255,0.18)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = "rgba(255,255,255,0.04)";
+                e.currentTarget.style.borderColor = "rgba(255,255,255,0.1)";
+              }}
+            >
+              PDF to Image
+            </Link>
+          </div>
+
+          {/* Trust Badges */}
+          <div
+            style={{
+              marginTop: "40px",
+              display: "flex",
+              gap: "24px",
+              flexWrap: "wrap",
+            }}
+          >
+            {[
+              { icon: Lock, label: "No uploads, ever" },
+              { icon: Wifi, label: "Works offline" },
+              { icon: ShieldCheck, label: "GDPR safe" },
+            ].map(({ icon: Icon, label }) => (
+              <div
+                key={label}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "7px",
+                  color: "#6b7280",
+                  fontSize: "13px",
+                }}
+              >
+                <Icon size={14} color="#6366f1" />
+                {label}
+              </div>
+            ))}
+          </div>
         </div>
-        <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight leading-tight mb-6 font-space-grotesk text-white">
-          Convert, Merge, &amp; Optimize <br />
-          <span className="bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400">
-            Your Career Documents
-          </span>
-        </h1>
-        <p className="text-base md:text-lg text-gray-400 max-w-2xl mx-auto leading-relaxed mb-8">
-          Lightweight, lightning-fast utilities designed for job seekers. Merge cover letters, split portfolios, reduce PDF sizes, and convert documents safely without any uploads.
-        </p>
+
+        {/* Right — Visual Card Stack */}
+        <div style={{ position: "relative", height: "380px" }}>
+          {/* Background file card */}
+          <div
+            style={{
+              position: "absolute",
+              top: "30px",
+              right: "0",
+              width: "260px",
+              background: "rgba(28,32,45,0.8)",
+              border: "1px solid rgba(255,255,255,0.07)",
+              borderRadius: "16px",
+              padding: "20px",
+              transform: "rotate(3deg)",
+              backdropFilter: "blur(12px)",
+            }}
+          >
+            <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "14px" }}>
+              <div style={{ width: "32px", height: "32px", borderRadius: "8px", background: "rgba(239,68,68,0.15)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                <FileText size={16} color="#ef4444" />
+              </div>
+              <div>
+                <div style={{ fontSize: "13px", fontWeight: 600, color: "#fff" }}>Resume_Final_v3.pdf</div>
+                <div style={{ fontSize: "11px", color: "#6b7280" }}>4.2 MB</div>
+              </div>
+            </div>
+            <div style={{ height: "4px", borderRadius: "2px", background: "rgba(255,255,255,0.06)", overflow: "hidden" }}>
+              <div style={{ height: "100%", width: "100%", background: "linear-gradient(90deg, #6366f1, #c084fc)", borderRadius: "2px" }} />
+            </div>
+            <div style={{ fontSize: "11px", color: "#6366f1", marginTop: "8px", fontWeight: 500 }}>Compressed → 890 KB</div>
+          </div>
+
+          {/* Middle card — merge */}
+          <div
+            style={{
+              position: "absolute",
+              top: "110px",
+              left: "0",
+              width: "280px",
+              background: "rgba(20,24,36,0.9)",
+              border: "1px solid rgba(99,102,241,0.2)",
+              borderRadius: "16px",
+              padding: "20px",
+              backdropFilter: "blur(16px)",
+              boxShadow: "0 20px 60px rgba(0,0,0,0.5)",
+            }}
+          >
+            <div style={{ fontSize: "11px", color: "#6b7280", marginBottom: "12px", fontWeight: 600, letterSpacing: "0.05em", textTransform: "uppercase" }}>Merging files</div>
+            {["Resume.pdf", "Cover_Letter.pdf", "References.pdf"].map((name, i) => (
+              <div
+                key={name}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "10px",
+                  padding: "8px 10px",
+                  borderRadius: "8px",
+                  background: i === 0 ? "rgba(99,102,241,0.08)" : "transparent",
+                  marginBottom: "4px",
+                }}
+              >
+                <div style={{ width: "6px", height: "6px", borderRadius: "50%", background: i === 0 ? "#6366f1" : "#374151", flexShrink: 0 }} />
+                <span style={{ fontSize: "13px", color: i === 0 ? "#e5e7eb" : "#6b7280" }}>{name}</span>
+                {i === 0 && (
+                  <span style={{ marginLeft: "auto", fontSize: "10px", color: "#6366f1", background: "rgba(99,102,241,0.15)", padding: "2px 8px", borderRadius: "99px", fontWeight: 600 }}>Active</span>
+                )}
+              </div>
+            ))}
+            <div style={{ marginTop: "14px", padding: "10px 14px", background: "linear-gradient(135deg, #6366f1, #8b5cf6)", borderRadius: "8px", textAlign: "center", fontSize: "13px", fontWeight: 600, color: "#fff" }}>
+              → Application_Bundle.pdf
+            </div>
+          </div>
+
+          {/* Bottom right stat pill */}
+          <div
+            style={{
+              position: "absolute",
+              bottom: "20px",
+              right: "10px",
+              background: "rgba(16,185,129,0.1)",
+              border: "1px solid rgba(16,185,129,0.2)",
+              borderRadius: "999px",
+              padding: "8px 16px",
+              display: "flex",
+              alignItems: "center",
+              gap: "8px",
+            }}
+          >
+            <Star size={13} color="#10b981" fill="#10b981" />
+            <span style={{ fontSize: "13px", color: "#6ee7b7", fontWeight: 600 }}>100% private · 0 uploads</span>
+          </div>
+        </div>
       </section>
 
-      {/* Grid Section */}
-      <section className="max-w-7xl mx-auto px-6 pb-20 w-full">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {TOOLS.map((tool, idx) => {
+      {/* ══════════════════════════════════════
+          STATS BAR
+      ══════════════════════════════════════ */}
+      <section
+        style={{
+          borderTop: "1px solid rgba(255,255,255,0.05)",
+          borderBottom: "1px solid rgba(255,255,255,0.05)",
+          padding: "32px 24px",
+          background: "rgba(255,255,255,0.01)",
+        }}
+      >
+        <div
+          style={{
+            maxWidth: "900px",
+            margin: "0 auto",
+            display: "grid",
+            gridTemplateColumns: "repeat(4, 1fr)",
+            gap: "16px",
+            textAlign: "center",
+          }}
+          className="stats-grid"
+        >
+          {[
+            { value: 50000, suffix: "+", label: "Files Converted" },
+            { value: 5, suffix: " tools", label: "Free PDF Utilities" },
+            { value: 100, suffix: "%", label: "Client-Side Processing" },
+            { value: 0, suffix: " bytes", label: "Data Sent to Servers" },
+          ].map((stat) => (
+            <div key={stat.label}>
+              <div
+                style={{
+                  fontSize: "28px",
+                  fontWeight: 800,
+                  color: "#fff",
+                  letterSpacing: "-0.02em",
+                  lineHeight: 1,
+                  marginBottom: "6px",
+                }}
+                className="font-space-grotesk"
+              >
+                <AnimatedNumber target={stat.value} suffix={stat.suffix} />
+              </div>
+              <div style={{ fontSize: "12px", color: "#6b7280", fontWeight: 500 }}>
+                {stat.label}
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* ══════════════════════════════════════
+          TOOLS GRID
+      ══════════════════════════════════════ */}
+      <section
+        style={{
+          maxWidth: "1200px",
+          margin: "0 auto",
+          padding: "72px 24px",
+          width: "100%",
+        }}
+      >
+        <div style={{ marginBottom: "48px" }}>
+          <p
+            style={{
+              fontSize: "11px",
+              fontWeight: 700,
+              letterSpacing: "0.1em",
+              textTransform: "uppercase",
+              color: "#6366f1",
+              marginBottom: "12px",
+            }}
+          >
+            All tools
+          </p>
+          <h2
+            style={{
+              fontSize: "clamp(26px, 4vw, 38px)",
+              fontWeight: 800,
+              color: "#fff",
+              letterSpacing: "-0.02em",
+              maxWidth: "480px",
+              lineHeight: 1.2,
+            }}
+            className="font-space-grotesk"
+          >
+            Everything you need for job applications.
+          </h2>
+        </div>
+
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))",
+            gap: "20px",
+          }}
+        >
+          {TOOLS.map((tool) => {
             const IconComponent = tool.Icon;
             return (
               <Link
-                key={idx}
+                key={tool.href}
                 href={tool.href}
-                className="glass-card rounded-2xl p-8 flex flex-col justify-between relative group overflow-hidden decoration-none border border-white/5"
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  padding: "28px",
+                  borderRadius: "16px",
+                  background: "rgba(255,255,255,0.02)",
+                  border: `1px solid ${tool.accentBorder}`,
+                  textDecoration: "none",
+                  transition: "all 0.25s cubic-bezier(0.16,1,0.3,1)",
+                  position: "relative",
+                  overflow: "hidden",
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = tool.accentDim;
+                  e.currentTarget.style.transform = "translateY(-3px)";
+                  e.currentTarget.style.boxShadow = `0 16px 48px ${tool.accentDim}`;
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = "rgba(255,255,255,0.02)";
+                  e.currentTarget.style.transform = "translateY(0)";
+                  e.currentTarget.style.boxShadow = "none";
+                }}
               >
-                {/* Glow Overlay */}
-                <div
-                  className="absolute -right-16 -top-16 w-36 h-36 rounded-full blur-[40px] pointer-events-none group-hover:scale-125 transition-transform duration-300"
-                  style={{ background: tool.glowColor }}
-                ></div>
-
-                <div>
-                  {/* Header */}
-                  <div className="flex justify-between items-start mb-6">
-                    <div
-                      className={`w-12 h-12 rounded-xl flex items-center justify-center bg-gradient-to-tr ${tool.color} text-white shadow-md`}
+                {/* Top row */}
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "20px" }}>
+                  <div
+                    style={{
+                      width: "44px",
+                      height: "44px",
+                      borderRadius: "12px",
+                      background: tool.accentDim,
+                      border: `1px solid ${tool.accentBorder}`,
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <IconComponent size={20} color={tool.accent} />
+                  </div>
+                  <div style={{ display: "flex", gap: "6px", alignItems: "center" }}>
+                    {tool.tag && (
+                      <span
+                        style={{
+                          fontSize: "10px",
+                          fontWeight: 700,
+                          letterSpacing: "0.06em",
+                          padding: "3px 9px",
+                          borderRadius: "99px",
+                          background: `${tool.accentDim}`,
+                          color: tool.accent,
+                          border: `1px solid ${tool.accentBorder}`,
+                          textTransform: "uppercase",
+                        }}
+                      >
+                        {tool.tag}
+                      </span>
+                    )}
+                    <span
+                      style={{
+                        fontSize: "10px",
+                        fontWeight: 600,
+                        padding: "3px 9px",
+                        borderRadius: "99px",
+                        background: "rgba(255,255,255,0.04)",
+                        color: "#9ca3af",
+                        border: "1px solid rgba(255,255,255,0.08)",
+                        textTransform: "uppercase",
+                        letterSpacing: "0.06em",
+                      }}
                     >
-                      <IconComponent className="w-6 h-6" />
-                    </div>
-                    <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full bg-white/5 border border-white/10 text-gray-400">
                       {tool.badge}
                     </span>
                   </div>
-
-                  {/* Title & Desc */}
-                  <h3 className="text-xl font-bold mb-3 font-space-grotesk text-white group-hover:text-indigo-300 transition-colors duration-200">
-                    {tool.title}
-                  </h3>
-                  <p className="text-sm text-gray-400 leading-relaxed mb-6">
-                    {tool.description}
-                  </p>
                 </div>
 
-                <div className="inline-flex items-center gap-1 text-xs font-semibold text-white group-hover:text-indigo-300 transition-colors">
-                  Launch Tool <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform duration-200" />
+                {/* Title */}
+                <div style={{ marginBottom: "10px" }}>
+                  <div style={{ fontSize: "10px", color: "#6b7280", fontWeight: 600, letterSpacing: "0.06em", textTransform: "uppercase", marginBottom: "4px" }}>
+                    {tool.subtitle}
+                  </div>
+                  <h3
+                    style={{ fontSize: "20px", fontWeight: 700, color: "#f9fafb", lineHeight: 1.2 }}
+                    className="font-space-grotesk"
+                  >
+                    {tool.title}
+                  </h3>
+                </div>
+
+                {/* Description */}
+                <p style={{ fontSize: "14px", color: "#9ca3af", lineHeight: 1.65, marginBottom: "24px", flexGrow: 1 }}>
+                  {tool.description}
+                </p>
+
+                {/* CTA */}
+                <div
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: "6px",
+                    fontSize: "13px",
+                    fontWeight: 600,
+                    color: tool.accent,
+                  }}
+                >
+                  Open tool <ArrowRight size={13} />
                 </div>
               </Link>
             );
@@ -164,69 +667,146 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Trust Pitch Section */}
-      <section className="bg-white/[0.01] border-y border-white/5 py-16 px-6">
-        <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-10">
-          <div className="flex flex-col items-center text-center p-4">
-            <div className="w-12 h-12 rounded-full bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center mb-4 text-indigo-400">
-              <ShieldCheck className="w-6 h-6" />
+      {/* ══════════════════════════════════════
+          TRUST SECTION
+      ══════════════════════════════════════ */}
+      <section
+        style={{
+          borderTop: "1px solid rgba(255,255,255,0.05)",
+          padding: "72px 24px",
+          background: "rgba(255,255,255,0.01)",
+        }}
+      >
+        <div
+          style={{
+            maxWidth: "1000px",
+            margin: "0 auto",
+            display: "grid",
+            gridTemplateColumns: "repeat(3, 1fr)",
+            gap: "40px",
+          }}
+          className="trust-grid"
+        >
+          {[
+            {
+              icon: ShieldCheck,
+              color: "#6366f1",
+              bg: "rgba(99,102,241,0.08)",
+              title: "Files never leave your browser",
+              body: "Every conversion runs 100% locally. We don't have servers that receive your documents — because we never built any.",
+            },
+            {
+              icon: Clock,
+              color: "#10b981",
+              bg: "rgba(16,185,129,0.08)",
+              title: "Conversion in under 3 seconds",
+              body: "Browser-native processing means there's no network round-trip. Your file is done before you even blink.",
+            },
+            {
+              icon: CheckCircle,
+              color: "#c084fc",
+              bg: "rgba(192,132,252,0.08)",
+              title: "Free. No sign-up. No limits.",
+              body: "No subscription, no daily cap, no watermarks. Open a tool and get to work — it's that simple.",
+            },
+          ].map(({ icon: Icon, color, bg, title, body }) => (
+            <div key={title} style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+              <div
+                style={{
+                  width: "48px",
+                  height: "48px",
+                  borderRadius: "14px",
+                  background: bg,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <Icon size={22} color={color} />
+              </div>
+              <div>
+                <h4
+                  style={{ fontSize: "16px", fontWeight: 700, color: "#f9fafb", marginBottom: "8px" }}
+                  className="font-space-grotesk"
+                >
+                  {title}
+                </h4>
+                <p style={{ fontSize: "14px", color: "#9ca3af", lineHeight: 1.65 }}>{body}</p>
+              </div>
             </div>
-            <h4 className="text-lg font-bold mb-2 font-space-grotesk text-white">Guaranteed Privacy</h4>
-            <p className="text-sm text-gray-400 leading-relaxed">
-              We never see your files. Since processing is strictly browser-based, your data is completely secure and hacker-proof.
-            </p>
-          </div>
-          <div className="flex flex-col items-center text-center p-4">
-            <div className="w-12 h-12 rounded-full bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center mb-4 text-emerald-400">
-              <Zap className="w-6 h-6" />
-            </div>
-            <h4 className="text-lg font-bold mb-2 font-space-grotesk text-white">Instant Conversions</h4>
-            <p className="text-sm text-gray-400 leading-relaxed">
-              Skip the queue. Browser rendering means conversions happen in milliseconds without any network latency.
-            </p>
-          </div>
-          <div className="flex flex-col items-center text-center p-4">
-            <div className="w-12 h-12 rounded-full bg-pink-500/10 border border-pink-500/20 flex items-center justify-center mb-4 text-pink-400">
-              <CheckCircle className="w-6 h-6" />
-            </div>
-            <h4 className="text-lg font-bold mb-2 font-space-grotesk text-white">100% Free Forever</h4>
-            <p className="text-sm text-gray-400 leading-relaxed">
-              No subscription popups, daily limits, or hidden fees. Use our suite as much as you need, watermark-free.
-            </p>
-          </div>
+          ))}
         </div>
       </section>
 
-      {/* FAQ Section */}
-      <section className="max-w-4xl mx-auto px-6 py-24 w-full">
-        <h2 className="text-3xl font-bold text-center mb-12 font-space-grotesk text-white">
-          Frequently Asked Questions
-        </h2>
-        <div className="flex flex-col gap-4">
+      {/* ══════════════════════════════════════
+          FAQ
+      ══════════════════════════════════════ */}
+      <section style={{ maxWidth: "740px", margin: "0 auto", padding: "72px 24px", width: "100%" }}>
+        <div style={{ marginBottom: "40px" }}>
+          <p style={{ fontSize: "11px", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "#6366f1", marginBottom: "10px" }}>
+            Got questions?
+          </p>
+          <h2
+            style={{ fontSize: "28px", fontWeight: 800, color: "#fff", letterSpacing: "-0.02em" }}
+            className="font-space-grotesk"
+          >
+            Things people usually ask
+          </h2>
+        </div>
+        <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
           {FAQS.map((faq, idx) => {
             const isOpen = openFaq === idx;
             return (
               <div
                 key={idx}
-                className="glass-panel rounded-2xl overflow-hidden transition-all duration-300"
+                style={{
+                  borderRadius: "14px",
+                  overflow: "hidden",
+                  border: isOpen ? "1px solid rgba(99,102,241,0.2)" : "1px solid rgba(255,255,255,0.06)",
+                  transition: "border-color 0.25s",
+                  background: isOpen ? "rgba(99,102,241,0.04)" : "rgba(255,255,255,0.02)",
+                }}
               >
                 <button
                   onClick={() => toggleFaq(idx)}
-                  className="w-full px-6 py-5 flex items-center justify-between text-left focus:outline-none hover:bg-white/[0.02]"
+                  style={{
+                    width: "100%",
+                    padding: "20px 24px",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    background: "none",
+                    border: "none",
+                    cursor: "pointer",
+                    textAlign: "left",
+                  }}
                 >
-                  <span className="font-semibold text-white pr-4">{faq.q}</span>
+                  <span style={{ fontWeight: 600, color: "#e5e7eb", fontSize: "15px", paddingRight: "16px" }}>
+                    {faq.q}
+                  </span>
                   <ChevronDown
-                    className={`w-5 h-5 text-gray-400 flex-shrink-0 transition-transform duration-300 ${
-                      isOpen ? "rotate-180 text-indigo-400" : ""
-                    }`}
+                    size={18}
+                    color={isOpen ? "#6366f1" : "#6b7280"}
+                    style={{ flexShrink: 0, transform: isOpen ? "rotate(180deg)" : "rotate(0deg)", transition: "transform 0.3s" }}
                   />
                 </button>
                 <div
-                  className={`transition-all duration-300 ease-in-out ${
-                    isOpen ? "max-h-[300px] border-t border-white/5 opacity-100" : "max-h-0 opacity-0 pointer-events-none"
-                  }`}
+                  style={{
+                    maxHeight: isOpen ? "300px" : "0",
+                    overflow: "hidden",
+                    transition: "max-height 0.35s cubic-bezier(0.16,1,0.3,1)",
+                  }}
                 >
-                  <p className="px-6 py-5 text-sm text-gray-400 leading-relaxed bg-[#0b0c10]/40">
+                  <p
+                    style={{
+                      padding: "0 24px 20px",
+                      fontSize: "14px",
+                      color: "#9ca3af",
+                      lineHeight: 1.7,
+                      borderTop: "1px solid rgba(255,255,255,0.06)",
+                      paddingTop: "16px",
+                    }}
+                  >
                     {faq.a}
                   </p>
                 </div>
@@ -235,6 +815,26 @@ export default function Home() {
           })}
         </div>
       </section>
+
+      {/* Responsive styles */}
+      <style>{`
+        @media (max-width: 768px) {
+          .hero-grid {
+            grid-template-columns: 1fr !important;
+            gap: 40px !important;
+            padding-top: 48px !important;
+          }
+          .hero-grid > div:last-child {
+            display: none;
+          }
+          .stats-grid {
+            grid-template-columns: repeat(2, 1fr) !important;
+          }
+          .trust-grid {
+            grid-template-columns: 1fr !important;
+          }
+        }
+      `}</style>
     </div>
   );
 }
