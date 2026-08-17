@@ -10,6 +10,13 @@ export function middleware(req) {
 
     // Allow requests to the main app dashboard, API, and static assets to pass through
     if (isMainApp || hostname === "cvgrid.in" || hostname === "www.cvgrid.in") {
+        const path = url.pathname;
+        // Redirect blog and about page requests on the app subdomain to the main landing domain to avoid 404
+        if (isMainApp && (path === "/blog" || path.startsWith("/blog/") || path === "/about" || path.startsWith("/about/"))) {
+            const proto = isLocalhost ? "http" : "https";
+            const targetHost = isLocalhost ? "localhost:3000" : "cvgrid.in";
+            return NextResponse.redirect(new URL(`${proto}://${targetHost}${path}${url.search}`, req.url), 308);
+        }
         return NextResponse.next();
     }
 
