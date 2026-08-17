@@ -55,8 +55,28 @@ export default function Footer() {
                 </div>
 
                 {/* Navigation Columns */}
-                <div className="lg:col-span-7 grid grid-cols-2 md:grid-cols-3 gap-8 md:gap-12 w-full">
-                    {/* Col 1 */}
+                <div className="lg:col-span-7 grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12 w-full">
+                    {/* Col 1: PDF Utilities */}
+                    <div className="flex flex-col gap-4">
+                        <h3 className="text-sm font-bold text-white tracking-widest uppercase mb-2" style={{ fontFamily: "var(--font-space-grotesk), sans-serif" }}>PDF Utilities</h3>
+                        <a className="text-[#c7c4d7] hover:text-white transition-colors duration-200 no-underline text-sm py-1" href="/pdf-to-image" style={{ fontFamily: "var(--font-inter), sans-serif" }}>
+                            PDF to PNG
+                        </a>
+                        <a className="text-[#c7c4d7] hover:text-white transition-colors duration-200 no-underline text-sm py-1" href="/image-to-pdf" style={{ fontFamily: "var(--font-inter), sans-serif" }}>
+                            PNG to PDF
+                        </a>
+                        <a className="text-[#c7c4d7] hover:text-white transition-colors duration-200 no-underline text-sm py-1" href="/merge" style={{ fontFamily: "var(--font-inter), sans-serif" }}>
+                            Merge PDF
+                        </a>
+                        <a className="text-[#c7c4d7] hover:text-white transition-colors duration-200 no-underline text-sm py-1" href="/split" style={{ fontFamily: "var(--font-inter), sans-serif" }}>
+                            Split PDF
+                        </a>
+                        <a className="text-[#c7c4d7] hover:text-white transition-colors duration-200 no-underline text-sm py-1" href="/compress" style={{ fontFamily: "var(--font-inter), sans-serif" }}>
+                            Compress PDF
+                        </a>
+                    </div>
+
+                    {/* Col 2 */}
                     <div className="flex flex-col gap-4">
                         <h3 className="text-sm font-bold text-white tracking-widest uppercase mb-2" style={{ fontFamily: "var(--font-space-grotesk), sans-serif" }}>Product</h3>
                         <a className="text-[#c7c4d7] hover:text-white transition-colors duration-200 no-underline text-sm py-1" href="https://app.cvgrid.in/templates" style={{ fontFamily: "var(--font-inter), sans-serif" }}>
@@ -70,7 +90,7 @@ export default function Footer() {
                         </a>
                     </div>
 
-                    {/* Col 2 */}
+                    {/* Col 3 */}
                     <div className="flex flex-col gap-4">
                         <h3 className="text-sm font-bold text-white tracking-widest uppercase mb-2" style={{ fontFamily: "var(--font-space-grotesk), sans-serif" }}>Support</h3>
                         <a className="text-[#c7c4d7] hover:text-white transition-colors duration-200 no-underline text-sm py-1" href="https://docs.cvgrid.in" style={{ fontFamily: "var(--font-inter), sans-serif" }}>
@@ -84,7 +104,7 @@ export default function Footer() {
                         </a>
                     </div>
 
-                    {/* Col 3: Social & Media */}
+                    {/* Col 4: Social & Media */}
                     <div className="flex flex-col gap-4">
                         <h3 className="text-sm font-bold text-white tracking-widest uppercase mb-2" style={{ fontFamily: "var(--font-space-grotesk), sans-serif" }}>Connect</h3>
                         <div className="flex gap-3">

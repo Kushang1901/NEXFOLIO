@@ -16,7 +16,11 @@ const spaceGrotesk = Space_Grotesk({
 });
 
 export const metadata = {
-  title: "CVGrid Convert - Free Online PDF & Document Utilities",
+  metadataBase: new URL("https://convert.cvgrid.in"),
+  title: {
+    default: "CVGrid Convert - Free Online PDF & Document Utilities",
+    template: "%s | CVGrid Convert",
+  },
   description:
     "Convert PDF to PNG, PNG/JPG to PDF, merge multiple PDFs, split pages, and compress documents instantly in your browser. 100% private and secure, files never leave your device.",
   keywords: [
@@ -29,7 +33,61 @@ export const metadata = {
     "resume tools",
     "online document converter",
     "free pdf converter",
+    "pdf to jpg",
+    "jpg to pdf",
+    "pdf splitter",
+    "pdf merger",
+    "compress pdf size",
   ],
+  alternates: {
+    canonical: "/",
+  },
+  icons: {
+    icon: [
+      { url: "/favicon.ico", sizes: "any" },
+      { url: "/favicon.png", type: "image/png", sizes: "32x32" },
+      { url: "/apple-touch-icon.png", type: "image/png", sizes: "180x180" },
+    ],
+    apple: [
+      { url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" },
+    ],
+  },
+  openGraph: {
+    title: "CVGrid Convert - Free Online PDF & Document Utilities",
+    description:
+      "Convert, merge, split, and compress PDF documents instantly in your browser. 100% private and secure, files never leave your device.",
+    url: "https://convert.cvgrid.in",
+    siteName: "CVGrid Convert",
+    locale: "en_US",
+    type: "website",
+    images: [
+      {
+        url: "/logo.png",
+        width: 512,
+        height: 512,
+        alt: "CVGrid Convert Logo",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    site: "@cvgrid",
+    title: "CVGrid Convert - Free Online PDF & Document Utilities",
+    description:
+      "Convert, merge, split, and compress PDF documents instantly in your browser. 100% private and secure, files never leave your device.",
+    images: ["/logo.png"],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
 };
 
 export default function RootLayout({ children }) {
