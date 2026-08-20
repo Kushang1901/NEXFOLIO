@@ -650,11 +650,7 @@ export default function Navbar() {
                         })}
                     </div>
 
-                    {/* ── Desktop: Right Auth Buttons (Logged Out) ── */}
-                    <div className="hidden lg:flex" style={{ alignItems: "center", gap: "12px", marginLeft: "auto" }}>
-                        <a href="https://app.cvgrid.in/signup" style={{ color: "rgba(255,255,255,0.75)", textDecoration: "none", fontSize: "0.9rem", fontWeight: "500", padding: "7px 14px" }}>Sign Up</a>
-                        <a href="https://app.cvgrid.in/login" style={{ background: "linear-gradient(135deg, #3b82f6, #6366f1)", color: "#fff", textDecoration: "none", fontSize: "0.9rem", fontWeight: "600", padding: "8px 20px", borderRadius: "8px", transition: "opacity 0.2s" }}>Login</a>
-                    </div>
+
 
                     {/* ── Mobile: Hamburger ── */}
                     <button className="flex lg:hidden flex-col gap-[5px]" onClick={() => setMenuOpen(true)} aria-label="Open menu"
@@ -988,10 +984,7 @@ export default function Navbar() {
                         );
                     })}
 
-                    <div style={{ padding: "20px 24px", display: "flex", flexDirection: "column", gap: "10px", borderTop: "1px solid rgba(255,255,255,0.07)", marginTop: "8px" }}>
-                        <a href="https://app.cvgrid.in/signup" onClick={closeMenu} style={{ textAlign: "center", padding: "11px", border: "1.5px solid rgba(255,255,255,0.2)", borderRadius: "10px", color: "#fff", textDecoration: "none", fontWeight: "500" }}>Sign Up</a>
-                        <a href="https://app.cvgrid.in/login" onClick={closeMenu} style={{ textAlign: "center", padding: "11px", background: "linear-gradient(135deg, #3b82f6, #6366f1)", borderRadius: "10px", color: "#fff", textDecoration: "none", fontWeight: "600" }}>Login</a>
-                    </div>
+
                 </nav>
             </aside>
             <style>{`
