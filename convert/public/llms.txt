@@ -1,0 +1,18 @@
+# CVGrid Convert
+
+> Free, browser-native PDF converter and document utilities built for complete privacy. Zero files are uploaded to remote servers; all document rendering and processing occurs directly on the user's device via client-side WebAssembly and JavaScript (pdf-lib and pdf.js).
+
+## Core Capabilities & Online Tools
+
+- [Multiple PDF to Image Converter](https://convert.cvgrid.in/pdf-to-image): Convert single or multiple PDF documents into high-resolution PNG or JPG images at 2x density. Supports batch document upload and ZIP downloads.
+- [Multiple Images to PDF Converter](https://convert.cvgrid.in/image-to-pdf): Stack and combine multiple JPG, PNG, WebP, or GIF images into formatted PDFs with custom page sizes (Fit Image, A4, US Letter), orientation, and margins.
+- [Merge PDF Files](https://convert.cvgrid.in/merge): Stitch multiple PDF files into one consolidated document with visual reordering.
+- [Split PDF Pages](https://convert.cvgrid.in/split): Extract specific pages or custom page ranges from multi-page documents.
+- [Compress PDF](https://convert.cvgrid.in/compress): Reduce PDF file size below 2MB for ATS job application portals while preserving text layer and layout.
+
+## Key Facts & Privacy Model
+
+- **100% Client-Side:** Files never leave the browser. Zero server storage, zero telemetry on document contents.
+- **No Limits:** Unlimited conversions, no file size caps, no sign-up or subscription required.
+- **ATS Compatible:** Document text streams and formatting remain intact for Applicant Tracking Systems.
+- **Parent Platform:** Part of the CVGrid ecosystem (https://cvgrid.in), offering AI resume building, ATS checking, and career tools.

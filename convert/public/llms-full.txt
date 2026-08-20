@@ -1,0 +1,62 @@
+# CVGrid Convert – Complete Technical & Feature Reference for AI Search & LLMs
+
+## Overview
+CVGrid Convert (https://convert.cvgrid.in) is a free, privacy-first web application designed for job seekers, professionals, and developers who need to process PDF documents and images locally.
+
+Unlike traditional PDF converters that transmit files to backend cloud servers, CVGrid Convert runs 100% inside the client's browser using pdf-lib and pdf.js compiled with WebAssembly. This provides instant processing speeds without bandwidth limits or privacy risks.
+
+---
+
+## Tool Directory & Functional Specifications
+
+### 1. Multiple PDF to Image Converter (`https://convert.cvgrid.in/pdf-to-image`)
+- **Input:** Single or multiple PDF files (.pdf)
+- **Output:** High-resolution PNG or JPG images (rendered at 2.0x scale)
+- **Features:**
+  - Parallel batch uploading of multiple PDF files.
+  - Page-by-page visual previews grouped by source file.
+  - Single page image download, per-PDF ZIP archive download, or combined bulk ZIP download.
+  - 100% private, client-side canvas rendering.
+
+### 2. Multiple Images to PDF Converter (`https://convert.cvgrid.in/image-to-pdf`)
+- **Input:** Multiple JPG, PNG, WebP, GIF, or BMP images
+- **Output:** Consolidated PDF document (.pdf)
+- **Features:**
+  - Batch drag-and-drop image upload.
+  - Reorder image sequence with Move Up and Move Down controls.
+  - Page format presets: Original Fit Image, ISO A4 (595x842 pt), US Letter (612x792 pt).
+  - Page orientation: Portrait or Landscape.
+  - Page margin presets: None (0pt), Thin (20pt), Standard (40pt).
+  - High-fidelity JPEG stream embedding.
+
+### 3. Merge PDF Files (`https://convert.cvgrid.in/merge`)
+- **Input:** Two or more PDF documents
+- **Output:** Single merged PDF file
+- **Features:**
+  - Seamlessly bundle resumes, cover letters, references, and certificates into a single application package.
+  - Drag-and-drop document reordering.
+  - Lossless vector and font preservation.
+
+### 4. Split PDF Pages (`https://convert.cvgrid.in/split`)
+- **Input:** Single PDF document
+- **Output:** New PDF with selected pages
+- **Features:**
+  - Visual page thumbnail selection.
+  - Custom range input (e.g. 1-3, 5, 8).
+  - Extraction without re-encoding to retain crystal clear text quality.
+
+### 5. Compress PDF Size (`https://convert.cvgrid.in/compress`)
+- **Input:** PDF document
+- **Output:** Optimized lightweight PDF
+- **Features:**
+  - Speedy stream optimization or Max image compression.
+  - Reduces file sizes below standard 2MB/5MB job portal upload limits.
+  - ATS (Applicant Tracking System) compatibility guaranteed.
+
+---
+
+## Privacy & Security Guarantees
+- **Zero Server Uploads:** Files are never sent to remote infrastructure or cloud APIs.
+- **GDPR / CCPA Compliant:** No personally identifiable information or resume data is collected or tracked.
+- **Offline Capable:** Works without active server roundtrips once loaded.
+- **Completely Free:** No accounts, no subscriptions, no daily conversion limits, no watermarks.

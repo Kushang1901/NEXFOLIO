@@ -1,19 +1,44 @@
 export default async function sitemap() {
   const baseUrl = "https://convert.cvgrid.in";
-  
+  const now = new Date().toISOString();
+
   const routes = [
-    "",
-    "/pdf-to-image",
-    "/image-to-pdf",
-    "/merge",
-    "/split",
-    "/compress",
+    {
+      path: "",
+      priority: 1.0,
+      changeFrequency: "daily",
+    },
+    {
+      path: "/pdf-to-image",
+      priority: 0.9,
+      changeFrequency: "weekly",
+    },
+    {
+      path: "/image-to-pdf",
+      priority: 0.9,
+      changeFrequency: "weekly",
+    },
+    {
+      path: "/merge",
+      priority: 0.85,
+      changeFrequency: "weekly",
+    },
+    {
+      path: "/split",
+      priority: 0.85,
+      changeFrequency: "weekly",
+    },
+    {
+      path: "/compress",
+      priority: 0.85,
+      changeFrequency: "weekly",
+    },
   ];
 
   return routes.map((route) => ({
-    url: `${baseUrl}${route}`,
-    lastModified: new Date().toISOString().split("T")[0],
-    changeFrequency: "monthly",
-    priority: route === "" ? 1.0 : 0.8,
+    url: `${baseUrl}${route.path}`,
+    lastModified: now,
+    changeFrequency: route.changeFrequency,
+    priority: route.priority,
   }));
 }
