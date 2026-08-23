@@ -115,18 +115,18 @@ export default function Footer() {
 
                         {/* Official Microsoft Store Badge */}
                         <a 
-                            href="https://apps.microsoft.com/detail/9N3QSV077XT0" 
+                            href="https://get.microsoft.com/installer/download/9N3QSV077XT0?referrer=appbadge&cid=website-footer" 
                             target="_blank" 
                             rel="noopener noreferrer" 
                             className="mt-2 inline-block transition-all duration-300 hover:scale-[1.03] active:scale-[0.98] drop-shadow-md hover:drop-shadow-xl w-fit"
-                            title="Download CVGrid on Microsoft Store"
-                            aria-label="Download CVGrid on Microsoft Store"
+                            title="Download CVGrid from Microsoft Store"
+                            aria-label="Download CVGrid from Microsoft Store"
                         >
                             <img 
                                 src="https://get.microsoft.com/images/en-us%20light.svg" 
                                 alt="Get it from Microsoft Store" 
-                                width="140"
-                                height="48"
+                                width="160"
+                                height="56"
                                 className="h-10 w-auto rounded-lg object-contain" 
                             />
                         </a>
