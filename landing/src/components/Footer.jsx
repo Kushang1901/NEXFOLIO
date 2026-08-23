@@ -115,7 +115,7 @@ export default function Footer() {
 
                         {/* Official Microsoft Store Badge */}
                         <a 
-                            href="https://get.microsoft.com/installer/download/9N3QSV077XT0?referrer=appbadge&cid=website-footer" 
+                            href="https://apps.microsoft.com/detail/9n3qsv077xt0?hl=en-US&gl=IN" 
                             target="_blank" 
                             rel="noopener noreferrer" 
                             className="mt-2 inline-block transition-all duration-300 hover:scale-[1.03] active:scale-[0.98] drop-shadow-md hover:drop-shadow-xl w-fit"
