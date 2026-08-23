@@ -35,8 +35,25 @@ export default function Footer() {
                         The intelligent career platform for the modern era. Build, optimize, and export ATS-compliant resumes powered by advanced AI.
                     </p>
                     
-                    {/* Developer Credits */}
-                    <div className="flex items-center mt-2">
+                    {/* App Store & Developer Credits */}
+                    <div className="flex flex-wrap items-center gap-3 mt-2">
+                        <a 
+                            href="https://apps.microsoft.com/detail/9N3QSV077XT0"
+                            target="_blank" 
+                            rel="noopener noreferrer" 
+                            className="flex items-center gap-2.5 px-3.5 py-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/15 hover:border-[#c0c1ff]/50 text-white transition-all duration-300 no-underline group shadow-sm hover:scale-[1.02] active:scale-[0.98]"
+                            title="Download CVGrid from Microsoft Store"
+                            aria-label="Download CVGrid from Microsoft Store"
+                        >
+                            <svg className="w-4 h-4 shrink-0 fill-white group-hover:drop-shadow-[0_0_8px_rgba(255,255,255,0.5)] transition-all duration-300" viewBox="0 0 24 24">
+                                <path d="M1 1h10v10H1V1zm12 0h10v10H13V1zM1 13h10v10H1V13zm12 0h10v10H13V13z"/>
+                            </svg>
+                            <div className="flex flex-col text-left">
+                                <span className="text-[9px] uppercase font-semibold text-[#c7c4d7] tracking-wider leading-none">Get it from</span>
+                                <span className="text-xs font-bold text-white tracking-wide leading-snug">Microsoft Store</span>
+                            </div>
+                        </a>
+
                         <a 
                             href="https://kushangacharya.vercel.app" 
                             target="_blank" 
