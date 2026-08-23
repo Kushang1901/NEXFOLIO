@@ -142,11 +142,11 @@ export default function Footer() {
                             aria-label="Download CVGrid from Microsoft Store"
                         >
                             <img 
-                                src="https://get.microsoft.com/images/en-us%20light.svg" 
+                                src="/microsoft-store-light.svg" 
                                 alt="Get it from Microsoft Store" 
                                 width="160"
-                                height="56"
-                                className="h-10 w-auto rounded-lg object-contain" 
+                                height="44"
+                                className="h-10 w-auto rounded object-contain" 
                             />
                         </a>
                     </div>
