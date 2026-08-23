@@ -132,25 +132,22 @@ export default function Footer() {
                             </a>
                         </div>
 
-                        {/* Download for Windows Badge */}
+                        {/* Official Microsoft Store Badge */}
                         <a 
                             href="https://apps.microsoft.com/detail/9N3QSV077XT0" 
                             target="_blank" 
                             rel="noopener noreferrer" 
-                            className="mt-2 inline-flex items-center gap-3 px-3.5 py-2 rounded-xl bg-white hover:bg-neutral-100 text-black shadow-lg hover:shadow-white/20 transition-all duration-300 hover:scale-[1.03] active:scale-[0.98] no-underline group w-fit"
-                            title="Download CVGrid for Windows"
-                            aria-label="Download CVGrid for Windows"
+                            className="mt-2 inline-block transition-all duration-300 hover:scale-[1.03] active:scale-[0.98] drop-shadow-md hover:drop-shadow-xl w-fit"
+                            title="Download CVGrid on Microsoft Store"
+                            aria-label="Download CVGrid on Microsoft Store"
                         >
-                            <svg className="w-6 h-6 shrink-0" viewBox="0 0 24 24" fill="none">
-                                <rect x="1" y="1" width="10" height="10" fill="#f25022" rx="0.5" />
-                                <rect x="13" y="1" width="10" height="10" fill="#7fba00" rx="0.5" />
-                                <rect x="1" y="13" width="10" height="10" fill="#00a4ef" rx="0.5" />
-                                <rect x="13" y="13" width="10" height="10" fill="#ffb900" rx="0.5" />
-                            </svg>
-                            <div className="flex flex-col text-left">
-                                <span className="text-[10px] font-medium text-neutral-600 leading-none">Download for</span>
-                                <span className="text-sm font-bold text-black tracking-tight leading-snug">Windows</span>
-                            </div>
+                            <img 
+                                src="https://get.microsoft.com/images/en-us%20light.svg" 
+                                alt="Get it from Microsoft Store" 
+                                width="140"
+                                height="48"
+                                className="h-10 w-auto rounded-lg object-contain" 
+                            />
                         </a>
                     </div>
                 </div>
