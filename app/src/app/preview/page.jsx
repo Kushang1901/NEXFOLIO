@@ -40,6 +40,7 @@ import { normalizeResumeData } from "../../utils/resumeAdapter";
 import { useRouter } from "next/navigation";
 import { showToast } from "../../utils/toast";
 import { subscribeToAuthChanges } from "../../authState";
+import { auth } from "../../firebase";
 import ReviewModal from "../../components/ReviewModal";
 
 export default function Preview() {
@@ -69,6 +70,29 @@ export default function Preview() {
     const [showShareModal, setShowShareModal] = useState(false);
     const [isSharingLoading, setIsSharingLoading] = useState(false);
     const [userEmail, setUserEmail] = useState("");
+
+    const getActiveUserEmail = () => {
+        if (userEmail) return userEmail;
+        if (typeof window !== "undefined") {
+            if (auth?.currentUser) {
+                const fbEmail = auth.currentUser.email || 
+                                auth.currentUser.providerData?.[0]?.email || 
+                                (auth.currentUser.uid ? `github-${auth.currentUser.uid}@cvgrid.in` : null);
+                if (fbEmail) return fbEmail;
+            }
+            try {
+                const mock = localStorage.getItem("mock_user");
+                if (mock) {
+                    const parsed = JSON.parse(mock);
+                    if (parsed.email) return parsed.email;
+                }
+            } catch (e) {}
+            if (resumeData?.email) {
+                return resumeData.email;
+            }
+        }
+        return "";
+    };
 
     // Template Selector States
     const [showTemplateModal, setShowTemplateModal] = useState(false);
@@ -109,13 +133,14 @@ export default function Preview() {
         setSelectedTemplate(newTemplateId);
         sessionStorage.setItem("selectedTemplate", newTemplateId);
 
-        if (userEmail && resumeId && resumeData) {
+        const activeEmail = userEmail || getActiveUserEmail();
+        if (activeEmail && resumeId && resumeData) {
             try {
                 const response = await fetch("/api/resumes", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({
-                        email: userEmail,
+                        email: activeEmail,
                         id: resumeId,
                         resumeName: resumeData.fullName ? `${resumeData.fullName}'s Resume` : "My Resume",
                         resumeData: resumeData,
@@ -207,12 +232,17 @@ export default function Preview() {
         }
 
         const unsubscribe = subscribeToAuthChanges(async (loggedUser) => {
-            if (loggedUser && loggedUser.email) {
-                setUserEmail(loggedUser.email);
-                const targetId = id || savedId;
-                if (targetId) {
-                    await fetchSharingStatus(targetId, loggedUser.email);
-                    await loadResume(loggedUser.email, targetId);
+            if (loggedUser) {
+                const emailVal = loggedUser.email || 
+                                 loggedUser.providerData?.[0]?.email || 
+                                 (loggedUser.uid ? `github-${loggedUser.uid}@cvgrid.in` : null);
+                if (emailVal) {
+                    setUserEmail(emailVal);
+                    const targetId = id || savedId;
+                    if (targetId) {
+                        await fetchSharingStatus(targetId, emailVal);
+                        await loadResume(emailVal, targetId);
+                    }
                 }
             }
         });
@@ -311,9 +341,14 @@ export default function Preview() {
     };
 
     const handleRazorpayPayment = async () => {
-        if (!userEmail) {
+        const activeEmail = getActiveUserEmail();
+        if (!activeEmail) {
             showToast("You must be logged in to purchase premium features.", "error");
             return;
+        }
+
+        if (!userEmail && activeEmail) {
+            setUserEmail(activeEmail);
         }
 
         let currentResumeId = resumeId;
@@ -326,7 +361,7 @@ export default function Preview() {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({
-                        email: userEmail,
+                        email: activeEmail,
                         resumeName: resumeData?.fullName ? `${resumeData.fullName}'s Resume` : "My Resume",
                         resumeData: resumeData,
                         selectedTemplate: selectedTemplate,
@@ -407,7 +442,9 @@ export default function Preview() {
                     }
                 },
                 prefill: {
-                    email: userEmail
+                    name: resumeData?.fullName || "",
+                    email: activeEmail,
+                    contact: resumeData?.phone || ""
                 },
                 theme: {
                     color: "#6366f1"
@@ -762,11 +799,12 @@ export default function Preview() {
             const origin = window.location.origin;
             const newLink = checked ? `${origin}/resume/${resumeId}` : "";
             
+            const activeEmail = userEmail || getActiveUserEmail();
             const response = await fetch("/api/resumes", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
-                    email: userEmail,
+                    email: activeEmail,
                     id: resumeId,
                     resumeName: resumeData.fullName ? `${resumeData.fullName}'s Resume` : "My Resume",
                     resumeData: resumeData,
