@@ -140,20 +140,32 @@ export default function ElegantTemplate({ data }) {
             )}
 
             {/* Internship */}
-            {data.internship && (
-                <div className="mb-4">
-                    <h5 className="fw-semibold text-uppercase border-bottom pb-2 mb-3" style={{ fontSize: "16px", letterSpacing: "1.5px", breakAfter: "avoid", pageBreakAfter: "avoid" }}>Internship</h5>
-                    <div className="mb-2 small text-muted" style={{ paddingLeft: "12px", breakInside: "avoid", pageBreakInside: "avoid" }}>
-                        <div className="d-flex justify-content-between align-items-baseline text-dark fw-semibold" style={{ fontStyle: "italic" }}>
-                            <span>{data.internship.field}</span>
-                            <span style={{ fontStyle: "normal" }}>{data.internship.start} – {data.internship.end}</span>
-                        </div>
-                        <div className="italic">
-                            {data.internship.company}
+            {data.internship && (() => {
+                const bullets = (data.internship.bullets && data.internship.bullets.length > 0)
+                    ? data.internship.bullets
+                    : (data.internship.description ? data.internship.description.split("\n").map(l => l.trim().replace(/^[-*•–]\s*/, "")).filter(Boolean) : []);
+                return (
+                    <div className="mb-4">
+                        <h5 className="fw-semibold text-uppercase border-bottom pb-2 mb-3" style={{ fontSize: "16px", letterSpacing: "1.5px", breakAfter: "avoid", pageBreakAfter: "avoid" }}>Internship</h5>
+                        <div className="mb-2 small text-muted" style={{ paddingLeft: "12px", breakInside: "avoid", pageBreakInside: "avoid" }}>
+                            <div className="d-flex justify-content-between align-items-baseline text-dark fw-semibold" style={{ fontStyle: "italic" }}>
+                                <span>{data.internship.field}</span>
+                                <span style={{ fontStyle: "normal" }}>{data.internship.start} – {data.internship.end}</span>
+                            </div>
+                            <div className="italic">
+                                {data.internship.company}
+                            </div>
+                            {bullets.length > 0 && (
+                                <ul style={{ margin: "6px 0 0", paddingLeft: "16px", listStyleType: "disc" }}>
+                                    {bullets.map((b, i) => (
+                                        <li key={i} style={{ fontStyle: "normal", color: "#475569", lineHeight: "1.5", marginBottom: "2px" }}>{b}</li>
+                                    ))}
+                                </ul>
+                            )}
                         </div>
                     </div>
-                </div>
-            )}
+                );
+            })()}
 
             {/* Projects */}
             {data.projects && (() => {

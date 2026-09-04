@@ -123,20 +123,32 @@ export default function BlueprintTemplate({ data }) {
             )}
 
             {/* INTERNSHIPS */}
-            {data.internship && (
-                <div className="mb-4">
-                    <h6 className="fw-bold text-uppercase" style={{ fontSize: "12px", color: blue, borderBottom: `1.5px solid ${blue}`, paddingBottom: "2px" }}>
-                        // Field Deployments (Internships)
-                    </h6>
-                    <div style={{ fontSize: "11.5px" }}>
-                        <div className="d-flex justify-content-between fw-bold">
-                            <span style={{ color: "#0f172a" }}>{data.internship.field}</span>
-                            <span className="text-muted">{data.internship.start} – {data.internship.end}</span>
+            {data.internship && (() => {
+                const bullets = (data.internship.bullets && data.internship.bullets.length > 0)
+                    ? data.internship.bullets
+                    : (data.internship.description ? data.internship.description.split("\n").map(l => l.trim().replace(/^[-*•–]\s*/, "")).filter(Boolean) : []);
+                return (
+                    <div className="mb-4">
+                        <h6 className="fw-bold text-uppercase" style={{ fontSize: "12px", color: blue, borderBottom: `1.5px solid ${blue}`, paddingBottom: "2px" }}>
+                            // Field Deployments (Internships)
+                        </h6>
+                        <div style={{ fontSize: "11.5px" }}>
+                            <div className="d-flex justify-content-between fw-bold">
+                                <span style={{ color: "#0f172a" }}>{data.internship.field}</span>
+                                <span className="text-muted">{data.internship.start} – {data.internship.end}</span>
+                            </div>
+                            <div style={{ color: blue, marginTop: "2px" }}>{data.internship.company}</div>
+                            {bullets.length > 0 && (
+                                <ul style={{ margin: "6px 0 0", paddingLeft: "16px", listStyleType: "square", color: blue }}>
+                                    {bullets.map((b, i) => (
+                                        <li key={i} style={{ color: "#334155", marginBottom: "2px", lineHeight: "1.45" }}>{b}</li>
+                                    ))}
+                                </ul>
+                            )}
                         </div>
-                        <div style={{ color: blue, marginTop: "2px" }}>{data.internship.company}</div>
                     </div>
-                </div>
-            )}
+                );
+            })()}
 
             {/* EDUCATION */}
             {data.education && data.education.length > 0 && (

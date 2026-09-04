@@ -150,20 +150,32 @@ export default function AccentTemplate({ data }) {
                 )}
 
                 {/* Internship */}
-                {data.internship && (
-                    <section className="mb-4">
-                        <h6 className="fw-bold text-uppercase pb-1 mb-2" style={{ color: "#0083b0", borderBottom: "1px solid #e2e8f0" }}>Internship</h6>
-                        <div className="mb-2 small text-muted">
-                            <div className="d-flex justify-content-between align-items-baseline text-dark fw-bold">
-                                <span>{data.internship.field}</span>
-                                <span>{data.internship.start} – {data.internship.end}</span>
+                {data.internship && (() => {
+                    const bullets = (data.internship.bullets && data.internship.bullets.length > 0)
+                        ? data.internship.bullets
+                        : (data.internship.description ? data.internship.description.split("\n").map(l => l.trim().replace(/^[-*•–]\s*/, "")).filter(Boolean) : []);
+                    return (
+                        <section className="mb-4">
+                            <h6 className="fw-bold text-uppercase pb-1 mb-2" style={{ color: "#0083b0", borderBottom: "1px solid #e2e8f0" }}>Internship</h6>
+                            <div className="mb-2 small text-muted">
+                                <div className="d-flex justify-content-between align-items-baseline text-dark fw-bold">
+                                    <span>{data.internship.field}</span>
+                                    <span>{data.internship.start} – {data.internship.end}</span>
+                                </div>
+                                <div className="italic">
+                                    {data.internship.company}
+                                </div>
+                                {bullets.length > 0 && (
+                                    <ul style={{ margin: "6px 0 0", paddingLeft: "16px", listStyleType: "disc" }}>
+                                        {bullets.map((b, i) => (
+                                            <li key={i} style={{ marginBottom: "2px", lineHeight: "1.5", color: "#475569" }}>{b}</li>
+                                        ))}
+                                    </ul>
+                                )}
                             </div>
-                            <div className="italic">
-                                {data.internship.company}
-                            </div>
-                        </div>
-                    </section>
-                )}
+                        </section>
+                    );
+                })()}
 
                 {/* Projects */}
                 {data.projects && (() => {

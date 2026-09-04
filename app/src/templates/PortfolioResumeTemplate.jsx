@@ -140,20 +140,32 @@ export default function PortfolioResumeTemplate({ data }) {
             )}
 
             {/* INTERNSHIPS */}
-            {data.internship && (
-                <section className="mb-4">
-                    <h5 className="fw-bold mb-3 text-uppercase" style={{ fontSize: "11px", letterSpacing: "1px", color: "#4f46e5" }}>Internships &amp; Apprenticeships</h5>
-                    <div style={{ borderLeft: "3px solid #6366f1", paddingLeft: "12px", background: "rgba(99, 102, 241, 0.04)", padding: "10px 14px", borderRadius: "0 6px 6px 0" }}>
-                        <div className="d-flex justify-content-between fw-bold" style={{ fontSize: "12.5px" }}>
-                            <span style={{ color: "#0f172a" }}>{data.internship.field}</span>
-                            <span className="text-muted small">{data.internship.start} – {data.internship.end}</span>
+            {data.internship && (() => {
+                const bullets = (data.internship.bullets && data.internship.bullets.length > 0)
+                    ? data.internship.bullets
+                    : (data.internship.description ? data.internship.description.split("\n").map(l => l.trim().replace(/^[-*•–]\s*/, "")).filter(Boolean) : []);
+                return (
+                    <section className="mb-4">
+                        <h5 className="fw-bold mb-3 text-uppercase" style={{ fontSize: "11px", letterSpacing: "1px", color: "#4f46e5" }}>Internships &amp; Apprenticeships</h5>
+                        <div style={{ borderLeft: "3px solid #6366f1", paddingLeft: "12px", background: "rgba(99, 102, 241, 0.04)", padding: "10px 14px", borderRadius: "0 6px 6px 0" }}>
+                            <div className="d-flex justify-content-between fw-bold" style={{ fontSize: "12.5px" }}>
+                                <span style={{ color: "#0f172a" }}>{data.internship.field}</span>
+                                <span className="text-muted small">{data.internship.start} – {data.internship.end}</span>
+                            </div>
+                            <div style={{ fontSize: "11.5px", color: "#6366f1", fontStyle: "italic", marginTop: "2px" }}>
+                                {data.internship.company}
+                            </div>
+                            {bullets.length > 0 && (
+                                <ul style={{ margin: "8px 0 0", paddingLeft: "16px", listStyleType: "disc" }}>
+                                    {bullets.map((b, i) => (
+                                        <li key={i} style={{ fontSize: "11.5px", color: "#334155", lineHeight: "1.5", marginBottom: "2px" }}>{b}</li>
+                                    ))}
+                                </ul>
+                            )}
                         </div>
-                        <div style={{ fontSize: "11.5px", color: "#6366f1", fontStyle: "italic", marginTop: "2px" }}>
-                            {data.internship.company}
-                        </div>
-                    </div>
-                </section>
-            )}
+                    </section>
+                );
+            })()}
 
             {/* EDUCATION */}
             {data.education && data.education.length > 0 && (

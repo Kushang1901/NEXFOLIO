@@ -68,11 +68,17 @@ export const normalizeResumeData = (raw) => {
 
         internship: (raw.hasInternship && raw.internship && typeof raw.internship === "object")
             ? {
-                field: raw.internship.field || "",
+                field: raw.internship.field || raw.internship.role || "",
                 company: raw.internship.company || "",
                 ongoing: raw.internship.ongoing || false,
-                start: [raw.internship.startMonth, raw.internship.startYear].filter(Boolean).join(" "),
-                end: raw.internship.ongoing ? "Present" : [raw.internship.endMonth, raw.internship.endYear].filter(Boolean).join(" ")
+                start: [raw.internship.startMonth, raw.internship.startYear].filter(Boolean).join(" ") || raw.internship.start || "",
+                end: raw.internship.ongoing ? "Present" : ([raw.internship.endMonth, raw.internship.endYear].filter(Boolean).join(" ") || raw.internship.end || ""),
+                description: raw.internship.description || "",
+                bullets: raw.internship.bullets && Array.isArray(raw.internship.bullets)
+                    ? raw.internship.bullets
+                    : (raw.internship.description
+                        ? raw.internship.description.split("\n").map(l => l.trim().replace(/^[-*•–]\s*/, "")).filter(Boolean)
+                        : [])
             }
             : (typeof raw.internship === "string" ? raw.internship : null),
 

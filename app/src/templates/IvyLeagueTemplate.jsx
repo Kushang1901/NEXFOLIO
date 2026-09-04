@@ -114,20 +114,32 @@ export default function IvyLeagueTemplate({ data }) {
             )}
 
             {/* FELLOWSHIPS & INTERNSHIPS */}
-            {data.internship && (
-                <section className="mb-4">
-                    <h5 className="fw-bold text-center mb-3" style={{ fontSize: "12px", letterSpacing: "1px", borderBottom: "1px solid #777", paddingBottom: "2px" }}>FELLOWSHIPS &amp; INTERNSHIPS</h5>
-                    <div style={{ fontSize: "12.5px" }}>
-                        <div className="d-flex justify-content-between">
-                            <strong>{data.internship.field}</strong>
-                            <span>{data.internship.start} – {data.internship.end}</span>
+            {data.internship && (() => {
+                const bullets = (data.internship.bullets && data.internship.bullets.length > 0)
+                    ? data.internship.bullets
+                    : (data.internship.description ? data.internship.description.split("\n").map(l => l.trim().replace(/^[-*•–]\s*/, "")).filter(Boolean) : []);
+                return (
+                    <section className="mb-4">
+                        <h5 className="fw-bold text-center mb-3" style={{ fontSize: "12px", letterSpacing: "1px", borderBottom: "1px solid #777", paddingBottom: "2px" }}>FELLOWSHIPS &amp; INTERNSHIPS</h5>
+                        <div style={{ fontSize: "12.5px" }}>
+                            <div className="d-flex justify-content-between">
+                                <strong>{data.internship.field}</strong>
+                                <span>{data.internship.start} – {data.internship.end}</span>
+                            </div>
+                            <div className="text-muted fst-italic" style={{ fontSize: "11.5px", marginTop: "2px" }}>
+                                {data.internship.company}
+                            </div>
+                            {bullets.length > 0 && (
+                                <ul style={{ margin: "6px 0 0", paddingLeft: "18px", listStyleType: "disc" }}>
+                                    {bullets.map((b, i) => (
+                                        <li key={i} style={{ fontSize: "11.5px", color: "#222", lineHeight: "1.5", marginBottom: "2px" }}>{b}</li>
+                                    ))}
+                                </ul>
+                            )}
                         </div>
-                        <div className="text-muted fst-italic" style={{ fontSize: "11.5px", marginTop: "2px" }}>
-                            {data.internship.company}
-                        </div>
-                    </div>
-                </section>
-            )}
+                    </section>
+                );
+            })()}
 
             {/* AWARDS & HONORS */}
             {data.achievements && (

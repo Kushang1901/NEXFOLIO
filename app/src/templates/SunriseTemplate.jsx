@@ -111,21 +111,33 @@ export default function SunriseTemplate({ data }) {
                 )}
 
                 {/* Internship */}
-                {data.internship && (
-                    <section style={{ marginBottom: "1.5rem" }}>
-                        <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "10px" }}>
-                            <div style={{ width: "28px", height: "3px", background: accent, borderRadius: "2px" }}></div>
-                            <h2 style={{ margin: 0, fontSize: "0.75rem", fontWeight: "700", textTransform: "uppercase", letterSpacing: "2px", color: accent }}>Internship</h2>
-                        </div>
-                        <div style={{ borderLeft: `3px solid ${accentLight}`, paddingLeft: "14px" }}>
-                            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
-                                <strong style={{ fontSize: "0.95rem" }}>{data.internship.field}</strong>
-                                <span style={{ fontSize: "0.8rem", color: "#888" }}>{data.internship.start} – {data.internship.end}</span>
+                {data.internship && (() => {
+                    const bullets = (data.internship.bullets && data.internship.bullets.length > 0)
+                        ? data.internship.bullets
+                        : (data.internship.description ? data.internship.description.split("\n").map(l => l.trim().replace(/^[-*•–]\s*/, "")).filter(Boolean) : []);
+                    return (
+                        <section style={{ marginBottom: "1.5rem" }}>
+                            <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "10px" }}>
+                                <div style={{ width: "28px", height: "3px", background: accent, borderRadius: "2px" }}></div>
+                                <h2 style={{ margin: 0, fontSize: "0.75rem", fontWeight: "700", textTransform: "uppercase", letterSpacing: "2px", color: accent }}>Internship</h2>
                             </div>
-                            <p style={{ margin: "2px 0 0", fontSize: "0.85rem", color: accent, fontStyle: "italic" }}>{data.internship.company}</p>
-                        </div>
-                    </section>
-                )}
+                            <div style={{ borderLeft: `3px solid ${accentLight}`, paddingLeft: "14px" }}>
+                                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
+                                    <strong style={{ fontSize: "0.95rem" }}>{data.internship.field}</strong>
+                                    <span style={{ fontSize: "0.8rem", color: "#888" }}>{data.internship.start} – {data.internship.end}</span>
+                                </div>
+                                <p style={{ margin: "2px 0 0", fontSize: "0.85rem", color: accent, fontStyle: "italic" }}>{data.internship.company}</p>
+                                {bullets.length > 0 && (
+                                    <ul style={{ margin: "6px 0 0", paddingLeft: "18px", fontSize: "0.85rem", color: "#555", lineHeight: "1.5" }}>
+                                        {bullets.map((b, i) => (
+                                            <li key={i}>{b}</li>
+                                        ))}
+                                    </ul>
+                                )}
+                            </div>
+                        </section>
+                    );
+                })()}
 
                 {/* Education */}
                 {data.education && data.education.length > 0 && (

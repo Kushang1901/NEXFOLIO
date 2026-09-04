@@ -125,16 +125,28 @@ export default function TimelineTemplate({ data }) {
                                     </div>
                                 )}
 
-                                {data.internship && (
-                                    <div style={{ position: "relative" }}>
-                                        <div style={{ position: "absolute", left: "-24px", top: "4px", width: "12px", height: "12px", borderRadius: "50%", background: "#fff", border: `2px solid ${teal}`, boxShadow: `0 0 0 2px ${teal}44` }}></div>
-                                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: "4px" }}>
-                                            <strong style={{ fontSize: "1rem", color: "#0f172a" }}>{data.internship.field}</strong>
-                                            <span style={{ fontSize: "0.78rem", color: "#94a3b8", background: tealLight, padding: "2px 8px", borderRadius: "4px" }}>{data.internship.start} – {data.internship.end}</span>
+                                {data.internship && (() => {
+                                    const bullets = (data.internship.bullets && data.internship.bullets.length > 0)
+                                        ? data.internship.bullets
+                                        : (data.internship.description ? data.internship.description.split("\n").map(l => l.trim().replace(/^[-*•–]\s*/, "")).filter(Boolean) : []);
+                                    return (
+                                        <div style={{ position: "relative" }}>
+                                            <div style={{ position: "absolute", left: "-24px", top: "4px", width: "12px", height: "12px", borderRadius: "50%", background: "#fff", border: `2px solid ${teal}`, boxShadow: `0 0 0 2px ${teal}44` }}></div>
+                                            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: "4px" }}>
+                                                <strong style={{ fontSize: "1rem", color: "#0f172a" }}>{data.internship.field}</strong>
+                                                <span style={{ fontSize: "0.78rem", color: "#94a3b8", background: tealLight, padding: "2px 8px", borderRadius: "4px" }}>{data.internship.start} – {data.internship.end}</span>
+                                            </div>
+                                            <p style={{ margin: 0, fontSize: "0.875rem", color: teal, fontWeight: "500" }}>{data.internship.company}</p>
+                                            {bullets.length > 0 && (
+                                                <ul style={{ margin: "6px 0 0", paddingLeft: "18px", fontSize: "0.88rem", color: "#475569", lineHeight: "1.5" }}>
+                                                    {bullets.map((b, i) => (
+                                                        <li key={i}>{b}</li>
+                                                    ))}
+                                                </ul>
+                                            )}
                                         </div>
-                                        <p style={{ margin: 0, fontSize: "0.875rem", color: teal, fontWeight: "500" }}>{data.internship.company}</p>
-                                    </div>
-                                )}
+                                    );
+                                })()}
                             </div>
                         </section>
                     )}

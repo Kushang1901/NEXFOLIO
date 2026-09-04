@@ -728,7 +728,7 @@ PhD: ${formData.hasPhd ? `${formData.phd.course} (${[formData.phd.startMonth, fo
 
 Internship:
 ${formData.hasInternship
-    ? `Company: ${formData.internship.company}, Field/Role: ${formData.internship.field}, Duration: ${[formData.internship.startMonth, formData.internship.startYear].filter(Boolean).join(" ")} to ${formData.internship.ongoing ? "Present (Ongoing)" : [formData.internship.endMonth, formData.internship.endYear].filter(Boolean).join(" ")}`
+    ? `Company: ${formData.internship.company}, Field/Role: ${formData.internship.field}, Duration: ${[formData.internship.startMonth, formData.internship.startYear].filter(Boolean).join(" ")} to ${formData.internship.ongoing ? "Present (Ongoing)" : [formData.internship.endMonth, formData.internship.endYear].filter(Boolean).join(" ")}${formData.internship.description ? `. Description / Key Responsibilities:\n${formData.internship.description}` : ""}`
     : "Not Applicable"}
 
 Job Experience:
@@ -1466,6 +1466,24 @@ ${formData.skills || "Not provided"}
                                                         </div>
                                                     </div>
                                                 )}
+                                            </div>
+
+                                            <div className="mb-3">
+                                                <label htmlFor="internshipDescription" className="form-label small text-white-50 fw-semibold d-flex justify-content-between">
+                                                    <span>Description / Key Responsibilities (Bullet Points)</span>
+                                                    <span className="text-muted small">One point per line</span>
+                                                </label>
+                                                <textarea
+                                                    className="form-control bg-dark text-white border-secondary"
+                                                    id="internshipDescription"
+                                                    rows="3"
+                                                    value={formData.internship.description || ""}
+                                                    onChange={(e) => handleNestedChange("internship", "description", e.target.value)}
+                                                    placeholder="- Developed and maintained responsive web interfaces using React.js&#10;- Collaborated with the design team to implement pixel-perfect UI from Figma&#10;- Improved page load performance and cross-browser compatibility"
+                                                    style={{ borderRadius: "8px", fontSize: "0.9rem" }}
+                                                    suppressHydrationWarning
+                                                ></textarea>
+                                                <small className="text-white-50">Optional - Add bullet points describing your internship work (one point per line or starting with -)</small>
                                             </div>
                                         </>
                                     )}

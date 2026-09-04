@@ -128,6 +128,36 @@ export default function DataAnalystTemplate({ data }) {
                 </section>
             )}
 
+            {/* INTERNSHIP */}
+            {data.internship && (() => {
+                const bullets = (data.internship.bullets && data.internship.bullets.length > 0)
+                    ? data.internship.bullets
+                    : (data.internship.description ? data.internship.description.split("\n").map(l => l.trim().replace(/^[-*•–]\s*/, "")).filter(Boolean) : []);
+                return (
+                    <section style={{ marginBottom: "20px" }}>
+                        <h5 style={{ margin: "0 0 10px", fontSize: "12px", fontWeight: "700", textTransform: "uppercase", letterSpacing: "1px", color: "#0f172a", borderLeft: "3px solid #0891b2", paddingLeft: "8px" }}>
+                            Internships & Training
+                        </h5>
+                        <div>
+                            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
+                                <strong style={{ fontSize: "13px", color: "#0f172a" }}>{data.internship.field}</strong>
+                                <span style={{ fontSize: "11px", color: "#64748b", background: "#f0f9ff", padding: "2px 8px", borderRadius: "4px" }}>{data.internship.start} – {data.internship.end}</span>
+                            </div>
+                            <div style={{ color: "#0891b2", fontSize: "12px", fontWeight: "500", margin: "2px 0 4px" }}>
+                                {data.internship.company}
+                            </div>
+                            {bullets.length > 0 && (
+                                <ul style={{ margin: "6px 0 0", paddingLeft: "16px", listStyleType: "disc" }}>
+                                    {bullets.map((b, i) => (
+                                        <li key={i} style={{ fontSize: "11.5px", color: "#334155", lineHeight: "1.5", marginBottom: "2px" }}>{b}</li>
+                                    ))}
+                                </ul>
+                            )}
+                        </div>
+                    </section>
+                );
+            })()}
+
             {/* EDUCATION */}
             {data.education && data.education.length > 0 && (
                 <section style={{ marginBottom: "20px" }}>

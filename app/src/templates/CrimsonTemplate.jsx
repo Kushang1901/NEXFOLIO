@@ -114,20 +114,32 @@ export default function CrimsonTemplate({ data }) {
                     </section>
                 )}
 
-                {data.internship && (
-                    <section style={{ marginBottom: "2rem" }}>
-                        <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "14px" }}>
-                            <h2 style={{ margin: 0, fontFamily: "'Georgia', serif", fontSize: "1.1rem", color: "#1c1917", fontWeight: "700", fontStyle: "italic" }}>Internship</h2>
-                            <div style={{ flex: 1, height: "1px", background: "#e7e5e4" }}></div>
-                            <div style={{ width: "6px", height: "6px", background: red, borderRadius: "50%", flexShrink: 0 }}></div>
-                        </div>
-                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
-                            <strong style={{ fontSize: "1rem", fontFamily: "'Georgia', serif" }}>{data.internship.field}</strong>
-                            <span style={{ fontSize: "0.8rem", color: "#78716c", fontFamily: "sans-serif" }}>{data.internship.start} – {data.internship.end}</span>
-                        </div>
-                        <p style={{ margin: "4px 0 0", fontSize: "0.875rem", color: red, fontStyle: "italic" }}>{data.internship.company}</p>
-                    </section>
-                )}
+                {data.internship && (() => {
+                    const bullets = (data.internship.bullets && data.internship.bullets.length > 0)
+                        ? data.internship.bullets
+                        : (data.internship.description ? data.internship.description.split("\n").map(l => l.trim().replace(/^[-*•–]\s*/, "")).filter(Boolean) : []);
+                    return (
+                        <section style={{ marginBottom: "2rem" }}>
+                            <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "14px" }}>
+                                <h2 style={{ margin: 0, fontFamily: "'Georgia', serif", fontSize: "1.1rem", color: "#1c1917", fontWeight: "700", fontStyle: "italic" }}>Internship</h2>
+                                <div style={{ flex: 1, height: "1px", background: "#e7e5e4" }}></div>
+                                <div style={{ width: "6px", height: "6px", background: red, borderRadius: "50%", flexShrink: 0 }}></div>
+                            </div>
+                            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
+                                <strong style={{ fontSize: "1rem", fontFamily: "'Georgia', serif" }}>{data.internship.field}</strong>
+                                <span style={{ fontSize: "0.8rem", color: "#78716c", fontFamily: "sans-serif" }}>{data.internship.start} – {data.internship.end}</span>
+                            </div>
+                            <p style={{ margin: "4px 0 0", fontSize: "0.875rem", color: red, fontStyle: "italic" }}>{data.internship.company}</p>
+                            {bullets.length > 0 && (
+                                <ul style={{ margin: "6px 0 0", paddingLeft: "18px", listStyleType: "disc" }}>
+                                    {bullets.map((b, i) => (
+                                        <li key={i} style={{ fontSize: "0.875rem", color: "#44403c", lineHeight: "1.6", marginBottom: "3px" }}>{b}</li>
+                                    ))}
+                                </ul>
+                            )}
+                        </section>
+                    );
+                })()}
 
                 {data.education && data.education.length > 0 && (
                     <section style={{ marginBottom: "2rem" }}>

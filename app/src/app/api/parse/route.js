@@ -82,7 +82,8 @@ JSON schema:
     "startMonth": "Start month",
     "startYear": "Start year",
     "endMonth": "End month (leave empty if ongoing)",
-    "endYear": "End year (leave empty if ongoing)"
+    "endYear": "End year (leave empty if ongoing)",
+    "description": "A bulleted or paragraph description of internship responsibilities and achievements"
   },
   "hasExperience": true/false,
   "experience": {

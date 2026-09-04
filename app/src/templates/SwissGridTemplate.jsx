@@ -104,20 +104,32 @@ export default function SwissGridTemplate({ data }) {
                 )}
 
                 {/* INTERNSHIP */}
-                {data.internship && (
-                    <div className="row">
-                        <div className="col-3 fw-bold text-uppercase" style={{ fontSize: "11px", letterSpacing: "1.2px", color: "#111" }}>Internship</div>
-                        <div className="col-9">
-                            <div className="d-flex justify-content-between fw-bold" style={{ fontSize: "12.5px" }}>
-                                <span>{data.internship.field}</span>
-                                <span>{data.internship.start} – {data.internship.end}</span>
-                            </div>
-                            <div className="text-muted" style={{ fontSize: "11.5px", fontStyle: "italic", marginTop: "3px" }}>
-                                {data.internship.company}
+                {data.internship && (() => {
+                    const bullets = (data.internship.bullets && data.internship.bullets.length > 0)
+                        ? data.internship.bullets
+                        : (data.internship.description ? data.internship.description.split("\n").map(l => l.trim().replace(/^[-*•–]\s*/, "")).filter(Boolean) : []);
+                    return (
+                        <div className="row">
+                            <div className="col-3 fw-bold text-uppercase" style={{ fontSize: "11px", letterSpacing: "1.2px", color: "#111" }}>Internship</div>
+                            <div className="col-9">
+                                <div className="d-flex justify-content-between fw-bold" style={{ fontSize: "12.5px" }}>
+                                    <span>{data.internship.field}</span>
+                                    <span>{data.internship.start} – {data.internship.end}</span>
+                                </div>
+                                <div className="text-muted" style={{ fontSize: "11.5px", fontStyle: "italic", marginTop: "3px" }}>
+                                    {data.internship.company}
+                                </div>
+                                {bullets.length > 0 && (
+                                    <ul style={{ margin: "6px 0 0", paddingLeft: "16px", fontSize: "11.5px", color: "#334155", lineHeight: "1.5" }}>
+                                        {bullets.map((b, i) => (
+                                            <li key={i}>{b}</li>
+                                        ))}
+                                    </ul>
+                                )}
                             </div>
                         </div>
-                    </div>
-                )}
+                    );
+                })()}
 
                 {/* EDUCATION */}
                 {data.education && data.education.length > 0 && (

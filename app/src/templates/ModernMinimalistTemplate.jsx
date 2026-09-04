@@ -131,22 +131,34 @@ export default function ModernMinimalistTemplate({ data }) {
             )}
 
             {/* Internship */}
-            {data.internship && (
-                <section className="mb-4">
-                    <h5 className="text-uppercase fw-bold mb-2" style={{ letterSpacing: "1px", fontWeight: "700" }}>
-                        Internship
-                    </h5>
-                    <div className="mb-2 text-dark" style={{ fontSize: "0.95rem" }}>
-                        <div className="d-flex justify-content-between align-items-baseline fw-bold">
-                            <span>{data.internship.field}</span>
-                            <span>{data.internship.start} – {data.internship.end}</span>
+            {data.internship && (() => {
+                const bullets = (data.internship.bullets && data.internship.bullets.length > 0)
+                    ? data.internship.bullets
+                    : (data.internship.description ? data.internship.description.split("\n").map(l => l.trim().replace(/^[-*•–]\s*/, "")).filter(Boolean) : []);
+                return (
+                    <section className="mb-4">
+                        <h5 className="text-uppercase fw-bold mb-2" style={{ letterSpacing: "1px", fontWeight: "700" }}>
+                            Internship
+                        </h5>
+                        <div className="mb-2 text-dark" style={{ fontSize: "0.95rem" }}>
+                            <div className="d-flex justify-content-between align-items-baseline fw-bold">
+                                <span>{data.internship.field}</span>
+                                <span>{data.internship.start} – {data.internship.end}</span>
+                            </div>
+                            <div className="text-muted small">
+                                {data.internship.company}
+                            </div>
+                            {bullets.length > 0 && (
+                                <ul style={{ margin: "6px 0 0", paddingLeft: "18px", listStyleType: "disc" }}>
+                                    {bullets.map((b, i) => (
+                                        <li key={i} style={{ color: "#374151", lineHeight: "1.5", marginBottom: "2px" }}>{b}</li>
+                                    ))}
+                                </ul>
+                            )}
                         </div>
-                        <div className="text-muted small">
-                            {data.internship.company}
-                        </div>
-                    </div>
-                </section>
-            )}
+                    </section>
+                );
+            })()}
 
             {/* Projects */}
             {data.projects && (() => {

@@ -231,27 +231,38 @@ export default function ClassicTemplate({ data }) {
             )}
 
             {/* INTERNSHIP */}
-            {data.internship && (
-                <section className="mb-4">
-                    <h5 className="fw-bold text-uppercase mb-2.5" style={{ fontSize: "0.95rem", letterSpacing: "0.06em", borderBottom: "1.5px solid #e2e8f0", paddingBottom: "4px", color: "#0f172a" }}>
-                        Internship
-                    </h5>
-                    <div className="mb-2">
-                        <div className="d-flex justify-content-between align-items-baseline">
-                            <span className="fw-bold" style={{ fontSize: "0.95rem", color: "#0f172a" }}>{data.internship.field || data.internship.role}</span>
-                            <span className="text-muted small fw-medium">{data.internship.start} – {data.internship.end}</span>
+            {data.internship && (() => {
+                const bullets = (data.internship.bullets && data.internship.bullets.length > 0)
+                    ? data.internship.bullets
+                    : (data.internship.description ? data.internship.description.split("\n").map(l => l.trim().replace(/^[-*•–]\s*/, "")).filter(Boolean) : []);
+                return (
+                    <section className="mb-4">
+                        <h5 className="fw-bold text-uppercase mb-2.5" style={{ fontSize: "0.95rem", letterSpacing: "0.06em", borderBottom: "1.5px solid #e2e8f0", paddingBottom: "4px", color: "#0f172a" }}>
+                            Internship
+                        </h5>
+                        <div className="mb-2">
+                            <div className="d-flex justify-content-between align-items-baseline">
+                                <span className="fw-bold" style={{ fontSize: "0.95rem", color: "#0f172a" }}>{data.internship.field || data.internship.role}</span>
+                                <span className="text-muted small fw-medium">{data.internship.start} – {data.internship.end}</span>
+                            </div>
+                            <div className="text-muted small mb-1.5 fw-semibold" style={{ color: "#475569" }}>
+                                {data.internship.company} {data.internship.location && `| ${data.internship.location}`}
+                            </div>
+                            {bullets.length > 0 ? (
+                                <ul style={{ margin: "6px 0 0", paddingLeft: "18px", listStyleType: "disc" }}>
+                                    {bullets.map((b, i) => (
+                                        <li key={i} style={{ fontSize: "0.88rem", color: "#334155", lineHeight: "1.55", marginBottom: "2px" }}>{b}</li>
+                                    ))}
+                                </ul>
+                            ) : data.internship.description && (
+                                <p className="mt-1 text-secondary" style={{ whiteSpace: "pre-line", fontSize: "0.9rem", lineHeight: "1.55", color: "#334155" }}>
+                                    {data.internship.description}
+                                </p>
+                            )}
                         </div>
-                        <div className="text-muted small mb-1.5 fw-semibold" style={{ color: "#475569" }}>
-                            {data.internship.company} {data.internship.location && `| ${data.internship.location}`}
-                        </div>
-                        {data.internship.description && (
-                            <p className="mt-1 text-secondary" style={{ whiteSpace: "pre-line", fontSize: "0.9rem", lineHeight: "1.55", color: "#334155" }}>
-                                {data.internship.description}
-                            </p>
-                        )}
-                    </div>
-                </section>
-            )}
+                    </section>
+                );
+            })()}
 
             {/* PROJECTS */}
             {data.projects && (() => {

@@ -122,22 +122,34 @@ export default function CompactATSTemplate({ data }) {
             )}
 
             {/* INTERNSHIP */}
-            {data.internship && (
-                <div style={{ marginBottom: "18px" }}>
-                    <div style={{ fontWeight: "700", textTransform: "uppercase", fontSize: "11px", letterSpacing: "1.2px", color: "#0f172a", borderLeft: "3px solid #2563eb", paddingLeft: "8px", borderBottom: "1px solid #e2e8f0", paddingBottom: "4px", marginBottom: "10px" }}>
-                        Internships
-                    </div>
-                    <div>
-                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
-                            <strong style={{ fontSize: "12px", color: "#0f172a" }}>{data.internship.field}</strong>
-                            <span style={{ fontSize: "10.5px", color: "#64748b", background: "#f1f5f9", padding: "2px 8px", borderRadius: "4px" }}>{data.internship.start} – {data.internship.end}</span>
+            {data.internship && (() => {
+                const bullets = (data.internship.bullets && data.internship.bullets.length > 0)
+                    ? data.internship.bullets
+                    : (data.internship.description ? data.internship.description.split("\n").map(l => l.trim().replace(/^[-*•–]\s*/, "")).filter(Boolean) : []);
+                return (
+                    <div style={{ marginBottom: "18px" }}>
+                        <div style={{ fontWeight: "700", textTransform: "uppercase", fontSize: "11px", letterSpacing: "1.2px", color: "#0f172a", borderLeft: "3px solid #2563eb", paddingLeft: "8px", borderBottom: "1px solid #e2e8f0", paddingBottom: "4px", marginBottom: "10px" }}>
+                            Internships
                         </div>
-                        <div style={{ color: "#2563eb", fontSize: "11px", fontStyle: "italic", marginTop: "2px" }}>
-                            {data.internship.company}
+                        <div>
+                            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
+                                <strong style={{ fontSize: "12px", color: "#0f172a" }}>{data.internship.field}</strong>
+                                <span style={{ fontSize: "10.5px", color: "#64748b", background: "#f1f5f9", padding: "2px 8px", borderRadius: "4px" }}>{data.internship.start} – {data.internship.end}</span>
+                            </div>
+                            <div style={{ color: "#2563eb", fontSize: "11px", fontStyle: "italic", marginTop: "2px" }}>
+                                {data.internship.company}
+                            </div>
+                            {bullets.length > 0 && (
+                                <ul style={{ margin: "6px 0 0", paddingLeft: "16px", listStyleType: "disc" }}>
+                                    {bullets.map((b, i) => (
+                                        <li key={i} style={{ fontSize: "11px", color: "#334155", lineHeight: "1.45", marginBottom: "2px" }}>{b}</li>
+                                    ))}
+                                </ul>
+                            )}
                         </div>
                     </div>
-                </div>
-            )}
+                );
+            })()}
 
             {/* EDUCATION */}
             {data.education && data.education.length > 0 && (

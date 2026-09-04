@@ -114,21 +114,33 @@ export default function AuroraTemplate({ data }) {
                     </section>
                 )}
 
-                {data.internship && (
-                    <section style={{ marginBottom: "1.75rem" }}>
-                        <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "14px" }}>
-                            <div style={{ width: "20px", height: "3px", background: "linear-gradient(90deg, #22d3ee, #4ade80)", borderRadius: "2px" }}></div>
-                            <h3 style={{ margin: 0, fontSize: "0.7rem", fontWeight: "700", textTransform: "uppercase", letterSpacing: "2.5px", color: "#475569" }}>Internship</h3>
-                        </div>
-                        <div style={{ borderLeft: "3px solid #16a34a", paddingLeft: "14px" }}>
-                            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: "4px" }}>
-                                <strong style={{ fontSize: "1rem", color: "#1e293b" }}>{data.internship.field}</strong>
-                                <span style={{ fontSize: "0.78rem", color: "#94a3b8", background: "#f1f5f9", padding: "2px 8px", borderRadius: "4px" }}>{data.internship.start} – {data.internship.end}</span>
+                {data.internship && (() => {
+                    const bullets = (data.internship.bullets && data.internship.bullets.length > 0)
+                        ? data.internship.bullets
+                        : (data.internship.description ? data.internship.description.split("\n").map(l => l.trim().replace(/^[-*•–]\s*/, "")).filter(Boolean) : []);
+                    return (
+                        <section style={{ marginBottom: "1.75rem" }}>
+                            <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "14px" }}>
+                                <div style={{ width: "20px", height: "3px", background: "linear-gradient(90deg, #22d3ee, #4ade80)", borderRadius: "2px" }}></div>
+                                <h3 style={{ margin: 0, fontSize: "0.7rem", fontWeight: "700", textTransform: "uppercase", letterSpacing: "2.5px", color: "#475569" }}>Internship</h3>
                             </div>
-                            <p style={{ margin: 0, fontSize: "0.875rem", color: "#16a34a", fontWeight: "500" }}>{data.internship.company}</p>
-                        </div>
-                    </section>
-                )}
+                            <div style={{ borderLeft: "3px solid #16a34a", paddingLeft: "14px" }}>
+                                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: "4px" }}>
+                                    <strong style={{ fontSize: "1rem", color: "#1e293b" }}>{data.internship.field}</strong>
+                                    <span style={{ fontSize: "0.78rem", color: "#94a3b8", background: "#f1f5f9", padding: "2px 8px", borderRadius: "4px" }}>{data.internship.start} – {data.internship.end}</span>
+                                </div>
+                                <p style={{ margin: 0, fontSize: "0.875rem", color: "#16a34a", fontWeight: "500" }}>{data.internship.company}</p>
+                                {bullets.length > 0 && (
+                                    <ul style={{ margin: "8px 0 0", paddingLeft: "18px", listStyleType: "disc" }}>
+                                        {bullets.map((b, i) => (
+                                            <li key={i} style={{ fontSize: "0.875rem", color: "#334155", lineHeight: "1.5", marginBottom: "3px" }}>{b}</li>
+                                        ))}
+                                    </ul>
+                                )}
+                            </div>
+                        </section>
+                    );
+                })()}
 
                 {/* Education below Internship */}
                 {data.education && data.education.length > 0 && (

@@ -159,22 +159,34 @@ export default function SlateTwoColumnTemplate({ data }) {
                 )}
 
                 {/* Internship */}
-                {data.internship && (
-                    <section className="mb-4 pb-2">
-                        <h5 className="text-uppercase fw-bold text-slate-800 border-bottom pb-2 mb-3" style={{ color: "#1e293b", letterSpacing: "0.5px" }}>
-                            Internship
-                        </h5>
-                        <div className="mb-2" style={{ fontSize: "0.95rem" }}>
-                            <div className="d-flex justify-content-between align-items-baseline fw-bold text-slate-800">
-                                <span>{data.internship.field}</span>
-                                <span className="text-muted small fw-normal">{data.internship.start} – {data.internship.end}</span>
+                {data.internship && (() => {
+                    const bullets = (data.internship.bullets && data.internship.bullets.length > 0)
+                        ? data.internship.bullets
+                        : (data.internship.description ? data.internship.description.split("\n").map(l => l.trim().replace(/^[-*•–]\s*/, "")).filter(Boolean) : []);
+                    return (
+                        <section className="mb-4 pb-2">
+                            <h5 className="text-uppercase fw-bold text-slate-800 border-bottom pb-2 mb-3" style={{ color: "#1e293b", letterSpacing: "0.5px" }}>
+                                Internship
+                            </h5>
+                            <div className="mb-2" style={{ fontSize: "0.95rem" }}>
+                                <div className="d-flex justify-content-between align-items-baseline fw-bold text-slate-800">
+                                    <span>{data.internship.field}</span>
+                                    <span className="text-muted small fw-normal">{data.internship.start} – {data.internship.end}</span>
+                                </div>
+                                <div className="text-muted small" style={{ fontStyle: "italic" }}>
+                                    {data.internship.company}
+                                </div>
+                                {bullets.length > 0 && (
+                                    <ul style={{ margin: "6px 0 0", paddingLeft: "18px", fontSize: "0.85rem", color: "#475569", lineHeight: "1.5" }}>
+                                        {bullets.map((b, i) => (
+                                            <li key={i}>{b}</li>
+                                        ))}
+                                    </ul>
+                                )}
                             </div>
-                            <div className="text-muted small" style={{ fontStyle: "italic" }}>
-                                {data.internship.company}
-                            </div>
-                        </div>
-                    </section>
-                )}
+                        </section>
+                    );
+                })()}
 
                 {/* Projects */}
                 {data.projects && (() => {

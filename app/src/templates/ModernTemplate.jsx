@@ -198,20 +198,32 @@ export default function ModernTemplate({ data }) {
                 )}
 
                 {/* INTERNSHIP */}
-                {data.internship && (
-                    <section className="mb-4">
-                        <h5 className="fw-bold">INTERNSHIP</h5>
-                        <div className="mb-2">
-                            <div className="d-flex justify-content-between align-items-baseline">
-                                <span className="fw-bold">{data.internship.field}</span>
-                                <span className="text-muted small">{data.internship.start} – {data.internship.end}</span>
+                {data.internship && (() => {
+                    const bullets = (data.internship.bullets && data.internship.bullets.length > 0)
+                        ? data.internship.bullets
+                        : (data.internship.description ? data.internship.description.split("\n").map(l => l.trim().replace(/^[-*•–]\s*/, "")).filter(Boolean) : []);
+                    return (
+                        <section className="mb-4">
+                            <h5 className="fw-bold">INTERNSHIP</h5>
+                            <div className="mb-2">
+                                <div className="d-flex justify-content-between align-items-baseline">
+                                    <span className="fw-bold">{data.internship.field}</span>
+                                    <span className="text-muted small">{data.internship.start} – {data.internship.end}</span>
+                                </div>
+                                <div className="text-muted small italic">
+                                    {data.internship.company}
+                                </div>
+                                {bullets.length > 0 && (
+                                    <ul style={{ margin: "6px 0 0", paddingLeft: "18px", listStyleType: "disc" }}>
+                                        {bullets.map((b, i) => (
+                                            <li key={i} style={{ fontSize: "0.88rem", color: "#4b5563", lineHeight: "1.5", marginBottom: "2px" }}>{b}</li>
+                                        ))}
+                                    </ul>
+                                )}
                             </div>
-                            <div className="text-muted small italic">
-                                {data.internship.company}
-                            </div>
-                        </div>
-                    </section>
-                )}
+                        </section>
+                    );
+                })()}
 
                 {/* PROJECTS (ON PAGE 1 THIS IS EMPTY) */}
                 {data.projects && (() => {

@@ -117,18 +117,30 @@ export default function MidnightTemplate({ data }) {
                 )}
 
                 {/* Internship */}
-                {data.internship && (
-                    <section style={{ marginBottom: "1.75rem" }}>
-                        <SectionTitle>Internship</SectionTitle>
-                        <div style={{ background: `${purple}11`, border: `1px solid ${border}`, borderRadius: "10px", padding: "14px 16px" }}>
-                            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: "4px" }}>
-                                <strong style={{ fontSize: "1rem", color: "#e2d9f3" }}>{data.internship.field}</strong>
-                                <span style={{ fontSize: "0.78rem", color: purple }}>{data.internship.start} – {data.internship.end}</span>
+                {data.internship && (() => {
+                    const bullets = (data.internship.bullets && data.internship.bullets.length > 0)
+                        ? data.internship.bullets
+                        : (data.internship.description ? data.internship.description.split("\n").map(l => l.trim().replace(/^[-*•–]\s*/, "")).filter(Boolean) : []);
+                    return (
+                        <section style={{ marginBottom: "1.75rem" }}>
+                            <SectionTitle>Internship</SectionTitle>
+                            <div style={{ background: `${purple}11`, border: `1px solid ${border}`, borderRadius: "10px", padding: "14px 16px" }}>
+                                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: "4px" }}>
+                                    <strong style={{ fontSize: "1rem", color: "#e2d9f3" }}>{data.internship.field}</strong>
+                                    <span style={{ fontSize: "0.78rem", color: purple }}>{data.internship.start} – {data.internship.end}</span>
+                                </div>
+                                <p style={{ margin: 0, fontSize: "0.85rem", color: "#a78bfa", fontStyle: "italic" }}>{data.internship.company}</p>
+                                {bullets.length > 0 && (
+                                    <ul style={{ margin: "8px 0 0", paddingLeft: "18px", listStyleType: "disc" }}>
+                                        {bullets.map((b, i) => (
+                                            <li key={i} style={{ fontSize: "0.85rem", color: "#cbd5e1", lineHeight: "1.5", marginBottom: "2px" }}>{b}</li>
+                                        ))}
+                                    </ul>
+                                )}
                             </div>
-                            <p style={{ margin: 0, fontSize: "0.85rem", color: "#a78bfa", fontStyle: "italic" }}>{data.internship.company}</p>
-                        </div>
-                    </section>
-                )}
+                        </section>
+                    );
+                })()}
 
                 {/* Education */}
                 {data.education && data.education.length > 0 && (

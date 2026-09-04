@@ -116,14 +116,26 @@ export default function BentoTemplate({ data }) {
                 )}
 
                 {/* 5. INTERNSHIP BLOCK */}
-                {data.internship && (
-                    <div style={{ background: "#ffffff", border: "1px solid #e2e8f0", borderRadius: "16px", padding: "18px 20px" }}>
-                        <h6 className="fw-bold text-uppercase text-secondary mb-2" style={{ fontSize: "10.5px", letterSpacing: "0.5px" }}>Internships</h6>
-                        <div className="fw-bold" style={{ fontSize: "12px", color: "#0f172a" }}>{data.internship.field}</div>
-                        <div style={{ fontSize: "11.5px", color: "#6366f1", fontWeight: "600", marginTop: "2px" }}>{data.internship.company}</div>
-                        <div className="text-muted small mt-1">{data.internship.start} – {data.internship.end}</div>
-                    </div>
-                )}
+                {data.internship && (() => {
+                    const bullets = (data.internship.bullets && data.internship.bullets.length > 0)
+                        ? data.internship.bullets
+                        : (data.internship.description ? data.internship.description.split("\n").map(l => l.trim().replace(/^[-*•–]\s*/, "")).filter(Boolean) : []);
+                    return (
+                        <div style={{ background: "#ffffff", border: "1px solid #e2e8f0", borderRadius: "16px", padding: "18px 20px" }}>
+                            <h6 className="fw-bold text-uppercase text-secondary mb-2" style={{ fontSize: "10.5px", letterSpacing: "0.5px" }}>Internships</h6>
+                            <div className="fw-bold" style={{ fontSize: "12px", color: "#0f172a" }}>{data.internship.field}</div>
+                            <div style={{ fontSize: "11.5px", color: "#6366f1", fontWeight: "600", marginTop: "2px" }}>{data.internship.company}</div>
+                            <div className="text-muted small mt-1">{data.internship.start} – {data.internship.end}</div>
+                            {bullets.length > 0 && (
+                                <ul style={{ margin: "8px 0 0", paddingLeft: "16px", listStyleType: "disc" }}>
+                                    {bullets.map((b, i) => (
+                                        <li key={i} style={{ fontSize: "11px", color: "#334155", lineHeight: "1.45", marginBottom: "2px" }}>{b}</li>
+                                    ))}
+                                </ul>
+                            )}
+                        </div>
+                    );
+                })()}
 
                 {/* 6. CONTACT BOX */}
                 <div style={{ background: "#ffffff", border: "1px solid #e2e8f0", borderRadius: "16px", padding: "18px 20px" }}>
