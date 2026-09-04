@@ -9,17 +9,24 @@ export default function PageLoader() {
     const [progress, setProgress] = useState(0);
     const [visible, setVisible] = useState(false);
     const timerRef = useRef(null);
+    const safetyTimerRef = useRef(null);
     const progressRef = useRef(null);
     const prevPathname = useRef(pathname);
 
     const startLoading = () => {
         // Clear any existing timers
         clearTimeout(timerRef.current);
+        clearTimeout(safetyTimerRef.current);
         clearInterval(progressRef.current);
 
         setProgress(0);
         setVisible(true);
         setLoading(true);
+
+        // Safety timeout: auto dismiss if navigation hangs or is cancelled
+        safetyTimerRef.current = setTimeout(() => {
+            finishLoading();
+        }, 3500);
 
         // Animate progress bar from 0 → ~85% over ~600ms
         let current = 0;
@@ -34,6 +41,7 @@ export default function PageLoader() {
     };
 
     const finishLoading = () => {
+        clearTimeout(safetyTimerRef.current);
         clearInterval(progressRef.current);
 
         // Shoot to 100%
@@ -86,6 +94,7 @@ export default function PageLoader() {
     useEffect(() => {
         return () => {
             clearTimeout(timerRef.current);
+            clearTimeout(safetyTimerRef.current);
             clearInterval(progressRef.current);
         };
     }, []);
@@ -151,7 +160,7 @@ export default function PageLoader() {
                     background: "rgba(0, 0, 0, 0.08)",
                     backdropFilter: "blur(1px)",
                     WebkitBackdropFilter: "blur(1px)",
-                    pointerEvents: loading ? "all" : "none",
+                    pointerEvents: "none",
                     opacity: loading ? 1 : 0,
                     transition: "opacity 0.3s ease",
                 }}

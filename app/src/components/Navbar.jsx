@@ -10,7 +10,7 @@ import { showToast } from "../utils/toast";
 import { Home, Palette, FileSignature, Target, Sparkles, FileText, X, ArrowRight, LogOut, ChevronDown, User, Briefcase, KeyRound, HelpCircle, Crown, Share2 } from "lucide-react";
 
 const NAV_LINKS = [
-    { label: "Home", href: "/" },
+    { label: "Home", href: "https://cvgrid.in" },
     { label: "Templates", href: "/templates" },
     { label: "Blog", href: "https://cvgrid.in/blog" },
     { label: "AI Cover Letter", href: "/cover-letter" },
@@ -730,6 +730,16 @@ export default function Navbar() {
                                 );
                             }
 
+                            if (link.href.startsWith("http")) {
+                                return (
+                                    <div key={link.href} className="nav-item-wrapper">
+                                        <a href={link.href} className="nav-link-item">
+                                            {link.label}
+                                        </a>
+                                    </div>
+                                );
+                            }
+
                             return (
                                 <div key={link.href} className="nav-item-wrapper">
                                     <Link href={link.href} className={`nav-link-item ${isActive(link.href) ? 'active' : ''}`}>
@@ -1188,6 +1198,21 @@ export default function Navbar() {
                             );
                         }
 
+                        if (link.href.startsWith("http")) {
+                            return (
+                                <a key={link.href} href={link.href} onClick={closeMenu} style={{
+                                    ...drawerLinkStyle,
+                                    color: "rgba(255,255,255,0.75)",
+                                    display: "flex",
+                                    alignItems: "center",
+                                    gap: "10px",
+                                }}>
+                                    {Icon ? <Icon size={16} /> : null}
+                                    {link.label}
+                                </a>
+                            );
+                        }
+
                         return (
                             <Link key={link.href} href={link.href} onClick={closeMenu} style={{
                                 ...drawerLinkStyle,
@@ -1373,6 +1398,7 @@ const drawerLinkStyle = {
 };
 const drawerIcons = {
     "/": Home,
+    "https://cvgrid.in": Home,
     "/templates": Palette,
     "https://cvgrid.in/blog": FileText,
     "/cover-letter": FileSignature,

@@ -8,14 +8,25 @@ export default function AppIndexPage() {
     const router = useRouter();
 
     useEffect(() => {
+        let resolved = false;
         const unsubscribe = subscribeToAuthChanges((user) => {
+            resolved = true;
             if (user) {
                 router.replace("/my-resumes");
             } else {
                 router.replace("/login");
             }
         });
+
+        // Safety fallback if auth resolution takes too long
+        const fallbackTimer = setTimeout(() => {
+            if (!resolved) {
+                router.replace("/login");
+            }
+        }, 2000);
+
         return () => {
+            clearTimeout(fallbackTimer);
             if (typeof unsubscribe === "function") unsubscribe();
         };
     }, [router]);
