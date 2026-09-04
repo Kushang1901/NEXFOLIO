@@ -4,16 +4,20 @@ export default function robots() {
             {
                 userAgent: "*",
                 allow: ["/"],
-                disallow: ["/api/", "/_next/"],
+                disallow: ["/api/"],
             },
             {
                 userAgent: "Googlebot",
                 allow: ["/"],
-                disallow: ["/api/", "/_next/"],
-                crawlDelay: 0,
+                disallow: ["/api/"],
+            },
+            {
+                userAgent: "Mediapartners-Google",
+                allow: ["/"],
             },
         ],
         sitemap: "https://cvgrid.in/sitemap.xml",
         host: "https://cvgrid.in",
     };
 }
+

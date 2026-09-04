@@ -107,10 +107,42 @@ export default function PrivacyPolicy() {
                                 </p>
                             </section>
 
+                            <section>
+                                <h2 className="text-xl font-bold text-white mb-3 flex items-center gap-2" style={{ fontFamily: "var(--font-space-grotesk), sans-serif" }}>
+                                    <Shield size={18} className="text-blue-400" /> 5. Google AdSense & Third-Party Advertising
+                                </h2>
+                                <p className="mb-3">
+                                    We use third-party advertising companies, including Google AdSense, to serve advertisements when you visit our website. These companies may use information about your visits to this and other websites in order to provide advertisements about goods and services of interest to you.
+                                </p>
+                                <ul className="list-disc pl-6 space-y-2 mb-3">
+                                    <li>
+                                        <strong>Google DoubleClick DART Cookies:</strong> Google, as a third-party vendor, uses cookies to serve ads on our site. Google's use of the DART cookie enables it to serve ads to our users based on their visit to our site and other sites on the Internet.
+                                    </li>
+                                    <li>
+                                        <strong>Opt-Out Options:</strong> Users may opt out of personalized advertising by visiting the <a href="https://www.google.com/settings/ads" target="_blank" rel="noopener noreferrer" className="text-indigo-400 hover:underline">Google Ads Settings</a>. Alternatively, you can opt out of third-party vendors' use of cookies for personalized advertising by visiting <a href="https://www.aboutads.info" target="_blank" rel="noopener noreferrer" className="text-indigo-400 hover:underline">aboutads.info</a>.
+                                    </li>
+                                    <li>
+                                        <strong>Third-Party Ad Networks:</strong> Third-party ad servers or ad networks use technologies like cookies, JavaScript, or Web Beacons in their respective advertisements and links that appear on CVGrid. They automatically receive your IP address when this occurs. These technologies are used to measure the effectiveness of their advertising campaigns and/or to personalize advertising content.
+                                    </li>
+                                </ul>
+                                <p className="text-xs text-slate-400">
+                                    Note that CVGrid has no access to or control over cookies that are used by third-party advertisers.
+                                </p>
+                            </section>
+
+                            <section>
+                                <h2 className="text-xl font-bold text-white mb-3 flex items-center gap-2" style={{ fontFamily: "var(--font-space-grotesk), sans-serif" }}>
+                                    <Lock size={18} className="text-purple-400" /> 6. Cookies and Tracking Technologies
+                                </h2>
+                                <p className="mb-3">
+                                    Like any other website, CVGrid uses cookies to record session information, user-specific preferences, and track visitor behavior to enhance your user experience. You can choose to disable cookies through your individual browser options. Detailed information about cookie management with specific web browsers can be found at the browsers' respective websites.
+                                </p>
+                            </section>
+
                             <section className="border-t border-white/10 pt-6">
-                                <h2 className="text-lg font-bold text-white mb-2" style={{ fontFamily: "var(--font-space-grotesk), sans-serif" }}>5. Contact Support</h2>
+                                <h2 className="text-lg font-bold text-white mb-2" style={{ fontFamily: "var(--font-space-grotesk), sans-serif" }}>7. Contact Support</h2>
                                 <p>
-                                    If you have any questions or concerns regarding this Privacy Policy, feel free to visit our <Link href="/contact" className="text-indigo-400 hover:underline">Contact Us</Link> page.
+                                    If you have any questions or concerns regarding this Privacy Policy or our advertising practices, feel free to visit our <Link href="/contact" className="text-indigo-400 hover:underline">Contact Us</Link> page.
                                 </p>
                             </section>
                         </div>

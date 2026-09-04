@@ -1,138 +1,60 @@
+import { BLOG_POSTS } from "../data/blogPosts";
+
 export default function sitemap() {
     const today = new Date().toISOString().split("T")[0];
+    const baseUrl = "https://cvgrid.in";
 
-    return [
+    const staticRoutes = [
         {
-            url: "https://cvgrid.in",
+            url: baseUrl,
             lastModified: today,
             changeFrequency: "daily",
             priority: 1.0,
         },
         {
-            url: "https://cvgrid.in/about",
+            url: `${baseUrl}/about`,
             lastModified: today,
             changeFrequency: "weekly",
             priority: 0.8,
         },
         {
-            url: "https://cvgrid.in/contact",
+            url: `${baseUrl}/contact`,
             lastModified: today,
             changeFrequency: "weekly",
             priority: 0.8,
         },
         {
-            url: "https://cvgrid.in/privacy",
+            url: `${baseUrl}/privacy`,
             lastModified: today,
             changeFrequency: "monthly",
-            priority: 0.5,
+            priority: 0.6,
         },
         {
-            url: "https://cvgrid.in/terms",
+            url: `${baseUrl}/terms`,
             lastModified: today,
             changeFrequency: "monthly",
-            priority: 0.5,
+            priority: 0.6,
         },
         {
-            url: "https://cvgrid.in/blog",
+            url: `${baseUrl}/disclaimer`,
+            lastModified: today,
+            changeFrequency: "monthly",
+            priority: 0.6,
+        },
+        {
+            url: `${baseUrl}/blog`,
             lastModified: today,
             changeFrequency: "daily",
             priority: 0.9,
         },
-        {
-            url: "https://cvgrid.in/blog/ats-friendly-resume-2026",
-            lastModified: today,
-            changeFrequency: "monthly",
-            priority: 0.8,
-        },
-        {
-            url: "https://cvgrid.in/blog/resume-formatting-mistakes",
-            lastModified: today,
-            changeFrequency: "monthly",
-            priority: 0.8,
-        },
-        {
-            url: "https://cvgrid.in/blog/professional-cv-summary",
-            lastModified: today,
-            changeFrequency: "monthly",
-            priority: 0.8,
-        },
-        {
-            url: "https://cvgrid.in/blog/ai-resume-bullet-points",
-            lastModified: today,
-            changeFrequency: "monthly",
-            priority: 0.8,
-        },
-        {
-            url: "https://cvgrid.in/blog/write-tailored-cover-letter-ai",
-            lastModified: today,
-            changeFrequency: "monthly",
-            priority: 0.8,
-        },
-        {
-            url: "https://cvgrid.in/blog/job-interview-prep-checklist",
-            lastModified: today,
-            changeFrequency: "monthly",
-            priority: 0.8,
-        },
-        {
-            url: "https://app.cvgrid.in/templates",
-            lastModified: today,
-            changeFrequency: "weekly",
-            priority: 0.95,
-        },
-        {
-            url: "https://app.cvgrid.in/cover-letter",
-            lastModified: today,
-            changeFrequency: "monthly",
-            priority: 0.8,
-        },
-        {
-            url: "https://app.cvgrid.in/ats-checker",
-            lastModified: today,
-            changeFrequency: "monthly",
-            priority: 0.8,
-        },
-        {
-            url: "https://app.cvgrid.in/ai-tools",
-            lastModified: today,
-            changeFrequency: "weekly",
-            priority: 0.85,
-        },
-        {
-            url: "https://app.cvgrid.in/ai-tools/match-score",
-            lastModified: today,
-            changeFrequency: "weekly",
-            priority: 0.8,
-        },
-        {
-            url: "https://app.cvgrid.in/ai-tools/keyword-optimizer",
-            lastModified: today,
-            changeFrequency: "weekly",
-            priority: 0.8,
-        },
-        {
-            url: "https://app.cvgrid.in/ai-tools/job-analyzer",
-            lastModified: today,
-            changeFrequency: "weekly",
-            priority: 0.8,
-        },
-        {
-            url: "https://app.cvgrid.in/ai-tools/interview-generator",
-            lastModified: today,
-            changeFrequency: "weekly",
-            priority: 0.8,
-        },
-        {
-            url: "https://app.cvgrid.in/ai-tools/portfolio-builder",
-            lastModified: today,
-            changeFrequency: "weekly",
-            priority: 0.8,
-        },
-        {
-            url: "https://app.cvgrid.in/ai-tools/resume-sharing",
-            lastModified: today,
-            changeFrequency: "weekly",
-            priority: 0.8,
-        },
     ];
+
+    const blogRoutes = BLOG_POSTS.map(post => ({
+        url: `${baseUrl}/blog/${post.slug}`,
+        lastModified: today,
+        changeFrequency: "monthly",
+        priority: 0.8,
+    }));
+
+    return [...staticRoutes, ...blogRoutes];
 }

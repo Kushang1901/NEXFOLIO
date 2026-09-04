@@ -1,41 +1,55 @@
-"use client";
-
-import React, { useState, useEffect } from "react";
+import React from "react";
 import Link from "next/link";
-import { useParams } from "next/navigation";
 import Navbar from "../../../components/Navbar";
 import Footer from "../../../components/Footer";
+import BlogPostClient from "../../../components/BlogPostClient";
 import { BLOG_POSTS } from "../../../data/blogPosts";
-import { Calendar, Clock, User, ArrowLeft, Share2, Check, ArrowRight, BookOpen } from "lucide-react";
+import { Calendar, Clock, User, ArrowLeft, ArrowRight, BookOpen } from "lucide-react";
 
-export default function BlogPostDetail() {
-    const params = useParams();
-    const slug = params?.slug;
-    const [copied, setCopied] = useState(false);
-    const [scrollProgress, setScrollProgress] = useState(0);
+export async function generateStaticParams() {
+    return BLOG_POSTS.map(post => ({
+        slug: post.slug,
+    }));
+}
 
-    const post = BLOG_POSTS.find(p => p.slug === slug);
+export async function generateMetadata({ params }) {
+    const resolvedParams = await params;
+    const post = BLOG_POSTS.find(p => p.slug === resolvedParams?.slug);
 
-    useEffect(() => {
-        const handleScroll = () => {
-            const totalScroll = document.documentElement.scrollHeight - window.innerHeight;
-            if (totalScroll > 0) {
-                const currentScroll = window.scrollY;
-                setScrollProgress((currentScroll / totalScroll) * 100);
-            }
+    if (!post) {
+        return {
+            title: "Career Guide Not Found | CVGrid",
+            description: "The requested career guide could not be found.",
         };
+    }
 
-        window.addEventListener("scroll", handleScroll);
-        return () => window.removeEventListener("scroll", handleScroll);
-    }, []);
-
-    const copyToClipboard = () => {
-        if (typeof window !== "undefined") {
-            navigator.clipboard.writeText(window.location.href);
-            setCopied(true);
-            setTimeout(() => setCopied(false), 2000);
-        }
+    return {
+        title: `${post.title} | CVGrid Career Hub`,
+        description: post.description,
+        alternates: {
+            canonical: `https://cvgrid.in/blog/${post.slug}`,
+        },
+        openGraph: {
+            title: post.title,
+            description: post.description,
+            type: "article",
+            url: `https://cvgrid.in/blog/${post.slug}`,
+            publishedTime: post.date,
+            authors: [post.author],
+            siteName: "CVGrid",
+        },
+        twitter: {
+            card: "summary_large_image",
+            title: post.title,
+            description: post.description,
+        },
     };
+}
+
+export default async function BlogPostDetail({ params }) {
+    const resolvedParams = await params;
+    const slug = resolvedParams?.slug;
+    const post = BLOG_POSTS.find(p => p.slug === slug);
 
     if (!post) {
         return (
@@ -61,8 +75,41 @@ export default function BlogPostDetail() {
         .filter(sec => sec.type === "heading")
         .map(sec => sec.text);
 
+    // JSON-LD Structured Data for Google AdSense & Search
+    const blogPostingSchema = {
+        "@context": "https://schema.org",
+        "@type": "BlogPosting",
+        "headline": post.title,
+        "description": post.description,
+        "author": {
+            "@type": "Person",
+            "name": post.author,
+            "url": "https://kushangacharya.vercel.app"
+        },
+        "datePublished": post.date,
+        "dateModified": post.date,
+        "publisher": {
+            "@type": "Organization",
+            "name": "CVGrid",
+            "url": "https://cvgrid.in",
+            "logo": {
+                "@type": "ImageObject",
+                "url": "https://cvgrid.in/logo.png"
+            }
+        },
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": `https://cvgrid.in/blog/${post.slug}`
+        }
+    };
+
     return (
         <>
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(blogPostingSchema) }}
+            />
+
             <style dangerouslySetInnerHTML={{ __html: `
                 body {
                     background-color: #050508 !important;
@@ -98,19 +145,7 @@ export default function BlogPostDetail() {
                 }
             ` }} />
 
-            {/* Reading progress bar */}
-            <div 
-                style={{
-                    position: "fixed",
-                    top: 0,
-                    left: 0,
-                    height: "3px",
-                    background: "linear-gradient(90deg, #6366f1, #a855f7)",
-                    width: `${scrollProgress}%`,
-                    zIndex: 9999,
-                    transition: "width 0.1s ease-out"
-                }}
-            />
+            <BlogPostClient title={post.title} />
 
             <div className="min-h-screen flex flex-col">
                 <Navbar />
@@ -130,7 +165,7 @@ export default function BlogPostDetail() {
                         {/* LEFT COLUMN: Main Article Content */}
                         <article className="lg:col-span-8 glass-card p-6 md:p-10 shadow-2xl relative overflow-hidden">
                             <header className="border-b border-white/10 pb-6 mb-8">
-                                <span className="inline-block text-xs font-bold uppercase tracking-widest text-indigo-350 bg-indigo-500/10 border border-indigo-500/25 px-3 py-1 rounded-full mb-4">
+                                <span className="inline-block text-xs font-bold uppercase tracking-widest text-indigo-300 bg-indigo-500/10 border border-indigo-500/25 px-3 py-1 rounded-full mb-4">
                                     {post.category}
                                 </span>
                                 
@@ -165,7 +200,6 @@ export default function BlogPostDetail() {
                                         );
                                     }
                                     if (section.type === "heading") {
-                                        // Generate a simple ID for anchor links from heading text
                                         const headingId = section.text.toLowerCase().replace(/[^a-z0-9]+/g, "-");
                                         return (
                                             <h2 key={idx} id={headingId} className="text-xl md:text-2xl font-bold">
@@ -222,20 +256,7 @@ export default function BlogPostDetail() {
                                     Share this Guide
                                 </h4>
                                 <p className="text-slate-400 text-xs mb-4">Help colleagues and students optimize their applications.</p>
-                                <button 
-                                    onClick={copyToClipboard}
-                                    className="w-full flex items-center justify-center gap-2 py-2.5 rounded-lg border border-white/10 hover:border-indigo-500/40 bg-white/5 text-slate-350 hover:text-white hover:bg-white/10 text-xs font-semibold transition-all cursor-pointer"
-                                >
-                                    {copied ? (
-                                        <>
-                                            <Check size={14} className="text-emerald-400" /> Link Copied!
-                                        </>
-                                    ) : (
-                                        <>
-                                            <Share2 size={14} /> Copy Guide Link
-                                        </>
-                                    )}
-                                </button>
+                                <BlogPostClient title={post.title} />
                             </div>
 
                             {/* Builder Call to Action */}

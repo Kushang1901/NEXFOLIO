@@ -163,6 +163,9 @@ export default function Footer() {
                     <Link className="text-[#c7c4d7] hover:text-white transition-colors duration-200 no-underline" href="/terms">
                         Terms of Service
                     </Link>
+                    <Link className="text-[#c7c4d7] hover:text-white transition-colors duration-200 no-underline" href="/disclaimer">
+                        Disclaimer
+                    </Link>
                     <Link className="text-[#c7c4d7] hover:text-white transition-colors duration-200 no-underline" href="/contact">
                         Contact Us
                     </Link>
