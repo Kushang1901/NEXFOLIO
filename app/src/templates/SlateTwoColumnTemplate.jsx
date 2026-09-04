@@ -57,7 +57,7 @@ export default function SlateTwoColumnTemplate({ data }) {
     return (
         <div className="d-flex flex-row" style={{ fontFamily: "Inter, system-ui, sans-serif", color: "#334155", minHeight: "297mm", boxSizing: "border-box", width: "794px" }}>
             {/* Sidebar Column */}
-            <div className="p-4 p-md-5" style={{ width: "254px", background: "#f8fafc", borderRight: "1px solid #e2e8f0", flexShrink: 0, boxSizing: "border-box" }}>
+            <div style={{ width: "260px", padding: "36px 20px", background: "#f8fafc", borderRight: "1px solid #e2e8f0", flexShrink: 0, boxSizing: "border-box" }}>
                 <div className="sidebar-col w-100">
                     <div className="text-center mb-4">
                         {data.basics.photo && (
@@ -77,7 +77,7 @@ export default function SlateTwoColumnTemplate({ data }) {
                                 }}
                             />
                         )}
-                        <h2 className="fw-bold mb-1" style={{ fontSize: "1.75rem", color: "#1e293b" }}>{data.basics.name}</h2>
+                        <h2 className="fw-bold mb-1" style={{ fontSize: "1.75rem", color: "#1e293b", wordBreak: "break-word" }}>{data.basics.name}</h2>
                         {data.basics.role && (
                             <p className="text-muted fw-semibold text-uppercase small mb-0" style={{ letterSpacing: "1px" }}>
                                 {data.basics.role}
@@ -87,27 +87,45 @@ export default function SlateTwoColumnTemplate({ data }) {
 
                     <div className="mb-4">
                         <h6 className="text-uppercase fw-bold text-slate-700 border-bottom pb-2 mb-3" style={{ color: "#475569", letterSpacing: "0.5px" }}>Contact</h6>
-                        <div className="small space-y-2" style={{ lineHeight: "1.7" }}>
-                            <div><i className="fas fa-envelope me-2 text-slate-500"></i>{data.basics.email}</div>
-                            <div><i className="fas fa-phone me-2 text-slate-500"></i>{data.basics.phone}</div>
+                        <div className="small d-flex flex-column gap-2" style={{ lineHeight: "1.5" }}>
+                            {data.basics.email && (
+                                <div className="d-flex align-items-start gap-2" style={{ wordBreak: "break-word" }}>
+                                    <i className="fas fa-envelope text-slate-500" style={{ width: "15px", minWidth: "15px", marginTop: "3px", fontSize: "0.85rem" }}></i>
+                                    <span style={{ wordBreak: "break-all", overflowWrap: "anywhere", fontSize: "0.82rem", color: "#334155" }}>
+                                        {data.basics.email}
+                                    </span>
+                                </div>
+                            )}
+                            {data.basics.phone && (
+                                <div className="d-flex align-items-center gap-2">
+                                    <i className="fas fa-phone text-slate-500" style={{ width: "15px", minWidth: "15px", fontSize: "0.85rem" }}></i>
+                                    <span style={{ fontSize: "0.82rem", color: "#334155" }}>{data.basics.phone}</span>
+                                </div>
+                            )}
                         </div>
                     </div>
 
                     {Object.keys(links).length > 0 && (
                         <div className="mb-4">
                             <h6 className="text-uppercase fw-bold text-slate-700 border-bottom pb-2 mb-3" style={{ color: "#475569", letterSpacing: "0.5px" }}>Links</h6>
-                            <div className="small space-y-2" style={{ lineHeight: "1.7" }}>
+                            <div className="small d-flex flex-column gap-2" style={{ lineHeight: "1.5" }}>
                                 {links.linkedin && (
                                     <div>
-                                        <a href={links.linkedin} target="_blank" rel="noreferrer" className="text-slate-600 text-decoration-none hover:underline">
-                                            <i className="fab fa-linkedin me-2 text-slate-500"></i>{getUsername(links.linkedin, "linkedin")}
+                                        <a href={links.linkedin} target="_blank" rel="noreferrer" className="text-slate-600 text-decoration-none hover:underline d-flex align-items-start gap-2" style={{ wordBreak: "break-word" }}>
+                                            <i className="fab fa-linkedin text-slate-500" style={{ width: "15px", minWidth: "15px", marginTop: "3px", fontSize: "0.88rem" }}></i>
+                                            <span style={{ wordBreak: "break-all", overflowWrap: "anywhere", fontSize: "0.82rem" }}>
+                                                {getUsername(links.linkedin, "linkedin")}
+                                            </span>
                                         </a>
                                     </div>
                                 )}
                                 {links.github && (
                                     <div>
-                                        <a href={links.github} target="_blank" rel="noreferrer" className="text-slate-600 text-decoration-none hover:underline">
-                                            <i className="fab fa-github me-2 text-slate-500"></i>{getUsername(links.github, "github")}
+                                        <a href={links.github} target="_blank" rel="noreferrer" className="text-slate-600 text-decoration-none hover:underline d-flex align-items-start gap-2" style={{ wordBreak: "break-word" }}>
+                                            <i className="fab fa-github text-slate-500" style={{ width: "15px", minWidth: "15px", marginTop: "3px", fontSize: "0.88rem" }}></i>
+                                            <span style={{ wordBreak: "break-all", overflowWrap: "anywhere", fontSize: "0.82rem" }}>
+                                                {getUsername(links.github, "github")}
+                                            </span>
                                         </a>
                                     </div>
                                 )}
@@ -118,8 +136,8 @@ export default function SlateTwoColumnTemplate({ data }) {
                 </div>
             </div>
 
-            {/* Main Content Column (540px width) */}
-            <div className="p-4 p-md-5 main-col flex-grow-1" style={{ width: "540px", background: "#ffffff", boxSizing: "border-box", flexShrink: 0 }}>
+            {/* Main Content Column (534px width) */}
+            <div className="p-4 p-md-5 main-col flex-grow-1" style={{ width: "534px", background: "#ffffff", boxSizing: "border-box", flexShrink: 0 }}>
                 {/* Summary */}
                 {data.summary && (
                     <section className="mb-4 pb-2">
