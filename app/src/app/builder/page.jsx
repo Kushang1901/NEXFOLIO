@@ -64,6 +64,20 @@ const serializeSkillsList = (list) => {
     return list.join(", ");
 };
 
+const parseInternshipBulletsText = (text) => {
+    if (!text) return [];
+    if (Array.isArray(text)) return text.map(l => String(l).trim().replace(/^[•\-\*\s]+/, "")).filter(Boolean);
+    return text.split("\n").map(l => l.trim().replace(/^[•\-\*\s]+/, "")).filter(Boolean);
+};
+
+const serializeInternshipBullets = (list) => {
+    return list.map(item => {
+        const cleaned = (item || "").trim().replace(/^[•\-\*\s]+/, "");
+        if (!cleaned) return "";
+        return `- ${cleaned}`;
+    }).filter(Boolean).join("\n");
+};
+
 export default function ResumeBuilder() {
     const router = useRouter();
 
@@ -202,8 +216,19 @@ export default function ResumeBuilder() {
     const [skillInput, setSkillInput] = useState("");
     const [projectsList, setProjectsList] = useState([]);
     const [achievementsList, setAchievementsList] = useState([]);
+    const [internshipBullets, setInternshipBullets] = useState([]);
 
     // Keep buffers in sync with formData loaded from DB/sessionStorage
+    useEffect(() => {
+        const desc = formData.internship?.description;
+        const bList = formData.internship?.bullets;
+        const sourceText = (Array.isArray(bList) && bList.length > 0) ? bList.join("\n") : (desc || "");
+        const parsed = parseInternshipBulletsText(sourceText);
+        if (serializeInternshipBullets(internshipBullets) !== serializeInternshipBullets(parsed)) {
+            setInternshipBullets(parsed);
+        }
+    }, [formData.internship?.description, formData.internship?.bullets, internshipBullets]);
+
     useEffect(() => {
         if (formData.projects !== undefined) {
             if (serializeProjectsList(projectsList) !== formData.projects) {
@@ -334,6 +359,64 @@ export default function ResumeBuilder() {
             const upd = { ...prev, achievements: serialized };
             sessionStorage.setItem("resumeData", JSON.stringify(upd));
             return upd;
+        });
+    };
+
+    const handleAddInternshipBullet = () => {
+        const updated = [...internshipBullets, ""];
+        setInternshipBullets(updated);
+
+        const serialized = serializeInternshipBullets(updated);
+        setFormData(prev => {
+            const updatedForm = {
+                ...prev,
+                internship: {
+                    ...(prev.internship || {}),
+                    description: serialized,
+                    bullets: updated.map(b => b.trim().replace(/^[•\-\*\s]+/, "")).filter(Boolean)
+                }
+            };
+            sessionStorage.setItem("resumeData", JSON.stringify(updatedForm));
+            return updatedForm;
+        });
+    };
+
+    const handleUpdateInternshipBullet = (index, value) => {
+        const updated = [...internshipBullets];
+        updated[index] = value;
+        setInternshipBullets(updated);
+
+        const serialized = serializeInternshipBullets(updated);
+        setFormData(prev => {
+            const updatedForm = {
+                ...prev,
+                internship: {
+                    ...(prev.internship || {}),
+                    description: serialized,
+                    bullets: updated.map(b => b.trim().replace(/^[•\-\*\s]+/, "")).filter(Boolean)
+                }
+            };
+            sessionStorage.setItem("resumeData", JSON.stringify(updatedForm));
+            return updatedForm;
+        });
+    };
+
+    const handleRemoveInternshipBullet = (index) => {
+        const updated = internshipBullets.filter((_, idx) => idx !== index);
+        setInternshipBullets(updated);
+
+        const serialized = serializeInternshipBullets(updated);
+        setFormData(prev => {
+            const updatedForm = {
+                ...prev,
+                internship: {
+                    ...(prev.internship || {}),
+                    description: serialized,
+                    bullets: updated.map(b => b.trim().replace(/^[•\-\*\s]+/, "")).filter(Boolean)
+                }
+            };
+            sessionStorage.setItem("resumeData", JSON.stringify(updatedForm));
+            return updatedForm;
         });
     };
 
@@ -1469,21 +1552,86 @@ ${formData.skills || "Not provided"}
                                             </div>
 
                                             <div className="mb-3">
-                                                <label htmlFor="internshipDescription" className="form-label small text-white-50 fw-semibold d-flex justify-content-between">
-                                                    <span>Description / Key Responsibilities (Bullet Points)</span>
-                                                    <span className="text-muted small">One point per line</span>
-                                                </label>
-                                                <textarea
-                                                    className="form-control bg-dark text-white border-secondary"
-                                                    id="internshipDescription"
-                                                    rows="3"
-                                                    value={formData.internship.description || ""}
-                                                    onChange={(e) => handleNestedChange("internship", "description", e.target.value)}
-                                                    placeholder="- Developed and maintained responsive web interfaces using React.js&#10;- Collaborated with the design team to implement pixel-perfect UI from Figma&#10;- Improved page load performance and cross-browser compatibility"
-                                                    style={{ borderRadius: "8px", fontSize: "0.9rem" }}
-                                                    suppressHydrationWarning
-                                                ></textarea>
-                                                <small className="text-white-50">Optional - Add bullet points describing your internship work (one point per line or starting with -)</small>
+                                                <div className="d-flex justify-content-between align-items-center mb-2">
+                                                    <label className="form-label small text-white-50 fw-semibold mb-0">
+                                                        Description / Key Responsibilities (Bullet Points)
+                                                    </label>
+                                                    <button
+                                                        type="button"
+                                                        onClick={handleAddInternshipBullet}
+                                                        className="btn btn-sm btn-outline-primary d-flex align-items-center gap-1"
+                                                        style={{ borderRadius: "6px", fontSize: "0.82rem", padding: "4px 10px" }}
+                                                        suppressHydrationWarning
+                                                    >
+                                                        + Add Point
+                                                    </button>
+                                                </div>
+
+                                                {internshipBullets.length === 0 ? (
+                                                    <div 
+                                                        className="text-center py-3 px-2 bg-dark border-secondary mb-2" 
+                                                        style={{ borderRadius: "10px", border: "1px dashed rgba(255,255,255,0.12)" }}
+                                                    >
+                                                        <p className="text-white-50 small mb-2">No bullet points added yet. Describe your internship in bullet points.</p>
+                                                        <button
+                                                            type="button"
+                                                            onClick={handleAddInternshipBullet}
+                                                            className="btn btn-sm btn-outline-primary px-3 py-1"
+                                                            style={{ borderRadius: "6px", fontSize: "0.82rem" }}
+                                                            suppressHydrationWarning
+                                                        >
+                                                            + Add Point
+                                                        </button>
+                                                    </div>
+                                                ) : (
+                                                    <div className="d-flex flex-column gap-2 mb-2">
+                                                        {internshipBullets.map((pt, idx) => (
+                                                            <div 
+                                                                key={idx} 
+                                                                className="builder-achievement-item animate-fade-in d-flex align-items-center gap-2"
+                                                            >
+                                                                <span className="text-white-50 small fw-bold px-1" style={{ minWidth: "20px", textAlign: "center" }}>
+                                                                    •
+                                                                </span>
+                                                                <input
+                                                                    type="text"
+                                                                    className="form-control bg-black text-white border-secondary flex-grow-1"
+                                                                    placeholder={`Point ${idx + 1} (e.g. Developed features using React, improved performance)`}
+                                                                    value={pt}
+                                                                    onChange={(e) => handleUpdateInternshipBullet(idx, e.target.value)}
+                                                                    onKeyDown={(e) => {
+                                                                        if (e.key === "Enter") {
+                                                                            e.preventDefault();
+                                                                            handleAddInternshipBullet();
+                                                                        }
+                                                                    }}
+                                                                    style={{ borderRadius: "8px", height: "38px", fontSize: "0.9rem" }}
+                                                                />
+                                                                <button
+                                                                    type="button"
+                                                                    onClick={() => handleRemoveInternshipBullet(idx)}
+                                                                    className="btn btn-remove-item p-2 d-flex align-items-center justify-content-center"
+                                                                    style={{ width: "38px", height: "38px" }}
+                                                                    title="Remove Point"
+                                                                >
+                                                                    <i className="fas fa-trash-alt"></i>
+                                                                </button>
+                                                            </div>
+                                                        ))}
+                                                        <div className="d-flex justify-content-end mt-1">
+                                                            <button
+                                                                type="button"
+                                                                onClick={handleAddInternshipBullet}
+                                                                className="btn btn-sm btn-outline-primary d-flex align-items-center gap-1"
+                                                                style={{ borderRadius: "6px", fontSize: "0.82rem", padding: "4px 12px" }}
+                                                                suppressHydrationWarning
+                                                            >
+                                                                + New Point
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                )}
+                                                <small className="text-white-50">Optional - Click "+ Add Point" or "+ New Point" to add separate bullet points for each accomplishment.</small>
                                             </div>
                                         </>
                                     )}
