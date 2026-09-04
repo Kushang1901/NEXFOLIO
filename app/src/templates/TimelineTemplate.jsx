@@ -16,6 +16,46 @@ export default function TimelineTemplate({ data }) {
     const tealLight = "#f0fdfa";
     const gray = "#f8fafc";
 
+    
+    if (data?.isPage2) {
+        return (
+            <div style={{ fontFamily: "'Inter', system-ui, sans-serif", color: "#0f172a", background: "#fff", minHeight: "297mm", boxSizing: "border-box", width: "100%", padding: "48px" }}>
+                {/* PROJECTS ONLY ON PAGE 2 */}
+                {data.projects && (() => {
+                        const lines = data.projects.split("\n");
+                        const projs = [];
+                        let cur = null;
+                        lines.forEach(line => {
+                            const t = line.trim();
+                            if (!t) return;
+                            if (t.startsWith("-")) { if (cur) cur.bullets.push(t.replace(/^-\s*/, "")); }
+                            else { if (cur) projs.push(cur); cur = { name: t, bullets: [] }; }
+                        });
+                        if (cur) projs.push(cur);
+                        if (!projs.length) return <section><h2 style={{ margin: "0 0 10px", fontSize: "0.65rem", fontWeight: "700", textTransform: "uppercase", letterSpacing: "2.5px", color: teal }}>Projects</h2><div style={{ height: "2px", background: `linear-gradient(to right, ${teal}, transparent)`, marginBottom: "12px" }}></div><p style={{ whiteSpace: "pre-line", lineHeight: "1.6", color: "#334155", fontSize: "0.9rem", margin: 0 }}>{data.projects}</p></section>;
+                        return (
+                            <section>
+                                <h2 style={{ margin: "0 0 10px", fontSize: "0.65rem", fontWeight: "700", textTransform: "uppercase", letterSpacing: "2.5px", color: teal }}>Projects</h2>
+                                <div style={{ height: "2px", background: `linear-gradient(to right, ${teal}, transparent)`, marginBottom: "12px" }}></div>
+                                <div style={{ display: "flex", flexDirection: "column", gap: "9px" }}>
+                                    {projs.map((proj, i) => (
+                                        <div key={i} style={{ borderLeft: `3px solid ${teal}`, paddingLeft: "12px", paddingTop: "5px", paddingBottom: "5px", background: tealLight, borderRadius: "0 6px 6px 0" }}>
+                                            <div style={{ fontWeight: "700", fontSize: "0.9rem", color: "#0d6060", marginBottom: "4px" }}>{proj.name}</div>
+                                            {proj.bullets.length > 0 && (
+                                                <ul style={{ margin: 0, paddingLeft: "16px", fontSize: "0.83rem", color: "#334155", lineHeight: "1.5" }}>
+                                                    {proj.bullets.map((b, j) => <li key={j} style={{ marginBottom: "2px" }}>{b}</li>)}
+                                                </ul>
+                                            )}
+                                        </div>
+                                    ))}
+                                </div>
+                            </section>
+                        );
+                    })()}
+            </div>
+        );
+    }
+
     return (
         <div style={{ fontFamily: "'Inter', system-ui, sans-serif", color: "#0f172a", background: "#fff", minHeight: "100%" }}>
             {/* Split header - left dark, right white */}
@@ -37,17 +77,6 @@ export default function TimelineTemplate({ data }) {
                             {links.portfolio && <div><a href={links.portfolio} target="_blank" rel="noreferrer" style={{ color: teal, textDecoration: "none" }}>🌐 {getUsername(links.portfolio, "portfolio")}</a></div>}
                         </div>
                     </div>
-
-                    {data.skills && data.skills.length > 0 && (
-                        <div style={{ marginTop: "24px", borderTop: `1px solid ${teal}44`, paddingTop: "20px", width: "100%" }}>
-                            <h3 style={{ margin: "0 0 12px", fontSize: "0.62rem", fontWeight: "700", textTransform: "uppercase", letterSpacing: "2.5px", color: teal }}>Skills</h3>
-                            <div style={{ display: "flex", flexWrap: "wrap", gap: "5px" }}>
-                                {data.skills.map((s, i) => (
-                                    <span key={i} style={{ background: `${teal}22`, color: "#5eead4", padding: "3px 8px", borderRadius: "4px", fontSize: "0.75rem", fontWeight: "500" }}>{s}</span>
-                                ))}
-                            </div>
-                        </div>
-                    )}
 
                     {data.achievements && (
                         <div style={{ marginTop: "24px", borderTop: `1px solid ${teal}44`, paddingTop: "20px", width: "100%" }}>
@@ -120,6 +149,19 @@ export default function TimelineTemplate({ data }) {
                                     <span style={{ fontSize: "0.78rem", color: "#94a3b8" }}>{edu.start} – {edu.end}</span>
                                 </div>
                             ))}
+                        </section>
+                    )}
+
+                    {/* Skills section moved below Education */}
+                    {data.skills && data.skills.length > 0 && (
+                        <section style={{ marginBottom: "1.5rem" }}>
+                            <h2 style={{ margin: "0 0 10px", fontSize: "0.65rem", fontWeight: "700", textTransform: "uppercase", letterSpacing: "2.5px", color: teal }}>Skills & Expertise</h2>
+                            <div style={{ height: "2px", background: `linear-gradient(to right, ${teal}, transparent)`, marginBottom: "14px" }}></div>
+                            <div style={{ display: "flex", flexWrap: "wrap", gap: "8px" }}>
+                                {data.skills.map((s, i) => (
+                                    <span key={i} style={{ background: tealLight, color: "#0f766e", border: "1px solid #99f6e4", padding: "5px 12px", borderRadius: "6px", fontSize: "0.82rem", fontWeight: "600" }}>{s}</span>
+                                ))}
+                            </div>
                         </section>
                     )}
 

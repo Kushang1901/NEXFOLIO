@@ -14,6 +14,45 @@ export default function NavyEleganceTemplate({ data }) {
         }
     };
 
+    
+    if (data?.isPage2) {
+        return (
+            <div style={{ fontFamily: "Georgia, serif", color: "#2d3748", minHeight: "297mm", boxSizing: "border-box", width: "100%", padding: "48px" }}>
+                {/* PROJECTS ONLY ON PAGE 2 */}
+                {data.projects && (() => {
+                    const lines = data.projects.split("\n");
+                    const projs = [];
+                    let cur = null;
+                    lines.forEach(line => {
+                        const t = line.trim();
+                        if (!t) return;
+                        if (t.startsWith("-")) { if (cur) cur.bullets.push(t.replace(/^-\s*/, "")); }
+                        else { if (cur) projs.push(cur); cur = { name: t, bullets: [] }; }
+                    });
+                    if (cur) projs.push(cur);
+                    if (!projs.length) return <section className="mb-4"><h4 className="fw-bold text-uppercase border-bottom pb-2 mb-3" style={{ color: "#0f172a", letterSpacing: "1px", fontSize: "1.25rem" }}>Key Projects</h4><p style={{ whiteSpace: "pre-line", lineHeight: "1.6", fontSize: "0.95rem" }}>{data.projects}</p></section>;
+                    return (
+                        <section className="mb-4">
+                            <h4 className="fw-bold text-uppercase border-bottom pb-2 mb-3" style={{ color: "#0f172a", letterSpacing: "1px", fontSize: "1.25rem" }}>Key Projects</h4>
+                            <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+                                {projs.map((proj, i) => (
+                                    <div key={i} style={{ borderLeft: "3px solid #0f172a", paddingLeft: "12px", paddingTop: "5px", paddingBottom: "5px", background: "#f8fafc", borderRadius: "0 6px 6px 0" }}>
+                                        <div style={{ fontWeight: "700", fontSize: "0.92rem", color: "#0f172a", marginBottom: "4px" }}>{proj.name}</div>
+                                        {proj.bullets.length > 0 && (
+                                            <ul style={{ margin: 0, paddingLeft: "16px", fontSize: "0.88rem", color: "#475569", lineHeight: "1.5" }}>
+                                                {proj.bullets.map((b, j) => <li key={j} style={{ marginBottom: "2px" }}>{b}</li>)}
+                                            </ul>
+                                        )}
+                                    </div>
+                                ))}
+                            </div>
+                        </section>
+                    );
+                })()}
+            </div>
+        );
+    }
+
     return (
         <div style={{ fontFamily: "Georgia, serif", color: "#2d3748", minHeight: "297mm", boxSizing: "border-box", width: "100%" }}>
             {/* Header Banner */}

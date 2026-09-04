@@ -438,10 +438,10 @@ export const templateList = [
     },
     {
         id: "compact_ats",
-        name: "Compact ATS",
+        name: "Precision ATS",
         category: "professional",
-        tags: ["ATS Friendly", "Font Dense", "No Photo"],
-        desc: "Maximizes page economy with clean vertical hierarchy. Perfect for multi-page reductions.",
+        tags: ["ATS Friendly", "Modern Corporate", "Precision Layout"],
+        desc: "Engineered for 100% ATS readability with sophisticated corporate typography, crisp accenting, and optimal space economy.",
         preview: (
             <div className="bg-white text-dark p-3 h-100 d-flex flex-column justify-content-between" style={{ fontSize: "10px", borderRadius: "6px", fontFamily: "Arial, sans-serif" }}>
                 <div>

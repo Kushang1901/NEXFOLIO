@@ -3,6 +3,45 @@ import React from "react";
 export default function PortfolioResumeTemplate({ data }) {
     const links = data?.basics?.links || {};
     
+    
+    if (data?.isPage2) {
+        return (
+            <div className="p-5" style={{ minHeight: "297mm", boxSizing: "border-box", width: "100%", fontFamily: "'Inter', sans-serif", color: "#0f172a" }}>
+                {/* PROJECTS ONLY ON PAGE 2 */}
+                {data.projects && (() => {
+                const lines = data.projects.split("\n");
+                const projs = [];
+                let cur = null;
+                lines.forEach(line => {
+                    const t = line.trim();
+                    if (!t) return;
+                    if (t.startsWith("-")) { if (cur) cur.bullets.push(t.replace(/^-\s*/, "")); }
+                    else { if (cur) projs.push(cur); cur = { name: t, bullets: [] }; }
+                });
+                if (cur) projs.push(cur);
+                if (!projs.length) return <section className="mb-4"><h5 className="fw-bold mb-3 text-uppercase" style={{ fontSize: "11px", letterSpacing: "1px", color: "#4f46e5" }}>Featured Projects</h5><p style={{ fontSize: "11.5px", lineHeight: "1.5", color: "#334155", whiteSpace: "pre-line", margin: 0 }}>{data.projects}</p></section>;
+                return (
+                    <section className="mb-4">
+                        <h5 className="fw-bold mb-3 text-uppercase" style={{ fontSize: "11px", letterSpacing: "1px", color: "#4f46e5" }}>Featured Projects</h5>
+                        <div style={{ display: "flex", flexDirection: "column", gap: "9px" }}>
+                            {projs.map((proj, i) => (
+                                <div key={i} style={{ borderLeft: "3px solid #4f46e5", paddingLeft: "10px", paddingTop: "5px", paddingBottom: "5px", background: "rgba(99, 102, 241, 0.05)", borderRadius: "0 6px 6px 0" }}>
+                                    <div style={{ fontWeight: "700", fontSize: "11.5px", color: "#4f46e5", marginBottom: "4px" }}>{proj.name}</div>
+                                    {proj.bullets.length > 0 && (
+                                        <ul style={{ margin: 0, paddingLeft: "14px", fontSize: "11px", color: "#334155", lineHeight: "1.5" }}>
+                                            {proj.bullets.map((b, j) => <li key={j} style={{ marginBottom: "2px" }}>{b}</li>)}
+                                        </ul>
+                                    )}
+                                </div>
+                            ))}
+                        </div>
+                    </section>
+                );
+            })()}
+            </div>
+        );
+    }
+
     return (
         <div className="p-5" style={{ minHeight: "297mm", boxSizing: "border-box", width: "100%", fontFamily: "'Inter', sans-serif", color: "#0f172a" }}>
             {/* HERO PROFILE HEADER */}
@@ -75,8 +114,77 @@ export default function PortfolioResumeTemplate({ data }) {
                 </section>
             )}
 
-            {/* PROJECTS */}
-            {data.projects && (() => {
+            {/* EXPERIENCE */}
+            {data.experience && (
+                <section className="mb-4">
+                    <h5 className="fw-bold mb-3 text-uppercase" style={{ fontSize: "11px", letterSpacing: "1px", color: "#4f46e5" }}>Experience</h5>
+                    {typeof data.experience === "string" ? (
+                        <p style={{ fontSize: "12px", whiteSpace: "pre-line", margin: 0, lineHeight: "1.6", color: "#334155" }}>{data.experience}</p>
+                    ) : (
+                        <div className="mb-3">
+                            <div className="d-flex justify-content-between fw-bold" style={{ fontSize: "12.5px" }}>
+                                <span>{data.experience.role}</span>
+                                <span className="text-muted small">{data.experience.start} – {data.experience.end}</span>
+                            </div>
+                            <div className="text-muted mb-1.5" style={{ fontSize: "11.5px", color: "#6366f1", fontWeight: "600" }}>
+                                {data.experience.company} {data.experience.location && `| ${data.experience.location}`}
+                            </div>
+                            {data.experience.description && (
+                                <p style={{ fontSize: "12px", lineHeight: "1.6", color: "#475569", whiteSpace: "pre-line", margin: 0 }}>
+                                    {data.experience.description}
+                                </p>
+                            )}
+                        </div>
+                    )}
+                </section>
+            )}
+
+            {/* INTERNSHIPS */}
+            {data.internship && (
+                <section className="mb-4">
+                    <h5 className="fw-bold mb-3 text-uppercase" style={{ fontSize: "11px", letterSpacing: "1px", color: "#4f46e5" }}>Internships &amp; Apprenticeships</h5>
+                    <div style={{ borderLeft: "3px solid #6366f1", paddingLeft: "12px", background: "rgba(99, 102, 241, 0.04)", padding: "10px 14px", borderRadius: "0 6px 6px 0" }}>
+                        <div className="d-flex justify-content-between fw-bold" style={{ fontSize: "12.5px" }}>
+                            <span style={{ color: "#0f172a" }}>{data.internship.field}</span>
+                            <span className="text-muted small">{data.internship.start} – {data.internship.end}</span>
+                        </div>
+                        <div style={{ fontSize: "11.5px", color: "#6366f1", fontStyle: "italic", marginTop: "2px" }}>
+                            {data.internship.company}
+                        </div>
+                    </div>
+                </section>
+            )}
+
+            {/* EDUCATION */}
+            {data.education && data.education.length > 0 && (
+                <section className="mb-4">
+                    <h5 className="fw-bold mb-3 text-uppercase" style={{ fontSize: "11px", letterSpacing: "1px", color: "#4f46e5" }}>Education</h5>
+                    {data.education.map((edu, i) => (
+                        <div key={i} className="mb-2" style={{ fontSize: "12.5px" }}>
+                            <div className="d-flex justify-content-between fw-bold">
+                                <span>{edu.course}</span>
+                                <span className="text-muted small">{edu.start} – {edu.end}</span>
+                            </div>
+                            {edu.college && <div className="text-muted" style={{ fontSize: "11.5px", marginTop: "2px" }}>{edu.college}</div>}
+                        </div>
+                    ))}
+                </section>
+            )}
+
+            {/* ACHIEVEMENTS */}
+            {data.achievements && (
+                <section className="mb-3">
+                    <h5 className="fw-bold mb-3 text-uppercase" style={{ fontSize: "11px", letterSpacing: "1px", color: "#4f46e5" }}>Awards &amp; Certifications</h5>
+                    <div style={{ borderLeft: "3px solid #6366f1", paddingLeft: "12px", background: "rgba(99, 102, 241, 0.04)", padding: "10px 14px", borderRadius: "0 6px 6px 0" }}>
+                        <p style={{ fontSize: "12px", lineHeight: "1.6", color: "#334155", whiteSpace: "pre-line", margin: 0 }}>
+                            {data.achievements}
+                        </p>
+                    </div>
+                </section>
+            )}
+
+            {/* Fallback projects for single-page PNG export */}
+            {data.projects && !data.isPage2 && (() => {
                 const lines = data.projects.split("\n");
                 const projs = [];
                 let cur = null;
@@ -87,7 +195,7 @@ export default function PortfolioResumeTemplate({ data }) {
                     else { if (cur) projs.push(cur); cur = { name: t, bullets: [] }; }
                 });
                 if (cur) projs.push(cur);
-                if (!projs.length) return <section className="mb-4"><h5 className="fw-bold mb-3 text-uppercase" style={{ fontSize: "11px", letterSpacing: "1px", color: "#4f46e5" }}>Featured Projects</h5><p style={{ fontSize: "11.5px", lineHeight: "1.5", color: "#334155", whiteSpace: "pre-line", margin: 0 }}>{data.projects}</p></section>;
+                if (!projs.length) return null;
                 return (
                     <section className="mb-4">
                         <h5 className="fw-bold mb-3 text-uppercase" style={{ fontSize: "11px", letterSpacing: "1px", color: "#4f46e5" }}>Featured Projects</h5>
@@ -106,44 +214,6 @@ export default function PortfolioResumeTemplate({ data }) {
                     </section>
                 );
             })()}
-
-            {/* EXPERIENCE */}
-            {data.experience && (
-                <section className="mb-4">
-                    <h5 className="fw-bold mb-3 text-uppercase" style={{ fontSize: "11px", letterSpacing: "1px", color: "#4f46e5" }}>Experience</h5>
-                    {typeof data.experience === "string" ? (
-                        <p style={{ fontSize: "11.5px", whiteSpace: "pre-line", margin: 0 }}>{data.experience}</p>
-                    ) : (
-                        <div className="mb-3">
-                            <div className="d-flex justify-content-between fw-bold" style={{ fontSize: "12px" }}>
-                                <span>{data.experience.role}</span>
-                                <span className="text-muted small">{data.experience.start} – {data.experience.end}</span>
-                            </div>
-                            <div className="text-muted mb-1" style={{ fontSize: "11px" }}>
-                                {data.experience.company} {data.experience.location && `| ${data.experience.location}`}
-                            </div>
-                            {data.experience.description && (
-                                <p style={{ fontSize: "11.5px", lineHeight: "1.5", color: "#475569", whiteSpace: "pre-line", margin: 0 }}>
-                                    {data.experience.description}
-                                </p>
-                            )}
-                        </div>
-                    )}
-                </section>
-            )}
-
-            {/* EDUCATION */}
-            <section className="mb-4">
-                <h5 className="fw-bold mb-3 text-uppercase" style={{ fontSize: "11px", letterSpacing: "1px", color: "#4f46e5" }}>Education</h5>
-                {data.education.map((edu, i) => (
-                    <div key={i} className="mb-2" style={{ fontSize: "12px" }}>
-                        <div className="d-flex justify-content-between">
-                            <strong>{edu.course}</strong>
-                            <span className="text-muted small">{edu.start} – {edu.end}</span>
-                        </div>
-                    </div>
-                ))}
-            </section>
         </div>
     );
 }

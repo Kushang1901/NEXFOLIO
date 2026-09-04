@@ -27,6 +27,60 @@ export default function ClassicTemplate({ data }) {
         }
     };
 
+    
+    if (data?.isPage2) {
+        return (
+            <div className="p-5" style={{ minHeight: "297mm", boxSizing: "border-box", width: "100%", fontFamily: "'Inter', -apple-system, sans-serif", color: "#1e293b" }}>
+                {/* PROJECTS ONLY ON PAGE 2 */}
+                {data.projects && (() => {
+                const lines = data.projects.split("\n");
+                const projects = [];
+                let current = null;
+                lines.forEach(line => {
+                    const trimmed = line.trim();
+                    if (!trimmed) return;
+                    if (trimmed.startsWith("-")) {
+                        if (current) current.bullets.push(trimmed.replace(/^-\s*/, ""));
+                    } else {
+                        if (current) projects.push(current);
+                        current = { name: trimmed, bullets: [] };
+                    }
+                });
+                if (current) projects.push(current);
+                if (!projects.length) return (
+                    <section className="mb-4">
+                        <h5 className="fw-bold text-uppercase mb-2.5" style={{ fontSize: "0.95rem", letterSpacing: "0.06em", borderBottom: "1.5px solid #e2e8f0", paddingBottom: "4px", color: "#0f172a" }}>
+                            Projects
+                        </h5>
+                        <p style={{ whiteSpace: "pre-line", fontSize: "0.9rem", lineHeight: "1.55", color: "#334155" }}>{data.projects}</p>
+                    </section>
+                );
+                return (
+                    <section className="mb-4">
+                        <h5 className="fw-bold text-uppercase mb-2.5" style={{ fontSize: "0.95rem", letterSpacing: "0.06em", borderBottom: "1.5px solid #e2e8f0", paddingBottom: "4px", color: "#0f172a" }}>
+                            Projects
+                        </h5>
+                        <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+                            {projects.map((proj, i) => (
+                                <div key={i} style={{ borderLeft: "3px solid #64748b", paddingLeft: "14px", paddingTop: "2px", paddingBottom: "2px" }}>
+                                    <div style={{ fontWeight: "700", fontSize: "0.95rem", color: "#0f172a", marginBottom: "4px" }}>{proj.name}</div>
+                                    {proj.bullets.length > 0 && (
+                                        <ul style={{ margin: 0, paddingLeft: "16px", listStyleType: "disc" }}>
+                                            {proj.bullets.map((b, j) => (
+                                                <li key={j} style={{ fontSize: "0.88rem", color: "#334155", lineHeight: "1.5", marginBottom: "2px" }}>{b}</li>
+                                            ))}
+                                        </ul>
+                                    )}
+                                </div>
+                            ))}
+                        </div>
+                    </section>
+                );
+            })()}
+            </div>
+        );
+    }
+
     return (
         <div className="p-5" style={{ minHeight: "297mm", boxSizing: "border-box", width: "100%", fontFamily: "'Inter', -apple-system, sans-serif", color: "#1e293b" }}>
             {/* HEADER */}

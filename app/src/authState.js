@@ -10,24 +10,32 @@ if (typeof window !== "undefined" && !window.__fetchInterceptorAttached) {
         const isTargetApi = urlStr.includes("/api/resumes") || urlStr.includes("/api/user") || urlStr.includes("/api/payments") || urlStr.includes("/api/cover-letters") || urlStr.includes("/api/ai/") || urlStr.includes("/api/resume-sharing");
         
         if (isTargetApi) {
-            options.headers = options.headers || {};
+            let tokenToInject = null;
             try {
-                // 1. Check if mock user is logged in (credentials fallback session)
+                // 1. Check if mock user is logged in
                 const mockUserStr = localStorage.getItem("mock_user");
                 if (mockUserStr) {
                     const mockUser = JSON.parse(mockUserStr);
                     if (mockUser.token) {
-                        options.headers["Authorization"] = `Bearer ${mockUser.token}`;
+                        tokenToInject = mockUser.token;
                     }
-                } else if (auth.currentUser) {
-                    // 2. Check if Firebase user is logged in
-                    const token = await auth.currentUser.getIdToken();
-                    if (token) {
-                        options.headers["Authorization"] = `Bearer ${token}`;
-                    }
+                }
+                
+                // 2. If no mock token, check if Firebase user is logged in
+                if (!tokenToInject && auth?.currentUser) {
+                    tokenToInject = await auth.currentUser.getIdToken();
                 }
             } catch (err) {
                 console.warn("Fetch auth interceptor error:", err);
+            }
+
+            if (tokenToInject) {
+                if (typeof Headers !== "undefined" && options.headers instanceof Headers) {
+                    options.headers.set("Authorization", `Bearer ${tokenToInject}`);
+                } else {
+                    options.headers = options.headers || {};
+                    options.headers["Authorization"] = `Bearer ${tokenToInject}`;
+                }
             }
         }
         return originalFetch(url, options);

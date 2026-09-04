@@ -14,6 +14,46 @@ export default function DeveloperTemplate({ data }) {
         }
     };
 
+    
+    if (data?.isPage2) {
+        return (
+            <div style={{ fontFamily: "monospace, 'Fira Code', 'Courier New'", color: "#1e293b", background: "#ffffff", minHeight: "297mm", boxSizing: "border-box", width: "100%", padding: "48px" }}>
+                {/* PROJECTS ONLY ON PAGE 2 */}
+                {data.projects && (() => {
+                        const lines = data.projects.split("\n");
+                        const projs = [];
+                        let cur = null;
+                        lines.forEach(line => {
+                            const t = line.trim();
+                            if (!t) return;
+                            if (t.startsWith("-")) { if (cur) cur.bullets.push(t.replace(/^-\s*/, "")); }
+                            else { if (cur) projs.push(cur); cur = { name: t, bullets: [] }; }
+                        });
+                        if (cur) projs.push(cur);
+                        if (!projs.length) return <section className="mb-4"><h5 className="fw-bold mb-3" style={{ borderBottom: "2px solid #0f172a", paddingBottom: "6px" }}>const projects = () =&gt; &#123;</h5><p className="small text-muted" style={{ paddingLeft: "16px", borderLeft: "2px dashed #cbd5e1", whiteSpace: "pre-line", lineHeight: "1.6" }}>{data.projects}</p><h5 className="fw-bold mt-2">&#125;</h5></section>;
+                        return (
+                            <section className="mb-4">
+                                <h5 className="fw-bold mb-3" style={{ borderBottom: "2px solid #0f172a", paddingBottom: "6px" }}>const projects = () =&gt; &#123;</h5>
+                                <div style={{ paddingLeft: "16px", borderLeft: "2px dashed #cbd5e1", display: "flex", flexDirection: "column", gap: "10px" }}>
+                                    {projs.map((proj, i) => (
+                                        <div key={i} style={{ background: "#f8fafc", border: "1px solid #e2e8f0", borderRadius: "4px", padding: "8px 12px" }}>
+                                            <div className="fw-bold text-dark" style={{ fontSize: "0.9rem", marginBottom: "4px" }}>// {proj.name}</div>
+                                            {proj.bullets.length > 0 && (
+                                                <ul className="text-muted" style={{ margin: 0, paddingLeft: "16px", fontSize: "0.82rem", lineHeight: "1.5" }}>
+                                                    {proj.bullets.map((b, j) => <li key={j} style={{ marginBottom: "2px" }}>{b}</li>)}
+                                                </ul>
+                                            )}
+                                        </div>
+                                    ))}
+                                </div>
+                                <h5 className="fw-bold mt-2">&#125;</h5>
+                            </section>
+                        );
+                    })()}
+            </div>
+        );
+    }
+
     return (
         <div style={{ fontFamily: "monospace, 'Fira Code', 'Courier New'", color: "#1e293b", background: "#ffffff", minHeight: "297mm", boxSizing: "border-box", width: "100%" }}>
             <div className="d-flex flex-row" style={{ minHeight: "297mm", height: "100%" }}>
@@ -72,20 +112,6 @@ export default function DeveloperTemplate({ data }) {
                             )}
                         </div>
                     </div>
-
-                    {/* Tech Stack */}
-                    {data.skills && data.skills.length > 0 && (
-                        <div className="mb-4">
-                            <h6 className="fw-bold mb-3 small" style={{ color: "#38bdf8", letterSpacing: "1px" }}>// TECH_STACK</h6>
-                            <div className="d-flex flex-wrap gap-2">
-                                {data.skills.map((skill, i) => (
-                                    <span key={i} className="badge px-2 py-1 small" style={{ background: "#1e293b", border: "1px solid #334155", color: "#38bdf8" }}>
-                                        {skill}
-                                    </span>
-                                ))}
-                            </div>
-                        </div>
-                    )}
 
                     {/* Education */}
                     {data.education && data.education.length > 0 && (
@@ -192,9 +218,24 @@ export default function DeveloperTemplate({ data }) {
 
                     {/* Achievements */}
                     {data.achievements && (
-                        <section>
+                        <section className="mb-4">
                             <h5 className="fw-bold mb-3" style={{ borderBottom: "2px solid #0f172a", paddingBottom: "6px" }}>const achievements = () =&gt; &#123;</h5>
                             <p className="small text-muted" style={{ paddingLeft: "16px", borderLeft: "2px dashed #cbd5e1", whiteSpace: "pre-line", lineHeight: "1.6" }}>{data.achievements}</p>
+                            <h5 className="fw-bold mt-2">&#125;</h5>
+                        </section>
+                    )}
+
+                    {/* Tech Stack */}
+                    {data.skills && data.skills.length > 0 && (
+                        <section className="mb-4">
+                            <h5 className="fw-bold mb-3" style={{ borderBottom: "2px solid #0f172a", paddingBottom: "6px" }}>const techStack = () =&gt; &#123;</h5>
+                            <div className="d-flex flex-wrap gap-2" style={{ paddingLeft: "16px", borderLeft: "2px dashed #cbd5e1" }}>
+                                {data.skills.map((skill, i) => (
+                                    <span key={i} className="badge px-2.5 py-1.5 small" style={{ background: "#f1f5f9", border: "1px solid #cbd5e1", color: "#0284c7", fontWeight: "600" }}>
+                                        "{skill}"
+                                    </span>
+                                ))}
+                            </div>
                             <h5 className="fw-bold mt-2">&#125;</h5>
                         </section>
                     )}

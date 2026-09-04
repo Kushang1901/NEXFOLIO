@@ -3,6 +3,45 @@ import React from "react";
 export default function IvyLeagueTemplate({ data }) {
     const links = data?.basics?.links || {};
     
+    
+    if (data?.isPage2) {
+        return (
+            <div className="p-5" style={{ minHeight: "297mm", boxSizing: "border-box", width: "100%", fontFamily: "Georgia, 'Times New Roman', Times, serif", color: "#111", lineHeight: "1.5" }}>
+                {/* PROJECTS ONLY ON PAGE 2 */}
+                {data.projects && (() => {
+                const lines = data.projects.split("\n");
+                const projs = [];
+                let cur = null;
+                lines.forEach(line => {
+                    const t = line.trim();
+                    if (!t) return;
+                    if (t.startsWith("-")) { if (cur) cur.bullets.push(t.replace(/^-\s*/, "")); }
+                    else { if (cur) projs.push(cur); cur = { name: t, bullets: [] }; }
+                });
+                if (cur) projs.push(cur);
+                if (!projs.length) return <section className="mb-4"><h5 className="fw-bold text-center mb-3" style={{ fontSize: "12px", letterSpacing: "1px", borderBottom: "1px solid #777", paddingBottom: "2px" }}>RESEARCH &amp; PUBLICATIONS</h5><p style={{ fontSize: "12px", whiteSpace: "pre-line", margin: 0 }}>{data.projects}</p></section>;
+                return (
+                    <section className="mb-4">
+                        <h5 className="fw-bold text-center mb-3" style={{ fontSize: "12px", letterSpacing: "1px", borderBottom: "1px solid #777", paddingBottom: "2px" }}>RESEARCH &amp; PUBLICATIONS</h5>
+                        <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+                            {projs.map((proj, i) => (
+                                <div key={i} style={{ borderLeft: "2px solid #555", paddingLeft: "10px", paddingTop: "3px", paddingBottom: "3px" }}>
+                                    <div style={{ fontWeight: "700", fontStyle: "italic", fontSize: "12px", color: "#111", marginBottom: "3px" }}>{proj.name}</div>
+                                    {proj.bullets.length > 0 && (
+                                        <ul style={{ margin: 0, paddingLeft: "14px", fontSize: "11.5px", color: "#333", lineHeight: "1.5" }}>
+                                            {proj.bullets.map((b, j) => <li key={j} style={{ marginBottom: "1px" }}>{b}</li>)}
+                                        </ul>
+                                    )}
+                                </div>
+                            ))}
+                        </div>
+                    </section>
+                );
+            })()}
+            </div>
+        );
+    }
+
     return (
         <div className="p-5" style={{ minHeight: "297mm", boxSizing: "border-box", width: "100%", fontFamily: "Georgia, 'Times New Roman', Times, serif", color: "#111", lineHeight: "1.5" }}>
             {/* HEADER */}
@@ -39,11 +78,12 @@ export default function IvyLeagueTemplate({ data }) {
             <section className="mb-4">
                 <h5 className="fw-bold text-center mb-3" style={{ fontSize: "12px", letterSpacing: "1px", borderBottom: "1px solid #777", paddingBottom: "2px" }}>EDUCATION</h5>
                 {data.education.map((edu, i) => (
-                    <div key={i} className="mb-2" style={{ fontSize: "12px" }}>
+                    <div key={i} className="mb-2" style={{ fontSize: "12.5px" }}>
                         <div className="d-flex justify-content-between">
                             <strong>{edu.course}</strong>
                             <span>{edu.start} – {edu.end}</span>
                         </div>
+                        {edu.college && <div className="text-muted fst-italic" style={{ fontSize: "11.5px" }}>{edu.college}</div>}
                     </div>
                 ))}
             </section>
@@ -53,18 +93,18 @@ export default function IvyLeagueTemplate({ data }) {
                 <section className="mb-4">
                     <h5 className="fw-bold text-center mb-3" style={{ fontSize: "12px", letterSpacing: "1px", borderBottom: "1px solid #777", paddingBottom: "2px" }}>PROFESSIONAL APPOINTMENTS</h5>
                     {typeof data.experience === "string" ? (
-                        <p style={{ fontSize: "12px", whiteSpace: "pre-line", margin: 0 }}>{data.experience}</p>
+                        <p style={{ fontSize: "12px", whiteSpace: "pre-line", margin: 0, lineHeight: "1.6" }}>{data.experience}</p>
                     ) : (
-                        <div className="mb-3" style={{ fontSize: "12px" }}>
+                        <div className="mb-3" style={{ fontSize: "12.5px" }}>
                             <div className="d-flex justify-content-between">
                                 <strong>{data.experience.role}</strong>
                                 <span>{data.experience.start} – {data.experience.end}</span>
                             </div>
-                            <div className="text-muted italic mb-1">
+                            <div className="text-muted fst-italic mb-1" style={{ fontSize: "11.5px" }}>
                                 {data.experience.company} {data.experience.location && `| ${data.experience.location}`}
                             </div>
                             {data.experience.description && (
-                                <p style={{ fontSize: "11.5px", color: "#333", whiteSpace: "pre-line", margin: 0 }}>
+                                <p style={{ fontSize: "12px", color: "#333", whiteSpace: "pre-line", margin: 0, lineHeight: "1.6" }}>
                                     {data.experience.description}
                                 </p>
                             )}
@@ -73,8 +113,40 @@ export default function IvyLeagueTemplate({ data }) {
                 </section>
             )}
 
-            {/* PUBLICATIONS / PROJECTS */}
-            {data.projects && (() => {
+            {/* FELLOWSHIPS & INTERNSHIPS */}
+            {data.internship && (
+                <section className="mb-4">
+                    <h5 className="fw-bold text-center mb-3" style={{ fontSize: "12px", letterSpacing: "1px", borderBottom: "1px solid #777", paddingBottom: "2px" }}>FELLOWSHIPS &amp; INTERNSHIPS</h5>
+                    <div style={{ fontSize: "12.5px" }}>
+                        <div className="d-flex justify-content-between">
+                            <strong>{data.internship.field}</strong>
+                            <span>{data.internship.start} – {data.internship.end}</span>
+                        </div>
+                        <div className="text-muted fst-italic" style={{ fontSize: "11.5px", marginTop: "2px" }}>
+                            {data.internship.company}
+                        </div>
+                    </div>
+                </section>
+            )}
+
+            {/* AWARDS & HONORS */}
+            {data.achievements && (
+                <section className="mb-4">
+                    <h5 className="fw-bold text-center mb-3" style={{ fontSize: "12px", letterSpacing: "1px", borderBottom: "1px solid #777", paddingBottom: "2px" }}>HONORS, GRANTS &amp; FELLOWSHIPS</h5>
+                    <p style={{ fontSize: "12px", whiteSpace: "pre-line", margin: 0, lineHeight: "1.6" }}>{data.achievements}</p>
+                </section>
+            )}
+
+            {/* SKILLS */}
+            {data.skills && data.skills.length > 0 && (
+                <section className="mb-3">
+                    <h5 className="fw-bold text-center mb-2" style={{ fontSize: "12px", letterSpacing: "1px", borderBottom: "1px solid #777", paddingBottom: "2px" }}>SKILLS &amp; FIELD EXPERTISE</h5>
+                    <p style={{ fontSize: "12px", textAlign: "center", margin: 0, lineHeight: "1.6" }}>{data.skills.join(" • ")}</p>
+                </section>
+            )}
+
+            {/* Fallback projects for single-page PNG export */}
+            {data.projects && !data.isPage2 && (() => {
                 const lines = data.projects.split("\n");
                 const projs = [];
                 let cur = null;
@@ -85,7 +157,7 @@ export default function IvyLeagueTemplate({ data }) {
                     else { if (cur) projs.push(cur); cur = { name: t, bullets: [] }; }
                 });
                 if (cur) projs.push(cur);
-                if (!projs.length) return <section className="mb-4"><h5 className="fw-bold text-center mb-3" style={{ fontSize: "12px", letterSpacing: "1px", borderBottom: "1px solid #777", paddingBottom: "2px" }}>RESEARCH &amp; PUBLICATIONS</h5><p style={{ fontSize: "12px", whiteSpace: "pre-line", margin: 0 }}>{data.projects}</p></section>;
+                if (!projs.length) return null;
                 return (
                     <section className="mb-4">
                         <h5 className="fw-bold text-center mb-3" style={{ fontSize: "12px", letterSpacing: "1px", borderBottom: "1px solid #777", paddingBottom: "2px" }}>RESEARCH &amp; PUBLICATIONS</h5>
@@ -104,22 +176,6 @@ export default function IvyLeagueTemplate({ data }) {
                     </section>
                 );
             })()}
-
-            {/* AWARDS & HONORS */}
-            {data.achievements && (
-                <section className="mb-4">
-                    <h5 className="fw-bold text-center mb-3" style={{ fontSize: "12px", letterSpacing: "1px", borderBottom: "1px solid #777", paddingBottom: "2px" }}>HONORS, GRANTS & FELLOWSHIPS</h5>
-                    <p style={{ fontSize: "12px", whiteSpace: "pre-line", margin: 0 }}>{data.achievements}</p>
-                </section>
-            )}
-
-            {/* SKILLS */}
-            {data.skills.length > 0 && (
-                <section>
-                    <h5 className="fw-bold text-center mb-2" style={{ fontSize: "12px", letterSpacing: "1px", borderBottom: "1px solid #777", paddingBottom: "2px" }}>SKILLS & FIELD EXPERTISE</h5>
-                    <p style={{ fontSize: "12px", textAlign: "center", margin: 0 }}>{data.skills.join(" • ")}</p>
-                </section>
-            )}
         </div>
     );
 }

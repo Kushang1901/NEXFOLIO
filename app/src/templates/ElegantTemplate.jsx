@@ -14,6 +14,45 @@ export default function ElegantTemplate({ data }) {
         }
     };
 
+    
+    if (data?.isPage2) {
+        return (
+            <div className="p-5" style={{ fontFamily: "'Playfair Display', Georgia, 'Times New Roman', serif", color: "#2d3748", minHeight: "297mm", boxSizing: "border-box", width: "100%" }}>
+                {/* PROJECTS ONLY ON PAGE 2 */}
+                {data.projects && (() => {
+                const lines = data.projects.split("\n");
+                const projs = [];
+                let cur = null;
+                lines.forEach(line => {
+                    const t = line.trim();
+                    if (!t) return;
+                    if (t.startsWith("-")) { if (cur) cur.bullets.push(t.replace(/^-\s*/, "")); }
+                    else { if (cur) projs.push(cur); cur = { name: t, bullets: [] }; }
+                });
+                if (cur) projs.push(cur);
+                if (!projs.length) return <div className="mb-4" style={{ breakInside: "avoid", pageBreakInside: "avoid" }}><h5 className="fw-semibold text-uppercase border-bottom pb-2 mb-3" style={{ fontSize: "16px", letterSpacing: "1.5px", breakAfter: "avoid", pageBreakAfter: "avoid" }}>Selected Projects</h5><p className="small text-muted" style={{ whiteSpace: "pre-line", lineHeight: "1.7", paddingLeft: "12px" }}>{data.projects}</p></div>;
+                return (
+                    <div className="mb-4">
+                        <h5 className="fw-semibold text-uppercase border-bottom pb-2 mb-3" style={{ fontSize: "16px", letterSpacing: "1.5px", breakAfter: "avoid", pageBreakAfter: "avoid" }}>Selected Projects</h5>
+                        <div style={{ display: "flex", flexDirection: "column", gap: "10px", paddingLeft: "12px" }}>
+                            {projs.map((proj, i) => (
+                                <div key={i} style={{ borderLeft: "2px solid #4a5568", paddingLeft: "12px", breakInside: "avoid", pageBreakInside: "avoid" }}>
+                                    <div className="fw-semibold text-dark" style={{ fontStyle: "italic", fontSize: "0.92rem", marginBottom: "4px" }}>{proj.name}</div>
+                                    {proj.bullets.length > 0 && (
+                                        <ul className="text-muted" style={{ margin: 0, paddingLeft: "16px", fontSize: "0.85rem", lineHeight: "1.6" }}>
+                                            {proj.bullets.map((b, j) => <li key={j} style={{ marginBottom: "2px", breakInside: "avoid", pageBreakInside: "avoid" }}>{b}</li>)}
+                                        </ul>
+                                    )}
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                );
+            })()}
+            </div>
+        );
+    }
+
     return (
         <div className="p-5" style={{ fontFamily: "'Playfair Display', Georgia, 'Times New Roman', serif", color: "#2d3748", minHeight: "297mm", boxSizing: "border-box", width: "100%" }}>
             {/* Header */}

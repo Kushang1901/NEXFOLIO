@@ -14,6 +14,45 @@ export default function MinimalistTemplate({ data }) {
         }
     };
 
+    
+    if (data?.isPage2) {
+        return (
+            <div className="p-5" style={{ fontFamily: "system-ui, -apple-system, sans-serif", color: "#2d3748", minHeight: "297mm", boxSizing: "border-box", width: "100%" }}>
+                {/* PROJECTS ONLY ON PAGE 2 */}
+                {data.projects && (() => {
+                const lines = data.projects.split("\n");
+                const projs = [];
+                let cur = null;
+                lines.forEach(line => {
+                    const t = line.trim();
+                    if (!t) return;
+                    if (t.startsWith("-")) { if (cur) cur.bullets.push(t.replace(/^-\s*/, "")); }
+                    else { if (cur) projs.push(cur); cur = { name: t, bullets: [] }; }
+                });
+                if (cur) projs.push(cur);
+                if (!projs.length) return <div className="mb-4"><h6 className="text-uppercase fw-semibold border-bottom pb-2 mb-3 text-secondary" style={{ letterSpacing: "1px" }}>Projects</h6><p className="text-muted small" style={{ whiteSpace: "pre-line", lineHeight: "1.6" }}>{data.projects}</p></div>;
+                return (
+                    <div className="mb-4">
+                        <h6 className="text-uppercase fw-semibold border-bottom pb-2 mb-3 text-secondary" style={{ letterSpacing: "1px" }}>Projects</h6>
+                        <div style={{ display: "flex", flexDirection: "column", gap: "9px" }}>
+                            {projs.map((proj, i) => (
+                                <div key={i} style={{ borderLeft: "2px solid #6b7280", paddingLeft: "10px", paddingTop: "4px", paddingBottom: "4px" }}>
+                                    <div className="fw-semibold text-dark" style={{ fontSize: "0.88rem", marginBottom: "3px" }}>{proj.name}</div>
+                                    {proj.bullets.length > 0 && (
+                                        <ul className="text-muted" style={{ margin: 0, paddingLeft: "14px", fontSize: "0.82rem", lineHeight: "1.5" }}>
+                                            {proj.bullets.map((b, j) => <li key={j} style={{ marginBottom: "2px" }}>{b}</li>)}
+                                        </ul>
+                                    )}
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                );
+            })()}
+            </div>
+        );
+    }
+
     return (
         <div className="p-5" style={{ fontFamily: "system-ui, -apple-system, sans-serif", color: "#2d3748", minHeight: "297mm", boxSizing: "border-box", width: "100%" }}>
             {/* Header */}

@@ -593,10 +593,15 @@ export default function PublicResumePage() {
                         margin: 0mm;
                     }
 
+                    *, *::before, *::after {
+                        -webkit-print-color-adjust: exact !important;
+                        print-color-adjust: exact !important;
+                        color-adjust: exact !important;
+                    }
+
                     html, body {
                         background: #ffffff !important;
                         background-color: #ffffff !important;
-                        color: #000000 !important;
                         margin: 0 !important;
                         padding: 0 !important;
                         width: 100% !important;
@@ -604,6 +609,7 @@ export default function PublicResumePage() {
                         overflow: visible !important;
                         -webkit-print-color-adjust: exact !important;
                         print-color-adjust: exact !important;
+                        color-adjust: exact !important;
                     }
 
                     .no-print, nav, .navbar, .modal, .modal-backdrop, .toast-container, header, footer,
@@ -648,27 +654,30 @@ export default function PublicResumePage() {
                     }
 
                     #resume-preview {
-                        width: 100% !important;
-                        max-width: 100% !important;
-                        min-height: auto !important;
+                        width: 210mm !important;
+                        max-width: 210mm !important;
+                        min-width: 210mm !important;
+                        min-height: 297mm !important;
                         height: auto !important;
                         box-shadow: none !important;
                         border: none !important;
                         border-radius: 0 !important;
-                        margin: 0 !important;
+                        margin: 0 auto !important;
+                        padding: 0 !important;
                         position: static !important;
                         transform: none !important;
                         overflow: visible !important;
                         background: #ffffff !important;
-                        -webkit-box-decoration-break: clone;
-                        box-decoration-break: clone;
-                        padding: 12mm 14mm !important;
+                        box-sizing: border-box !important;
+                        -webkit-print-color-adjust: exact !important;
+                        print-color-adjust: exact !important;
+                        color-adjust: exact !important;
                     }
 
-                    #resume-preview > div:first-child {
-                        padding: 0 !important;
-                        min-height: auto !important;
-                        width: 100% !important;
+                    #resume-preview * {
+                        -webkit-print-color-adjust: exact !important;
+                        print-color-adjust: exact !important;
+                        color-adjust: exact !important;
                     }
 
                     /* Prevent awkward slicing and orphan headings across page boundaries */
@@ -678,13 +687,19 @@ export default function PublicResumePage() {
                     #resume-preview h4,
                     #resume-preview h5,
                     #resume-preview h6,
-                    #resume-preview .section-title {
+                    #resume-preview .section-title,
+                    #resume-preview .section-header {
                         break-after: avoid !important;
                         page-break-after: avoid !important;
                     }
 
+                    #resume-preview section,
+                    #resume-preview article,
                     #resume-preview [style*="borderLeft"],
                     #resume-preview [style*="border-left"],
+                    #resume-preview [style*="background"],
+                    #resume-preview .badge,
+                    #resume-preview .rounded-pill,
                     #resume-preview .experience-item,
                     #resume-preview .project-item,
                     #resume-preview .education-item,

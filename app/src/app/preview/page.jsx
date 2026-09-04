@@ -49,6 +49,9 @@ export default function Preview() {
     const [aiOutput, setAiOutput] = useState("");
     const [selectedTemplate, setSelectedTemplate] = useState("classic");
     const [showDownloadModal, setShowDownloadModal] = useState(false);
+    const [showPdfModal, setShowPdfModal] = useState(false);
+    const [autoDownloadPdfAfterPayment, setAutoDownloadPdfAfterPayment] = useState(false);
+    const generateAndDownloadPDFRef = React.useRef(null);
     const [showDocxSubModal, setShowDocxSubModal] = useState(false);
     const [showPremiumPrompt, setShowPremiumPrompt] = useState(false);
     const [premiumPromptType, setPremiumPromptType] = useState("");
@@ -253,10 +256,10 @@ export default function Preview() {
 
     // Dynamic Scaling Effect for Mobile Preview
     useEffect(() => {
-        const previewEl = document.getElementById("resume-preview");
+        const previewEl = document.getElementById("pdf-sheet-1") || document.getElementById("resume-preview");
         const containerEl = document.querySelector(".preview-viewport-container");
         
-        if (!previewEl || !containerEl) return;
+        if (!containerEl) return;
 
         const updateScale = () => {
             const containerWidth = containerEl.clientWidth;
@@ -386,13 +389,36 @@ export default function Preview() {
         }
 
         try {
+            // Ensure Razorpay SDK script is loaded
+            if (typeof window !== "undefined" && !window.Razorpay) {
+                const loaded = await new Promise((resolve) => {
+                    const existing = document.querySelector('script[src*="checkout.razorpay.com"]');
+                    if (existing) {
+                        existing.addEventListener("load", () => resolve(true));
+                        existing.addEventListener("error", () => resolve(false));
+                        // Check if already loaded in the meantime
+                        if (window.Razorpay) return resolve(true);
+                    } else {
+                        const script = document.createElement("script");
+                        script.src = "https://checkout.razorpay.com/v1/checkout.js";
+                        script.onload = () => resolve(true);
+                        script.onerror = () => resolve(false);
+                        document.body.appendChild(script);
+                    }
+                });
+                if (!loaded && !window.Razorpay) {
+                    throw new Error("Could not load payment gateway. Please check your internet connection.");
+                }
+            }
+
             // 1. Create order on the backend
             const response = await fetch("/api/payments", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                     action: "create_order",
-                    resumeId: currentResumeId
+                    resumeId: currentResumeId,
+                    email: activeEmail
                 })
             });
 
@@ -421,6 +447,7 @@ export default function Preview() {
                             body: JSON.stringify({
                                 action: "verify_payment",
                                 resumeId: currentResumeId,
+                                email: activeEmail,
                                 razorpayPaymentId: response.razorpay_payment_id,
                                 razorpayOrderId: response.razorpay_order_id,
                                 razorpaySignature: response.razorpay_signature
@@ -430,7 +457,25 @@ export default function Preview() {
                         const verifyData = await verifyRes.json();
                         if (verifyRes.ok && verifyData.success) {
                             setIsPaid(true);
+                            setShowPremiumPrompt(false);
                             showToast("Payment Successful! Premium unlocked.", "success");
+                            if (autoDownloadPdfAfterPayment) {
+                                setAutoDownloadPdfAfterPayment(false);
+                                setTimeout(() => {
+                                    if (generateAndDownloadPDFRef.current) {
+                                        generateAndDownloadPDFRef.current();
+                                    }
+                                }, 600);
+                            } else if (downloadType === "png") {
+                                setDownloadType(null);
+                                setTimeout(() => downloadAsPNG(), 500);
+                            } else if (downloadType === "docx-editable") {
+                                setDownloadType(null);
+                                setTimeout(() => downloadAsDOCX(false), 500);
+                            } else if (downloadType === "docx-visual") {
+                                setDownloadType(null);
+                                setTimeout(() => downloadAsDOCX(true), 500);
+                            }
                         } else {
                             throw new Error(verifyData.error || "Payment verification failed");
                         }
@@ -506,28 +551,9 @@ export default function Preview() {
         }
     };
 
-    const downloadAsPDF = async () => {
-        if (isCurrentTemplatePremium && !isPaid) {
-            showToast("This template requires a premium upgrade to export.", "error");
-            setShowDownloadModal(false);
-            return;
-        }
-
+    const downloadAsPDF = () => {
         setShowDownloadModal(false);
-
-        try {
-            // Wait brief moment for modal animations to clear completely
-            await new Promise((resolve) => setTimeout(resolve, 200));
-            window.print();
-            showToast("Print preview opened successfully!", "success");
-
-            setTimeout(() => {
-                triggerReviewPrompt();
-            }, 1200);
-        } catch (err) {
-            console.error(err);
-            showToast("Failed to print resume. Please try again.", "error");
-        }
+        setShowPdfModal(true);
     };
 
     /* ===== WORD EDITABLE — generated from resume data via `docx` library ===== */
@@ -883,94 +909,224 @@ export default function Preview() {
             : resumeData
     );
 
+    /* ================= 2-PAGE PARTITIONING LOGIC ================= */
+    const hasPage2 = Boolean(
+        data?.projects && 
+        (typeof data.projects === "string" ? data.projects.trim().length > 0 : data.projects.length > 0)
+    );
+
+    const getPageData = (pageNumber) => {
+        if (!data) return null;
+        if (pageNumber === 1) {
+            return {
+                ...data,
+                isPage2: false,
+                projects: "" // Page 1: everything EXCEPT projects (skills are INCLUDED)
+            };
+        }
+        if (pageNumber === 2) {
+            return {
+                ...data,
+                isPage2: true,
+                basics: {
+                    name: "",
+                    role: "",
+                    email: "",
+                    phone: "",
+                    photo: "",
+                    location: "",
+                    links: {}
+                },
+                summary: "",
+                education: [],
+                experience: null,
+                internship: null,
+                skills: [], // NO skills on Page 2
+                achievements: "",
+                projects: data.projects // ONLY projects on Page 2
+            };
+        }
+        return {
+            ...data,
+            isPage2: false
+        };
+    };
+
     /* ================= TEMPLATE LOGIC ================= */
-    const renderTemplate = () => {
+    const renderTemplate = (pageNumber = 0) => {
+        const tData = getPageData(pageNumber);
+        if (!tData) return null;
+
         switch (selectedTemplate) {
             case "modern":
-                return <ModernTemplate data={data} />;
+                return <ModernTemplate data={tData} />;
 
             case "creative":
-                return <CreativeTemplate data={data} />;
+                return <CreativeTemplate data={tData} />;
 
             case "minimalist":
-                return <MinimalistTemplate data={data} />;
+                return <MinimalistTemplate data={tData} />;
 
             case "executive":
-                return <ExecutiveTemplate data={data} />;
+                return <ExecutiveTemplate data={tData} />;
 
             case "developer":
-                return <DeveloperTemplate data={data} />;
+                return <DeveloperTemplate data={tData} />;
 
             case "elegant":
-                return <ElegantTemplate data={data} />;
+                return <ElegantTemplate data={tData} />;
 
             case "accent":
-                return <AccentTemplate data={data} />;
+                return <AccentTemplate data={tData} />;
 
             case "navy_elegance":
-                return <NavyEleganceTemplate data={data} />;
+                return <NavyEleganceTemplate data={tData} />;
 
             case "minimalist_bw":
-                return <ModernMinimalistTemplate data={data} />;
+                return <ModernMinimalistTemplate data={tData} />;
 
             case "emerald":
-                return <EmeraldTemplate data={data} />;
+                return <EmeraldTemplate data={tData} />;
 
             case "slate_two_column":
-                return <SlateTwoColumnTemplate data={data} />;
+                return <SlateTwoColumnTemplate data={tData} />;
 
             case "sunrise":
-                return <SunriseTemplate data={data} />;
+                return <SunriseTemplate data={tData} />;
 
             case "midnight":
-                return <MidnightTemplate data={data} />;
+                return <MidnightTemplate data={tData} />;
 
             case "nordic":
-                return <NordicTemplate data={data} />;
+                return <NordicTemplate data={tData} />;
 
             case "crimson":
-                return <CrimsonTemplate data={data} />;
+                return <CrimsonTemplate data={tData} />;
 
             case "aurora":
-                return <AuroraTemplate data={data} />;
+                return <AuroraTemplate data={tData} />;
 
             case "timeline":
-                return <TimelineTemplate data={data} />;
+                return <TimelineTemplate data={tData} />;
 
             case "compact_ats":
-                return <CompactATSTemplate data={data} />;
+                return <CompactATSTemplate data={tData} />;
 
             case "graduate":
-                return <GraduateTemplate data={data} />;
+                return <GraduateTemplate data={tData} />;
 
             case "swiss_grid":
-                return <SwissGridTemplate data={data} />;
+                return <SwissGridTemplate data={tData} />;
 
             case "product_manager":
-                return <ProductManagerTemplate data={data} />;
+                return <ProductManagerTemplate data={tData} />;
 
             case "data_analyst":
-                return <DataAnalystTemplate data={data} />;
+                return <DataAnalystTemplate data={tData} />;
 
             case "bento":
-                return <BentoTemplate data={data} />;
+                return <BentoTemplate data={tData} />;
 
             case "ivy_league":
-                return <IvyLeagueTemplate data={data} />;
+                return <IvyLeagueTemplate data={tData} />;
 
             case "blueprint":
-                return <BlueprintTemplate data={data} />;
+                return <BlueprintTemplate data={tData} />;
 
             case "consultant":
-                return <ConsultantTemplate data={data} />;
+                return <ConsultantTemplate data={tData} />;
 
             case "portfolio_resume":
-                return <PortfolioResumeTemplate data={data} />;
+                return <PortfolioResumeTemplate data={tData} />;
 
             default:
-                return <ClassicTemplate data={data} />;
+                return <ClassicTemplate data={tData} />;
         }
     };
+
+    /* ================= DIRECT 2-PAGE PDF GENERATION ================= */
+    const generateAndDownloadPDF = async () => {
+        setIsDownloading(true);
+        setDownloadType("pdf");
+        showToast("Generating high-resolution 2-Page PDF...", "info");
+
+        try {
+            const { default: html2canvas } = await import("html2canvas");
+            const { default: jsPDF } = await import("jspdf");
+
+            // Allow elements to settle
+            await new Promise((resolve) => setTimeout(resolve, 350));
+
+            const sheet1 = document.getElementById("pdf-sheet-1");
+            if (!sheet1) {
+                throw new Error("Could not find Page 1 element to export.");
+            }
+
+            const canvas1 = await html2canvas(sheet1, {
+                scale: 2,
+                useCORS: true,
+                logging: false,
+                backgroundColor: "#ffffff",
+                onclone: (clonedDoc) => {
+                    const el = clonedDoc.getElementById("pdf-sheet-1");
+                    if (el) {
+                        el.style.transform = "none";
+                        el.style.position = "static";
+                    }
+                }
+            });
+
+            const imgData1 = canvas1.toDataURL("image/jpeg", 0.95);
+            const pdf = new jsPDF({
+                orientation: "portrait",
+                unit: "mm",
+                format: "a4"
+            });
+
+            pdf.addImage(imgData1, "JPEG", 0, 0, 210, 297, undefined, "FAST");
+
+            const sheet2 = document.getElementById("pdf-sheet-2");
+            if (hasPage2 && sheet2) {
+                const canvas2 = await html2canvas(sheet2, {
+                    scale: 2,
+                    useCORS: true,
+                    logging: false,
+                    backgroundColor: "#ffffff",
+                    onclone: (clonedDoc) => {
+                        const el = clonedDoc.getElementById("pdf-sheet-2");
+                        if (el) {
+                            el.style.transform = "none";
+                            el.style.position = "static";
+                        }
+                    }
+                });
+
+                const imgData2 = canvas2.toDataURL("image/jpeg", 0.95);
+                pdf.addPage("a4", "portrait");
+                pdf.addImage(imgData2, "JPEG", 0, 0, 210, 297, undefined, "FAST");
+            }
+
+            const safeFileName = resumeData?.fullName
+                ? `${resumeData.fullName.replace(/\s+/g, "_")}_Resume.pdf`
+                : "Resume.pdf";
+
+            pdf.save(safeFileName);
+            setShowPdfModal(false);
+            showToast("2-Page PDF downloaded successfully!", "success");
+
+            setTimeout(() => {
+                triggerReviewPrompt();
+            }, 1200);
+        } catch (err) {
+            console.error("PDF Export Error:", err);
+            showToast("Failed to generate PDF. Please try again.", "error");
+        } finally {
+            setIsDownloading(false);
+            setDownloadType(null);
+        }
+    };
+
+    generateAndDownloadPDFRef.current = generateAndDownloadPDF;
 
     /* ================= UI ================= */
     return (
@@ -1055,72 +1211,175 @@ export default function Preview() {
                     </span>
                 </div>
 
-                {/* Viewport for the A4 sheet */}
-                <div className="preview-viewport-container d-flex justify-content-center py-2">
-                    <div 
-                        className="preview-viewport-shadow"
-                        style={{
-                            width: `${794 * scale}px`,
-                            height: parentHeight,
-                            overflow: "hidden",
-                            position: "relative",
-                            transition: "width 0.15s ease, height 0.15s ease"
-                        }}
-                    >
-                        <div
-                            id="resume-preview"
-                            className="bg-white text-dark"
+                {/* Viewport for the A4 sheets */}
+                <div className="preview-viewport-container d-flex flex-column align-items-center py-2 gap-4">
+                    {/* PAGE 1 */}
+                    <div className="d-flex flex-column align-items-center w-100">
+                        <div className="badge bg-white text-dark shadow-sm border mb-2 px-3 py-1.5" style={{ fontSize: "12px", fontWeight: 600, borderRadius: "20px" }}>
+                            <i className="fas fa-file-alt text-primary me-1.5"></i> Page 1 • Profile, Experience, Skills &amp; Education
+                        </div>
+                        <div 
+                            className="preview-viewport-shadow"
                             style={{
-                                width: "794px",
-                                minHeight: "1123px",
-                                boxSizing: "border-box",
-                                position: "absolute",
-                                top: 0,
-                                left: 0,
-                                transform: `scale(${scale})`,
-                                transformOrigin: "top left",
+                                width: `${794 * scale}px`,
+                                height: parentHeight,
                                 overflow: "hidden",
-                                fontFamily: "'Inter', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif"
+                                position: "relative",
+                                transition: "width 0.15s ease, height 0.15s ease",
+                                backgroundColor: "#ffffff",
+                                borderRadius: "4px"
                             }}
                         >
-                            {/* Watermark Overlay for Unpaid Resume */}
-                            {!isPaid && showWatermark && isCurrentTemplatePremium && (
-                                <div className="watermark-overlay" style={{
+                            <div
+                                id="pdf-sheet-1"
+                                className="bg-white text-dark"
+                                style={{
+                                    width: "794px",
+                                    minHeight: "1123px",
+                                    boxSizing: "border-box",
                                     position: "absolute",
                                     top: 0,
                                     left: 0,
-                                    width: "100%",
-                                    height: "100%",
-                                    pointerEvents: "none",
-                                    zIndex: 99,
-                                    display: "flex",
-                                    flexDirection: "column",
-                                    justifyContent: "space-between",
-                                    padding: "120px 0",
-                                    boxSizing: "border-box",
-                                    overflow: "hidden"
-                                }}>
-                                    {Array.from({ length: 5 }).map((_, idx) => (
-                                        <div key={idx} style={{
-                                            fontSize: "90px",
-                                            color: "rgba(128, 128, 128, 0.11)",
-                                            fontWeight: "900",
-                                            transform: "rotate(-30deg) scale(1.1)",
-                                            textAlign: "center",
-                                            whiteSpace: "nowrap",
-                                            width: "100%",
-                                            userSelect: "none",
-                                            fontFamily: "'Inter', 'Helvetica Neue', Arial, sans-serif",
-                                            letterSpacing: "10px",
-                                            margin: "40px 0"
-                                        }}>
-                                            CVGRID
-                                        </div>
-                                    ))}
-                                </div>
-                            )}
-                            {renderTemplate()}
+                                    transform: `scale(${scale})`,
+                                    transformOrigin: "top left",
+                                    overflow: "hidden",
+                                    fontFamily: "'Inter', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif"
+                                }}
+                            >
+                                {/* Watermark Overlay for Unpaid Resume */}
+                                {!isPaid && showWatermark && isCurrentTemplatePremium && (
+                                    <div className="watermark-overlay" style={{
+                                        position: "absolute",
+                                        top: 0,
+                                        left: 0,
+                                        width: "100%",
+                                        height: "100%",
+                                        pointerEvents: "none",
+                                        zIndex: 99,
+                                        display: "flex",
+                                        flexDirection: "column",
+                                        justifyContent: "space-between",
+                                        padding: "120px 0",
+                                        boxSizing: "border-box",
+                                        overflow: "hidden"
+                                    }}>
+                                        {Array.from({ length: 5 }).map((_, idx) => (
+                                            <div key={idx} style={{
+                                                fontSize: "90px",
+                                                color: "rgba(128, 128, 128, 0.11)",
+                                                fontWeight: "900",
+                                                transform: "rotate(-30deg) scale(1.1)",
+                                                textAlign: "center",
+                                                whiteSpace: "nowrap",
+                                                width: "100%",
+                                                userSelect: "none",
+                                                fontFamily: "'Inter', 'Helvetica Neue', Arial, sans-serif",
+                                                letterSpacing: "10px",
+                                                margin: "40px 0"
+                                            }}>
+                                                CVGRID
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+                                {renderTemplate(1)}
+                            </div>
                         </div>
+                    </div>
+
+                    {/* PAGE 2 */}
+                    {hasPage2 && (
+                        <div className="d-flex flex-column align-items-center w-100">
+                            <div className="badge bg-white text-dark shadow-sm border mb-2 px-3 py-1.5" style={{ fontSize: "12px", fontWeight: 600, borderRadius: "20px" }}>
+                                <i className="fas fa-layer-group text-info me-1.5"></i> Page 2 • Selected Projects
+                            </div>
+                            <div 
+                                className="preview-viewport-shadow"
+                                style={{
+                                    width: `${794 * scale}px`,
+                                    height: parentHeight,
+                                    overflow: "hidden",
+                                    position: "relative",
+                                    transition: "width 0.15s ease, height 0.15s ease",
+                                    backgroundColor: "#ffffff",
+                                    borderRadius: "4px"
+                                }}
+                            >
+                                <div
+                                    id="pdf-sheet-2"
+                                    className="bg-white text-dark"
+                                    style={{
+                                        width: "794px",
+                                        minHeight: "1123px",
+                                        boxSizing: "border-box",
+                                        position: "absolute",
+                                        top: 0,
+                                        left: 0,
+                                        transform: `scale(${scale})`,
+                                        transformOrigin: "top left",
+                                        overflow: "hidden",
+                                        fontFamily: "'Inter', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif"
+                                    }}
+                                >
+                                    {/* Watermark Overlay for Unpaid Resume */}
+                                    {!isPaid && showWatermark && isCurrentTemplatePremium && (
+                                        <div className="watermark-overlay" style={{
+                                            position: "absolute",
+                                            top: 0,
+                                            left: 0,
+                                            width: "100%",
+                                            height: "100%",
+                                            pointerEvents: "none",
+                                            zIndex: 99,
+                                            display: "flex",
+                                            flexDirection: "column",
+                                            justifyContent: "space-between",
+                                            padding: "120px 0",
+                                            boxSizing: "border-box",
+                                            overflow: "hidden"
+                                        }}>
+                                            {Array.from({ length: 5 }).map((_, idx) => (
+                                                <div key={idx} style={{
+                                                    fontSize: "90px",
+                                                    color: "rgba(128, 128, 128, 0.11)",
+                                                    fontWeight: "900",
+                                                    transform: "rotate(-30deg) scale(1.1)",
+                                                    textAlign: "center",
+                                                    whiteSpace: "nowrap",
+                                                    width: "100%",
+                                                    userSelect: "none",
+                                                    fontFamily: "'Inter', 'Helvetica Neue', Arial, sans-serif",
+                                                    letterSpacing: "10px",
+                                                    margin: "40px 0"
+                                                }}>
+                                                    CVGRID
+                                                </div>
+                                            ))}
+                                        </div>
+                                    )}
+                                    {renderTemplate(2)}
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Preserved Full Viewport for PNG Export (Completely unimpacted) */}
+                    <div
+                        id="resume-preview"
+                        className="bg-white text-dark"
+                        style={{
+                            position: "fixed",
+                            left: "-9999px",
+                            top: 0,
+                            width: "794px",
+                            minHeight: "1123px",
+                            boxSizing: "border-box",
+                            zIndex: -9999,
+                            pointerEvents: "none",
+                            fontFamily: "'Inter', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif"
+                        }}
+                    >
+                        {renderTemplate(0)}
                     </div>
                 </div>
             </div>
@@ -1552,10 +1811,15 @@ export default function Preview() {
                         margin: 0mm;
                     }
 
+                    *, *::before, *::after {
+                        -webkit-print-color-adjust: exact !important;
+                        print-color-adjust: exact !important;
+                        color-adjust: exact !important;
+                    }
+
                     html, body {
                         background: #ffffff !important;
                         background-color: #ffffff !important;
-                        color: #000000 !important;
                         margin: 0 !important;
                         padding: 0 !important;
                         width: 100% !important;
@@ -1563,6 +1827,7 @@ export default function Preview() {
                         overflow: visible !important;
                         -webkit-print-color-adjust: exact !important;
                         print-color-adjust: exact !important;
+                        color-adjust: exact !important;
                     }
 
                     .no-print, nav, .navbar, .modal, .modal-backdrop, .toast-container, header, footer,
@@ -1619,27 +1884,30 @@ export default function Preview() {
                     }
 
                     #resume-preview {
-                        width: 100% !important;
-                        max-width: 100% !important;
-                        min-height: auto !important;
+                        width: 210mm !important;
+                        max-width: 210mm !important;
+                        min-width: 210mm !important;
+                        min-height: 297mm !important;
                         height: auto !important;
                         box-shadow: none !important;
                         border: none !important;
                         border-radius: 0 !important;
-                        margin: 0 !important;
+                        margin: 0 auto !important;
+                        padding: 0 !important;
                         position: static !important;
                         transform: none !important;
                         overflow: visible !important;
                         background: #ffffff !important;
-                        -webkit-box-decoration-break: clone;
-                        box-decoration-break: clone;
-                        padding: 12mm 14mm !important;
+                        box-sizing: border-box !important;
+                        -webkit-print-color-adjust: exact !important;
+                        print-color-adjust: exact !important;
+                        color-adjust: exact !important;
                     }
 
-                    #resume-preview > div:first-child {
-                        padding: 0 !important;
-                        min-height: auto !important;
-                        width: 100% !important;
+                    #resume-preview * {
+                        -webkit-print-color-adjust: exact !important;
+                        print-color-adjust: exact !important;
+                        color-adjust: exact !important;
                     }
 
                     /* Prevent awkward slicing and orphan headings across page boundaries */
@@ -1649,13 +1917,19 @@ export default function Preview() {
                     #resume-preview h4,
                     #resume-preview h5,
                     #resume-preview h6,
-                    #resume-preview .section-title {
+                    #resume-preview .section-title,
+                    #resume-preview .section-header {
                         break-after: avoid !important;
                         page-break-after: avoid !important;
                     }
 
+                    #resume-preview section,
+                    #resume-preview article,
                     #resume-preview [style*="borderLeft"],
                     #resume-preview [style*="border-left"],
+                    #resume-preview [style*="background"],
+                    #resume-preview .badge,
+                    #resume-preview .rounded-pill,
                     #resume-preview .experience-item,
                     #resume-preview .project-item,
                     #resume-preview .education-item,
@@ -1872,113 +2146,8 @@ export default function Preview() {
                         const FREE_TEMPLATES = ["modern", "creative", "product_manager", "bento"];
                         const isCurrentTemplatePremium = !FREE_TEMPLATES.includes(selectedTemplate);
                         
-                        if (!isPaid && isCurrentTemplatePremium) {
-                            return (
-                                /* STRICT PREMIUM TEMPLATE PAYWALL SCREEN */
-                                <div className="card p-4 p-md-5 text-white animate-fade-in" style={{
-                                    maxWidth: "560px",
-                                    width: "95%",
-                                    background: "linear-gradient(145deg, #181926 0%, #0d0f1a 100%)",
-                                    borderRadius: "24px",
-                                    border: "1.5px solid rgba(245, 158, 11, 0.35)", // Gold tint border
-                                    boxShadow: "0 25px 60px rgba(0, 0, 0, 0.75), 0 0 30px rgba(245, 158, 11, 0.08)"
-                                }}>
-                                    <div className="card-body position-relative p-0 text-center">
-                                        <button 
-                                            onClick={() => setShowDownloadModal(false)}
-                                            className="btn-close btn-close-white position-absolute"
-                                            style={{ top: "-5px", right: "-5px", zIndex: 10 }}
-                                            aria-label="Close"
-                                        ></button>
-
-                                        {/* Gold Premium Seal */}
-                                        <div style={{ display: "flex", justifyContent: "center", marginBottom: "20px" }}>
-                                            <div style={{
-                                                width: "70px",
-                                                height: "70px",
-                                                borderRadius: "50%",
-                                                background: "rgba(245, 158, 11, 0.15)",
-                                                border: "1.5px solid rgba(245, 158, 11, 0.4)",
-                                                display: "flex",
-                                                alignItems: "center",
-                                                justifyContent: "center"
-                                            }}>
-                                                <Crown size={32} className="text-warning" />
-                                            </div>
-                                        </div>
-
-                                        <h3 className="fw-bold mb-2 text-white" style={{ fontSize: "1.65rem", letterSpacing: "-0.01em" }}>Premium Layout Locked</h3>
-                                        
-                                        <div className="d-inline-block px-3 py-1 rounded-pill mb-4" style={{
-                                            background: "rgba(245, 158, 11, 0.08)",
-                                            border: "1px solid rgba(245, 158, 11, 0.2)",
-                                            fontSize: "0.82rem",
-                                            fontWeight: "600",
-                                            color: "#f59e0b"
-                                        }}>
-                                            Layout: {templateList.find(t => t.id === selectedTemplate)?.name || selectedTemplate}
-                                        </div>
-
-                                        <p className="text-white-50 mb-4" style={{ fontSize: "0.95rem", lineHeight: "1.5" }}>
-                                            You are using a Premium layout built for senior profiles and hiring software compatibility. Upgrade to Premium for a one-time charge of <strong>₹150</strong> to download.
-                                        </p>
-
-                                        <div style={{
-                                            background: "rgba(255, 255, 255, 0.02)",
-                                            border: "1px solid rgba(255, 255, 255, 0.05)",
-                                            borderRadius: "16px",
-                                            padding: "16px",
-                                            textAlign: "left",
-                                            marginBottom: "24px"
-                                        }}>
-                                            <h5 className="fw-semibold text-white mb-3" style={{ fontSize: "0.9rem" }}>What's included in Premium:</h5>
-                                            <ul className="list-unstyled d-flex flex-column gap-2 mb-0" style={{ fontSize: "0.85rem", color: "#cbd5e1" }}>
-                                                <li className="d-flex align-items-center gap-2">
-                                                    <i className="fas fa-check text-success"></i> <strong>Clean &amp; Watermark-Free</strong> exports
-                                                </li>
-                                                <li className="d-flex align-items-center gap-2">
-                                                    <i className="fas fa-check text-success"></i> PDF, PNG, and Editable Word formats
-                                                </li>
-                                                <li className="d-flex align-items-center gap-2">
-                                                    <i className="fas fa-check text-success"></i> Unlimited downloads and edits forever
-                                                </li>
-                                            </ul>
-                                        </div>
-
-                                        <div className="d-flex flex-column gap-2.5">
-                                            <button 
-                                                onClick={handleRazorpayPayment}
-                                                className="btn w-100 py-3 fw-bold"
-                                                style={{
-                                                    background: "linear-gradient(135deg, #f59e0b 0%, #d97706 100%)",
-                                                    border: "none",
-                                                    color: "#fff",
-                                                    borderRadius: "12px",
-                                                    fontSize: "0.95rem",
-                                                    boxShadow: "0 4px 15px rgba(245, 158, 11, 0.3)"
-                                                }}
-                                            >
-                                                Upgrade for ₹150
-                                            </button>
-                                            
-                                            <button 
-                                                onClick={() => {
-                                                    setShowDownloadModal(false);
-                                                    setShowTemplateModal(true);
-                                                }}
-                                                className="btn btn-outline-light w-100 py-2.5 fw-semibold"
-                                                style={{ borderRadius: "12px", border: "1px solid rgba(255, 255, 255, 0.15)", fontSize: "0.88rem" }}
-                                            >
-                                                Switch to a Free Template
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            );
-                        }
-                        
                         return (
-                            /* ORIGINAL UNLOCKED MODAL FOR PAID OR FREE TEMPLATE USERS */
+                            /* UNLOCKED MODAL WITH FORMAT SELECTION FOR ALL TEMPLATES */
                             <div className="card text-center p-4 p-md-5 text-white animate-fade-in" style={{
                                 maxWidth: "680px",
                                 width: "95%",
@@ -2136,9 +2305,16 @@ export default function Preview() {
                                                             height: "100%"
                                                         }}
                                                     >
-                                                        <i className="fas fa-file-pdf fa-2x mb-3 text-primary"></i>
+                                                        <div className="d-flex align-items-center gap-1.5 mb-2">
+                                                            <i className="fas fa-file-pdf fa-2x text-primary"></i>
+                                                            {isCurrentTemplatePremium && !isPaid && (
+                                                                <Crown size={16} className="text-warning" />
+                                                            )}
+                                                        </div>
                                                         <span className="fw-bold fs-6 mb-1 text-white">PDF File</span>
-                                                        <span className="text-white-50 small" style={{ fontSize: "0.75rem" }}>Best for printing/ATS</span>
+                                                        <span className="text-white-50 small" style={{ fontSize: "0.75rem" }}>
+                                                            {isCurrentTemplatePremium && !isPaid ? "2 Pages • Unlock (₹150)" : "2-Page Layout • ATS Ready"}
+                                                        </span>
                                                     </button>
                                                 </div>
                                                 <div className="col-12 col-md-4">
@@ -2254,6 +2430,256 @@ export default function Preview() {
                             </div>
                         );
                     })()}
+                </div>
+            )}
+
+            {/* PDF EXPORT PREVIEW MODAL */}
+            {showPdfModal && (
+                <div style={{
+                    position: "fixed",
+                    top: 0,
+                    left: 0,
+                    width: "100%",
+                    height: "100%",
+                    backgroundColor: "rgba(10, 14, 21, 0.82)",
+                    backdropFilter: "blur(10px)",
+                    zIndex: 9999,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    padding: "16px",
+                    overflowY: "auto"
+                }} className="no-print animate-fade-in">
+                    <div className="card text-dark shadow-2xl" style={{
+                        maxWidth: "880px",
+                        width: "100%",
+                        backgroundColor: "#ffffff",
+                        borderRadius: "24px",
+                        border: "1px solid #e2e8f0",
+                        overflow: "hidden",
+                        boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.25)"
+                    }}>
+                        {/* Modal Header */}
+                        <div className="d-flex align-items-center justify-content-between px-4 py-3.5 border-bottom" style={{ backgroundColor: "#f8fafc" }}>
+                            <div className="d-flex align-items-center gap-2.5">
+                                <div className="p-2 rounded-3 text-white d-flex align-items-center justify-content-center" style={{ backgroundColor: "#dc2626" }}>
+                                    <i className="fas fa-file-pdf" style={{ fontSize: "1.1rem" }}></i>
+                                </div>
+                                <div>
+                                    <h5 className="fw-bold mb-0 text-dark" style={{ fontSize: "1.15rem", letterSpacing: "-0.01em" }}>
+                                        PDF Export Preview
+                                    </h5>
+                                    <p className="text-muted small mb-0" style={{ fontSize: "0.8rem" }}>
+                                        {hasPage2 ? "2-Page Multi-Sheet A4 Layout" : "Single Page A4 Layout"} • Print &amp; ATS Ready
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div className="d-flex align-items-center gap-2">
+                                {isCurrentTemplatePremium ? (
+                                    <span className="badge d-inline-flex align-items-center gap-1.5 px-3 py-1.5" style={{
+                                        backgroundColor: "rgba(245, 158, 11, 0.12)",
+                                        color: "#b45309",
+                                        border: "1px solid rgba(245, 158, 11, 0.3)",
+                                        borderRadius: "20px",
+                                        fontSize: "0.78rem",
+                                        fontWeight: "600"
+                                    }}>
+                                        <Crown size={14} className="text-warning" />
+                                        {isPaid ? "Premium Unlocked" : "Premium (₹150)"}
+                                    </span>
+                                ) : (
+                                    <span className="badge d-inline-flex align-items-center gap-1.5 px-3 py-1.5" style={{
+                                        backgroundColor: "rgba(16, 185, 129, 0.12)",
+                                        color: "#047857",
+                                        border: "1px solid rgba(16, 185, 129, 0.3)",
+                                        borderRadius: "20px",
+                                        fontSize: "0.78rem",
+                                        fontWeight: "600"
+                                    }}>
+                                        <Check size={14} /> Free Template
+                                    </span>
+                                )}
+
+                                <button 
+                                    onClick={() => setShowPdfModal(false)}
+                                    className="btn-close ms-2"
+                                    aria-label="Close"
+                                ></button>
+                            </div>
+                        </div>
+
+                        {/* Modal Body: Two A4 Previews */}
+                        <div className="p-4" style={{ backgroundColor: "#f1f5f9", maxHeight: "65vh", overflowY: "auto" }}>
+                            <div className="d-flex flex-wrap justify-content-center align-items-start gap-4">
+                                {/* Page 1 Card */}
+                                <div className="d-flex flex-column align-items-center">
+                                    <div className="d-flex align-items-center justify-content-between w-100 mb-2 px-1">
+                                        <span className="badge bg-dark text-white px-2.5 py-1" style={{ fontSize: "0.75rem", borderRadius: "12px" }}>
+                                            Page 1 of {hasPage2 ? "2" : "1"}
+                                        </span>
+                                        <span className="text-muted small" style={{ fontSize: "0.75rem" }}>
+                                            Profile, Experience, Skills &amp; Education
+                                        </span>
+                                    </div>
+                                    <div style={{
+                                        width: "250px",
+                                        height: "354px", // exact A4 aspect ratio 1:1.414
+                                        overflow: "hidden",
+                                        position: "relative",
+                                        backgroundColor: "#ffffff",
+                                        borderRadius: "8px",
+                                        boxShadow: "0 8px 24px rgba(0,0,0,0.12)",
+                                        border: "1px solid #cbd5e1"
+                                    }}>
+                                        <div style={{
+                                            width: "794px",
+                                            minHeight: "1123px",
+                                            transform: "scale(0.315)",
+                                            transformOrigin: "top left",
+                                            pointerEvents: "none",
+                                            backgroundColor: "#ffffff"
+                                        }}>
+                                            {renderTemplate(1)}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Page 2 Card (if hasPage2) */}
+                                {hasPage2 && (
+                                    <div className="d-flex flex-column align-items-center">
+                                        <div className="d-flex align-items-center justify-content-between w-100 mb-2 px-1">
+                                            <span className="badge bg-primary text-white px-2.5 py-1" style={{ fontSize: "0.75rem", borderRadius: "12px" }}>
+                                                Page 2 of 2
+                                            </span>
+                                            <span className="text-muted small" style={{ fontSize: "0.75rem" }}>
+                                                Selected Projects
+                                            </span>
+                                        </div>
+                                        <div style={{
+                                            width: "250px",
+                                            height: "354px", // exact A4 aspect ratio 1:1.414
+                                            overflow: "hidden",
+                                            position: "relative",
+                                            backgroundColor: "#ffffff",
+                                            borderRadius: "8px",
+                                            boxShadow: "0 8px 24px rgba(0,0,0,0.12)",
+                                            border: "1px solid #cbd5e1"
+                                        }}>
+                                            <div style={{
+                                                width: "794px",
+                                                minHeight: "1123px",
+                                                transform: "scale(0.315)",
+                                                transformOrigin: "top left",
+                                                pointerEvents: "none",
+                                                backgroundColor: "#ffffff"
+                                            }}>
+                                                {renderTemplate(2)}
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+
+                            {/* Information Card */}
+                            <div className="mt-4 p-3 rounded-3 bg-white border d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3">
+                                <div className="d-flex align-items-center gap-3">
+                                    <div className="p-2.5 rounded-circle bg-emerald-50 text-success d-flex align-items-center justify-content-center" style={{ backgroundColor: "#ecfdf5", color: "#059669" }}>
+                                        <Sparkles size={20} />
+                                    </div>
+                                    <div>
+                                        <div className="fw-semibold text-dark" style={{ fontSize: "0.88rem" }}>
+                                            Programmatic Clean Vector A4 Export
+                                        </div>
+                                        <div className="text-muted" style={{ fontSize: "0.78rem" }}>
+                                            Direct instant download • No browser print dialog • Clean multi-page pagination
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="d-flex align-items-center gap-2 text-muted small" style={{ fontSize: "0.78rem" }}>
+                                    <span className="badge bg-light text-dark border">
+                                        <i className="fas fa-check text-success me-1"></i> A4 (210×297mm)
+                                    </span>
+                                    <span className="badge bg-light text-dark border">
+                                        <i className="fas fa-check text-success me-1"></i> 300 DPI Sharp
+                                    </span>
+                                </div>
+                            </div>
+
+                            {isCurrentTemplatePremium && !isPaid && (
+                                <div className="mt-3 p-3 rounded-3 border" style={{ backgroundColor: "#fffbeb", borderColor: "#fde68a" }}>
+                                    <div className="d-flex align-items-center gap-2 text-warning-emphasis fw-semibold" style={{ fontSize: "0.85rem", color: "#92400e" }}>
+                                        <Crown size={16} /> Premium Template Upgrade
+                                    </div>
+                                    <div className="text-muted small mt-1" style={{ fontSize: "0.78rem", color: "#78350f" }}>
+                                        This layout includes an executive 2-page structure designed for senior applicants. Click below to upgrade for a one-time charge of <strong>₹150</strong>. After payment, your 2-page PDF will download automatically.
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+
+                        {/* Modal Footer */}
+                        <div className="d-flex align-items-center justify-content-between px-4 py-3 border-top" style={{ backgroundColor: "#ffffff" }}>
+                            <button
+                                onClick={() => {
+                                    setShowPdfModal(false);
+                                    setShowDownloadModal(true);
+                                }}
+                                className="btn btn-outline-secondary px-3 py-2 fw-medium d-flex align-items-center gap-1.5"
+                                style={{ borderRadius: "10px", fontSize: "0.88rem" }}
+                            >
+                                <i className="fas fa-arrow-left"></i> Change Format
+                            </button>
+
+                            {isCurrentTemplatePremium && !isPaid ? (
+                                <button
+                                    onClick={() => {
+                                        setAutoDownloadPdfAfterPayment(true);
+                                        setShowPdfModal(false);
+                                        handleRazorpayPayment();
+                                    }}
+                                    disabled={isDownloading}
+                                    className="btn px-4 py-2.5 fw-bold text-white d-flex align-items-center gap-2 shadow-sm"
+                                    style={{
+                                        background: "linear-gradient(135deg, #f59e0b 0%, #d97706 100%)",
+                                        borderRadius: "10px",
+                                        border: "none",
+                                        fontSize: "0.92rem",
+                                        boxShadow: "0 4px 14px rgba(245, 158, 11, 0.35)"
+                                    }}
+                                >
+                                    <Crown size={18} />
+                                    Pay ₹150 &amp; Download 2-Page PDF
+                                </button>
+                            ) : (
+                                <button
+                                    onClick={generateAndDownloadPDF}
+                                    disabled={isDownloading}
+                                    className="btn btn-primary px-4 py-2.5 fw-bold d-flex align-items-center gap-2 shadow-sm"
+                                    style={{
+                                        background: "linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)",
+                                        borderRadius: "10px",
+                                        border: "none",
+                                        fontSize: "0.92rem",
+                                        boxShadow: "0 4px 14px rgba(37, 99, 235, 0.35)"
+                                    }}
+                                >
+                                    {isDownloading ? (
+                                        <>
+                                            <Loader2 size={18} className="spinner-border spinner-border-sm" />
+                                            Generating PDF...
+                                        </>
+                                    ) : (
+                                        <>
+                                            <i className="fas fa-download"></i>
+                                            Download 2-Page PDF
+                                        </>
+                                    )}
+                                </button>
+                            )}
+                        </div>
+                    </div>
                 </div>
             )}
 

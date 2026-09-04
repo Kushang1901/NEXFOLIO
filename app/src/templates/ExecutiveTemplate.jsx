@@ -14,6 +14,45 @@ export default function ExecutiveTemplate({ data }) {
         }
     };
 
+    
+    if (data?.isPage2) {
+        return (
+            <div style={{ fontFamily: "Georgia, serif", color: "#1a1a1a", minHeight: "297mm", boxSizing: "border-box", width: "100%", padding: "48px" }}>
+                {/* PROJECTS ONLY ON PAGE 2 */}
+                {data.projects && (() => {
+                        const lines = data.projects.split("\n");
+                        const projs = [];
+                        let cur = null;
+                        lines.forEach(line => {
+                            const t = line.trim();
+                            if (!t) return;
+                            if (t.startsWith("-")) { if (cur) cur.bullets.push(t.replace(/^-\s*/, "")); }
+                            else { if (cur) projs.push(cur); cur = { name: t, bullets: [] }; }
+                        });
+                        if (cur) projs.push(cur);
+                        if (!projs.length) return <section className="mb-4"><h5 className="fw-bold pb-2 text-uppercase mb-3" style={{ color: "#1b2a4a", borderBottom: "2px solid #1b2a4a" }}>Key Projects</h5><p className="small text-muted" style={{ whiteSpace: "pre-line", lineHeight: "1.6" }}>{data.projects}</p></section>;
+                        return (
+                            <section className="mb-4">
+                                <h5 className="fw-bold pb-2 text-uppercase mb-3" style={{ color: "#1b2a4a", borderBottom: "2px solid #1b2a4a" }}>Key Projects</h5>
+                                <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+                                    {projs.map((proj, i) => (
+                                        <div key={i} style={{ borderLeft: "3px solid #1b2a4a", paddingLeft: "12px", paddingTop: "5px", paddingBottom: "5px", background: "#f8fafc", borderRadius: "0 6px 6px 0" }}>
+                                            <div style={{ fontWeight: "700", fontSize: "0.9rem", color: "#1b2a4a", marginBottom: "4px" }}>{proj.name}</div>
+                                            {proj.bullets.length > 0 && (
+                                                <ul className="text-muted" style={{ margin: 0, paddingLeft: "16px", fontSize: "0.83rem", lineHeight: "1.5" }}>
+                                                    {proj.bullets.map((b, j) => <li key={j} style={{ marginBottom: "2px" }}>{b}</li>)}
+                                                </ul>
+                                            )}
+                                        </div>
+                                    ))}
+                                </div>
+                            </section>
+                        );
+                    })()}
+            </div>
+        );
+    }
+
     return (
         <div style={{ fontFamily: "Georgia, serif", color: "#1a1a1a", minHeight: "297mm", boxSizing: "border-box", display: "flex", flexDirection: "column", width: "100%" }}>
             {/* Top Corporate Navy Header */}
@@ -65,20 +104,6 @@ export default function ExecutiveTemplate({ data }) {
                                         <span>{getUsername(links.portfolio, "portfolio")}</span>
                                     </a>
                                 )}
-                            </div>
-                        </div>
-                    )}
-
-                    {/* Skills */}
-                    {data.skills && data.skills.length > 0 && (
-                        <div className="mb-4">
-                            <h6 className="fw-bold border-bottom pb-2 text-uppercase mb-3" style={{ color: "#1b2a4a", borderBottomColor: "#cbd5e1" }}>Skills Expertise</h6>
-                            <div className="d-flex flex-wrap gap-1">
-                                {data.skills.map((skill, i) => (
-                                    <span key={i} className="badge bg-secondary text-white px-2 py-1 m-1 small" style={{ background: "#475569" }}>
-                                        {skill}
-                                    </span>
-                                ))}
                             </div>
                         </div>
                     )}
@@ -182,9 +207,35 @@ export default function ExecutiveTemplate({ data }) {
 
                     {/* Achievements */}
                     {data.achievements && (
-                        <section>
+                        <section className="mb-4">
                             <h5 className="fw-bold pb-2 text-uppercase mb-3" style={{ color: "#1b2a4a", borderBottom: "2px solid #1b2a4a" }}>Achievements & Leadership</h5>
                             <p className="small text-muted" style={{ whiteSpace: "pre-line", lineHeight: "1.6" }}>{data.achievements}</p>
+                        </section>
+                    )}
+
+                    {/* Skills & Expertise */}
+                    {data.skills && data.skills.length > 0 && (
+                        <section className="mb-4">
+                            <h5 className="fw-bold pb-2 text-uppercase mb-3" style={{ color: "#1b2a4a", borderBottom: "2px solid #1b2a4a" }}>Skills &amp; Expertise</h5>
+                            <div className="d-flex flex-wrap gap-2">
+                                {data.skills.map((skill, i) => (
+                                    <span
+                                        key={i}
+                                        style={{
+                                            fontSize: "0.78rem",
+                                            fontWeight: "600",
+                                            color: "#1b2a4a",
+                                            backgroundColor: "#f1f5f9",
+                                            border: "1px solid #cbd5e1",
+                                            borderRadius: "6px",
+                                            padding: "4px 10px",
+                                            display: "inline-block"
+                                        }}
+                                    >
+                                        {skill}
+                                    </span>
+                                ))}
+                            </div>
                         </section>
                     )}
                 </div>

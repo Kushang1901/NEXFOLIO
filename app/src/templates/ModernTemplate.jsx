@@ -27,10 +27,53 @@ export default function ModernTemplate({ data }) {
         }
     };
 
+    if (data?.isPage2) {
+        return (
+            <div className="p-5" style={{ minHeight: "297mm", boxSizing: "border-box", width: "100%", fontFamily: "'Inter', -apple-system, sans-serif", color: "#1e293b" }}>
+                {/* PROJECTS ONLY ON PAGE 2 */}
+                {data.projects && (() => {
+                    const lines = data.projects.split("\n");
+                    const projects = [];
+                    let current = null;
+                    lines.forEach(line => {
+                        const trimmed = line.trim();
+                        if (!trimmed) return;
+                        if (trimmed.startsWith("-")) {
+                            if (current) current.bullets.push(trimmed.replace(/^-\s*/, ""));
+                        } else {
+                            if (current) projects.push(current);
+                            current = { name: trimmed, bullets: [] };
+                        }
+                    });
+                    if (current) projects.push(current);
+                    if (!projects.length) return <section style={{ breakInside: "avoid", pageBreakInside: "avoid" }}><h5 className="fw-bold" style={{ breakAfter: "avoid", pageBreakAfter: "avoid" }}>PROJECTS</h5><p style={{ whiteSpace: "pre-line" }}>{data.projects}</p></section>;
+                    return (
+                        <section>
+                            <h5 className="fw-bold" style={{ breakAfter: "avoid", pageBreakAfter: "avoid" }}>PROJECTS</h5>
+                            <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+                                {projects.map((proj, i) => (
+                                    <div key={i} style={{ borderLeft: "3px solid #0d6efd", paddingLeft: "12px", paddingTop: "4px", paddingBottom: "4px", backgroundColor: "#f0f4ff", background: "#f0f4ff", borderRadius: "0 6px 6px 0", breakInside: "avoid", pageBreakInside: "avoid", WebkitPrintColorAdjust: "exact", printColorAdjust: "exact" }}>
+                                        <div style={{ fontWeight: "700", fontSize: "0.9rem", color: "#0d6efd", marginBottom: "4px" }}>{proj.name}</div>
+                                        {proj.bullets.length > 0 && (
+                                            <ul style={{ margin: 0, paddingLeft: "16px", listStyleType: "disc" }}>
+                                                {proj.bullets.map((b, j) => (
+                                                    <li key={j} style={{ fontSize: "0.83rem", color: "#374151", lineHeight: "1.5", marginBottom: "2px", breakInside: "avoid", pageBreakInside: "avoid" }}>{b}</li>
+                                                ))}
+                                            </ul>
+                                        )}
+                                    </div>
+                                ))}
+                            </div>
+                        </section>
+                    );
+                })()}
+            </div>
+        );
+    }
 
     return (
         <div className="d-flex" style={{ minHeight: "297mm", boxSizing: "border-box", width: "794px" }}>
-            {/* LEFT SIDEBAR */}
+            {/* LEFT SIDEBAR (BLUE SECTION) */}
             <div
                 className="text-white"
                 style={{ width: "254px", padding: "24px 16px", background: "linear-gradient(180deg, #1e40af 0%, #1e3a8a 50%, #0f172a 100%)", flexShrink: 0, boxSizing: "border-box" }}
@@ -103,49 +146,30 @@ export default function ModernTemplate({ data }) {
                         )}
                     </div>
                 </div>
-
-                <hr style={{ borderColor: "rgba(255, 255, 255, 0.2)" }} />
-
-                <h6 className="fw-bold text-uppercase tracking-wider mb-3" style={{ fontSize: "0.8rem", letterSpacing: "1.5px", color: "rgba(255, 255, 255, 0.8)" }}>Skills</h6>
-                <div className="d-flex flex-wrap gap-2">
-                    {data.skills.map((skill, i) => (
-                        <span
-                            key={i}
-                            className="px-2.5 py-1 rounded-pill"
-                            style={{
-                                fontSize: "0.75rem",
-                                background: "rgba(255, 255, 255, 0.1)",
-                                border: "1px solid rgba(255, 255, 255, 0.15)",
-                                color: "#ffffff",
-                                fontWeight: "500",
-                                letterSpacing: "0.2px",
-                                display: "inline-block"
-                            }}
-                        >
-                            {skill}
-                        </span>
-                    ))}
-                </div>
             </div>
 
-            {/* RIGHT CONTENT */}
+            {/* RIGHT CONTENT (WHITE SECTION) */}
             <div className="p-5" style={{ width: "540px", boxSizing: "border-box", flexShrink: 0 }}>
                 {/* SUMMARY */}
-                <section className="mb-4">
-                    <h5 className="fw-bold">PROFILE</h5>
-                    <p>{data.summary}</p>
-                </section>
+                {data.summary && (
+                    <section className="mb-4">
+                        <h5 className="fw-bold">PROFILE</h5>
+                        <p>{data.summary}</p>
+                    </section>
+                )}
 
                 {/* EDUCATION */}
-                <section className="mb-4">
-                    <h5 className="fw-bold">EDUCATION</h5>
-                    {data.education.map((edu, i) => (
-                        <p key={i}>
-                            <strong>{edu.course}</strong><br />
-                            {edu.start} – {edu.end}
-                        </p>
-                    ))}
-                </section>
+                {data.education && data.education.length > 0 && (
+                    <section className="mb-4">
+                        <h5 className="fw-bold">EDUCATION</h5>
+                        {data.education.map((edu, i) => (
+                            <p key={i}>
+                                <strong>{edu.course}</strong><br />
+                                {edu.start} – {edu.end}
+                            </p>
+                        ))}
+                    </section>
+                )}
 
                 {/* EXPERIENCE */}
                 {data.experience && (
@@ -189,7 +213,7 @@ export default function ModernTemplate({ data }) {
                     </section>
                 )}
 
-                {/* PROJECTS */}
+                {/* PROJECTS (ON PAGE 1 THIS IS EMPTY) */}
                 {data.projects && (() => {
                     const lines = data.projects.split("\n");
                     const projects = [];
@@ -207,11 +231,11 @@ export default function ModernTemplate({ data }) {
                     if (current) projects.push(current);
                     if (!projects.length) return <section><h5 className="fw-bold">PROJECTS</h5><p style={{ whiteSpace: "pre-line" }}>{data.projects}</p></section>;
                     return (
-                        <section>
+                        <section className="mb-4">
                             <h5 className="fw-bold">PROJECTS</h5>
                             <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
                                 {projects.map((proj, i) => (
-                                    <div key={i} style={{ borderLeft: "3px solid #0d6efd", paddingLeft: "12px", paddingTop: "4px", paddingBottom: "4px", background: "#f0f4ff", borderRadius: "0 6px 6px 0" }}>
+                                    <div key={i} style={{ borderLeft: "3px solid #0d6efd", paddingLeft: "12px", paddingTop: "4px", paddingBottom: "4px", backgroundColor: "#f0f4ff", background: "#f0f4ff", borderRadius: "0 6px 6px 0" }}>
                                         <div style={{ fontWeight: "700", fontSize: "0.9rem", color: "#0d6efd", marginBottom: "4px" }}>{proj.name}</div>
                                         {proj.bullets.length > 0 && (
                                             <ul style={{ margin: 0, paddingLeft: "16px", listStyleType: "disc" }}>
@@ -234,6 +258,34 @@ export default function ModernTemplate({ data }) {
                         <p style={{ whiteSpace: "pre-line" }}>
                             {data.achievements}
                         </p>
+                    </section>
+                )}
+
+                {/* SKILLS MOVED TO WHITE SECTION TO PERFECTLY BALANCE SPACE */}
+                {data.skills && data.skills.length > 0 && (
+                    <section className="mb-4">
+                        <h5 className="fw-bold mb-2.5" style={{ color: "#0f172a", letterSpacing: "0.5px" }}>SKILLS</h5>
+                        <div className="d-flex flex-wrap gap-2">
+                            {data.skills.map((skill, i) => (
+                                <span
+                                    key={i}
+                                    style={{
+                                        fontSize: "0.78rem",
+                                        fontWeight: "600",
+                                        color: "#1e40af",
+                                        backgroundColor: "#eff6ff",
+                                        border: "1px solid #bfdbfe",
+                                        borderRadius: "6px",
+                                        padding: "4px 10px",
+                                        display: "inline-block",
+                                        letterSpacing: "0.2px",
+                                        boxShadow: "0 1px 2px rgba(0,0,0,0.02)"
+                                    }}
+                                >
+                                    {skill}
+                                </span>
+                            ))}
+                        </div>
                     </section>
                 )}
 

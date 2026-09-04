@@ -15,6 +15,45 @@ export default function SlateTwoColumnTemplate({ data }) {
         }
     };
 
+    
+    if (data?.isPage2) {
+        return (
+            <div className="p-5" style={{ minHeight: "297mm", boxSizing: "border-box", width: "100%", fontFamily: "'Inter', -apple-system, sans-serif", color: "#1e293b" }}>
+                {/* PROJECTS ONLY ON PAGE 2 */}
+                {data.projects && (() => {
+                    const lines = data.projects.split("\n");
+                    const projs = [];
+                    let cur = null;
+                    lines.forEach(line => {
+                        const t = line.trim();
+                        if (!t) return;
+                        if (t.startsWith("-")) { if (cur) cur.bullets.push(t.replace(/^-\s*/, "")); }
+                        else { if (cur) projs.push(cur); cur = { name: t, bullets: [] }; }
+                    });
+                    if (cur) projs.push(cur);
+                    if (!projs.length) return <section className="mb-4 pb-2"><h5 className="text-uppercase fw-bold text-slate-800 border-bottom pb-2 mb-3" style={{ color: "#1e293b", letterSpacing: "0.5px" }}>Academic &amp; Personal Projects</h5><p style={{ whiteSpace: "pre-line", lineHeight: "1.6", fontSize: "0.95rem" }}>{data.projects}</p></section>;
+                    return (
+                        <section className="mb-4 pb-2">
+                            <h5 className="text-uppercase fw-bold border-bottom pb-2 mb-3" style={{ color: "#1e293b", letterSpacing: "0.5px" }}>Academic &amp; Personal Projects</h5>
+                            <div style={{ display: "flex", flexDirection: "column", gap: "9px" }}>
+                                {projs.map((proj, i) => (
+                                    <div key={i} style={{ borderLeft: "3px solid #64748b", paddingLeft: "12px", paddingTop: "4px", paddingBottom: "4px", background: "#f8fafc", borderRadius: "0 6px 6px 0" }}>
+                                        <div style={{ fontWeight: "700", fontSize: "0.9rem", color: "#1e293b", marginBottom: "3px" }}>{proj.name}</div>
+                                        {proj.bullets.length > 0 && (
+                                            <ul style={{ margin: 0, paddingLeft: "14px", fontSize: "0.85rem", color: "#475569", lineHeight: "1.5" }}>
+                                                {proj.bullets.map((b, j) => <li key={j} style={{ marginBottom: "2px" }}>{b}</li>)}
+                                            </ul>
+                                        )}
+                                    </div>
+                                ))}
+                            </div>
+                        </section>
+                    );
+                })()}
+            </div>
+        );
+    }
+
     return (
         <div className="d-flex flex-row" style={{ fontFamily: "Inter, system-ui, sans-serif", color: "#334155", minHeight: "297mm", boxSizing: "border-box", width: "794px" }}>
             {/* Sidebar Column */}
@@ -76,18 +115,6 @@ export default function SlateTwoColumnTemplate({ data }) {
                         </div>
                     )}
 
-                    {data.skills && data.skills.length > 0 && (
-                        <div>
-                            <h6 className="text-uppercase fw-bold text-slate-700 border-bottom pb-2 mb-3" style={{ color: "#475569", letterSpacing: "0.5px" }}>Skills</h6>
-                            <div className="d-flex flex-wrap gap-1.5 pt-1">
-                                {data.skills.map((skill, i) => (
-                                    <span key={i} className="bg-slate-200 text-slate-700 border-0 px-2.5 py-1 rounded small" style={{ fontSize: "0.75rem", backgroundColor: "#e2e8f0", fontWeight: "600" }}>
-                                        {skill}
-                                    </span>
-                                ))}
-                            </div>
-                        </div>
-                    )}
                 </div>
             </div>
 
@@ -205,6 +232,22 @@ export default function SlateTwoColumnTemplate({ data }) {
                             Achievements & Certifications
                         </h5>
                         <p style={{ whiteSpace: "pre-line", lineHeight: "1.6", fontSize: "0.95rem" }}>{data.achievements}</p>
+                    </section>
+                )}
+
+                {/* Skills */}
+                {data.skills && data.skills.length > 0 && (
+                    <section className="mb-4 pb-2">
+                        <h5 className="text-uppercase fw-bold text-slate-800 border-bottom pb-2 mb-3" style={{ color: "#1e293b", letterSpacing: "0.5px" }}>
+                            Skills &amp; Competencies
+                        </h5>
+                        <div className="d-flex flex-wrap gap-1.5 pt-1">
+                            {data.skills.map((skill, i) => (
+                                <span key={i} className="bg-slate-200 text-slate-700 border-0 px-2.5 py-1 rounded small" style={{ fontSize: "0.8rem", backgroundColor: "#e2e8f0", fontWeight: "600", color: "#334155" }}>
+                                    {skill}
+                                </span>
+                            ))}
+                        </div>
                     </section>
                 )}
             </div>
