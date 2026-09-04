@@ -68,8 +68,8 @@ export default function ElegantTemplate({ data }) {
 
             {/* Profile Summary */}
             {data.summary && (
-                <div className="mb-4">
-                    <h5 className="fw-semibold text-center text-uppercase mb-3" style={{ fontSize: "16px", letterSpacing: "1.5px" }}>Summary</h5>
+                <div className="mb-4" style={{ breakInside: "avoid", pageBreakInside: "avoid" }}>
+                    <h5 className="fw-semibold text-center text-uppercase mb-3" style={{ fontSize: "16px", letterSpacing: "1.5px", breakAfter: "avoid", pageBreakAfter: "avoid" }}>Summary</h5>
                     <p className="small text-center text-muted mx-auto" style={{ maxWidth: "680px", lineHeight: "1.7", fontStyle: "italic" }}>{data.summary}</p>
                 </div>
             )}
@@ -77,11 +77,11 @@ export default function ElegantTemplate({ data }) {
             {/* Experience */}
             {data.experience && (
                 <div className="mb-4">
-                    <h5 className="fw-semibold text-uppercase border-bottom pb-2 mb-3" style={{ fontSize: "16px", letterSpacing: "1.5px" }}>Professional Experience</h5>
+                    <h5 className="fw-semibold text-uppercase border-bottom pb-2 mb-3" style={{ fontSize: "16px", letterSpacing: "1.5px", breakAfter: "avoid", pageBreakAfter: "avoid" }}>Professional Experience</h5>
                     {typeof data.experience === "string" ? (
-                        <p className="small text-muted" style={{ whiteSpace: "pre-line", lineHeight: "1.7", paddingLeft: "12px" }}>{data.experience}</p>
+                        <p className="small text-muted" style={{ whiteSpace: "pre-line", lineHeight: "1.7", paddingLeft: "12px", breakInside: "avoid", pageBreakInside: "avoid" }}>{data.experience}</p>
                     ) : (
-                        <div className="mb-3 small text-muted" style={{ paddingLeft: "12px" }}>
+                        <div className="mb-3 small text-muted" style={{ paddingLeft: "12px", breakInside: "avoid", pageBreakInside: "avoid" }}>
                             <div className="d-flex justify-content-between align-items-baseline text-dark fw-semibold" style={{ fontStyle: "italic" }}>
                                 <span>{data.experience.role}</span>
                                 <span style={{ fontStyle: "normal" }}>{data.experience.start} – {data.experience.end}</span>
@@ -103,8 +103,8 @@ export default function ElegantTemplate({ data }) {
             {/* Internship */}
             {data.internship && (
                 <div className="mb-4">
-                    <h5 className="fw-semibold text-uppercase border-bottom pb-2 mb-3" style={{ fontSize: "16px", letterSpacing: "1.5px" }}>Internship</h5>
-                    <div className="mb-2 small text-muted" style={{ paddingLeft: "12px" }}>
+                    <h5 className="fw-semibold text-uppercase border-bottom pb-2 mb-3" style={{ fontSize: "16px", letterSpacing: "1.5px", breakAfter: "avoid", pageBreakAfter: "avoid" }}>Internship</h5>
+                    <div className="mb-2 small text-muted" style={{ paddingLeft: "12px", breakInside: "avoid", pageBreakInside: "avoid" }}>
                         <div className="d-flex justify-content-between align-items-baseline text-dark fw-semibold" style={{ fontStyle: "italic" }}>
                             <span>{data.internship.field}</span>
                             <span style={{ fontStyle: "normal" }}>{data.internship.start} – {data.internship.end}</span>
@@ -128,17 +128,17 @@ export default function ElegantTemplate({ data }) {
                     else { if (cur) projs.push(cur); cur = { name: t, bullets: [] }; }
                 });
                 if (cur) projs.push(cur);
-                if (!projs.length) return <div className="mb-4"><h5 className="fw-semibold text-uppercase border-bottom pb-2 mb-3" style={{ fontSize: "16px", letterSpacing: "1.5px" }}>Selected Projects</h5><p className="small text-muted" style={{ whiteSpace: "pre-line", lineHeight: "1.7", paddingLeft: "12px" }}>{data.projects}</p></div>;
+                if (!projs.length) return <div className="mb-4" style={{ breakInside: "avoid", pageBreakInside: "avoid" }}><h5 className="fw-semibold text-uppercase border-bottom pb-2 mb-3" style={{ fontSize: "16px", letterSpacing: "1.5px", breakAfter: "avoid", pageBreakAfter: "avoid" }}>Selected Projects</h5><p className="small text-muted" style={{ whiteSpace: "pre-line", lineHeight: "1.7", paddingLeft: "12px" }}>{data.projects}</p></div>;
                 return (
                     <div className="mb-4">
-                        <h5 className="fw-semibold text-uppercase border-bottom pb-2 mb-3" style={{ fontSize: "16px", letterSpacing: "1.5px" }}>Selected Projects</h5>
+                        <h5 className="fw-semibold text-uppercase border-bottom pb-2 mb-3" style={{ fontSize: "16px", letterSpacing: "1.5px", breakAfter: "avoid", pageBreakAfter: "avoid" }}>Selected Projects</h5>
                         <div style={{ display: "flex", flexDirection: "column", gap: "10px", paddingLeft: "12px" }}>
                             {projs.map((proj, i) => (
-                                <div key={i} style={{ borderLeft: "2px solid #4a5568", paddingLeft: "12px" }}>
+                                <div key={i} style={{ borderLeft: "2px solid #4a5568", paddingLeft: "12px", breakInside: "avoid", pageBreakInside: "avoid" }}>
                                     <div className="fw-semibold text-dark" style={{ fontStyle: "italic", fontSize: "0.92rem", marginBottom: "4px" }}>{proj.name}</div>
                                     {proj.bullets.length > 0 && (
                                         <ul className="text-muted" style={{ margin: 0, paddingLeft: "16px", fontSize: "0.85rem", lineHeight: "1.6" }}>
-                                            {proj.bullets.map((b, j) => <li key={j} style={{ marginBottom: "2px" }}>{b}</li>)}
+                                            {proj.bullets.map((b, j) => <li key={j} style={{ marginBottom: "2px", breakInside: "avoid", pageBreakInside: "avoid" }}>{b}</li>)}
                                         </ul>
                                     )}
                                 </div>
@@ -150,11 +150,11 @@ export default function ElegantTemplate({ data }) {
 
             {/* Education */}
             {data.education && data.education.length > 0 && (
-                <div className="mb-4">
-                    <h5 className="fw-semibold text-uppercase border-bottom pb-2 mb-3" style={{ fontSize: "16px", letterSpacing: "1.5px" }}>Academic History</h5>
+                <div className="mb-4" style={{ breakInside: "avoid", pageBreakInside: "avoid" }}>
+                    <h5 className="fw-semibold text-uppercase border-bottom pb-2 mb-3" style={{ fontSize: "16px", letterSpacing: "1.5px", breakAfter: "avoid", pageBreakAfter: "avoid" }}>Academic History</h5>
                     <div className="row g-3 px-2">
                         {data.education.map((edu, i) => (
-                            <div key={i} className="col-6 small text-muted">
+                            <div key={i} className="col-6 small text-muted" style={{ breakInside: "avoid", pageBreakInside: "avoid" }}>
                                 <div className="fw-semibold text-dark" style={{ fontStyle: "italic" }}>{edu.course}</div>
                                 <div>Years: {edu.start} – {edu.end}</div>
                             </div>
@@ -165,16 +165,16 @@ export default function ElegantTemplate({ data }) {
 
             {/* Achievements */}
             {data.achievements && (
-                <div className="mb-4">
-                    <h5 className="fw-semibold text-uppercase border-bottom pb-2 mb-3" style={{ fontSize: "16px", letterSpacing: "1.5px" }}>Achievements & Leadership</h5>
+                <div className="mb-4" style={{ breakInside: "avoid", pageBreakInside: "avoid" }}>
+                    <h5 className="fw-semibold text-uppercase border-bottom pb-2 mb-3" style={{ fontSize: "16px", letterSpacing: "1.5px", breakAfter: "avoid", pageBreakAfter: "avoid" }}>Achievements & Leadership</h5>
                     <p className="small text-muted" style={{ whiteSpace: "pre-line", lineHeight: "1.7", paddingLeft: "12px" }}>{data.achievements}</p>
                 </div>
             )}
 
             {/* Skills */}
             {data.skills && data.skills.length > 0 && (
-                <div>
-                    <h5 className="fw-semibold text-uppercase border-bottom pb-2 mb-3" style={{ fontSize: "16px", letterSpacing: "1.5px" }}>Skills</h5>
+                <div style={{ breakInside: "avoid", pageBreakInside: "avoid" }}>
+                    <h5 className="fw-semibold text-uppercase border-bottom pb-2 mb-3" style={{ fontSize: "16px", letterSpacing: "1.5px", breakAfter: "avoid", pageBreakAfter: "avoid" }}>Skills</h5>
                     <p className="small text-muted px-2" style={{ wordSpacing: "2px" }}>
                         {data.skills.join("  •  ")}
                     </p>

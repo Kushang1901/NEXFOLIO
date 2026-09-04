@@ -6,5 +6,9 @@ import dynamic from "next/dynamic";
 const GrivoChat = dynamic(() => import("./GrivoChat"), { ssr: false });
 
 export default function GrivoChatWrapper() {
-    return <GrivoChat />;
+    return (
+        <div id="grivo-chat-wrapper" className="no-print" style={{ display: "contents" }}>
+            <GrivoChat />
+        </div>
+    );
 }

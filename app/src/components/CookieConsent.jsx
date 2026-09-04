@@ -139,7 +139,7 @@ export default function CookieConsent() {
 
     return (
         <>
-            <div style={containerStyle}>
+            <div className="no-print" style={containerStyle}>
                 <div style={headerStyle}>
                     <div style={iconWrapperStyle}>
                         <Cookie size={18} color="#6366f1" />

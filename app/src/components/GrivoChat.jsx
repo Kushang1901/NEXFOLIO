@@ -441,11 +441,18 @@ export default function GrivoChat() {
                 .grivo-unread {
                     animation: grivo-bubble-in 0.3s ease;
                 }
+                @media print {
+                    .grivo-fab, .grivo-unread, .no-print, [class*="grivo"] {
+                        display: none !important;
+                        visibility: hidden !important;
+                        opacity: 0 !important;
+                    }
+                }
             `}</style>
 
             {/* ── TOOLTIP / INTRO BUBBLE ───────────── */}
             {showTooltip && !isOpen && (
-                <div style={styles.tooltip} className="grivo-unread">
+                <div style={styles.tooltip} className="grivo-unread no-print">
                     <div style={styles.tooltipHeader}>
                         <GrivoIcon size={22} />
                         <span style={styles.tooltipTitle}>GRIVO AI</span>
@@ -466,7 +473,7 @@ export default function GrivoChat() {
 
             {/* ── FAB BUTTON ───────────────────────── */}
             <button
-                className="grivo-fab"
+                className="grivo-fab no-print"
                 onClick={handleOpen}
                 style={styles.fab}
                 aria-label="Open GRIVO AI Chat"

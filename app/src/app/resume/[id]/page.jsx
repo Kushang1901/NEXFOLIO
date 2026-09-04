@@ -588,44 +588,115 @@ export default function PublicResumePage() {
             {/* PRINT STYLES */}
             <style>{`
                 @media print {
-                    .no-print, nav, .navbar, .modal, .modal-backdrop, .toast-container, header, footer {
-                        display: none !important;
+                    @page {
+                        size: A4 portrait;
+                        margin: 0mm;
                     }
-                    body {
-                        background: white !important;
-                        color: black !important;
+
+                    html, body {
+                        background: #ffffff !important;
+                        background-color: #ffffff !important;
+                        color: #000000 !important;
                         margin: 0 !important;
                         padding: 0 !important;
+                        width: 100% !important;
+                        height: auto !important;
+                        overflow: visible !important;
+                        -webkit-print-color-adjust: exact !important;
+                        print-color-adjust: exact !important;
                     }
+
+                    .no-print, nav, .navbar, .modal, .modal-backdrop, .toast-container, header, footer,
+                    #grivo-chat, #grivo-chat-wrapper, .grivo-chat, .grivo-fab, .grivo-unread, .grivo-bubble, .grivo-panel,
+                    [class*="grivo"], [id*="grivo"], button[aria-label*="GRIVO"],
+                    .back-to-top-btn, button[aria-label="Back to top"],
+                    [class*="CookieConsent"], .cookie-consent {
+                        display: none !important;
+                        visibility: hidden !important;
+                        opacity: 0 !important;
+                        height: 0 !important;
+                        width: 0 !important;
+                        pointer-events: none !important;
+                    }
+
                     .container {
                         max-width: 100% !important;
                         width: 100% !important;
                         padding: 0 !important;
                         margin: 0 !important;
                     }
+
                     .preview-viewport-container {
                         padding: 0 !important;
                         margin: 0 !important;
                         display: block !important;
                         width: 100% !important;
                         height: auto !important;
+                        background: #ffffff !important;
                     }
+
                     .preview-viewport-shadow {
                         box-shadow: none !important;
+                        border: none !important;
+                        outline: none !important;
+                        border-radius: 0 !important;
                         width: 100% !important;
+                        max-width: 100% !important;
                         height: auto !important;
                         overflow: visible !important;
-                        border-radius: 0 !important;
+                        background: #ffffff !important;
                     }
+
                     #resume-preview {
                         width: 100% !important;
-                        min-height: 100vh !important;
+                        max-width: 100% !important;
+                        min-height: auto !important;
+                        height: auto !important;
                         box-shadow: none !important;
+                        border: none !important;
                         border-radius: 0 !important;
                         margin: 0 !important;
-                        padding: 0 !important;
-                        position: relative !important;
+                        position: static !important;
                         transform: none !important;
+                        overflow: visible !important;
+                        background: #ffffff !important;
+                        -webkit-box-decoration-break: clone;
+                        box-decoration-break: clone;
+                        padding: 12mm 14mm !important;
+                    }
+
+                    #resume-preview > div:first-child {
+                        padding: 0 !important;
+                        min-height: auto !important;
+                        width: 100% !important;
+                    }
+
+                    /* Prevent awkward slicing and orphan headings across page boundaries */
+                    #resume-preview h1,
+                    #resume-preview h2,
+                    #resume-preview h3,
+                    #resume-preview h4,
+                    #resume-preview h5,
+                    #resume-preview h6,
+                    #resume-preview .section-title {
+                        break-after: avoid !important;
+                        page-break-after: avoid !important;
+                    }
+
+                    #resume-preview [style*="borderLeft"],
+                    #resume-preview [style*="border-left"],
+                    #resume-preview .experience-item,
+                    #resume-preview .project-item,
+                    #resume-preview .education-item,
+                    #resume-preview .row > div,
+                    #resume-preview [class*="col-"],
+                    #resume-preview li,
+                    #resume-preview tr,
+                    #resume-preview .mb-2,
+                    #resume-preview .mb-3,
+                    #resume-preview .mb-4 {
+                        break-inside: avoid !important;
+                        page-break-inside: avoid !important;
                     }
                 }
             `}</style>

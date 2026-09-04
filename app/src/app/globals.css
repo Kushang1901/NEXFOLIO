@@ -37,3 +37,63 @@ code {
 .collapse.navbar-collapse {
   visibility: visible !important;
 }
+
+/* ================= PRINT & PDF EXPORT DEFAULTS ================= */
+@media print {
+  @page {
+    size: A4 portrait;
+    margin: 0mm;
+  }
+
+  html, body {
+    background: #ffffff !important;
+    background-color: #ffffff !important;
+    color: #000000 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    height: auto !important;
+    min-height: auto !important;
+    overflow: visible !important;
+    overflow-x: visible !important;
+    overflow-y: visible !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* Completely suppress all non-resume web UI, chatbot, floating buttons, navbars, modals */
+  .no-print,
+  nav,
+  .navbar,
+  header,
+  footer,
+  .modal,
+  .modal-backdrop,
+  .toast-container,
+  #grivo-chat,
+  #grivo-chat-wrapper,
+  .grivo-chat,
+  .grivo-fab,
+  .grivo-unread,
+  .grivo-bubble,
+  .grivo-panel,
+  [class*="grivo"],
+  [id*="grivo"],
+  button[aria-label*="GRIVO"],
+  button[aria-label*="Back to top"],
+  .back-to-top-btn,
+  .bg-glow-spot-1,
+  .bg-glow-spot-2,
+  .mobile-sticky-bottom-bar,
+  .template-modal-backdrop,
+  .template-transition-loader,
+  [class*="CookieConsent"],
+  .cookie-consent {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    height: 0 !important;
+    width: 0 !important;
+    pointer-events: none !important;
+  }
+}
+
