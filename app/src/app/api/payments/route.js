@@ -65,8 +65,8 @@ export async function POST(request) {
 
         // 1. CREATE RAZORPAY ORDER ACTION
         if (action === "create_order") {
-            const keyId = process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || "rzp_test_THQGbMwadquB87";
-            const keySecret = process.env.RAZORPAY_KEY_SECRET;
+            const keyId = process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || "rzp_test_SsUweEky8qbyAL";
+            const keySecret = process.env.RAZORPAY_KEY_SECRET || "rkpHwK2w8V4TTQkzWtTlsYRq";
 
             if (!keyId || !keySecret) {
                 console.error("Missing Razorpay Keys in server environment");
@@ -119,7 +119,7 @@ export async function POST(request) {
                 );
             }
 
-            const keySecret = process.env.RAZORPAY_KEY_SECRET;
+            const keySecret = process.env.RAZORPAY_KEY_SECRET || "rkpHwK2w8V4TTQkzWtTlsYRq";
             if (!keySecret) {
                 console.error("Missing Razorpay Secret Key in server environment");
                 return NextResponse.json(
