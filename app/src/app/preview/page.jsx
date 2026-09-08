@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import Script from "next/script";
 import Navbar from "../../components/Navbar";
-import { FileQuestion, ChevronRight, Home, LayoutGrid, Check, Search, Sparkles, X, SlidersHorizontal, Loader2, Crown, Unlock, Star } from "lucide-react";
+import { FileQuestion, ChevronRight, Home, LayoutGrid, Check, Search, Sparkles, X, SlidersHorizontal, Loader2, Crown, Unlock, Star, Globe } from "lucide-react";
 import { templateList } from "../../templates/templatesData";
 
 import ClassicTemplate from "../../templates/ClassicTemplate";
@@ -431,7 +431,7 @@ export default function Preview() {
 
             // 2. Open Razorpay checkout
             const options = {
-                key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || "rzp_live_TDTM6sBKdckc4Y",
+                key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || "rzp_test_THQGbMwadquB87",
                 amount: amount,
                 currency: currency,
                 name: "CVGrid Premium",
@@ -1190,6 +1190,16 @@ export default function Preview() {
                                     <i className="fas fa-pen text-indigo"></i> Edit
                                 </button>
                                 
+                                <button 
+                                    onClick={() => router.push(`/ai-tools/portfolio-builder${resumeId ? `?resumeId=${resumeId}` : ""}`)} 
+                                    className="btn btn-glass d-flex align-items-center gap-2 px-3 py-2" 
+                                    style={{ color: "#34d399", borderColor: "rgba(16,185,129,0.3)", background: "rgba(16,185,129,0.08)" }}
+                                    title="Convert this resume into an interactive portfolio website"
+                                    suppressHydrationWarning
+                                >
+                                    <Globe size={14} /> Portfolio Site
+                                </button>
+                                
                                 {resumeId && (
                                     <button onClick={() => setShowShareModal(true)} className="btn btn-glass btn-glass-info d-flex align-items-center gap-2 px-3 py-2" suppressHydrationWarning>
                                         <i className="fas fa-share-alt"></i> Share
@@ -1394,6 +1404,16 @@ export default function Preview() {
                 <button onClick={handleEdit} className="mobile-action-btn" suppressHydrationWarning>
                     <i className="fas fa-pen text-indigo" style={{ fontSize: "16px" }}></i>
                     <span>Edit</span>
+                </button>
+                
+                <button 
+                    onClick={() => router.push(`/ai-tools/portfolio-builder${resumeId ? `?resumeId=${resumeId}` : ""}`)} 
+                    className="mobile-action-btn"
+                    style={{ color: "#34d399" }}
+                    suppressHydrationWarning
+                >
+                    <Globe size={18} />
+                    <span>Portfolio</span>
                 </button>
                 
                 {resumeId && (

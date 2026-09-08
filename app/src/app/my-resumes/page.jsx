@@ -7,7 +7,7 @@ import Navbar from "../../components/Navbar";
 import { subscribeToAuthChanges } from "../../authState";
 import { showToast } from "../../utils/toast";
 import { normalizeResumeData } from "../../utils/resumeAdapter";
-import { LayoutDashboard, Plus, FileText, Palette, Pencil, Eye, Trash2, Lightbulb } from "lucide-react";
+import { LayoutDashboard, Plus, FileText, Palette, Pencil, Eye, Trash2, Lightbulb, Globe } from "lucide-react";
 
 import ClassicTemplate from "../../templates/ClassicTemplate";
 import ModernTemplate from "../../templates/ModernTemplate";
@@ -318,6 +318,15 @@ export default function MyResumesPage() {
                                                 onMouseLeave={e => { e.currentTarget.style.background = "rgba(255,255,255,0.05)"; e.currentTarget.style.color = "rgba(255,255,255,0.7)"; }}
                                             >
                                                 <Eye size={12} /> Preview
+                                            </button>
+                                            <button
+                                                onClick={() => router.push(`/ai-tools/portfolio-builder?resumeId=${resume.id}`)}
+                                                title="Generate Portfolio Website"
+                                                style={{ padding: "9px 10px", background: "rgba(16,185,129,0.1)", border: "1px solid rgba(16,185,129,0.25)", borderRadius: "9px", color: "#34d399", fontSize: "0.82rem", fontWeight: "600", cursor: "pointer", transition: "all 0.15s", display: "flex", alignItems: "center", justifyContent: "center", gap: "4px" }}
+                                                onMouseEnter={e => { e.currentTarget.style.background = "rgba(16,185,129,0.22)"; e.currentTarget.style.color = "#fff"; }}
+                                                onMouseLeave={e => { e.currentTarget.style.background = "rgba(16,185,129,0.1)"; e.currentTarget.style.color = "#34d399"; }}
+                                            >
+                                                <Globe size={12} />
                                             </button>
                                             <button
                                                 onClick={() => setDeleteTarget(resume.id)}

@@ -354,7 +354,7 @@ export default function CoverLetterGenerator() {
 
             // 2. Open Razorpay checkout
             const options = {
-                key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || "rzp_live_TDTM6sBKdckc4Y",
+                key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || "rzp_test_THQGbMwadquB87",
                 amount: amount,
                 currency: currency,
                 name: "CVGrid Premium",

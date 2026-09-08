@@ -65,7 +65,7 @@ export async function POST(request) {
 
         // 1. CREATE RAZORPAY ORDER ACTION
         if (action === "create_order") {
-            const keyId = process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || "rzp_live_TDTM6sBKdckc4Y";
+            const keyId = process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || "rzp_test_THQGbMwadquB87";
             const keySecret = process.env.RAZORPAY_KEY_SECRET;
 
             if (!keyId || !keySecret) {
