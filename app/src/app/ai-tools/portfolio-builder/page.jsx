@@ -252,7 +252,7 @@ function PortfolioBuilderContent() {
             const { orderId, amount, currency } = await response.json();
 
             const options = {
-                key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || "rzp_test_SsUweEky8qbyAL",
+                key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || "rzp_live_TDTM6sBKdckc4Y",
                 amount: amount,
                 currency: currency,
                 name: "CVGrid Premium Portfolio",
