@@ -6,7 +6,8 @@ import Script from "next/script";
 import {
     Sparkles, LayoutTemplate, ShieldCheck, ArrowLeft, RefreshCw, Crown,
     Code, Eye, Download, Lock, ExternalLink, Monitor, Tablet, Smartphone,
-    Maximize2, Minimize2, Copy, Check, Palette, Terminal, Zap, FileCode, CheckCircle2, ChevronRight
+    Maximize2, Minimize2, Copy, Check, Palette, Terminal, Zap, FileCode, CheckCircle2, ChevronRight,
+    Flame, Landmark, User
 } from "lucide-react";
 import Link from "next/link";
 import { showToast } from "../../../utils/toast";
@@ -117,10 +118,22 @@ function PortfolioBuilderContent() {
     // Active resume data getter
     const getActiveResumeData = () => {
         if (selectedResumeId === "demo" || resumes.length === 0) {
-            return SAMPLE_RESUME_DATA;
+            return { ...SAMPLE_RESUME_DATA, _isDemo: true };
         }
         const found = resumes.find(r => r.id === parseInt(selectedResumeId));
-        return found?.resumeData || SAMPLE_RESUME_DATA;
+        if (!found || !found.resumeData) {
+            return { ...SAMPLE_RESUME_DATA, _isDemo: true };
+        }
+        let parsed = found.resumeData;
+        if (typeof parsed === "string") {
+            try {
+                parsed = JSON.parse(parsed);
+            } catch (e) {
+                console.error("Error parsing resumeData JSON:", e);
+                parsed = {};
+            }
+        }
+        return { ...(parsed || {}), _isDemo: false };
     };
 
     // 2. Instant Template Compilation whenever Template, Accent, or Resume changes
@@ -389,6 +402,24 @@ function PortfolioBuilderContent() {
         }
     };
 
+    const renderTemplateBadgeIcon = (iconName, isSelected) => {
+        const size = 11;
+        switch (iconName) {
+            case "Flame":
+                return <Flame size={size} className={isSelected ? "text-amber-400" : "text-amber-500"} />;
+            case "Terminal":
+                return <Terminal size={size} className={isSelected ? "text-emerald-400" : "text-emerald-500"} />;
+            case "Sparkles":
+                return <Sparkles size={size} className={isSelected ? "text-indigo-400" : "text-indigo-500"} />;
+            case "Zap":
+                return <Zap size={size} className={isSelected ? "text-cyan-400" : "text-cyan-500"} />;
+            case "Landmark":
+                return <Landmark size={size} className={isSelected ? "text-amber-300" : "text-amber-500"} />;
+            default:
+                return <Sparkles size={size} />;
+        }
+    };
+
     return (
         <div style={{ minHeight: "100vh", background: "#060610", color: "#fff", position: "relative", overflowX: "hidden" }}>
             <Script src="https://checkout.razorpay.com/v1/checkout.js" strategy="lazyOnload" />
@@ -450,10 +481,10 @@ function PortfolioBuilderContent() {
                                     className="form-select glass-input-custom"
                                     style={{ fontSize: "0.88rem" }}
                                 >
-                                    <option value="demo">⭐ Demo Profile (Alex Rivera - Lead Full-Stack & AI)</option>
+                                    <option value="demo">Demo Profile (Alex Rivera - Lead Full-Stack & AI)</option>
                                     {resumes.map(r => (
                                         <option key={r.id} value={r.id}>
-                                            📄 {r.resumeName} {r.isPortfolioPaid ? "✨ (Unlocked)" : ""}
+                                            {r.resumeName} {r.isPortfolioPaid ? "(Unlocked)" : ""}
                                         </option>
                                     ))}
                                 </select>
@@ -536,8 +567,18 @@ function PortfolioBuilderContent() {
                                         >
                                             <div>
                                                 <div className="d-flex justify-content-between align-items-center mb-1.5">
-                                                    <span className="badge px-2 py-0.5 rounded-4 text-truncate" style={{ fontSize: "0.65rem", background: isSelected ? "rgba(99, 102, 241, 0.25)" : "rgba(255,255,255,0.06)", color: isSelected ? "#c7d2fe" : "#94a3b8" }}>
-                                                        {t.badge}
+                                                    <span 
+                                                        className="badge px-2 py-0.5 rounded-4 text-truncate d-inline-flex align-items-center gap-1.5" 
+                                                        style={{ 
+                                                            fontSize: "0.68rem", 
+                                                            fontWeight: "600",
+                                                            background: isSelected ? "rgba(99, 102, 241, 0.25)" : "rgba(255,255,255,0.06)", 
+                                                            color: isSelected ? "#e0e7ff" : "#94a3b8",
+                                                            border: isSelected ? "1px solid rgba(99, 102, 241, 0.35)" : "1px solid rgba(255,255,255,0.08)"
+                                                        }}
+                                                    >
+                                                        {renderTemplateBadgeIcon(t.badgeIcon, isSelected)}
+                                                        <span>{t.badge}</span>
                                                     </span>
                                                     {isSelected && <CheckCircle2 size={13} className="text-indigo-400" />}
                                                 </div>

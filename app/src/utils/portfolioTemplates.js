@@ -90,7 +90,8 @@ export const PORTFOLIO_TEMPLATES = [
     {
         id: "bento_grid",
         title: "Modern Bento Grid",
-        badge: "Trending 🔥",
+        badge: "Trending",
+        badgeIcon: "Flame",
         desc: "Dribbble & Apple style modular Bento layout with translucent cards, stat badges, and interactive tech tags.",
         preview: "/portfolio_dark_glass.png",
         tags: ["Bento Layout", "Glass UI", "Stats Counter", "High Conversion"]
@@ -98,7 +99,8 @@ export const PORTFOLIO_TEMPLATES = [
     {
         id: "dev_terminal",
         title: "Developer Terminal CLI",
-        badge: "Popular with Tech 💻",
+        badge: "Popular with Tech",
+        badgeIcon: "Terminal",
         desc: "Retro-futuristic command line terminal aesthetic with interactive typing, bash prompts, and neon green/cyan highlights.",
         preview: "/portfolio_dark_glass.png",
         tags: ["Hacker Vibe", "Monospace", "Interactive Bash", "Tech Stack"]
@@ -106,7 +108,8 @@ export const PORTFOLIO_TEMPLATES = [
     {
         id: "dark_glass",
         title: "Glassmorphic Dark",
-        badge: "Premium ✨",
+        badge: "Premium",
+        badgeIcon: "Sparkles",
         desc: "Vibrant ambient spotlights, frosted glass cards (backdrop-filter), smooth scrolling, and dynamic glow highlights.",
         preview: "/portfolio_dark_glass.png",
         tags: ["Ambient Glow", "Frosted Glass", "Smooth Animations", "Dark Theme"]
@@ -114,7 +117,8 @@ export const PORTFOLIO_TEMPLATES = [
     {
         id: "minimalist",
         title: "Sleek Minimalist",
-        badge: "Clean & Modern ⚡",
+        badge: "Clean & Modern",
+        badgeIcon: "Zap",
         desc: "Generous whitespace, refined sans-serif/monospace typography, high-contrast clean borders, and pure content clarity.",
         preview: "/portfolio_minimalist.png",
         tags: ["High Contrast", "Editorial Spacing", "Fast Loading", "ATS Friendly"]
@@ -122,7 +126,8 @@ export const PORTFOLIO_TEMPLATES = [
     {
         id: "classic",
         title: "Executive Classic",
-        badge: "Corporate & Elegant 🏛️",
+        badge: "Corporate & Elegant",
+        badgeIcon: "Landmark",
         desc: "Polished traditional typography, refined serif headers, structured corporate timeline, and timeless elegance.",
         preview: "/portfolio_classic.png",
         tags: ["Serif Typography", "Executive Grid", "Timeless", "Clean Print"]
@@ -137,75 +142,322 @@ export const ACCENT_COLORS = [
     { id: "rose", name: "Vibrant Rose", primary: "#f43f5e", secondary: "#fb7185", glow: "rgba(244, 63, 94, 0.25)" }
 ];
 
+const COMMON_TECH_KEYWORDS = [
+    "React.js", "React", "Next.js", "Vue.js", "Vue", "Angular", "TypeScript", "JavaScript",
+    "Node.js", "Express.js", "Express", "Python", "Django", "Flask", "FastAPI",
+    "Tailwind CSS", "TailwindCSS", "Bootstrap", "HTML5", "CSS3", "HTML", "CSS", "Sass",
+    "PostgreSQL", "MongoDB", "MySQL", "SQLite", "Redis", "Prisma", "Supabase", "Firebase",
+    "Docker", "Kubernetes", "AWS", "Google Cloud", "GCP", "Azure", "CI/CD", "Git", "GitHub",
+    "REST APIs", "GraphQL", "Redux", "Zustand", "Figma", "UI/UX", "Java", "C++", "C#", ".NET"
+];
+
+function extractTechKeywords(text) {
+    if (!text || typeof text !== "string") return [];
+    const found = [];
+    const lower = text.toLowerCase();
+    for (const tech of COMMON_TECH_KEYWORDS) {
+        const escaped = tech.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&');
+        const regex = new RegExp(`(^|[^a-zA-Z0-9#+])${escaped}(?![a-zA-Z0-9#+])`, 'i');
+        if (regex.test(lower)) {
+            found.push(tech);
+        }
+    }
+    return found.slice(0, 6);
+}
+
 /**
  * Normalizes resume data to ensure all sections and fields are cleanly mapped.
+ * Strictly preserves the user's actual saved resume data and avoids injecting dummy details.
  */
-export function normalizeResumeData(raw) {
+export function normalizeResumeData(raw, explicitIsDemo = false) {
     if (!raw) return SAMPLE_RESUME_DATA;
 
-    const name = raw.personalInfo?.fullName || raw.name || raw.fullName || "Alex Rivera";
-    const title = raw.personalInfo?.title || raw.title || raw.jobTitle || raw.role || "Software Engineer";
-    const email = raw.personalInfo?.email || raw.email || "";
-    const phone = raw.personalInfo?.phone || raw.phone || "";
-    const location = raw.personalInfo?.location || raw.location || "";
-    const summary = raw.personalInfo?.summary || raw.summary || raw.profile || "Passionate software engineer building high performance web applications.";
+    let parsed = raw;
+    if (typeof parsed === "string") {
+        try {
+            parsed = JSON.parse(parsed);
+        } catch (e) {
+            parsed = {};
+        }
+    }
 
-    // Parse links
+    const isDemo = explicitIsDemo || parsed._isDemo === true || (parsed.name === "Alex Rivera" && !parsed.fullName && !parsed.role);
+
+    // 1. Full Name
+    const name = (
+        parsed.fullName ||
+        parsed.name ||
+        parsed.basics?.name ||
+        parsed.personalInfo?.fullName ||
+        parsed.personalInfo?.name ||
+        (isDemo ? SAMPLE_RESUME_DATA.name : "Portfolio")
+    ).trim();
+
+    // 2. Role / Title
+    const title = (
+        parsed.role ||
+        parsed.jobTitle ||
+        parsed.title ||
+        parsed.basics?.role ||
+        parsed.personalInfo?.title ||
+        (isDemo ? SAMPLE_RESUME_DATA.title : "Software Developer")
+    ).trim();
+
+    // 3. Contact & Location
+    const email = (parsed.email || parsed.basics?.email || parsed.personalInfo?.email || (isDemo ? SAMPLE_RESUME_DATA.email : "")).trim();
+    const phone = (parsed.phone || parsed.basics?.phone || parsed.personalInfo?.phone || "").trim();
+    const location = (
+        parsed.location ||
+        parsed.address ||
+        parsed.city ||
+        parsed.basics?.location ||
+        parsed.experience?.location ||
+        (isDemo ? SAMPLE_RESUME_DATA.location : "")
+    ).trim();
+
+    // 4. Professional Summary / Bio (checks CVGrid's professionalSummary first!)
+    let summary = (
+        parsed.professionalSummary ||
+        parsed.summary ||
+        parsed.profile ||
+        parsed.personalInfo?.summary ||
+        parsed.bio ||
+        ""
+    ).trim();
+
+    if (!summary) {
+        if (isDemo) {
+            summary = SAMPLE_RESUME_DATA.summary;
+        } else {
+            summary = `Dedicated and passionate ${title} focused on building robust, high-performance web applications and solving challenging engineering problems.`;
+        }
+    }
+
+    // 5. Links
     const links = {
-        github: raw.personalInfo?.github || raw.links?.github || raw.github || "",
-        linkedin: raw.personalInfo?.linkedin || raw.links?.linkedin || raw.linkedin || "",
-        portfolio: raw.personalInfo?.portfolio || raw.links?.portfolio || raw.portfolio || "",
-        twitter: raw.personalInfo?.twitter || raw.links?.twitter || raw.twitter || ""
+        github: (parsed.github || parsed.basics?.links?.github || parsed.links?.github || parsed.personalInfo?.github || "").trim(),
+        linkedin: (parsed.linkedin || parsed.basics?.links?.linkedin || parsed.links?.linkedin || parsed.personalInfo?.linkedin || "").trim(),
+        portfolio: (parsed.portfolio || parsed.basics?.links?.portfolio || parsed.links?.portfolio || parsed.personalInfo?.portfolio || "").trim(),
+        twitter: (parsed.twitter || parsed.basics?.links?.twitter || parsed.links?.twitter || "").trim()
     };
 
-    // Normalize experience
+    // 6. Experience (Supports CVGrid object, array, and internship)
     let experience = [];
-    const expSource = raw.experience || raw.workExperience || [];
-    if (Array.isArray(expSource)) {
-        experience = expSource.map(item => ({
-            role: item.role || item.position || item.title || "Software Developer",
-            company: item.company || item.employer || "Tech Corp",
-            location: item.location || "",
-            startDate: item.startDate || item.start || "2022",
-            endDate: item.endDate || item.end || "Present",
-            description: item.description || item.summary || (Array.isArray(item.highlights) ? item.highlights.join(" ") : "")
-        }));
-    }
 
-    // Normalize education
-    let education = [];
-    const eduSource = raw.education || [];
-    if (Array.isArray(eduSource)) {
-        education = eduSource.map(item => ({
-            degree: item.degree || item.field || "B.S. in Computer Science",
-            institution: item.institution || item.school || item.college || "University",
-            year: item.year || item.gradYear || (item.startDate ? `${item.startDate} - ${item.endDate || ""}` : "2020"),
-            honors: item.honors || (item.gpa ? `GPA: ${item.gpa}` : "")
-        }));
-    }
-
-    // Normalize projects
-    let projects = [];
-    const projSource = raw.projects || [];
-    if (Array.isArray(projSource)) {
-        projects = projSource.map(item => ({
-            name: item.name || item.title || "Project",
-            description: item.description || item.summary || "Full-stack web application with responsive UI and modern cloud backend.",
-            tech: Array.isArray(item.tech) ? item.tech : (typeof item.technologies === "string" ? item.technologies.split(",").map(s => s.trim()) : ["React", "Node.js"]),
-            link: item.link || item.github || item.url || "#",
-            demo: item.demo || item.live || item.link || "#"
-        }));
-    }
-
-    // Normalize skills
-    let skills = {};
-    if (raw.skills) {
-        if (typeof raw.skills === "object" && !Array.isArray(raw.skills)) {
-            skills = raw.skills;
-        } else if (Array.isArray(raw.skills)) {
-            skills = { "Core Competencies": raw.skills.map(s => typeof s === "string" ? s : s.name || "") };
+    if (Array.isArray(parsed.experience) && parsed.experience.length > 0) {
+        parsed.experience.forEach(item => {
+            if (!item) return;
+            const r = item.role || item.position || item.title || "";
+            const c = item.company || item.employer || "";
+            if (!r && !c) return;
+            experience.push({
+                role: r || "Developer",
+                company: c || "Company",
+                location: item.location || "",
+                startDate: item.startDate || [item.startMonth, item.startYear].filter(Boolean).join(" ") || "Started",
+                endDate: item.ongoing ? "Present" : (item.endDate || [item.endMonth, item.endYear].filter(Boolean).join(" ") || "Present"),
+                description: item.description || item.summary || (Array.isArray(item.highlights) ? item.highlights.join(" ") : "")
+            });
+        });
+    } else if (parsed.experience && typeof parsed.experience === "object") {
+        if (parsed.experience.company || parsed.experience.role) {
+            const start = [parsed.experience.startMonth, parsed.experience.startYear].filter(Boolean).join(" ") || "Started";
+            const end = parsed.experience.ongoing ? "Present" : ([parsed.experience.endMonth, parsed.experience.endYear].filter(Boolean).join(" ") || "Present");
+            experience.push({
+                role: parsed.experience.role || "Developer",
+                company: parsed.experience.company || "Company",
+                location: parsed.experience.location || "",
+                startDate: start,
+                endDate: end,
+                description: parsed.experience.description || ""
+            });
         }
-    } else {
+    }
+
+    // Check internship
+    if (parsed.internship && typeof parsed.internship === "object") {
+        if (parsed.internship.company || parsed.internship.field || parsed.internship.role) {
+            const start = [parsed.internship.startMonth, parsed.internship.startYear].filter(Boolean).join(" ") || "Started";
+            const end = parsed.internship.ongoing ? "Present" : ([parsed.internship.endMonth, parsed.internship.endYear].filter(Boolean).join(" ") || "Present");
+            const desc = parsed.internship.description || (Array.isArray(parsed.internship.bullets) ? parsed.internship.bullets.join(" ") : "");
+            experience.push({
+                role: parsed.internship.role || parsed.internship.field || "Engineering Intern",
+                company: parsed.internship.company || "Internship",
+                location: parsed.internship.location || "",
+                startDate: start,
+                endDate: end,
+                description: desc
+            });
+        }
+    }
+
+    if (experience.length === 0 && isDemo) {
+        experience = SAMPLE_RESUME_DATA.experience;
+    }
+
+    // 7. Education (Graduation, PostGraduation, PhD)
+    let education = [];
+
+    if (Array.isArray(parsed.education) && parsed.education.length > 0) {
+        parsed.education.forEach(item => {
+            if (!item) return;
+            education.push({
+                degree: item.degree || item.course || item.field || "Degree",
+                institution: item.institution || item.school || item.college || "University",
+                year: item.year || item.gradYear || (item.startDate ? `${item.startDate} - ${item.endDate || ""}` : "Completed"),
+                honors: item.honors || (item.gpa ? `GPA: ${item.gpa}` : "")
+            });
+        });
+    }
+
+    if (parsed.graduation && typeof parsed.graduation === "object") {
+        const course = parsed.graduation.course || "";
+        const college = parsed.graduation.college || parsed.graduation.institution || parsed.graduation.school || "";
+        if (course || college) {
+            const year = [parsed.graduation.startYear, parsed.graduation.endYear].filter(Boolean).join(" - ")
+                || [parsed.graduation.startMonth, parsed.graduation.startYear].filter(Boolean).join(" ") + " - " + [parsed.graduation.endMonth, parsed.graduation.endYear].filter(Boolean).join(" ");
+            education.push({
+                degree: course || "Bachelor's Degree",
+                institution: college || "University",
+                year: year.trim().replace(/^-\s*|\s*-$/g, "") || "Completed",
+                honors: parsed.graduation.percentage ? `Score: ${parsed.graduation.percentage}%` : (parsed.graduation.cgpa ? `CGPA: ${parsed.graduation.cgpa}` : "")
+            });
+        }
+    } else if (typeof parsed.graduation === "string" && parsed.graduation.trim()) {
+        education.push({
+            degree: parsed.graduation.trim(),
+            institution: "University",
+            year: "Completed",
+            honors: ""
+        });
+    }
+
+    if (parsed.hasPostGraduation && parsed.postGraduation && typeof parsed.postGraduation === "object") {
+        const course = parsed.postGraduation.course || "";
+        const college = parsed.postGraduation.college || parsed.postGraduation.institution || "";
+        if (course || college) {
+            const year = [parsed.postGraduation.startYear, parsed.postGraduation.endYear].filter(Boolean).join(" - ");
+            education.push({
+                degree: course || "Master's Degree",
+                institution: college || "University",
+                year: year || "Completed",
+                honors: ""
+            });
+        }
+    }
+
+    if (parsed.hasPhd && parsed.phd && typeof parsed.phd === "object") {
+        const course = parsed.phd.course || "";
+        const college = parsed.phd.college || parsed.phd.institution || "";
+        if (course || college) {
+            const year = [parsed.phd.startYear, parsed.phd.endYear].filter(Boolean).join(" - ");
+            education.push({
+                degree: course || "Doctorate / Ph.D.",
+                institution: college || "University",
+                year: year || "Completed",
+                honors: ""
+            });
+        }
+    }
+
+    if (education.length === 0 && isDemo) {
+        education = SAMPLE_RESUME_DATA.education;
+    }
+
+    // 8. Projects (Supports arrays and CVGrid multiline project strings)
+    let projects = [];
+
+    if (Array.isArray(parsed.projects) && parsed.projects.length > 0) {
+        parsed.projects.forEach(p => {
+            if (!p) return;
+            const pName = p.name || p.title || "Project";
+            const pDesc = p.description || p.summary || (Array.isArray(p.bullets) ? p.bullets.join(" ") : "");
+            let tech = [];
+            if (Array.isArray(p.tech) && p.tech.length > 0) tech = p.tech;
+            else if (typeof p.technologies === "string" && p.technologies.trim()) tech = p.technologies.split(",").map(t => t.trim()).filter(Boolean);
+            else tech = extractTechKeywords(pName + " " + pDesc);
+
+            projects.push({
+                name: pName,
+                description: pDesc || "Interactive application built with modern architecture and responsive design.",
+                tech: tech.length > 0 ? tech : ["Web Development"],
+                link: p.link || p.github || p.url || "",
+                demo: p.demo || p.live || ""
+            });
+        });
+    } else if (typeof parsed.projects === "string" && parsed.projects.trim()) {
+        const lines = parsed.projects.split("\n");
+        let current = null;
+        lines.forEach(line => {
+            const trimmed = line.trim();
+            if (!trimmed) return;
+            if (trimmed.startsWith("-") || trimmed.startsWith("•") || trimmed.startsWith("*")) {
+                const bullet = trimmed.replace(/^[-•*]\s*/, "");
+                if (current) {
+                    current.bullets.push(bullet);
+                } else {
+                    current = { name: "Featured Project", bullets: [bullet], link: "", demo: "", tech: [] };
+                }
+            } else {
+                if (current) {
+                    const fullDesc = current.bullets.join(" ") || "Interactive project developed using modern technologies.";
+                    const tech = current.tech.length > 0 ? current.tech : extractTechKeywords(current.name + " " + fullDesc);
+                    projects.push({
+                        name: current.name,
+                        description: fullDesc,
+                        tech: tech.length > 0 ? tech : ["Web Development"],
+                        link: current.link || "",
+                        demo: current.demo || ""
+                    });
+                }
+                let pName = trimmed;
+                let link = "";
+                let demo = "";
+                const urls = trimmed.match(/https?:\/\/[^\s)]+/g);
+                if (urls && urls.length > 0) {
+                    link = urls[0];
+                    demo = urls[1] || urls[0];
+                    pName = trimmed.replace(/https?:\/\/[^\s)]+/g, "").replace(/[|()\[\]]/g, "").trim();
+                }
+                current = { name: pName || "Project", bullets: [], link, demo, tech: [] };
+            }
+        });
+        if (current) {
+            const fullDesc = current.bullets.join(" ") || "Interactive project developed using modern technologies.";
+            const tech = current.tech.length > 0 ? current.tech : extractTechKeywords(current.name + " " + fullDesc);
+            projects.push({
+                name: current.name,
+                description: fullDesc,
+                tech: tech.length > 0 ? tech : ["Web Development"],
+                link: current.link || "",
+                demo: current.demo || ""
+            });
+        }
+    }
+
+    if (projects.length === 0 && isDemo) {
+        projects = SAMPLE_RESUME_DATA.projects;
+    }
+
+    // 9. Skills (Supports string, array, and object)
+    let skills = {};
+    if (parsed.skills) {
+        if (typeof parsed.skills === "string" && parsed.skills.trim()) {
+            const skillList = parsed.skills.split(/[,\n]/).map(s => s.trim().replace(/^[-*•]\s*/, "")).filter(Boolean);
+            if (skillList.length > 0) {
+                skills = { "Core Competencies": skillList };
+            }
+        } else if (Array.isArray(parsed.skills) && parsed.skills.length > 0) {
+            const skillList = parsed.skills.map(s => typeof s === "string" ? s.trim() : (s.name || "")).filter(Boolean);
+            if (skillList.length > 0) {
+                skills = { "Core Competencies": skillList };
+            }
+        } else if (typeof parsed.skills === "object" && !Array.isArray(parsed.skills) && Object.keys(parsed.skills).length > 0) {
+            skills = parsed.skills;
+        }
+    }
+
+    if (Object.keys(skills).length === 0 && isDemo) {
         skills = SAMPLE_RESUME_DATA.skills;
     }
 
@@ -216,11 +468,12 @@ export function normalizeResumeData(raw) {
         phone,
         location,
         summary,
-        experience: experience.length > 0 ? experience : SAMPLE_RESUME_DATA.experience,
-        education: education.length > 0 ? education : SAMPLE_RESUME_DATA.education,
-        projects: projects.length > 0 ? projects : SAMPLE_RESUME_DATA.projects,
-        skills: Object.keys(skills).length > 0 ? skills : SAMPLE_RESUME_DATA.skills,
-        links
+        experience,
+        education,
+        projects,
+        skills,
+        links,
+        achievements: parsed.achievements || ""
     };
 }
 
@@ -253,7 +506,35 @@ export function compilePortfolioTemplate(resumeData, templateType = "dark_glass"
 function compileBentoGrid(data, accent) {
     const skillsList = Object.entries(data.skills)
         .flatMap(([_, list]) => Array.isArray(list) ? list : [])
-        .slice(0, 16);
+        .slice(0, 18);
+
+    // Calculate total experience duration dynamically
+    let expYears = 0;
+    if (data.experience && data.experience.length > 0) {
+        data.experience.forEach(exp => {
+            const startY = parseInt(exp.startDate?.match(/\b(19\d\d|20\d\d)\b/)?.[0] || 0);
+            const endY = exp.endDate?.toLowerCase().includes("present")
+                ? new Date().getFullYear()
+                : parseInt(exp.endDate?.match(/\b(19\d\d|20\d\d)\b/)?.[0] || 0);
+            if (startY && endY && endY >= startY) {
+                expYears += Math.max(1, endY - startY);
+            }
+        });
+    }
+
+    const stat1Val = expYears > 0 
+        ? `${expYears}+` 
+        : (data.projects.length > 0 ? `${data.projects.length}` : (skillsList.length > 0 ? `${skillsList.length}+` : "100%"));
+    const stat1Text = expYears > 0 
+        ? "Years Experience" 
+        : (data.projects.length > 0 ? "Projects Shipped" : (skillsList.length > 0 ? "Core Skills" : "Active Contributor"));
+
+    const stat2Val = expYears > 0 
+        ? `${data.projects.length || 1}+` 
+        : (skillsList.length > 0 ? `${skillsList.length}+` : "Active");
+    const stat2Text = expYears > 0 
+        ? "Major Projects Built" 
+        : (skillsList.length > 0 ? "Skills & Tools" : "Available for Roles");
 
     const html = `<!DOCTYPE html>
 <html lang="en">
@@ -303,12 +584,12 @@ function compileBentoGrid(data, accent) {
 
             <!-- Stats & Quick Profile Card -->
             <div class="bento-card stat-card">
-                <div class="stat-number">6+</div>
-                <div class="stat-label">Years of Experience</div>
+                <div class="stat-number">${stat1Val}</div>
+                <div class="stat-label">${stat1Text}</div>
                 <div class="divider"></div>
-                <div class="stat-number">${data.projects.length}+</div>
-                <div class="stat-label">Major Projects Shipped</div>
-                <div class="location-badge">📍 ${data.location || "Remote / Global"}</div>
+                <div class="stat-number">${stat2Val}</div>
+                <div class="stat-label">${stat2Text}</div>
+                <div class="location-badge">📍 ${data.location || "Open to Opportunities"}</div>
             </div>
 
             <!-- Social Links Card -->
@@ -326,7 +607,11 @@ function compileBentoGrid(data, accent) {
             <div class="bento-card skills-card" id="skills">
                 <h3 class="card-heading">Tech Stack & Tools</h3>
                 <div class="skills-grid">
-                    ${skillsList.map(skill => `<span class="skill-tag">${skill}</span>`).join("\n                    ")}
+                    ${skillsList.length > 0 ? skillsList.map(skill => `<span class="skill-tag">${skill}</span>`).join("\n                    ") : `
+                    <span class="skill-tag">Web Technologies</span>
+                    <span class="skill-tag">Modern Architecture</span>
+                    <span class="skill-tag">Clean Code</span>
+                    `}
                 </div>
             </div>
 
@@ -337,7 +622,7 @@ function compileBentoGrid(data, accent) {
                     <span class="text-dim">Production-ready applications & architectures</span>
                 </div>
                 <div class="projects-grid">
-                    ${data.projects.map(proj => `
+                    ${data.projects.length > 0 ? data.projects.map(proj => `
                     <div class="project-item">
                         <div class="project-header">
                             <h3 class="project-name">${proj.name}</h3>
@@ -350,15 +635,18 @@ function compileBentoGrid(data, accent) {
                         <div class="project-tech">
                             ${(Array.isArray(proj.tech) ? proj.tech : []).map(t => `<span class="tech-pill">${t}</span>`).join("")}
                         </div>
-                    </div>`).join("")}
+                    </div>`).join("") : `
+                    <div class="project-item" style="grid-column: 1 / -1; padding: 24px; text-align: center;">
+                        <p class="project-desc">Projects added in CVGrid will appear here with live links and technology badges.</p>
+                    </div>`}
                 </div>
             </div>
 
             <!-- Experience Timeline Bento Card (Span 3) -->
             <div class="bento-card experience-card" id="experience">
-                <h2 class="card-heading">Work Experience</h2>
+                <h2 class="card-heading">Work & Career Experience</h2>
                 <div class="timeline">
-                    ${data.experience.map(exp => `
+                    ${data.experience.length > 0 ? data.experience.map(exp => `
                     <div class="timeline-item">
                         <div class="timeline-meta">
                             <span class="timeline-role">${exp.role}</span>
@@ -366,19 +654,40 @@ function compileBentoGrid(data, accent) {
                             <span class="timeline-date">${exp.startDate} - ${exp.endDate}</span>
                         </div>
                         <p class="timeline-desc">${exp.description}</p>
-                    </div>`).join("")}
+                    </div>`).join("") : (data.education.length > 0 ? data.education.map(edu => `
+                    <div class="timeline-item">
+                        <div class="timeline-meta">
+                            <span class="timeline-role">${edu.degree}</span>
+                            <span class="timeline-company">@ ${edu.institution}</span>
+                            <span class="timeline-date">${edu.year}</span>
+                        </div>
+                        ${edu.honors ? `<p class="timeline-desc">${edu.honors}</p>` : ""}
+                    </div>`).join("") : `
+                    <div class="timeline-item">
+                        <div class="timeline-meta">
+                            <span class="timeline-role">${data.title}</span>
+                            <span class="timeline-company">Active & Available</span>
+                            <span class="timeline-date">Open</span>
+                        </div>
+                        <p class="timeline-desc">Seeking challenging opportunities to apply expertise, build modern software, and deliver business value.</p>
+                    </div>`)}
                 </div>
             </div>
 
             <!-- Education & Contact Card -->
             <div class="bento-card education-card">
-                <h3 class="card-heading">Education</h3>
-                ${data.education.map(edu => `
+                <h3 class="card-heading">Education & Credentials</h3>
+                ${data.education.length > 0 ? data.education.map(edu => `
                 <div class="edu-item">
                     <div class="edu-degree">${edu.degree}</div>
                     <div class="edu-school">${edu.institution}</div>
                     <div class="edu-year">${edu.year}</div>
-                </div>`).join("")}
+                </div>`).join("") : `
+                <div class="edu-item">
+                    <div class="edu-degree">${data.title}</div>
+                    <div class="edu-school">Technical Background</div>
+                    <div class="edu-year">Certified</div>
+                </div>`}
             </div>
 
             <div class="bento-card contact-card" id="contact">
@@ -994,7 +1303,7 @@ function compileDevTerminal(data, accent) {
                 </div>
                 <div class="cli-output">
                     <div class="projects-list">
-                        ${data.projects.map(p => `
+                        ${data.projects.length > 0 ? data.projects.map(p => `
                         <div class="project-row">
                             <div class="project-main">
                                 <span class="badge-repo">repo</span>
@@ -1008,7 +1317,14 @@ function compileDevTerminal(data, accent) {
                             <div class="project-stack-cli">
                                 Stack: ${(Array.isArray(p.tech) ? p.tech : []).join(" | ")}
                             </div>
-                        </div>`).join("")}
+                        </div>`).join("") : `
+                        <div class="project-row">
+                            <div class="project-main">
+                                <span class="badge-repo">notice</span>
+                                <span class="project-name-cli">Projects pipeline initializing...</span>
+                            </div>
+                            <div class="project-desc-cli">Project records from CVGrid builder will be logged here.</div>
+                        </div>`}
                     </div>
                 </div>
             </div>
@@ -1020,12 +1336,22 @@ function compileDevTerminal(data, accent) {
                 </div>
                 <div class="cli-output">
                     <div class="exp-log">
-                        ${data.experience.map(exp => `
+                        ${data.experience.length > 0 ? data.experience.map(exp => `
                         <div class="exp-row">
                             <div class="commit-hash">commit #${Math.random().toString(36).substring(2, 8)}</div>
                             <div class="exp-title-cli"><strong>${exp.role}</strong> @ <span class="cyan">${exp.company}</span> (${exp.startDate} - ${exp.endDate})</div>
                             <div class="exp-desc-cli">${exp.description}</div>
-                        </div>`).join("")}
+                        </div>`).join("") : (data.education.length > 0 ? data.education.map(edu => `
+                        <div class="exp-row">
+                            <div class="commit-hash">acad #${Math.random().toString(36).substring(2, 8)}</div>
+                            <div class="exp-title-cli"><strong>${edu.degree}</strong> @ <span class="cyan">${edu.institution}</span> (${edu.year})</div>
+                            <div class="exp-desc-cli">${edu.honors || 'Academic foundations & coursework.'}</div>
+                        </div>`).join("") : `
+                        <div class="exp-row">
+                            <div class="commit-hash">init #000001</div>
+                            <div class="exp-title-cli"><strong>${data.title}</strong> @ <span class="cyan">Active Candidate</span> (Ready to Deploy)</div>
+                            <div class="exp-desc-cli">Available for full-time engineering and developer roles.</div>
+                        </div>`)}
                     </div>
                 </div>
             </div>
@@ -1345,7 +1671,7 @@ function compileDarkGlass(data, accent) {
         <section class="section" id="projects">
             <h2 class="section-title">Selected Projects</h2>
             <div class="grid-projects">
-                ${data.projects.map(p => `
+                ${data.projects.length > 0 ? data.projects.map(p => `
                 <div class="glass-card project-card">
                     <div class="card-inner">
                         <div class="proj-top">
@@ -1359,15 +1685,18 @@ function compileDarkGlass(data, accent) {
                             ${(Array.isArray(p.tech) ? p.tech : []).map(t => `<span class="tag">${t}</span>`).join("")}
                         </div>
                     </div>
-                </div>`).join("")}
+                </div>`).join("") : `
+                <div class="glass-card project-card" style="grid-column: 1 / -1; text-align: center; padding: 40px;">
+                    <p class="proj-desc">Projects added in CVGrid builder will be highlighted here.</p>
+                </div>`}
             </div>
         </section>
 
         <!-- Experience -->
         <section class="section" id="experience">
-            <h2 class="section-title">Career Timeline</h2>
+            <h2 class="section-title">Career Background</h2>
             <div class="timeline-wrap">
-                ${data.experience.map(exp => `
+                ${data.experience.length > 0 ? data.experience.map(exp => `
                 <div class="glass-card exp-card">
                     <div class="exp-header">
                         <span class="exp-role">${exp.role}</span>
@@ -1375,7 +1704,23 @@ function compileDarkGlass(data, accent) {
                         <span class="exp-time">${exp.startDate} - ${exp.endDate}</span>
                     </div>
                     <p class="exp-body">${exp.description}</p>
-                </div>`).join("")}
+                </div>`).join("") : (data.education.length > 0 ? data.education.map(edu => `
+                <div class="glass-card exp-card">
+                    <div class="exp-header">
+                        <span class="exp-role">${edu.degree}</span>
+                        <span class="exp-company">${edu.institution}</span>
+                        <span class="exp-time">${edu.year}</span>
+                    </div>
+                    ${edu.honors ? `<p class="exp-body">${edu.honors}</p>` : ""}
+                </div>`).join("") : `
+                <div class="glass-card exp-card">
+                    <div class="exp-header">
+                        <span class="exp-role">${data.title}</span>
+                        <span class="exp-company">Active Candidate</span>
+                        <span class="exp-time">Open</span>
+                    </div>
+                    <p class="exp-body">Open for full-time engineering and web development roles.</p>
+                </div>`)}
             </div>
         </section>
 
@@ -1752,6 +2097,7 @@ function compileMinimalist(data, accent) {
             <p class="desc">${data.summary}</p>
         </section>
 
+        ${data.experience.length > 0 ? `
         <section class="block">
             <h2 class="label">EXPERIENCE</h2>
             <div class="list">
@@ -1764,8 +2110,22 @@ function compileMinimalist(data, accent) {
                     <p class="item-desc">${exp.description}</p>
                 </div>`).join("")}
             </div>
-        </section>
+        </section>` : (data.education.length > 0 ? `
+        <section class="block">
+            <h2 class="label">EDUCATION</h2>
+            <div class="list">
+                ${data.education.map(edu => `
+                <div class="item">
+                    <div class="item-header">
+                        <span class="item-title">${edu.degree} — ${edu.institution}</span>
+                        <span class="item-date">${edu.year}</span>
+                    </div>
+                    ${edu.honors ? `<p class="item-desc">${edu.honors}</p>` : ""}
+                </div>`).join("")}
+            </div>
+        </section>` : "")}
 
+        ${data.projects.length > 0 ? `
         <section class="block">
             <h2 class="label">SELECTED WORK</h2>
             <div class="list">
@@ -1781,8 +2141,9 @@ function compileMinimalist(data, accent) {
                     <p class="item-tech">${(Array.isArray(p.tech) ? p.tech : []).join(", ")}</p>
                 </div>`).join("")}
             </div>
-        </section>
+        </section>` : ""}
 
+        ${Object.keys(data.skills).length > 0 ? `
         <section class="block">
             <h2 class="label">SKILLS</h2>
             <div class="skills-wrap">
@@ -1792,7 +2153,7 @@ function compileMinimalist(data, accent) {
                     <span class="skill-vals">${Array.isArray(list) ? list.join(", ") : ""}</span>
                 </div>`).join("")}
             </div>
-        </section>
+        </section>` : ""}
     </div>
     <script src="script.js"></script>
 </body>
@@ -1927,10 +2288,10 @@ function compileClassic(data, accent) {
             <h1 class="title">${data.name}</h1>
             <p class="subtitle">${data.title}</p>
             <div class="meta-bar">
-                <span>${data.location}</span>
-                <span>•</span>
-                <a href="mailto:${data.email}">${data.email}</a>
+                ${data.location ? `<span>${data.location}</span><span>•</span>` : ""}
+                ${data.email ? `<a href="mailto:${data.email}">${data.email}</a>` : ""}
                 ${data.links.linkedin ? `<span>•</span><a href="${data.links.linkedin}" target="_blank">LinkedIn Profile</a>` : ""}
+                ${data.links.github ? `<span>•</span><a href="${data.links.github}" target="_blank">GitHub</a>` : ""}
             </div>
         </header>
 
@@ -1939,6 +2300,7 @@ function compileClassic(data, accent) {
             <p class="body-text">${data.summary}</p>
         </section>
 
+        ${data.experience.length > 0 ? `
         <section class="section">
             <h2 class="sec-heading">Professional Experience</h2>
             ${data.experience.map(exp => `
@@ -1947,11 +2309,12 @@ function compileClassic(data, accent) {
                     <h3 class="entry-title">${exp.role}</h3>
                     <span class="entry-date">${exp.startDate} – ${exp.endDate}</span>
                 </div>
-                <div class="entry-sub">${exp.company} — ${exp.location || "Executive Team"}</div>
+                <div class="entry-sub">${exp.company} ${exp.location ? `— ${exp.location}` : ""}</div>
                 <p class="body-text">${exp.description}</p>
             </div>`).join("")}
-        </section>
+        </section>` : ""}
 
+        ${data.projects.length > 0 ? `
         <section class="section">
             <h2 class="sec-heading">Key Initiatives & Projects</h2>
             <div class="projects-grid">
@@ -1962,10 +2325,11 @@ function compileClassic(data, accent) {
                     <div class="proj-meta">${(Array.isArray(p.tech) ? p.tech : []).join(" • ")}</div>
                 </div>`).join("")}
             </div>
-        </section>
+        </section>` : ""}
 
+        ${data.education.length > 0 ? `
         <section class="section">
-            <h2 class="sec-heading">Education</h2>
+            <h2 class="sec-heading">Education & Credentials</h2>
             ${data.education.map(e => `
             <div class="entry">
                 <div class="entry-row">
@@ -1974,7 +2338,7 @@ function compileClassic(data, accent) {
                 </div>
                 <div class="entry-sub">${e.degree} ${e.honors ? `(${e.honors})` : ""}</div>
             </div>`).join("")}
-        </section>
+        </section>` : ""}
     </div>
     <script src="script.js"></script>
 </body>
