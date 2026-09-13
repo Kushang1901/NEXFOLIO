@@ -76,18 +76,20 @@ export default function ModernMinimalistTemplate({ data }) {
                     <div className="small text-md-end" style={{ fontWeight: "500" }}>
                         <div>{data.basics.email}</div>
                         <div>{data.basics.phone}</div>
-                        <div className="mt-1">
-                            {links.linkedin && (
-                                <a href={links.linkedin} target="_blank" rel="noreferrer" className="text-dark text-decoration-none hover:underline me-3">
+                        {links.linkedin && (
+                            <div>
+                                <a href={links.linkedin} target="_blank" rel="noreferrer" className="text-dark text-decoration-none hover:underline">
                                     LinkedIn: {getUsername(links.linkedin, "linkedin")}
                                 </a>
-                            )}
-                            {links.github && (
+                            </div>
+                        )}
+                        {links.github && (
+                            <div>
                                 <a href={links.github} target="_blank" rel="noreferrer" className="text-dark text-decoration-none hover:underline">
                                     GitHub: {getUsername(links.github, "github")}
                                 </a>
-                            )}
-                        </div>
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>

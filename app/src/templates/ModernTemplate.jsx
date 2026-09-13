@@ -100,18 +100,26 @@ export default function ModernTemplate({ data }) {
 
                     <h3 className="fw-bold text-white mb-1" style={{ fontSize: "1.45rem", letterSpacing: "-0.02em" }}>{data.basics.name}</h3>
                     {data.basics.role && (
-                        <span className="badge mt-1 text-uppercase text-white tracking-wider" 
-                              style={{ 
-                                  fontSize: "0.68rem", 
-                                  letterSpacing: "1px", 
-                                  background: "rgba(255, 255, 255, 0.15)",
-                                  border: "1px solid rgba(255, 255, 255, 0.25)",
-                                  borderRadius: "6px",
-                                  padding: "5px 10px",
-                                  display: "inline-block"
-                              }}>
-                            {data.basics.role}
-                        </span>
+                        <div className="mt-1">
+                            <span className="badge text-uppercase text-white tracking-wider" 
+                                  style={{ 
+                                      fontSize: "0.68rem", 
+                                      letterSpacing: "0.8px", 
+                                      background: "rgba(255, 255, 255, 0.15)",
+                                      border: "1px solid rgba(255, 255, 255, 0.25)",
+                                      borderRadius: "6px",
+                                      padding: "5px 10px",
+                                      display: "inline-block",
+                                      whiteSpace: "normal",
+                                      wordBreak: "break-word",
+                                      overflowWrap: "break-word",
+                                      maxWidth: "100%",
+                                      lineHeight: "1.35",
+                                      textAlign: "center"
+                                  }}>
+                                {data.basics.role}
+                            </span>
+                        </div>
                     )}
                 </div>
 
