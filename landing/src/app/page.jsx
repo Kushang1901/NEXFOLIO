@@ -6,7 +6,7 @@ import Footer from "../components/Footer";
 import Link from "next/link";
 import Script from "next/script";
 import ScrollReveal from "../components/ScrollReveal";
-import { Brain, CheckSquare, Share2, Percent, Globe, MessagesSquare, Star, ChevronDown, Lock, ArrowRight } from "lucide-react";
+import { Brain, CheckSquare, Share2, Percent, Globe, MessagesSquare, Star, ChevronDown, Lock, ArrowRight, Sparkles, ShieldCheck, Zap } from "lucide-react";
 
 export default function HomePage() {
     const [tailwindLoaded, setTailwindLoaded] = useState(true);
@@ -477,32 +477,99 @@ export default function HomePage() {
                         </div>
                     </section>
 
-                    {/* Video Showcase Section */}
-                    <section className="px-4 md:px-8 pt-8 pb-16 max-w-[1000px] mx-auto relative z-10">
+                    {/* Video Showcase Section: 50/50 Balanced & Interactive */}
+                    <section className="px-4 md:px-8 py-16 max-w-[1280px] mx-auto relative z-10">
                         <ScrollReveal delay={150}>
-                            <div className="text-center mb-8">
-                                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-[#c0c1ff] text-xs font-semibold uppercase tracking-wider mb-3">
-                                    <span className="w-2 h-2 rounded-full bg-indigo-400 animate-pulse"></span>
-                                    See CVGrid In Action
-                                </div>
-                                <h2 className="text-2xl md:text-4xl font-bold text-white tracking-tight" style={{ fontFamily: "var(--font-space-grotesk), sans-serif" }}>
-                                    Watch How It <span className="ai-gradient-text">Works</span>
-                                </h2>
-                                <p className="text-sm md:text-base text-[#c7c4d7] max-w-xl mx-auto mt-2" style={{ fontFamily: "var(--font-inter), sans-serif" }}>
-                                    Discover how CVGrid helps you craft ATS-proof resumes and land more interviews in minutes.
-                                </p>
-                            </div>
+                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-14 items-center">
+                                {/* Left: Interactive Content (Equal 50% Balance) */}
+                                <div className="flex flex-col justify-center text-left">
+                                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-[#c0c1ff] text-xs font-semibold uppercase tracking-wider mb-4 w-fit">
+                                        <span className="w-2 h-2 rounded-full bg-indigo-400 animate-pulse"></span>
+                                        Interactive Product Tour
+                                    </div>
 
-                            <div className="relative mx-auto rounded-2xl p-2 md:p-3 glass-card border border-indigo-500/30 shadow-[0_0_50px_rgba(99,102,241,0.18)]">
-                                <div className="relative w-full overflow-hidden rounded-xl bg-black/60 shadow-inner" style={{ aspectRatio: "16 / 9" }}>
-                                    <iframe
-                                        className="w-full h-full absolute inset-0 rounded-xl border-0"
-                                        src="https://www.youtube.com/embed/-I2vBXZc720?si=p84uSeCPH31iifLc"
-                                        title="CVGrid - AI Resume Builder Demo"
-                                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                                        referrerPolicy="strict-origin-when-cross-origin"
-                                        allowFullScreen
-                                    />
+                                    <h2 className="text-3xl sm:text-4xl lg:text-[42px] font-bold text-white tracking-tight mb-3 leading-[1.15]" style={{ fontFamily: "var(--font-space-grotesk), sans-serif" }}>
+                                        Built to Beat Algorithms. <br className="hidden sm:inline" />
+                                        Designed to <span className="ai-gradient-text">Get Hired</span>.
+                                    </h2>
+
+                                    <p className="text-sm md:text-base text-[#c7c4d7] mb-6 leading-relaxed" style={{ fontFamily: "var(--font-inter), sans-serif" }}>
+                                        Watch our 75-second walkthrough to see how CVGrid transforms raw career history into recruiter-ready, high-scoring resumes.
+                                    </p>
+
+                                    {/* Interactive Micro-Cards */}
+                                    <div className="space-y-3 mb-8">
+                                        <div className="glass-card p-3.5 rounded-xl border border-white/5 hover:border-indigo-500/40 hover:bg-white/[0.03] transition-all duration-300 flex items-start gap-3.5 group cursor-default">
+                                            <div className="w-9 h-9 rounded-lg bg-indigo-500/15 border border-indigo-500/30 flex items-center justify-center shrink-0 text-indigo-400 group-hover:scale-110 group-hover:bg-indigo-500/25 transition-all">
+                                                <Zap className="w-4 h-4 text-[#a5b4fc]" />
+                                            </div>
+                                            <div>
+                                                <h4 className="text-sm font-bold text-white tracking-wide group-hover:text-[#c0c1ff] transition-colors" style={{ fontFamily: "var(--font-space-grotesk), sans-serif" }}>
+                                                    Reverse-Engineered ATS Scanner
+                                                </h4>
+                                                <p className="text-xs text-[#a4a0ba] mt-0.5 leading-relaxed" style={{ fontFamily: "var(--font-inter), sans-serif" }}>
+                                                    Pinpoints missing keywords and benchmarks your resume to guarantee a 95%+ pass rate.
+                                                </p>
+                                            </div>
+                                        </div>
+
+                                        <div className="glass-card p-3.5 rounded-xl border border-white/5 hover:border-purple-500/40 hover:bg-white/[0.03] transition-all duration-300 flex items-start gap-3.5 group cursor-default">
+                                            <div className="w-9 h-9 rounded-lg bg-purple-500/15 border border-purple-500/30 flex items-center justify-center shrink-0 text-purple-400 group-hover:scale-110 group-hover:bg-purple-500/25 transition-all">
+                                                <Sparkles className="w-4 h-4 text-[#c084fc]" />
+                                            </div>
+                                            <div>
+                                                <h4 className="text-sm font-bold text-white tracking-wide group-hover:text-[#d8b4fe] transition-colors" style={{ fontFamily: "var(--font-space-grotesk), sans-serif" }}>
+                                                    Neural Bullet-Point Rephraser
+                                                </h4>
+                                                <p className="text-xs text-[#a4a0ba] mt-0.5 leading-relaxed" style={{ fontFamily: "var(--font-inter), sans-serif" }}>
+                                                    Upgrades passive tasks into quantifiable, action-oriented achievements that recruiters respect.
+                                                </p>
+                                            </div>
+                                        </div>
+
+                                        <div className="glass-card p-3.5 rounded-xl border border-white/5 hover:border-emerald-500/40 hover:bg-white/[0.03] transition-all duration-300 flex items-start gap-3.5 group cursor-default">
+                                            <div className="w-9 h-9 rounded-lg bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center shrink-0 text-emerald-400 group-hover:scale-110 group-hover:bg-emerald-500/25 transition-all">
+                                                <ShieldCheck className="w-4 h-4 text-emerald-400" />
+                                            </div>
+                                            <div>
+                                                <h4 className="text-sm font-bold text-white tracking-wide group-hover:text-emerald-300 transition-colors" style={{ fontFamily: "var(--font-space-grotesk), sans-serif" }}>
+                                                    Recruiter-Tested Clean PDF Export
+                                                </h4>
+                                                <p className="text-xs text-[#a4a0ba] mt-0.5 leading-relaxed" style={{ fontFamily: "var(--font-inter), sans-serif" }}>
+                                                    Pixel-perfect typography formatted specifically to avoid software parsing glitches and watermarks.
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Action row with trust metrics */}
+                                    <div className="flex flex-wrap items-center gap-4">
+                                        <button
+                                            onClick={handleStartResume}
+                                            className="ai-gradient-bg text-white font-bold px-7 py-3 rounded-xl flex items-center gap-2 group glow-hover transition-all active:scale-95 border-0 cursor-pointer text-sm shadow-lg shadow-indigo-500/20"
+                                        >
+                                            <span style={{ fontFamily: "var(--font-space-grotesk), sans-serif" }}>Build My Resume Free</span>
+                                            <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+                                        </button>
+
+                                        
+                                    </div>
+                                </div>
+
+                                {/* Right: Video (Equal 50% Balance) */}
+                                <div className="flex items-center justify-center">
+                                    <div className="relative w-full rounded-2xl p-2.5 md:p-3 glass-card border border-indigo-500/30 shadow-[0_0_60px_rgba(99,102,241,0.22)] hover:border-indigo-500/60 transition-all group">
+                                        <div className="relative w-full overflow-hidden rounded-xl bg-black/80 shadow-inner" style={{ aspectRatio: "16 / 9" }}>
+                                            <iframe
+                                                className="w-full h-full absolute inset-0 rounded-xl border-0"
+                                                src="https://www.youtube.com/embed/-I2vBXZc720?si=p84uSeCPH31iifLc"
+                                                title="CVGrid - AI Resume Builder Demo"
+                                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                                                referrerPolicy="strict-origin-when-cross-origin"
+                                                allowFullScreen
+                                            />
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </ScrollReveal>
