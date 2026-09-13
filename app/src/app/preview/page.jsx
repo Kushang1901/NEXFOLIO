@@ -911,8 +911,13 @@ export default function Preview() {
 
     /* ================= 2-PAGE PARTITIONING LOGIC ================= */
     const hasPage2 = Boolean(
-        data?.projects && 
-        (typeof data.projects === "string" ? data.projects.trim().length > 0 : data.projects.length > 0)
+        data?.projects && (
+            typeof data.projects === "string"
+                ? data.projects.replace(/[\s\-\*\•\–\—\n\r]/g, "").length > 0
+                : Array.isArray(data.projects)
+                    ? data.projects.some(p => typeof p === "string" ? p.replace(/[\s\-\*\•\–\—\n\r]/g, "").length > 0 : Boolean((p?.title || "").trim() || (p?.description || "").trim()))
+                    : false
+        )
     );
 
     const getPageData = (pageNumber) => {
@@ -1048,7 +1053,7 @@ export default function Preview() {
     const generateAndDownloadPDF = async () => {
         setIsDownloading(true);
         setDownloadType("pdf");
-        showToast("Generating high-resolution 2-Page PDF...", "info");
+        showToast(hasPage2 ? "Generating high-resolution 2-Page PDF..." : "Generating high-resolution 1-Page PDF...", "info");
 
         try {
             const { default: html2canvas } = await import("html2canvas");
@@ -1112,7 +1117,7 @@ export default function Preview() {
 
             pdf.save(safeFileName);
             setShowPdfModal(false);
-            showToast("2-Page PDF downloaded successfully!", "success");
+            showToast(hasPage2 ? "2-Page PDF downloaded successfully!" : "1-Page PDF downloaded successfully!", "success");
 
             setTimeout(() => {
                 triggerReviewPrompt();
@@ -1226,7 +1231,7 @@ export default function Preview() {
                     {/* PAGE 1 */}
                     <div className="d-flex flex-column align-items-center w-100">
                         <div className="badge bg-white text-dark shadow-sm border mb-2 px-3 py-1.5" style={{ fontSize: "12px", fontWeight: 600, borderRadius: "20px" }}>
-                            <i className="fas fa-file-alt text-primary me-1.5"></i> Page 1 • Profile, Experience, Skills &amp; Education
+                            <i className="fas fa-file-alt text-primary me-1.5"></i> {hasPage2 ? "Page 1 of 2 • Profile, Experience, Skills & Education" : "Single Page • Complete Resume"}
                         </div>
                         <div 
                             className="preview-viewport-shadow"
@@ -1301,7 +1306,7 @@ export default function Preview() {
                     {hasPage2 && (
                         <div className="d-flex flex-column align-items-center w-100">
                             <div className="badge bg-white text-dark shadow-sm border mb-2 px-3 py-1.5" style={{ fontSize: "12px", fontWeight: 600, borderRadius: "20px" }}>
-                                <i className="fas fa-layer-group text-info me-1.5"></i> Page 2 • Selected Projects
+                                <i className="fas fa-layer-group text-info me-1.5"></i> Page 2 of 2 • Selected Projects
                             </div>
                             <div 
                                 className="preview-viewport-shadow"
@@ -2333,7 +2338,9 @@ export default function Preview() {
                                                         </div>
                                                         <span className="fw-bold fs-6 mb-1 text-white">PDF File</span>
                                                         <span className="text-white-50 small" style={{ fontSize: "0.75rem" }}>
-                                                            {isCurrentTemplatePremium && !isPaid ? "2 Pages • Unlock (₹150)" : "2-Page Layout • ATS Ready"}
+                                                            {isCurrentTemplatePremium && !isPaid 
+                                                                ? (hasPage2 ? "2 Pages • Unlock (₹150)" : "1 Page • Unlock (₹150)") 
+                                                                : (hasPage2 ? "2-Page Layout • ATS Ready" : "1-Page Layout • ATS Ready")}
                                                         </span>
                                                     </button>
                                                 </div>
@@ -2670,7 +2677,7 @@ export default function Preview() {
                                     }}
                                 >
                                     <Crown size={18} />
-                                    Pay ₹150 &amp; Download 2-Page PDF
+                                    Pay ₹150 &amp; Download {hasPage2 ? "2-Page" : "1-Page"} PDF
                                 </button>
                             ) : (
                                 <button
@@ -2693,7 +2700,7 @@ export default function Preview() {
                                     ) : (
                                         <>
                                             <i className="fas fa-download"></i>
-                                            Download 2-Page PDF
+                                            Download {hasPage2 ? "2-Page" : "1-Page"} PDF
                                         </>
                                     )}
                                 </button>

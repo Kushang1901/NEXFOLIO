@@ -542,7 +542,7 @@ export default function HomePage() {
                                         </div>
                                     </div>
 
-                                    {/* Action row with trust metrics */}
+                                    {/* Action row */}
                                     <div className="flex flex-wrap items-center gap-4">
                                         <button
                                             onClick={handleStartResume}
@@ -551,8 +551,6 @@ export default function HomePage() {
                                             <span style={{ fontFamily: "var(--font-space-grotesk), sans-serif" }}>Build My Resume Free</span>
                                             <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
                                         </button>
-
-                                        
                                     </div>
                                 </div>
 

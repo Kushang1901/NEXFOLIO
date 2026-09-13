@@ -30,14 +30,18 @@ const parseProjectsText = (text) => {
 };
 
 const serializeProjectsList = (list) => {
+    if (!list || !Array.isArray(list)) return "";
     return list.map(p => {
-        const title = p.title.trim();
-        const desc = p.description.trim().split("\n").map(line => {
+        const title = (p?.title || "").trim();
+        const desc = (p?.description || "").trim().split("\n").map(line => {
             const l = line.trim();
             if (!l) return "";
             if (l.startsWith("-") || l.startsWith("•") || l.startsWith("*")) return l;
             return `- ${l}`;
         }).filter(Boolean).join("\n");
+        if (!title && !desc) return "";
+        if (!title) return desc;
+        if (!desc) return title;
         return `${title}\n${desc}`;
     }).filter(Boolean).join("\n\n");
 };
@@ -1639,8 +1643,21 @@ ${formData.skills || "Not provided"}
 
                                 {/* PROJECTS */}
                                 <div className="mb-4">
-                                    <label className="form-label fw-semibold text-white d-flex justify-content-between align-items-center">
-                                        <span>Projects</span>
+                                    <label className="form-label fw-semibold text-white d-flex justify-content-between align-items-center mb-1">
+                                        <div className="d-flex align-items-center gap-2">
+                                            <span>Projects</span>
+                                            <span className="badge" style={{
+                                                background: "rgba(99, 102, 241, 0.15)",
+                                                color: "#a5b4fc",
+                                                border: "1px solid rgba(99, 102, 241, 0.3)",
+                                                fontSize: "0.72rem",
+                                                fontWeight: "600",
+                                                padding: "3px 8px",
+                                                borderRadius: "6px"
+                                            }}>
+                                                Optional • Recommended
+                                            </span>
+                                        </div>
                                         <button
                                             type="button"
                                             onClick={handleAddProject}
@@ -1651,10 +1668,16 @@ ${formData.skills || "Not provided"}
                                             + Add Project
                                         </button>
                                     </label>
+                                    <p className="text-white-50 small mb-2" style={{ fontSize: "0.78rem" }}>
+                                        Showcase key projects you have built. If no projects are added, your resume will automatically format as a clean <strong>1-page document</strong>.
+                                    </p>
 
                                     {projectsList.length === 0 ? (
-                                        <div className="text-center py-4 bg-dark border-secondary mb-3" style={{ borderRadius: "12px", border: "1px dashed rgba(255,255,255,0.1)" }}>
-                                            <p className="text-white-50 small mb-0">No projects added yet. Click "+ Add Project" to showcase your work.</p>
+                                        <div className="text-center py-4 bg-dark border-secondary mb-3" style={{ borderRadius: "12px", border: "1px dashed rgba(255,255,255,0.15)", background: "rgba(255, 255, 255, 0.02)" }}>
+                                            <p className="text-white-50 small mb-1">No projects added yet. Click "+ Add Project" to showcase your work.</p>
+                                            <p className="text-white-50 small mb-0" style={{ fontSize: "0.75rem", opacity: 0.7 }}>
+                                                💡 Projects are optional, but recommended. Resumes without projects will cleanly exclude the 2nd page.
+                                            </p>
                                         </div>
                                     ) : (
                                         <div className="d-flex flex-column gap-3 mb-3">
