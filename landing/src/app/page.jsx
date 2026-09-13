@@ -477,7 +477,37 @@ export default function HomePage() {
                         </div>
                     </section>
 
-                    {/* Bento Features */}
+                    {/* Video Showcase Section */}
+                    <section className="px-4 md:px-8 pt-8 pb-16 max-w-[1000px] mx-auto relative z-10">
+                        <ScrollReveal delay={150}>
+                            <div className="text-center mb-8">
+                                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-[#c0c1ff] text-xs font-semibold uppercase tracking-wider mb-3">
+                                    <span className="w-2 h-2 rounded-full bg-indigo-400 animate-pulse"></span>
+                                    See CVGrid In Action
+                                </div>
+                                <h2 className="text-2xl md:text-4xl font-bold text-white tracking-tight" style={{ fontFamily: "var(--font-space-grotesk), sans-serif" }}>
+                                    Watch How It <span className="ai-gradient-text">Works</span>
+                                </h2>
+                                <p className="text-sm md:text-base text-[#c7c4d7] max-w-xl mx-auto mt-2" style={{ fontFamily: "var(--font-inter), sans-serif" }}>
+                                    Discover how CVGrid helps you craft ATS-proof resumes and land more interviews in minutes.
+                                </p>
+                            </div>
+
+                            <div className="relative mx-auto rounded-2xl p-2 md:p-3 glass-card border border-indigo-500/30 shadow-[0_0_50px_rgba(99,102,241,0.18)]">
+                                <div className="relative w-full overflow-hidden rounded-xl bg-black/60 shadow-inner" style={{ aspectRatio: "16 / 9" }}>
+                                    <iframe
+                                        className="w-full h-full absolute inset-0 rounded-xl border-0"
+                                        src="https://www.youtube.com/embed/-I2vBXZc720?si=p84uSeCPH31iifLc"
+                                        title="CVGrid - AI Resume Builder Demo"
+                                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                                        referrerPolicy="strict-origin-when-cross-origin"
+                                        allowFullScreen
+                                    />
+                                </div>
+                            </div>
+                        </ScrollReveal>
+                    </section>
+
                     {/* Bento Features */}
                     <section className="px-4 md:px-8 py-24 max-w-[1280px] mx-auto relative">
                         {/* Background glowing spots */}
