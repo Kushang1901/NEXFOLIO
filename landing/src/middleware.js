@@ -5,7 +5,7 @@ export function middleware(req) {
     const pathname = url.pathname;
     const hostname = req.headers.get("host") || "";
 
-    // Pass through root page, landing pages (about, blog, contact, privacy, terms), Next.js internal files, static/public files, and API routes
+    // Pass through root page, landing pages, SEO & AEO files, Next.js internal files, static/public files, and API routes
     if (
         pathname === "/" ||
         pathname.startsWith("/about") ||
@@ -13,6 +13,11 @@ export function middleware(req) {
         pathname.startsWith("/contact") ||
         pathname.startsWith("/privacy") ||
         pathname.startsWith("/terms") ||
+        pathname.startsWith("/disclaimer") ||
+        pathname.startsWith("/llms.txt") ||
+        pathname.startsWith("/llms-full.txt") ||
+        pathname.startsWith("/robots.txt") ||
+        pathname.startsWith("/sitemap.xml") ||
         pathname.startsWith("/_next") ||
         pathname.startsWith("/api") ||
         pathname.startsWith("/static") ||

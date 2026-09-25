@@ -355,13 +355,16 @@ export default function RootLayout({ children }) {
                 "@type": "Organization",
                 "@id": `${BASE_URL}/#organization`,
                 "name": SITE_NAME,
-                "url": BASE_URL,
+                "url": "https://cvgrid.in",
                 "logo": LOGO,
                 "image": LOGO,
                 "description": "CVGrid provides a free AI-powered resume builder with 18+ professional templates for students and job seekers.",
                 "sameAs": [
-                    BASE_URL,
+                    "https://cvgrid.in",
+                    "https://apps.microsoft.com/detail/9n3qsv077xt0?hl=en-US&gl=IN",
                     "https://github.com/Kushang1901",
+                    "https://www.linkedin.com/in/kushang-acharya-938a712a6/",
+                    "https://kushangacharya.vercel.app"
                 ],
                 "founder": {
                     "@id": `${BASE_URL}/#author`,
@@ -381,7 +384,11 @@ export default function RootLayout({ children }) {
                 "@id": `${BASE_URL}/#author`,
                 "name": "Kushang Acharya",
                 "url": "https://kushangacharya.vercel.app",
-                "jobTitle": "Full Stack Developer",
+                "jobTitle": "Full Stack Developer & AI Engineer",
+                "sameAs": [
+                    "https://www.linkedin.com/in/kushang-acharya-938a712a6/",
+                    "https://github.com/Kushang1901"
+                ],
                 "worksFor": {
                     "@id": `${BASE_URL}/#organization`,
                 },
@@ -393,7 +400,7 @@ export default function RootLayout({ children }) {
                 "@id": `${BASE_URL}/#website`,
                 "url": BASE_URL,
                 "name": "CVGrid",
-                "alternateName": ["CVGrid AI", "CV Grid", "cvgrid.in"],
+                "alternateName": ["CVGrid AI", "CV Grid", "app.cvgrid.in"],
                 "description": "Build professional ATS-friendly resumes with AI. Free PDF export. 18+ templates.",
                 "publisher": {
                     "@id": `${BASE_URL}/#organization`,
@@ -418,7 +425,6 @@ export default function RootLayout({ children }) {
                 "description": SITE_DESC,
                 "isPartOf": { "@id": `${BASE_URL}/#website` },
                 "about": { "@id": `${BASE_URL}/#software` },
-                "breadcrumb": { "@id": `${BASE_URL}/#breadcrumb` },
                 "inLanguage": "en-US",
                 "datePublished": "2024-01-01",
                 "dateModified": new Date().toISOString().split("T")[0],
@@ -428,32 +434,6 @@ export default function RootLayout({ children }) {
                     "width": 1200,
                     "height": 630,
                 },
-            },
-
-            // 6. BreadcrumbList
-            {
-                "@type": "BreadcrumbList",
-                "@id": `${BASE_URL}/#breadcrumb`,
-                "itemListElement": [
-                    {
-                        "@type": "ListItem",
-                        "position": 1,
-                        "name": "Home",
-                        "item": BASE_URL,
-                    },
-                    {
-                        "@type": "ListItem",
-                        "position": 2,
-                        "name": "Resume Templates",
-                        "item": `${BASE_URL}/templates`,
-                    },
-                    {
-                        "@type": "ListItem",
-                        "position": 3,
-                        "name": "Resume Builder",
-                        "item": `${BASE_URL}/builder`,
-                    },
-                ],
             },
 
             // 7. HowTo — "How to build a free resume with AI"
@@ -712,20 +692,6 @@ export default function RootLayout({ children }) {
                 <meta property="og:price:amount" content="0" />
                 <meta property="og:price:currency" content="USD" />
                 <meta property="og:availability" content="instock" />
-
-                {/* ── Google Search Site Name Structured Data ── */}
-                <script
-                    type="application/ld+json"
-                    dangerouslySetInnerHTML={{
-                        __html: JSON.stringify({
-                            "@context": "https://schema.org",
-                            "@type": "WebSite",
-                            "name": "CVGrid",
-                            "alternateName": ["CVGrid AI", "CV Grid"],
-                            "url": "https://app.cvgrid.in/"
-                        })
-                    }}
-                />
 
                 {/* ── Structured Data: JSON-LD ────────────────── */}
                 <script

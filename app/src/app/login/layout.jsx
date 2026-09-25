@@ -1,15 +1,15 @@
 export const metadata = {
-    title: "Log In to CVGrid – Free AI Resume Builder",
+    title: "Sign In to CVGrid – Access Your Saved Resumes",
     description: "Log in to your CVGrid account to access your saved resumes, edit your AI-generated resume, and download your professional PDF. Free AI resume builder.",
     alternates: {
-        canonical: "/login",
+        canonical: "https://app.cvgrid.in/login",
     },
     robots: {
-        index: true,
-        follow: false,
+        index: false,
+        follow: true,
     },
     openGraph: {
-        title: "Log In – CVGrid Free AI Resume Builder",
+        title: "Sign In – CVGrid AI Resume Builder",
         description: "Access your CVGrid account to manage and download your professional AI-generated resumes.",
         url: "https://app.cvgrid.in/login",
         type: "website",
@@ -19,4 +19,3 @@ export const metadata = {
 export default function LoginLayout({ children }) {
     return <>{children}</>;
 }
-

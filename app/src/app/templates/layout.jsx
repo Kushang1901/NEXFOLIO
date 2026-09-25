@@ -1,6 +1,6 @@
 export const metadata = {
     title: "ATS Resume Templates – 18+ Free & Premium Designs | CVGrid",
-    description: "Browse 18+ free & premium ATS-optimized resume templates.",
+    description: "Browse 18+ free & premium ATS-optimized resume templates. Recruiter-approved single and dual-column layouts for students, freshers, and professionals.",
     keywords: [
         "free resume templates", "ATS resume templates", "professional resume templates",
         "modern resume template", "classic resume template", "creative resume template",
@@ -10,11 +10,11 @@ export const metadata = {
         "best resume templates 2026", "resume designs free",
     ],
     alternates: {
-        canonical: "/templates",
+        canonical: "https://app.cvgrid.in/templates",
     },
     openGraph: {
         title: "ATS Resume Templates – 18+ Free & Premium Designs | CVGrid",
-        description: "Browse 18+ free & premium ATS-optimized resume templates.",
+        description: "Browse 18+ free & premium ATS-optimized resume templates. Recruiter-approved layouts for students and professionals.",
         url: "https://app.cvgrid.in/templates",
         type: "website",
         images: [

@@ -4,13 +4,13 @@ export default function sitemap() {
 
     return [
         {
-            url: baseUrl,
+            url: `${baseUrl}/templates`,
             lastModified: today,
-            changeFrequency: "daily",
+            changeFrequency: "weekly",
             priority: 1.0,
         },
         {
-            url: `${baseUrl}/templates`,
+            url: `${baseUrl}/ats-checker`,
             lastModified: today,
             changeFrequency: "weekly",
             priority: 0.95,
@@ -18,56 +18,50 @@ export default function sitemap() {
         {
             url: `${baseUrl}/cover-letter`,
             lastModified: today,
-            changeFrequency: "monthly",
-            priority: 0.8,
-        },
-        {
-            url: `${baseUrl}/ats-checker`,
-            lastModified: today,
-            changeFrequency: "monthly",
-            priority: 0.8,
+            changeFrequency: "weekly",
+            priority: 0.9,
         },
         {
             url: `${baseUrl}/ai-tools`,
             lastModified: today,
             changeFrequency: "weekly",
-            priority: 0.85,
+            priority: 0.9,
         },
         {
             url: `${baseUrl}/ai-tools/match-score`,
             lastModified: today,
             changeFrequency: "weekly",
-            priority: 0.8,
+            priority: 0.85,
         },
         {
             url: `${baseUrl}/ai-tools/keyword-optimizer`,
             lastModified: today,
             changeFrequency: "weekly",
-            priority: 0.8,
+            priority: 0.85,
         },
         {
             url: `${baseUrl}/ai-tools/job-analyzer`,
             lastModified: today,
             changeFrequency: "weekly",
-            priority: 0.8,
+            priority: 0.85,
         },
         {
             url: `${baseUrl}/ai-tools/interview-generator`,
             lastModified: today,
             changeFrequency: "weekly",
-            priority: 0.8,
+            priority: 0.85,
         },
         {
             url: `${baseUrl}/ai-tools/portfolio-builder`,
             lastModified: today,
             changeFrequency: "weekly",
-            priority: 0.8,
+            priority: 0.85,
         },
         {
             url: `${baseUrl}/ai-tools/resume-sharing`,
             lastModified: today,
             changeFrequency: "weekly",
-            priority: 0.8,
+            priority: 0.85,
         },
     ];
 }

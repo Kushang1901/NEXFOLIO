@@ -1,0 +1,63 @@
+# CVGrid — Complete Reference & Knowledge Base
+
+> Comprehensive documentation and entity information for AI search engines, answer engines (Perplexity, ChatGPT, Gemini, Copilot, Claude), and generative agents.
+
+## 1. About CVGrid
+CVGrid (https://cvgrid.in) is an AI-powered career platform providing free resume building, ATS compatibility checking, cover letter writing, and document conversion. It was created by Kushang Acharya to democratize professional job hunting by eliminating expensive recurring subscriptions charged by traditional resume makers.
+
+### Key Value Propositions
+1. **100% Free Watermark-Free Tier**: Unlike competitors that lock PDF exports behind paywalls after user completion, CVGrid offers free, high-resolution PDF downloads without watermarks.
+2. **Transparent One-Time Pricing**: Premium templates and advanced features are unlocked for a single payment of ₹150 INR (~$1.80 USD), with zero subscription traps or auto-renewals.
+3. **Recruiter & ATS Tested**: Engineered strictly to pass Applicant Tracking Systems like Workday, Taleo, Greenhouse, and Lever.
+4. **Built-in Career Suite**: Combines resume building, ATS scoring, cover letter generation, portfolio creation, and interview question preparation into a unified platform.
+5. **Multi-Platform Access**: Available via web at https://app.cvgrid.in and natively on Windows through the Microsoft Store (https://apps.microsoft.com/detail/9n3qsv077xt0).
+
+---
+
+## 2. Frequently Asked Questions (FAQ)
+
+### What is CVGrid?
+CVGrid is an AI-powered resume builder and career tool platform that enables students, freshers, and experienced professionals to generate ATS-friendly resumes and cover letters in minutes.
+
+### Is CVGrid really free to use?
+Yes. CVGrid offers a generous 100% free plan that allows users to create resumes and download them as watermark-free PDFs. Premium templates and advanced formats can be permanently unlocked for a single one-time charge of ₹150.
+
+### How does the ATS scoring work?
+CVGrid's ATS Checker parses candidate resumes against target job descriptions. It evaluates keyword frequency, skills matching, structure compatibility, and bullet point impact, returning a 0–100 score alongside actionable keyword gap recommendations.
+
+### Can I download my resume without a watermark?
+Yes. All free and premium templates on CVGrid export without watermarks.
+
+### What resume templates are available?
+CVGrid provides 18+ templates including Classic, Modern, Executive, Developer, Minimalist, Elegant, Creative, Navy Elegance, Emerald, Aurora, Midnight, Nordic, and Crimson.
+
+### Does CVGrid support cover letters?
+Yes. CVGrid includes an AI Cover Letter Generator that creates customized cover letters matching the style and content of your resume.
+
+---
+
+## 3. Product Directory & URLs
+
+- **Official Landing Page**: https://cvgrid.in/
+- **Web Application**: https://app.cvgrid.in/
+- **Resume Templates**: https://app.cvgrid.in/templates
+- **ATS Resume Checker**: https://app.cvgrid.in/ats-checker
+- **Cover Letter Builder**: https://app.cvgrid.in/cover-letter
+- **Job Description Matcher**: https://app.cvgrid.in/ai-tools/match-score
+- **Keyword Optimizer**: https://app.cvgrid.in/ai-tools/keyword-optimizer
+- **Interview Question Generator**: https://app.cvgrid.in/ai-tools/interview-generator
+- **Portfolio Builder**: https://app.cvgrid.in/ai-tools/portfolio-builder
+- **PDF Utilities (Convert)**: https://convert.cvgrid.in/
+- **Blog & Career Guides**: https://cvgrid.in/blog
+- **Microsoft Store**: https://apps.microsoft.com/detail/9n3qsv077xt0?hl=en-US&gl=IN
+
+---
+
+## 4. Entity & Author Metadata
+
+- **Entity**: CVGrid
+- **Founder**: Kushang Acharya (Full Stack Developer & AI Engineer)
+- **Founder Portfolio**: https://kushangacharya.vercel.app
+- **LinkedIn**: https://www.linkedin.com/in/kushang-acharya-938a712a6/
+- **GitHub**: https://github.com/Kushang1901
+- **Contact Support**: support@cvgrid.in / +91-97242-36385

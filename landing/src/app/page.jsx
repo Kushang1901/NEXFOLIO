@@ -940,36 +940,44 @@ export default function HomePage() {
                         <div className="space-y-4">
                             {[
                                 {
-                                    q: "Is CVGrid free to use?",
-                                    a: "Yes! CVGrid offers a generous free tier. You can create your resume and download it completely free and watermark-free using any of our free templates. Premium templates are available for a one-time upgrade charge of ₹150 per resume.",
+                                    q: "Is CVGrid really free to use?",
+                                    a: "Yes! CVGrid offers a generous free tier. You can create your resume and download it completely free and watermark-free using any of our free templates. Premium templates are available for a one-time upgrade charge of ₹150.",
                                 },
                                 {
                                     q: "Are the resume templates ATS-friendly?",
-                                    a: "Absolutely. All resume templates on CVGrid are rigorously tested against leading Applicant Tracking Systems (ATS) to ensure your content parses perfectly and is never scrambled or ignored by recruiters.",
-                                },
-                                {
-                                    q: "Will recruiters know I used AI?",
-                                    a: "No. Our AI model is fine-tuned to write professional, impact-driven sentences that sound natural. It helps rephrase and optimize your real experience to highlight key achievements.",
+                                    a: "All resume templates on CVGrid are designed to be ATS (Applicant Tracking System) friendly. They use clean formatting, standard section headings, and readable fonts that pass recruiter screening software.",
                                 },
                                 {
                                     q: "How does the AI resume builder work?",
-                                    a: "Simply input your professional details, click the 'Generate AI Content' helper, and our AI will draft descriptions, executive summaries, and action-oriented bullet points matching your industry and target job description.",
+                                    a: "CVGrid uses advanced AI models to generate professional resume content based on your job role, experience, and skills. Simply enter your details, click generate, review the content, and download your finished resume.",
                                 },
                                 {
                                     q: "Can I download my resume as a PDF?",
-                                    a: "Yes. Once you're done editing, you can immediately download your CV as a high-quality PDF, Word document (.docx), or high-res PNG image. Downloads are completely free and watermark-free on our free layouts; premium layouts require a one-time upgrade.",
+                                    a: "Yes! Once you've built your resume, you can download it as a high-quality PDF, Word doc, or PNG. Free templates are completely watermark-free and free to download; premium templates are unlocked with a single one-time payment.",
                                 },
                                 {
                                     q: "Does CVGrid work for freshers and students?",
-                                    a: "Yes. The builder has custom sections for internships, projects, and achievements. The AI writer is optimized to highlight transferable skills, making it perfect for students and career switchers.",
+                                    a: "Absolutely. CVGrid is specifically designed for students, freshers, and entry-level job seekers. The AI helps you write professional resume content even if you have limited work experience.",
+                                },
+                                {
+                                    q: "How many resume templates are available?",
+                                    a: "CVGrid offers 18+ professionally designed resume templates including Classic, Modern, Creative, Executive, Developer, Minimalist, Elegant, Navy Elegance, Emerald, Aurora, Midnight, Nordic, Crimson, and more.",
+                                },
+                                {
+                                    q: "Is there an ATS checker in CVGrid?",
+                                    a: "Yes! CVGrid includes a built-in AI-powered ATS checker that analyzes your resume against a job description and gives you an ATS compatibility score with detailed suggestions to improve your chances.",
+                                },
+                                {
+                                    q: "Can CVGrid generate a cover letter too?",
+                                    a: "Yes! CVGrid has a free AI cover letter generator. Just enter your job title, company, and key highlights — and the AI will write a compelling, personalized cover letter in seconds.",
                                 },
                                 {
                                     q: "Why is CVGrid considered the best and less expensive CV maker?",
-                                    a: "CVGrid is designed to be both the best AI resume builder and the most less expensive CV maker online. While other tools bind you to expensive subscriptions (like $20-$30/month), CVGrid offers a full-featured 100% free tier. Upgrading to our premium resume layouts costs only a tiny, one-time payment of ₹150 for lifetime access.",
+                                    a: "CVGrid is designed to be the best and most less expensive CV maker on the market. We offer a 100% free tier with watermark-free PDF downloads. Premium templates are unlocked for a tiny, one-time payment of ₹150, making it much cheaper than monthly subscriptions of $20+ from competitors.",
                                 },
                                 {
                                     q: "What makes CVGrid the best ATS scorer and keyword generator?",
-                                    a: "We provide the best ATS scorer and keyword generator built directly into our career tools suite. Our scanner scores your resume against any job description and lists the exact missing keywords and skills you need to add to pass recruiter screens.",
+                                    a: "CVGrid includes the best ATS scorer and best keyword generator to scan your resume against target job descriptions. The AI calculates an overall match score, highlights keyword gaps, and recommends how to write and optimize them.",
                                 },
                             ].map((item, i) => (
                                 <ScrollReveal key={i} delay={i * 80}>

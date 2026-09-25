@@ -1,0 +1,26 @@
+# CVGrid App & API Reference
+
+> CVGrid (https://cvgrid.in / https://app.cvgrid.in) is an AI-powered resume builder, ATS score checker, and career acceleration suite.
+
+## Web Application Tools & Endpoints
+
+- [Resume Builder](https://app.cvgrid.in/): Interactive step-by-step resume editor with real-time preview and AI bullet point generation.
+- [Resume Templates](https://app.cvgrid.in/templates): 18+ ATS-compliant templates (Classic, Modern, Executive, Developer, Minimalist, etc.).
+- [ATS Score Checker](https://app.cvgrid.in/ats-checker): Scan your resume against job postings for keyword gaps and ATS compatibility.
+- [AI Cover Letter Generator](https://app.cvgrid.in/cover-letter): Generate role-targeted cover letters in seconds.
+- [AI Match Score](https://app.cvgrid.in/ai-tools/match-score): Deep match analysis against job descriptions.
+- [AI Keyword Optimizer](https://app.cvgrid.in/ai-tools/keyword-optimizer): Identify missing keywords and hard skills.
+- [AI Interview Question Generator](https://app.cvgrid.in/ai-tools/interview-generator): Role-specific interview prep.
+- [Portfolio Builder](https://app.cvgrid.in/ai-tools/portfolio-builder): Convert resumes into clean web portfolios.
+
+## Pricing & Transparency
+
+- Free Tier: 100% free resume creation and watermark-free PDF downloads.
+- Premium Upgrade: Single one-time fee of ₹150 INR (~$1.80 USD). No subscriptions.
+
+## Documentation & Entity
+- Entity: CVGrid
+- Founder: Kushang Acharya (https://kushangacharya.vercel.app)
+- GitHub: https://github.com/Kushang1901
+- Microsoft Store App: https://apps.microsoft.com/detail/9n3qsv077xt0?hl=en-US&gl=IN
+- Main Landing: https://cvgrid.in

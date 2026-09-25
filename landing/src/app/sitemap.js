@@ -14,32 +14,8 @@ export default function sitemap() {
         {
             url: `${baseUrl}/about`,
             lastModified: today,
-            changeFrequency: "weekly",
+            changeFrequency: "monthly",
             priority: 0.8,
-        },
-        {
-            url: `${baseUrl}/contact`,
-            lastModified: today,
-            changeFrequency: "weekly",
-            priority: 0.8,
-        },
-        {
-            url: `${baseUrl}/privacy`,
-            lastModified: today,
-            changeFrequency: "monthly",
-            priority: 0.6,
-        },
-        {
-            url: `${baseUrl}/terms`,
-            lastModified: today,
-            changeFrequency: "monthly",
-            priority: 0.6,
-        },
-        {
-            url: `${baseUrl}/disclaimer`,
-            lastModified: today,
-            changeFrequency: "monthly",
-            priority: 0.6,
         },
         {
             url: `${baseUrl}/blog`,
@@ -47,14 +23,52 @@ export default function sitemap() {
             changeFrequency: "daily",
             priority: 0.9,
         },
+        {
+            url: `${baseUrl}/contact`,
+            lastModified: today,
+            changeFrequency: "monthly",
+            priority: 0.7,
+        },
+        {
+            url: `${baseUrl}/privacy`,
+            lastModified: today,
+            changeFrequency: "yearly",
+            priority: 0.5,
+        },
+        {
+            url: `${baseUrl}/terms`,
+            lastModified: today,
+            changeFrequency: "yearly",
+            priority: 0.5,
+        },
+        {
+            url: `${baseUrl}/disclaimer`,
+            lastModified: today,
+            changeFrequency: "yearly",
+            priority: 0.5,
+        },
     ];
 
-    const blogRoutes = BLOG_POSTS.map(post => ({
-        url: `${baseUrl}/blog/${post.slug}`,
-        lastModified: today,
-        changeFrequency: "monthly",
-        priority: 0.8,
-    }));
+    const blogRoutes = BLOG_POSTS.map((post) => {
+        let postIsoDate = today;
+        try {
+            if (post.date) {
+                const parsed = new Date(post.date);
+                if (!isNaN(parsed.getTime())) {
+                    postIsoDate = parsed.toISOString().split("T")[0];
+                }
+            }
+        } catch {
+            postIsoDate = today;
+        }
+
+        return {
+            url: `${baseUrl}/blog/${post.slug}`,
+            lastModified: postIsoDate,
+            changeFrequency: "monthly",
+            priority: 0.85,
+        };
+    });
 
     return [...staticRoutes, ...blogRoutes];
 }

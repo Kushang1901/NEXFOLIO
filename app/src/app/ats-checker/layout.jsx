@@ -41,13 +41,13 @@ export default function ATSCheckerLayout({ children }) {
                 {
                     "@type": "ListItem",
                     "position": 1,
-                    "name": "Free AI ATS Resume Checker & Scorer Online | Check Resume Score Free – CVGrid",
+                    "name": "Home",
                     "item": "https://cvgrid.in",
                 },
                 {
                     "@type": "ListItem",
                     "position": 2,
-                    "name": "Free AI ATS Resume Checker & Scorer Online | Check Resume Score Free – CVGrid",
+                    "name": "ATS Resume Checker",
                     "item": "https://app.cvgrid.in/ats-checker",
                 },
             ],

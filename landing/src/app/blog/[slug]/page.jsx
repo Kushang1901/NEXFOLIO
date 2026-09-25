@@ -75,32 +75,73 @@ export default async function BlogPostDetail({ params }) {
         .filter(sec => sec.type === "heading")
         .map(sec => sec.text);
 
+    let isoDate = "2026-08-01";
+    try {
+        if (post.date) {
+            const parsed = new Date(post.date);
+            if (!isNaN(parsed.getTime())) {
+                isoDate = parsed.toISOString().split("T")[0];
+            }
+        }
+    } catch {}
+
     // JSON-LD Structured Data for Google AdSense & Search
     const blogPostingSchema = {
         "@context": "https://schema.org",
-        "@type": "BlogPosting",
-        "headline": post.title,
-        "description": post.description,
-        "author": {
-            "@type": "Person",
-            "name": post.author,
-            "url": "https://kushangacharya.vercel.app"
-        },
-        "datePublished": post.date,
-        "dateModified": post.date,
-        "publisher": {
-            "@type": "Organization",
-            "name": "CVGrid",
-            "url": "https://cvgrid.in",
-            "logo": {
-                "@type": "ImageObject",
-                "url": "https://cvgrid.in/logo.png"
+        "@graph": [
+            {
+                "@type": "BlogPosting",
+                "@id": `https://cvgrid.in/blog/${post.slug}#article`,
+                "headline": post.title,
+                "description": post.description,
+                "image": "https://cvgrid.in/og-image.png",
+                "inLanguage": "en-US",
+                "author": {
+                    "@type": "Person",
+                    "name": post.author,
+                    "url": "https://kushangacharya.vercel.app"
+                },
+                "datePublished": isoDate,
+                "dateModified": isoDate,
+                "publisher": {
+                    "@type": "Organization",
+                    "name": "CVGrid",
+                    "url": "https://cvgrid.in",
+                    "logo": {
+                        "@type": "ImageObject",
+                        "url": "https://cvgrid.in/logo.png"
+                    }
+                },
+                "mainEntityOfPage": {
+                    "@type": "WebPage",
+                    "@id": `https://cvgrid.in/blog/${post.slug}`
+                }
+            },
+            {
+                "@type": "BreadcrumbList",
+                "@id": `https://cvgrid.in/blog/${post.slug}#breadcrumb`,
+                "itemListElement": [
+                    {
+                        "@type": "ListItem",
+                        "position": 1,
+                        "name": "Home",
+                        "item": "https://cvgrid.in"
+                    },
+                    {
+                        "@type": "ListItem",
+                        "position": 2,
+                        "name": "Blog",
+                        "item": "https://cvgrid.in/blog"
+                    },
+                    {
+                        "@type": "ListItem",
+                        "position": 3,
+                        "name": post.title,
+                        "item": `https://cvgrid.in/blog/${post.slug}`
+                    }
+                ]
             }
-        },
-        "mainEntityOfPage": {
-            "@type": "WebPage",
-            "@id": `https://cvgrid.in/blog/${post.slug}`
-        }
+        ]
     };
 
     return (

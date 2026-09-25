@@ -107,6 +107,33 @@ export const metadata = {
 };
 
 export default function RootLayout({ children }) {
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebApplication",
+        "@id": "https://convert.cvgrid.in/#software",
+        "name": "CVGrid Convert",
+        "url": "https://convert.cvgrid.in",
+        "description": "Free, 100% private browser-native PDF converter and document utilities. Batch PDF to image, image to PDF, merge, split, and compress files locally.",
+        "applicationCategory": "UtilitiesApplication",
+        "operatingSystem": "All modern browsers",
+        "isAccessibleForFree": true,
+        "publisher": {
+          "@type": "Organization",
+          "name": "CVGrid",
+          "url": "https://cvgrid.in",
+          "logo": "https://cvgrid.in/logo.png",
+          "sameAs": [
+            "https://cvgrid.in",
+            "https://apps.microsoft.com/detail/9n3qsv077xt0?hl=en-US&gl=IN",
+            "https://github.com/Kushang1901"
+          ]
+        }
+      }
+    ]
+  };
+
   return (
     <html
       lang="en"
@@ -116,6 +143,10 @@ export default function RootLayout({ children }) {
         <link rel="icon" href="/favicon-48x48.png" sizes="48x48" type="image/png" />
         <link rel="icon" href="/logo192.png" sizes="192x192" type="image/png" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" sizes="180x180" />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
       </head>
       <body className="min-h-full flex flex-col bg-[#0f131b] text-[#dfe2ed] font-sans selection:bg-indigo-500/30 selection:text-white">
         <Navbar />

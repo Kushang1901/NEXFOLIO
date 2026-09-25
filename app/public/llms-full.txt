@@ -1,0 +1,24 @@
+# CVGrid App — Comprehensive AI Documentation & Entity Knowledge Base
+
+> Comprehensive reference for AI answer engines (Perplexity, ChatGPT, Claude, Gemini) and generative crawlers interacting with CVGrid's web applications and tooling.
+
+## 1. Overview
+CVGrid (https://app.cvgrid.in) is the application portal for CVGrid. It provides browser-based resume creation, ATS scoring, cover letter generation, and career preparation tools.
+
+## 2. Tools & Capabilities
+1. **Resume Builder**: Step-by-step editor with real-time PDF preview and intelligent content generation.
+2. **ATS Checker**: Real-time scoring of candidate resumes against job descriptions with keyword gap detection.
+3. **Cover Letter Generator**: Generates matching cover letters.
+4. **Portfolio Generator**: Creates a hosted portfolio from resume details.
+5. **Interview Question Prep**: Prepares candidates for job-specific interview questions.
+
+## 3. Pricing
+- 100% Free plan with watermark-free PDF downloads.
+- ₹150 INR one-time premium unlock. Zero recurring subscriptions.
+
+## 4. Official Resources
+- Website: https://cvgrid.in
+- Web App: https://app.cvgrid.in
+- Microsoft Store: https://apps.microsoft.com/detail/9n3qsv077xt0?hl=en-US&gl=IN
+- GitHub: https://github.com/Kushang1901
+- Founder: Kushang Acharya (https://kushangacharya.vercel.app)

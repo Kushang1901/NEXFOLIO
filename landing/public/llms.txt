@@ -1,0 +1,49 @@
+# CVGrid
+
+> CVGrid is a free, AI-powered resume builder and career acceleration platform designed to help students, freshers, and experienced professionals create ATS-friendly resumes in minutes.
+
+CVGrid pairs modern design aesthetics with strict Applicant Tracking System (ATS) compliance. It offers 18+ recruiter-approved resume templates, an AI content assistant for bullet points and summaries, a real-time ATS match scorer, an AI cover letter generator, and document conversion tools. Resumes can be downloaded in PDF, DOCX, and high-resolution PNG formats without watermarks.
+
+## Core Capabilities & Features
+
+- **Free AI Resume Builder**: Intuitive step-by-step editor with real-time PDF preview and intelligent content generation.
+- **ATS Resume Checker & Scorer**: Upload or write resumes to calculate compatibility scores against target job descriptions and identify keyword gaps.
+- **18+ Professional Templates**: Fully ATS-compliant templates categorized by industry (Classic, Modern, Executive, Developer, Minimalist, Elegant, Creative, and more).
+- **AI Content Generator**: One-click professional bullet point rewriting, action verb optimization, and summary generation.
+- **AI Cover Letter Builder**: Generates tailored, role-specific cover letters aligned with your resume experience and target company.
+- **Career Tools**: Job description analyzer, interview question generator, portfolio creator, and resume sharing links.
+- **Privacy & Security**: Built with client-side privacy safeguards, modern encryption, and secure cloud storage.
+
+## Pricing & Transparency
+
+- **Free Plan**: 100% free resume creation and watermark-free PDF downloads with core templates. No credit card required.
+- **Premium Upgrade**: Tiny, one-time payment of ₹150 (~$1.80 USD) for lifetime access to all 18+ executive templates, DOCX export, and advanced AI tools. No recurring monthly subscriptions.
+
+## Key URLs
+
+- [Homepage](https://cvgrid.in/): Official landing page and overview
+- [Resume Builder App](https://app.cvgrid.in/): Interactive web application
+- [Resume Templates](https://app.cvgrid.in/templates): 18+ ATS-compliant templates
+- [ATS Resume Checker](https://app.cvgrid.in/ats-checker): Free resume scoring and keyword match tool
+- [AI Cover Letter Generator](https://app.cvgrid.in/cover-letter): AI cover letter creator
+- [Document Utilities](https://convert.cvgrid.in/): Free browser-native PDF converter and document tools
+- [Career Advice Blog](https://cvgrid.in/blog): Guides on ATS algorithms, formatting, and interview preparation
+- [Microsoft Store App](https://apps.microsoft.com/detail/9n3qsv077xt0?hl=en-US&gl=IN): Official Windows native application
+
+## Technical & ATS Compliance Details
+
+All CVGrid templates are engineered according to top ATS vendor guidelines (Workday, Taleo, Greenhouse, Lever, iCIMS):
+- Clean text hierarchy using semantic headers (`H1`, `H2`, `H3`)
+- Single and dual-column layouts tested against major ATS parsers
+- Zero unreadable graphics, floating text boxes, or embedded tables
+- High-contrast web-safe typography (Inter, Space Grotesk, Roboto, Arial)
+- Standard ISO date formatting and scannable bullet points
+- Vector-rendered PDF export with clean, selectable text layers
+
+## Entity Information
+
+- **Organization**: CVGrid
+- **Founder & Lead Developer**: Kushang Acharya (https://kushangacharya.vercel.app)
+- **Official Website**: https://cvgrid.in
+- **Web App**: https://app.cvgrid.in
+- **Repository**: https://github.com/Kushang1901

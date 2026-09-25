@@ -21,6 +21,30 @@ const nextConfig = {
     },
     compress: true,
     poweredByHeader: false,
+    async redirects() {
+        return [
+            {
+                source: "/disclaimer",
+                destination: "https://cvgrid.in/disclaimer",
+                permanent: true,
+            },
+            {
+                source: "/about",
+                destination: "https://cvgrid.in/about",
+                permanent: true,
+            },
+            {
+                source: "/blog",
+                destination: "https://cvgrid.in/blog",
+                permanent: true,
+            },
+            {
+                source: "/blog/:path*",
+                destination: "https://cvgrid.in/blog/:path*",
+                permanent: true,
+            },
+        ];
+    },
     async rewrites() {
         return [
             {
