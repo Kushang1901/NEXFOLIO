@@ -431,7 +431,7 @@ export default function Preview() {
 
             // 2. Open Razorpay checkout
             const options = {
-                key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || "rzp_live_TDTM6sBKdckc4Y",
+                key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || "rzp_live_TglLJJoM8UdgEQ",
                 amount: amount,
                 currency: currency,
                 name: "CVGrid Premium",
