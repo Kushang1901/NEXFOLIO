@@ -4,7 +4,7 @@ import React from "react";
 import Link from "next/link";
 import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
-import { Sparkles, Trophy, Users, Award, ShieldCheck, ArrowRight, ArrowLeft } from "lucide-react";
+import { Sparkles, Trophy, Users, Award, ShieldCheck, ArrowRight, ArrowLeft, BookOpen, UserCheck, Mail } from "lucide-react";
 
 export default function AboutUs() {
     return (
@@ -119,6 +119,58 @@ export default function AboutUs() {
                                 <p className="text-slate-400 text-xs md:text-sm leading-relaxed">
                                     We consistently update our templates, resume parser engines, and AI algorithms to align with modern hiring standards and recruiter expectations.
                                 </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Editorial Standards & Leadership Section (E-E-A-T) */}
+                    <div className="glass-card p-8 md:p-12 mb-16 border-indigo-500/20">
+                        <div className="flex items-center gap-3 mb-6">
+                            <div className="w-10 h-10 rounded-xl bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 flex items-center justify-center shrink-0">
+                                <BookOpen size={20} />
+                            </div>
+                            <div>
+                                <h3 className="text-xl md:text-2xl font-bold text-white" style={{ fontFamily: "var(--font-space-grotesk), sans-serif" }}>
+                                    Editorial Standards &amp; Review Process
+                                </h3>
+                                <p className="text-slate-400 text-xs md:text-sm">How we research, write, and verify our career resources</p>
+                            </div>
+                        </div>
+
+                        <div className="space-y-4 text-slate-300 text-sm leading-relaxed mb-8">
+                            <p>
+                                At CVGrid, our career blueprints, resume writing guides, and ATS optimization resources are produced under strict editorial independence. We do not accept sponsored placements for resume advice, nor do we publish unvetted AI-generated generic filler.
+                            </p>
+                            <p>
+                                Every guide published on our platform is researched and benchmarked against the real parsing rules of tier-1 Applicant Tracking Systems (including Workday, Greenhouse, Taleo, and Lever) and vetted against modern tech and corporate hiring practices.
+                            </p>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-6 border-t border-white/10">
+                            <div className="p-5 rounded-xl bg-white/[0.02] border border-white/5 flex items-start gap-4">
+                                <div className="w-10 h-10 rounded-full bg-indigo-600/30 text-indigo-300 font-bold flex items-center justify-center shrink-0">
+                                    <UserCheck size={18} />
+                                </div>
+                                <div>
+                                    <h4 className="text-white font-bold text-sm mb-1">Founder &amp; Lead Engineer</h4>
+                                    <p className="text-indigo-400 text-xs font-semibold mb-2">Kushang Acharya</p>
+                                    <p className="text-slate-400 text-xs leading-relaxed">
+                                        Architect of CVGrid&apos;s ATS parser and resume generation engine. Dedicated to building accessible, privacy-respecting career tools for job seekers worldwide.
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div className="p-5 rounded-xl bg-white/[0.02] border border-white/5 flex items-start gap-4">
+                                <div className="w-10 h-10 rounded-full bg-emerald-600/30 text-emerald-300 font-bold flex items-center justify-center shrink-0">
+                                    <Mail size={18} />
+                                </div>
+                                <div>
+                                    <h4 className="text-white font-bold text-sm mb-1">Editorial &amp; Verification Contact</h4>
+                                    <p className="text-emerald-400 text-xs font-semibold mb-2">support@cvgrid.in</p>
+                                    <p className="text-slate-400 text-xs leading-relaxed">
+                                        Have a question about a guide or noticed an ATS parsing update? Reach out directly to our editorial and engineering team.
+                                    </p>
+                                </div>
                             </div>
                         </div>
                     </div>

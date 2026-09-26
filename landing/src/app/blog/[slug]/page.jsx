@@ -75,6 +75,12 @@ export default async function BlogPostDetail({ params }) {
         .filter(sec => sec.type === "heading")
         .map(sec => sec.text);
 
+    // Pick top related articles
+    const relatedPosts = BLOG_POSTS
+        .filter(p => p.slug !== post.slug)
+        .sort((a, b) => (a.category === post.category ? -1 : 1))
+        .slice(0, 3);
+
     let isoDate = "2026-08-01";
     try {
         if (post.date) {
@@ -262,6 +268,69 @@ export default async function BlogPostDetail({ params }) {
                                     return null;
                                 })}
                             </div>
+
+                            {/* Editorial Fact Check & Review Box */}
+                            <div className="mt-12 pt-8 border-t border-white/10">
+                                <div className="p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-start gap-3">
+                                    <div className="w-8 h-8 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0 mt-0.5">
+                                        <BookOpen size={16} />
+                                    </div>
+                                    <div className="text-xs leading-relaxed text-slate-300">
+                                        <span className="font-semibold text-emerald-400 block mb-0.5">Editorial Standards &amp; ATS Research Note</span>
+                                        This guide has been reviewed against current ATS parsing frameworks (including Greenhouse, Taleo, and Workday) and recruiting industry benchmarks. Our editorial mission is to provide actionable, verifiable resume blueprints that give job candidates an authentic advantage.
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Author Bio Box */}
+                            <div className="mt-6 p-6 rounded-2xl bg-white/[0.03] border border-white/10 flex flex-col sm:flex-row items-center sm:items-start gap-4 text-center sm:text-left">
+                                <div className="w-14 h-14 rounded-full bg-gradient-to-tr from-indigo-600 to-purple-600 text-white font-extrabold text-lg flex items-center justify-center shrink-0 shadow-lg shadow-indigo-500/20">
+                                    KA
+                                </div>
+                                <div className="space-y-1.5 flex-grow">
+                                    <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2">
+                                        <h4 className="text-white font-bold text-base" style={{ fontFamily: "var(--font-space-grotesk), sans-serif" }}>
+                                            {post.author}
+                                        </h4>
+                                        <span className="text-[11px] font-semibold text-indigo-400 bg-indigo-500/10 px-2 py-0.5 rounded-full border border-indigo-500/20">
+                                            Creator &amp; Lead Engineer
+                                        </span>
+                                    </div>
+                                    <p className="text-slate-400 text-xs leading-relaxed">
+                                        Kushang is the engineer and creator behind CVGrid. He writes extensively on applicant tracking systems, algorithmic resume parsing, technical career advancement, and modern frontend architecture.
+                                    </p>
+                                </div>
+                            </div>
+
+                            {/* Related Guides Section */}
+                            {relatedPosts.length > 0 && (
+                                <div className="mt-12 pt-8 border-t border-white/10">
+                                    <h3 className="text-lg font-bold text-white mb-6" style={{ fontFamily: "var(--font-space-grotesk), sans-serif" }}>
+                                        Related Career Guides &amp; Blueprints
+                                    </h3>
+                                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                                        {relatedPosts.map((rel) => (
+                                            <Link 
+                                                key={rel.slug} 
+                                                href={`/blog/${rel.slug}`}
+                                                className="p-4 rounded-xl bg-white/[0.02] border border-white/5 hover:border-indigo-500/30 hover:bg-white/[0.04] transition-all flex flex-col justify-between group no-underline"
+                                            >
+                                                <div>
+                                                    <span className="text-[10px] font-semibold uppercase tracking-wider text-indigo-400 mb-1.5 block">
+                                                        {rel.category}
+                                                    </span>
+                                                    <h5 className="text-xs font-bold text-white group-hover:text-indigo-300 transition-colors line-clamp-2 leading-snug">
+                                                        {rel.title}
+                                                    </h5>
+                                                </div>
+                                                <span className="text-[11px] text-slate-500 mt-3 flex items-center gap-1">
+                                                    <Clock size={12} /> {rel.readTime}
+                                                </span>
+                                            </Link>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
                         </article>
 
                         {/* RIGHT COLUMN: Sidebar (TOC, Share, CTA) */}
