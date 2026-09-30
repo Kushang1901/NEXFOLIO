@@ -1,67 +1,19 @@
-export default function sitemap() {
-    const baseUrl = "https://app.cvgrid.in";
-    const today = new Date().toISOString().split("T")[0];
+import { getDynamicSitemapRoutes } from "../lib/seoConfig";
 
-    return [
-        {
-            url: `${baseUrl}/templates`,
-            lastModified: today,
-            changeFrequency: "weekly",
-            priority: 1.0,
-        },
-        {
-            url: `${baseUrl}/ats-checker`,
-            lastModified: today,
-            changeFrequency: "weekly",
-            priority: 0.95,
-        },
-        {
-            url: `${baseUrl}/cover-letter`,
-            lastModified: today,
-            changeFrequency: "weekly",
-            priority: 0.9,
-        },
-        {
-            url: `${baseUrl}/ai-tools`,
-            lastModified: today,
-            changeFrequency: "weekly",
-            priority: 0.9,
-        },
-        {
-            url: `${baseUrl}/ai-tools/match-score`,
-            lastModified: today,
-            changeFrequency: "weekly",
-            priority: 0.85,
-        },
-        {
-            url: `${baseUrl}/ai-tools/keyword-optimizer`,
-            lastModified: today,
-            changeFrequency: "weekly",
-            priority: 0.85,
-        },
-        {
-            url: `${baseUrl}/ai-tools/job-analyzer`,
-            lastModified: today,
-            changeFrequency: "weekly",
-            priority: 0.85,
-        },
-        {
-            url: `${baseUrl}/ai-tools/interview-generator`,
-            lastModified: today,
-            changeFrequency: "weekly",
-            priority: 0.85,
-        },
-        {
-            url: `${baseUrl}/ai-tools/portfolio-builder`,
-            lastModified: today,
-            changeFrequency: "weekly",
-            priority: 0.85,
-        },
-        {
-            url: `${baseUrl}/ai-tools/resume-sharing`,
-            lastModified: today,
-            changeFrequency: "weekly",
-            priority: 0.85,
-        },
-    ];
+/**
+ * Dynamic XML Sitemap Generator for CVGrid Web App
+ */
+export const revalidate = 86400; // Dynamically revalidate every 24 hours
+
+export default function sitemap() {
+    const routes = getDynamicSitemapRoutes();
+
+    return routes.map((route) => ({
+        url: route.url,
+        lastModified: route.lastModified,
+        changeFrequency: route.changeFrequency,
+        priority: route.priority,
+        ...(route.images ? { images: route.images } : {}),
+        ...(route.alternates ? { alternates: route.alternates } : {}),
+    }));
 }

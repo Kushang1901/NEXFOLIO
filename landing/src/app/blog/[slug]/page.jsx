@@ -4,6 +4,8 @@ import Navbar from "../../../components/Navbar";
 import Footer from "../../../components/Footer";
 import BlogPostClient from "../../../components/BlogPostClient";
 import { BLOG_POSTS } from "../../../data/blogPosts";
+import { generateArticleSchema, generateBreadcrumbSchema } from "../../../lib/schemaMarkup";
+import { formatSlug } from "../../../lib/seoConfig";
 import { Calendar, Clock, User, ArrowLeft, ArrowRight, BookOpen } from "lucide-react";
 
 export async function generateStaticParams() {
@@ -91,70 +93,25 @@ export default async function BlogPostDetail({ params }) {
         }
     } catch {}
 
-    // JSON-LD Structured Data for Google AdSense & Search
-    const blogPostingSchema = {
+    // Synchronized Schema.org JSON-LD Structured Data for Google AdSense & Search
+    const cleanSlug = formatSlug(slug || post.slug);
+    const articleSchema = generateArticleSchema(post, cleanSlug);
+    const breadcrumbSchema = generateBreadcrumbSchema([
+        { name: "Home", slug: "" },
+        { name: "Blog", slug: "blog" },
+        { name: post.title, slug: `blog/${cleanSlug}` },
+    ]);
+
+    const schemaGraph = {
         "@context": "https://schema.org",
-        "@graph": [
-            {
-                "@type": "BlogPosting",
-                "@id": `https://cvgrid.in/blog/${post.slug}#article`,
-                "headline": post.title,
-                "description": post.description,
-                "image": "https://cvgrid.in/og-image.png",
-                "inLanguage": "en-US",
-                "author": {
-                    "@type": "Person",
-                    "name": post.author,
-                    "url": "https://kushangacharya.vercel.app"
-                },
-                "datePublished": isoDate,
-                "dateModified": isoDate,
-                "publisher": {
-                    "@type": "Organization",
-                    "name": "CVGrid",
-                    "url": "https://cvgrid.in",
-                    "logo": {
-                        "@type": "ImageObject",
-                        "url": "https://cvgrid.in/logo.png"
-                    }
-                },
-                "mainEntityOfPage": {
-                    "@type": "WebPage",
-                    "@id": `https://cvgrid.in/blog/${post.slug}`
-                }
-            },
-            {
-                "@type": "BreadcrumbList",
-                "@id": `https://cvgrid.in/blog/${post.slug}#breadcrumb`,
-                "itemListElement": [
-                    {
-                        "@type": "ListItem",
-                        "position": 1,
-                        "name": "Home",
-                        "item": "https://cvgrid.in"
-                    },
-                    {
-                        "@type": "ListItem",
-                        "position": 2,
-                        "name": "Blog",
-                        "item": "https://cvgrid.in/blog"
-                    },
-                    {
-                        "@type": "ListItem",
-                        "position": 3,
-                        "name": post.title,
-                        "item": `https://cvgrid.in/blog/${post.slug}`
-                    }
-                ]
-            }
-        ]
+        "@graph": [articleSchema, breadcrumbSchema],
     };
 
     return (
         <>
             <script
                 type="application/ld+json"
-                dangerouslySetInnerHTML={{ __html: JSON.stringify(blogPostingSchema) }}
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaGraph) }}
             />
 
             <style dangerouslySetInnerHTML={{ __html: `
