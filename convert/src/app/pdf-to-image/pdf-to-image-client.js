@@ -19,9 +19,13 @@ import {
 import JSZip from "jszip";
 import confetti from "canvas-confetti";
 
-export default function PdfToImageClient() {
+export default function PdfToImageClient({
+  defaultFormat = "image/png",
+  titleOverride = "Multiple PDF to Image Converter",
+  subtitleOverride = "Convert single or multiple PDF documents into high-resolution PNG or JPG images. 100% private, local client-side processing."
+} = {}) {
   const [pdfFiles, setPdfFiles] = useState([]);
-  const [outputFormat, setOutputFormat] = useState("image/png"); // image/png or image/jpeg
+  const [outputFormat, setOutputFormat] = useState(defaultFormat); // image/png or image/jpeg
   const [loading, setLoading] = useState(false);
   const [progressText, setProgressText] = useState("");
   const [progressPercent, setProgressPercent] = useState(0);
@@ -250,10 +254,10 @@ export default function PdfToImageClient() {
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
             <h1 className="text-3xl font-extrabold font-space-grotesk text-white">
-              Multiple PDF to Image Converter
+              {titleOverride}
             </h1>
             <p className="text-gray-400 text-sm mt-1">
-              Convert single or multiple PDF documents into high-resolution PNG or JPG images. 100% private, local client-side processing.
+              {subtitleOverride}
             </p>
           </div>
 

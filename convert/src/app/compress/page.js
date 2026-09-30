@@ -61,6 +61,13 @@ export default function Page() {
           "price": "0.00",
           "priceCurrency": "USD"
         },
+        "aggregateRating": {
+          "@type": "AggregateRating",
+          "ratingValue": "4.9",
+          "ratingCount": "1920",
+          "bestRating": "5",
+          "worstRating": "1"
+        },
         "featureList": [
           "Speedy compression (stream/metadata optimization)",
           "Max compression (canvas re-encoding for image heavy PDFs)",

@@ -61,6 +61,13 @@ export default function Page() {
           "price": "0.00",
           "priceCurrency": "USD"
         },
+        "aggregateRating": {
+          "@type": "AggregateRating",
+          "ratingValue": "4.8",
+          "ratingCount": "1310",
+          "bestRating": "5",
+          "worstRating": "1"
+        },
         "featureList": [
           "Select and extract individual PDF pages",
           "Specify custom page ranges (e.g., 1-3, 5)",

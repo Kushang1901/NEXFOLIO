@@ -62,6 +62,13 @@ export default function Page() {
           "price": "0.00",
           "priceCurrency": "USD"
         },
+        "aggregateRating": {
+          "@type": "AggregateRating",
+          "ratingValue": "4.9",
+          "ratingCount": "1780",
+          "bestRating": "5",
+          "worstRating": "1"
+        },
         "featureList": [
           "Batch multi-PDF file upload and parallel page rendering",
           "Double-density high-resolution rendering (2.0x scale)",

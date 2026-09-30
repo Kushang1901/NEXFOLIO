@@ -4,10 +4,103 @@ import {
   FileStack,
   Scissors,
   Zap,
+  FileImage,
+  FileSpreadsheet,
 } from "lucide-react";
 
 export const TOOLS = [
   {
+    slug: "pdf-to-jpg",
+    title: "PDF to JPG",
+    subtitle: "High-Res Image Converter",
+    description:
+      "Convert PDF documents into high-quality JPG photos. Fast, crystal clear, batch export with zero compression artifacts.",
+    href: "/pdf-to-jpg",
+    Icon: FileImage,
+    badge: "Most Popular",
+    accent: "#f59e0b",
+    accentDim: "rgba(245,158,11,0.12)",
+    accentBorder: "rgba(245,158,11,0.25)",
+    tag: "Hot",
+    priority: 0.95,
+  },
+  {
+    slug: "jpg-to-pdf",
+    title: "JPG to PDF",
+    subtitle: "Photo to PDF Maker",
+    description:
+      "Convert multiple JPG photos into a single, clean PDF file. Reorder pages, select standard A4/Letter sizing, and export in seconds.",
+    href: "/jpg-to-pdf",
+    Icon: Images,
+    badge: "Instant & Free",
+    accent: "#10b981",
+    accentDim: "rgba(16,185,129,0.12)",
+    accentBorder: "rgba(16,185,129,0.25)",
+    tag: "Popular",
+    priority: 0.95,
+  },
+  {
+    slug: "compress",
+    title: "Compress PDF",
+    subtitle: "File Optimizer",
+    description:
+      "Shrink PDF file size without visible text or graphic loss. Guaranteed ATS-friendly optimization to easily pass job portal 2MB file limits.",
+    href: "/compress",
+    Icon: Zap,
+    badge: "ATS Ready",
+    accent: "#ef4444",
+    accentDim: "rgba(239,68,68,0.12)",
+    accentBorder: "rgba(239,68,68,0.25)",
+    tag: "Essential",
+    priority: 0.95,
+  },
+  {
+    slug: "merge",
+    title: "Merge PDFs",
+    subtitle: "PDF Combiner",
+    description:
+      "Stitch multiple PDF files into one polished document. Bundle your resume, cover letter, and certificates into a single application package in seconds.",
+    href: "/merge",
+    Icon: FileStack,
+    badge: "Unlimited",
+    accent: "#a855f7",
+    accentDim: "rgba(168,85,247,0.12)",
+    accentBorder: "rgba(168,85,247,0.25)",
+    tag: "No Limits",
+    priority: 0.95,
+  },
+  {
+    slug: "pdf-to-png",
+    title: "PDF to PNG",
+    subtitle: "Lossless Image Extractor",
+    description:
+      "Convert single or multi-page PDFs to lossless PNG images. Ideal for graphics, certificates, signatures, and crisp vector rendering.",
+    href: "/pdf-to-png",
+    Icon: ImageIcon,
+    badge: "Lossless",
+    accent: "#06b6d4",
+    accentDim: "rgba(6,182,212,0.12)",
+    accentBorder: "rgba(6,182,212,0.25)",
+    tag: "High Res",
+    priority: 0.90,
+  },
+  {
+    slug: "png-to-pdf",
+    title: "PNG to PDF",
+    subtitle: "Crisp Graphic Combiner",
+    description:
+      "Transform PNG images with transparency into polished PDF pages. Great for portfolio pieces, digital artwork, and multi-page scans.",
+    href: "/png-to-pdf",
+    Icon: FileImage,
+    badge: "Crisp",
+    accent: "#8b5cf6",
+    accentDim: "rgba(139,92,246,0.12)",
+    accentBorder: "rgba(139,92,246,0.25)",
+    tag: null,
+    priority: 0.90,
+  },
+  {
+    slug: "pdf-to-image",
     title: "Multiple PDF to Image",
     subtitle: "Batch PDF Converter",
     description:
@@ -19,8 +112,10 @@ export const TOOLS = [
     accentDim: "rgba(59,130,246,0.12)",
     accentBorder: "rgba(59,130,246,0.25)",
     tag: "Updated",
+    priority: 0.90,
   },
   {
+    slug: "image-to-pdf",
     title: "Multiple Images to PDF",
     subtitle: "Batch Image Combiner",
     description:
@@ -31,22 +126,11 @@ export const TOOLS = [
     accent: "#10b981",
     accentDim: "rgba(16,185,129,0.12)",
     accentBorder: "rgba(16,185,129,0.25)",
-    tag: "Popular",
-  },
-  {
-    title: "Merge PDFs",
-    subtitle: "PDF Combiner",
-    description:
-      "Stitch multiple PDF files into one polished document. Bundle your resume, cover letter, and certificates into a single application package in seconds.",
-    href: "/merge",
-    Icon: FileStack,
-    badge: "Unlimited",
-    accent: "#a855f7",
-    accentDim: "rgba(168,85,247,0.12)",
-    accentBorder: "rgba(168,85,247,0.25)",
     tag: null,
+    priority: 0.90,
   },
   {
+    slug: "split",
     title: "Split PDF",
     subtitle: "Page Extractor",
     description:
@@ -58,29 +142,21 @@ export const TOOLS = [
     accentDim: "rgba(245,158,11,0.12)",
     accentBorder: "rgba(245,158,11,0.25)",
     tag: null,
-  },
-  {
-    title: "Compress PDF",
-    subtitle: "File Optimizer",
-    description:
-      "Shrink PDF file size without visible text or graphic loss. Guaranteed ATS-friendly optimization to easily pass job portal 2MB file limits.",
-    href: "/compress",
-    Icon: Zap,
-    badge: "ATS Ready",
-    accent: "#ef4444",
-    accentDim: "rgba(239,68,68,0.12)",
-    accentBorder: "rgba(239,68,68,0.25)",
-    tag: null,
+    priority: 0.85,
   },
 ];
 
 export const HOME_FAQS = [
   {
+    q: "Why is CVGrid Convert better than online converters like iLovePDF or Smallpdf?",
+    a: "Unlike traditional file conversion sites that upload your sensitive documents to remote servers, CVGrid Convert runs 100% locally inside your browser using WebAssembly. Your files, resumes, and private data never leave your device. It is completely private, has zero file size limits, requires no sign-up, and adds zero watermarks.",
+  },
+  {
     q: "Can I convert multiple PDF files to images at the same time?",
     a: "Yes! Our Multiple PDF to Image tool allows you to upload and process multiple PDF documents in a single batch. You can preview all rendered pages grouped by PDF and download them individually, per file, or package everything into a consolidated ZIP archive.",
   },
   {
-    q: "Can I combine multiple images of different formats into a single PDF?",
+    q: "Can I combine multiple JPG and PNG images into a single PDF?",
     a: "Yes! You can upload multiple JPG, PNG, WebP, and GIF images simultaneously. You can easily drag and reorder images, select page sizes (Fit Image, A4, US Letter), choose orientation, and export a clean, consolidated PDF document.",
   },
   {
@@ -92,7 +168,7 @@ export const HOME_FAQS = [
     a: "No restrictions whatsoever. There are zero upload throttles, no subscriptions, no file size caps, and absolutely no watermarks added to your documents. Convert as many files as you need for free.",
   },
   {
-    q: "Will my resume formatting or text quality degrade during PDF conversion?",
-    a: "No. Our tools use high-fidelity PDF engines with double-density rendering (2.0x scale) for razor-sharp image exports and precise PDF document tree manipulation so your fonts, vector paths, and formatting stay 100% crisp.",
+    q: "Will my resume formatting or text quality degrade during PDF conversion or compression?",
+    a: "No. Our tools use high-fidelity PDF engines with double-density rendering (2.0x scale) for razor-sharp image exports and precise PDF document tree manipulation so your fonts, vector paths, and ATS readability stay 100% crisp.",
   },
 ];

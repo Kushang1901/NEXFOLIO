@@ -18,7 +18,10 @@ import {
 import { PDFDocument } from "pdf-lib";
 import confetti from "canvas-confetti";
 
-export default function ImageToPdfClient() {
+export default function ImageToPdfClient({
+  titleOverride = "Multiple Images to PDF Converter",
+  subtitleOverride = "Stack and combine multiple PNG, JPG, WebP, or GIF images into a clean, formatted PDF document. Reorder pages, select standard paper sizes (A4, Letter, Fit), and set custom margins."
+} = {}) {
   const [images, setImages] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -232,10 +235,10 @@ export default function ImageToPdfClient() {
             <span className="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-500 to-teal-600 flex items-center justify-center text-white shadow-md">
               <Images className="w-5.5 h-5.5" />
             </span>
-            Multiple Images to PDF Converter
+            {titleOverride}
           </h1>
           <p className="text-gray-400 mt-2 max-w-xl">
-            Stack and combine multiple PNG, JPG, WebP, or GIF images into a clean, formatted PDF document. Reorder pages, select standard paper sizes (A4, Letter, Fit), and set custom margins.
+            {subtitleOverride}
           </p>
         </div>
 

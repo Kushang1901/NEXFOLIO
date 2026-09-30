@@ -66,6 +66,9 @@ export default function Footer() {
                         <a className="text-[#c7c4d7] hover:text-white transition-colors duration-200 no-underline text-sm py-1" href="https://app.cvgrid.in/ats-checker" style={{ fontFamily: "var(--font-inter), sans-serif" }}>
                             ATS Scanner
                         </a>
+                        <a className="text-[#c7c4d7] hover:text-white transition-colors duration-200 no-underline text-sm py-1" href="https://convert.cvgrid.in" style={{ fontFamily: "var(--font-inter), sans-serif" }}>
+                            Free PDF &amp; Document Tools
+                        </a>
                         <a className="text-[#c7c4d7] hover:text-white transition-colors duration-200 no-underline text-sm py-1" href="https://app.cvgrid.in/login" style={{ fontFamily: "var(--font-inter), sans-serif" }}>
                             Pricing Plans
                         </a>

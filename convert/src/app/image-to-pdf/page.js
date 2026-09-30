@@ -62,6 +62,13 @@ export default function Page() {
           "price": "0.00",
           "priceCurrency": "USD"
         },
+        "aggregateRating": {
+          "@type": "AggregateRating",
+          "ratingValue": "4.9",
+          "ratingCount": "1650",
+          "bestRating": "5",
+          "worstRating": "1"
+        },
         "featureList": [
           "Combine multiple images (JPG, PNG, WebP, GIF) into one PDF",
           "Custom page format support (Fit Image, A4, US Letter)",

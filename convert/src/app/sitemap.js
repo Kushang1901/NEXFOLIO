@@ -1,44 +1,20 @@
-export default async function sitemap() {
-  const baseUrl = "https://convert.cvgrid.in";
-  const now = new Date().toISOString();
+import { getDynamicSitemapRoutes } from "../lib/seoConfig";
 
-  const routes = [
-    {
-      path: "",
-      priority: 1.0,
-      changeFrequency: "daily",
-    },
-    {
-      path: "/pdf-to-image",
-      priority: 0.9,
-      changeFrequency: "weekly",
-    },
-    {
-      path: "/image-to-pdf",
-      priority: 0.9,
-      changeFrequency: "weekly",
-    },
-    {
-      path: "/merge",
-      priority: 0.85,
-      changeFrequency: "weekly",
-    },
-    {
-      path: "/split",
-      priority: 0.85,
-      changeFrequency: "weekly",
-    },
-    {
-      path: "/compress",
-      priority: 0.85,
-      changeFrequency: "weekly",
-    },
-  ];
+/**
+ * Dynamic XML Sitemap Generator for CVGrid Convert
+ * Automatically generates URLs with respected priorities, change frequencies, and customizable slugs.
+ */
+export const revalidate = 86400; // Dynamically revalidate every 24 hours
+
+export default function sitemap() {
+  const routes = getDynamicSitemapRoutes();
 
   return routes.map((route) => ({
-    url: `${baseUrl}${route.path}`,
-    lastModified: now,
+    url: route.url,
+    lastModified: route.lastModified,
     changeFrequency: route.changeFrequency,
     priority: route.priority,
+    ...(route.images ? { images: route.images } : {}),
+    ...(route.alternates ? { alternates: route.alternates } : {}),
   }));
 }
