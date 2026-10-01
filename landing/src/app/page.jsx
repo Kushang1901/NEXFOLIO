@@ -560,8 +560,8 @@ export default function HomePage() {
                                         <div className="relative w-full overflow-hidden rounded-xl bg-black/80 shadow-inner" style={{ aspectRatio: "16 / 9" }}>
                                             <iframe
                                                 className="w-full h-full absolute inset-0 rounded-xl border-0"
-                                                src="https://www.youtube.com/embed/-I2vBXZc720?si=p84uSeCPH31iifLc"
-                                                title="CVGrid - AI Resume Builder Demo"
+                                                src="https://www.youtube.com/embed/-I2vBXZc720?si=jSsXVzT-3_fOR4PO"
+                                                title="YouTube video player"
                                                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                                                 referrerPolicy="strict-origin-when-cross-origin"
                                                 allowFullScreen
