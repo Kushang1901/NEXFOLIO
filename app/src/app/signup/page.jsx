@@ -11,6 +11,7 @@ import Footer from "../../components/Footer";
 import { subscribeToAuthChanges } from "../../authState";
 import Script from "next/script";
 import { showToast } from "../../utils/toast";
+import { Check, ShieldCheck, Loader2 } from "lucide-react";
 
 export default function Signup() {
     const router = useRouter();
@@ -465,25 +466,59 @@ export default function Signup() {
                         <div className="absolute top-0 left-0 w-1.5 h-full bg-primary"></div>
                         
                         {successMessage ? (
-                            <div className="flex flex-col items-center justify-center text-center py-12 px-6 fade-in-transition">
-                                <div className="relative mb-8 flex items-center justify-center">
-                                    {/* Outer pulsing ring */}
-                                    <div className="absolute w-24 h-24 rounded-full border-2 border-[#22c55e]/20 animate-ping opacity-75"></div>
-                                    {/* Rotating loader ring */}
-                                    <div className="w-20 h-20 rounded-full border-4 border-[#22c55e]/20 border-t-[#22c55e] animate-spin"></div>
-                                    {/* Center Checkmark */}
-                                    <div className="absolute w-12 h-12 bg-[#22c55e]/10 border border-[#22c55e]/30 rounded-full flex items-center justify-center">
-                                        <svg width="24" height="24" viewBox="0 0 20 20" fill="none" className="text-[#22c55e]">
-                                            <path d="M4 10l4 4l8-8" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>
-                                        </svg>
+                            <div className="flex flex-col items-center justify-center text-center py-10 px-4 max-w-md mx-auto fade-in-transition">
+                                {/* Top live status pill */}
+                                <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/25 text-emerald-400 text-xs font-semibold tracking-wide mb-6 shadow-[0_0_20px_rgba(16,185,129,0.12)]">
+                                    <span className="relative flex h-2 w-2">
+                                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                                        <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-400"></span>
+                                    </span>
+                                    <span>{successType === "signup" ? "Account Initialized" : "Authentication Confirmed"}</span>
+                                </div>
+
+                                {/* Central Success Visual */}
+                                <div className="relative mb-6 flex items-center justify-center">
+                                    {/* Ambient radial glow */}
+                                    <div className="absolute w-28 h-28 rounded-full bg-gradient-to-tr from-emerald-500/20 via-indigo-500/25 to-purple-500/20 blur-xl animate-pulse -z-10"></div>
+                                    
+                                    {/* Outer glass tile */}
+                                    <div className="relative w-20 h-20 rounded-2xl bg-[#181824]/90 border border-white/10 backdrop-blur-xl flex items-center justify-center shadow-[0_12px_40px_rgba(0,0,0,0.5),0_0_25px_rgba(34,197,94,0.15)]">
+                                        {/* Inner gradient badge with checkmark */}
+                                        <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-400 via-emerald-500 to-teal-600 flex items-center justify-center shadow-lg shadow-emerald-500/30">
+                                            <Check className="w-6 h-6 text-white stroke-[2.5]" />
+                                        </div>
                                     </div>
                                 </div>
-                                <h2 className="text-xl font-bold text-white mb-2 tracking-wide font-sans">
+
+                                {/* Heading */}
+                                <h2 className="text-2xl sm:text-3xl font-bold text-white mb-2 tracking-tight" style={{ fontFamily: "var(--font-space-grotesk), sans-serif" }}>
                                     {successType === "signup" ? "Account Created!" : "Welcome Back!"}
                                 </h2>
-                                <p className="text-sm text-on-surface-variant max-w-md font-sans leading-relaxed" style={{ color: "rgba(255,255,255,0.7)" }}>
+
+                                {/* Descriptive Subtitle */}
+                                <p className="text-sm text-[#a4a0ba] max-w-sm mx-auto leading-relaxed mb-6" style={{ fontFamily: "var(--font-inter), sans-serif" }}>
                                     {successMessage}
                                 </p>
+
+                                {/* Animated Progress Loader */}
+                                <div className="w-full max-w-xs mx-auto">
+                                    <div className="h-1.5 w-full bg-white/10 rounded-full overflow-hidden p-[1px] relative shadow-inner">
+                                        <div className="h-full rounded-full bg-gradient-to-r from-emerald-400 via-indigo-500 to-purple-500 animate-cvgrid-progress shadow-[0_0_12px_rgba(99,102,241,0.5)]"></div>
+                                    </div>
+                                    <div className="flex items-center justify-between mt-2.5 px-0.5 text-xs text-[#a4a0ba]">
+                                        <span className="inline-flex items-center gap-1.5">
+                                            <Loader2 className="w-3.5 h-3.5 animate-spin text-indigo-400" />
+                                            <span>Preparing dashboard</span>
+                                        </span>
+                                        <span className="font-mono text-[11px] text-white/40">redirecting...</span>
+                                    </div>
+                                </div>
+
+                                {/* Security Footer */}
+                                <div className="mt-8 pt-5 border-t border-white/5 w-full flex items-center justify-center gap-2 text-[11px] text-[#908fa0] uppercase tracking-wider font-mono">
+                                    <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+                                    <span>256-Bit Encrypted Session</span>
+                                </div>
                             </div>
                         ) : (
                             <div className="grid grid-cols-1 md:grid-cols-[1.1fr_auto_0.9fr] gap-8 items-stretch">
