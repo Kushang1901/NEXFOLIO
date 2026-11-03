@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { getDb } from "../../../lib/db";
+import { checkRateLimit, getClientIp } from "../../../utils/rateLimiter";
 
 export async function GET(request) {
     try {
@@ -8,6 +9,16 @@ export async function GET(request) {
         const checkExistenceOnly = searchParams.get("checkExistenceOnly") === "true";
 
         if (checkExistenceOnly && email) {
+            // Anti-scraping rate limit: max 20 checks per minute per IP
+            const clientIp = getClientIp(request);
+            const rateCheck = checkRateLimit(`check-user:ip:${clientIp}`, 20, 60 * 1000);
+            if (!rateCheck.allowed) {
+                return NextResponse.json(
+                    { error: "Too many lookup requests. Please wait a moment." },
+                    { status: 429 }
+                );
+            }
+
             const db = await getDb();
             const users = await db`
                 SELECT id FROM users WHERE email = ${email}

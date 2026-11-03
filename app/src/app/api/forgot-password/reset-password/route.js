@@ -1,15 +1,39 @@
 import { NextResponse } from "next/server";
 import { getDb } from "../../../../lib/db";
 import { hashPassword } from "../../../../utils/crypto";
+import { checkRateLimit, getClientIp } from "../../../../utils/rateLimiter";
+import crypto from "crypto";
 
 export async function POST(request) {
     try {
-        const { email, otp, password } = await request.json();
+        const body = await request.json().catch(() => ({}));
+        const email = typeof body.email === "string" ? body.email.trim().toLowerCase() : "";
+        const otp = typeof body.otp === "string" ? body.otp.trim() : "";
+        const password = typeof body.password === "string" ? body.password : "";
 
         if (!email || !otp || !password) {
             return NextResponse.json(
                 { error: "Email, OTP, and new password are required" },
                 { status: 400 }
+            );
+        }
+
+        if (password.length < 6) {
+            return NextResponse.json(
+                { error: "Password must be at least 6 characters long" },
+                { status: 400 }
+            );
+        }
+
+        // Anti-bruteforce rate limit
+        const clientIp = getClientIp(request);
+        const ipLimit = checkRateLimit(`reset-pwd:ip:${clientIp}`, 5, 10 * 60 * 1000);
+        const emailLimit = checkRateLimit(`reset-pwd:email:${email}`, 5, 10 * 60 * 1000);
+
+        if (!ipLimit.allowed || !emailLimit.allowed) {
+            return NextResponse.json(
+                { error: "Too many reset attempts. Please request a new OTP and try again later." },
+                { status: 429 }
             );
         }
 
@@ -47,8 +71,13 @@ export async function POST(request) {
             );
         }
 
-        // Check match
-        if (user.otp_code !== otp.trim()) {
+        // Timing-safe match check
+        const storedOtpBuffer = Buffer.from(String(user.otp_code));
+        const inputOtpBuffer = Buffer.from(String(otp));
+        const isMatch = storedOtpBuffer.length === inputOtpBuffer.length &&
+                        crypto.timingSafeEqual(storedOtpBuffer, inputOtpBuffer);
+
+        if (!isMatch) {
             return NextResponse.json(
                 { error: "Incorrect OTP. Cannot reset password." },
                 { status: 400 }

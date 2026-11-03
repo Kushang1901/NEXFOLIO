@@ -128,12 +128,17 @@ export async function POST(request) {
                 );
             }
 
-            // Cryptographically verify the Razorpay HMAC-SHA256 signature
+            // Cryptographically verify the Razorpay HMAC-SHA256 signature using timing-safe comparison
             const hmac = crypto.createHmac("sha256", keySecret);
             hmac.update(`${razorpayOrderId}|${razorpayPaymentId}`);
             const generatedSignature = hmac.digest("hex");
 
-            if (generatedSignature !== razorpaySignature) {
+            const genSigBuffer = Buffer.from(generatedSignature);
+            const userSigBuffer = Buffer.from(String(razorpaySignature));
+            const isValidSig = genSigBuffer.length === userSigBuffer.length &&
+                               crypto.timingSafeEqual(genSigBuffer, userSigBuffer);
+
+            if (!isValidSig) {
                 console.error("Razorpay Signature Verification Failed");
                 return NextResponse.json(
                     { error: "Signature verification failed" },

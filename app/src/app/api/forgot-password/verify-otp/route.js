@@ -1,14 +1,30 @@
 import { NextResponse } from "next/server";
 import { getDb } from "../../../../lib/db";
+import { checkRateLimit, getClientIp } from "../../../../utils/rateLimiter";
+import crypto from "crypto";
 
 export async function POST(request) {
     try {
-        const { email, otp } = await request.json();
+        const body = await request.json().catch(() => ({}));
+        const email = typeof body.email === "string" ? body.email.trim().toLowerCase() : "";
+        const otp = typeof body.otp === "string" ? body.otp.trim() : "";
 
         if (!email || !otp) {
             return NextResponse.json(
                 { error: "Email and OTP are required" },
                 { status: 400 }
+            );
+        }
+
+        // Anti-bruteforce: limit to 5 verification attempts per 5 minutes per IP/email
+        const clientIp = getClientIp(request);
+        const ipLimit = checkRateLimit(`verify-otp:ip:${clientIp}`, 10, 5 * 60 * 1000);
+        const emailLimit = checkRateLimit(`verify-otp:email:${email}`, 5, 5 * 60 * 1000);
+
+        if (!ipLimit.allowed || !emailLimit.allowed) {
+            return NextResponse.json(
+                { error: "Too many verification attempts. Please request a new OTP and try again later." },
+                { status: 429 }
             );
         }
 
@@ -46,8 +62,13 @@ export async function POST(request) {
             );
         }
 
-        // Check match
-        if (user.otp_code !== otp.trim()) {
+        // Timing-safe comparison to prevent timing attacks
+        const storedOtpBuffer = Buffer.from(String(user.otp_code));
+        const inputOtpBuffer = Buffer.from(String(otp));
+        const isMatch = storedOtpBuffer.length === inputOtpBuffer.length &&
+                        crypto.timingSafeEqual(storedOtpBuffer, inputOtpBuffer);
+
+        if (!isMatch) {
             return NextResponse.json(
                 { error: "Incorrect OTP. Please check and try again." },
                 { status: 400 }

@@ -1,15 +1,31 @@
 import { NextResponse } from "next/server";
 import { getDb } from "../../../../lib/db";
 import { sendOtpEmail } from "../../../../utils/sendOtpEmail";
+import { checkRateLimit, getClientIp } from "../../../../utils/rateLimiter";
+import crypto from "crypto";
 
 export async function POST(request) {
     try {
-        const { email } = await request.json();
+        const body = await request.json().catch(() => ({}));
+        const email = typeof body.email === "string" ? body.email.trim().toLowerCase() : "";
 
         if (!email) {
             return NextResponse.json(
                 { error: "Email is required" },
                 { status: 400 }
+            );
+        }
+
+        // Rate limit: Maximum 3 OTP requests per 10 minutes per IP/email
+        const clientIp = getClientIp(request);
+        const ipLimit = checkRateLimit(`send-otp:ip:${clientIp}`, 5, 10 * 60 * 1000);
+        const emailLimit = checkRateLimit(`send-otp:email:${email}`, 3, 10 * 60 * 1000);
+
+        if (!ipLimit.allowed || !emailLimit.allowed) {
+            const waitSeconds = Math.max(ipLimit.resetInSeconds, emailLimit.resetInSeconds);
+            return NextResponse.json(
+                { error: `Too many OTP requests. Please wait ${Math.ceil(waitSeconds / 60)} minute(s) before trying again.` },
+                { status: 429 }
             );
         }
 
@@ -25,8 +41,8 @@ export async function POST(request) {
             );
         }
 
-        // Generate 6-digit random OTP
-        const otp = Math.floor(100000 + Math.random() * 900000).toString();
+        // Generate cryptographically secure 6-digit random OTP
+        const otp = crypto.randomInt(100000, 1000000).toString();
         // Set expiry to 5 minutes from now
         const expiry = new Date(Date.now() + 5 * 60 * 1000);
 

@@ -6,15 +6,21 @@
  * @returns {Promise<{success: boolean, reason?: string}>} Verification result
  */
 export async function verifyTurnstile(token, action) {
-    // 1. Bypass validation in development or for mobile app client requests (passing "APP_BYPASS")
-    if (token === "APP_BYPASS" || (process.env.NODE_ENV === "development" && (!token || token === "MOCK_TOKEN" || !process.env.TURNSTILE_SECRET_KEY))) {
-        console.log(`ℹ️ [Turnstile Bypass] Bypassed verification for action: ${action || "unspecified"} in development/mobile client.`);
-        return { success: true, reason: "Bypassed for mobile client or dev environment" };
+    // 1. In local development environment, allow mock bypass if Turnstile is not configured
+    const isDev = process.env.NODE_ENV === "development";
+    if (isDev && (!token || token === "MOCK_TOKEN" || !process.env.TURNSTILE_SECRET_KEY)) {
+        console.log(`ℹ️ [Turnstile] Bypassed verification for action: ${action || "unspecified"} in local development.`);
+        return { success: true, reason: "Bypassed for dev environment" };
     }
 
-    if (!token) {
-        console.warn(`❌ [Turnstile] No token provided for action: ${action || "unspecified"}`);
-        return { success: false, reason: "No token provided" };
+    // 2. Verified secure mobile app bypass requires private server-side secret match
+    if (token && process.env.APP_BYPASS_SECRET && token === process.env.APP_BYPASS_SECRET) {
+        return { success: true, reason: "Authenticated mobile client" };
+    }
+
+    if (!token || token === "APP_BYPASS") {
+        console.warn(`❌ [Turnstile] Invalid or rejected token for action: ${action || "unspecified"}`);
+        return { success: false, reason: "Security verification token missing or invalid." };
     }
 
     const secretKey = process.env.TURNSTILE_SECRET_KEY;

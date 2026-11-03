@@ -104,7 +104,12 @@ export async function GET(request) {
                     );
                 }
                 const inputHash = crypto.createHash("sha256").update(passwordParam).digest("hex");
-                if (inputHash !== resume.passwordHash) {
+                const inputHashBuf = Buffer.from(inputHash);
+                const storedHashBuf = Buffer.from(String(resume.passwordHash || ""));
+                const isPasswordValid = inputHashBuf.length === storedHashBuf.length &&
+                                        crypto.timingSafeEqual(inputHashBuf, storedHashBuf);
+
+                if (!isPasswordValid) {
                     return NextResponse.json(
                         { error: "Incorrect password" },
                         { status: 401, headers: corsHeaders }

@@ -1,15 +1,31 @@
 import { NextResponse } from "next/server";
 import { getDb } from "../../../../lib/db";
 import { hashPassword } from "../../../../utils/crypto";
+import { checkRateLimit, getClientIp } from "../../../../utils/rateLimiter";
+import crypto from "crypto";
 
 export async function POST(request) {
     try {
-        const { email, password } = await request.json();
+        const body = await request.json().catch(() => ({}));
+        const email = typeof body.email === "string" ? body.email.trim().toLowerCase() : "";
+        const password = typeof body.password === "string" ? body.password : "";
 
         if (!email || !password) {
             return NextResponse.json(
                 { error: "Email and password are required" },
                 { status: 400 }
+            );
+        }
+
+        // Rate limit: max 5 login attempts per 5 minutes per IP/email
+        const clientIp = getClientIp(request);
+        const ipLimit = checkRateLimit(`login:ip:${clientIp}`, 10, 5 * 60 * 1000);
+        const emailLimit = checkRateLimit(`login:email:${email}`, 5, 5 * 60 * 1000);
+
+        if (!ipLimit.allowed || !emailLimit.allowed) {
+            return NextResponse.json(
+                { error: "Too many failed login attempts. Please wait 5 minutes before trying again." },
+                { status: 429 }
             );
         }
 
@@ -36,7 +52,12 @@ export async function POST(request) {
         }
 
         const hashedPassword = hashPassword(password);
-        if (user.password !== hashedPassword) {
+        const userHashBuffer = Buffer.from(String(user.password));
+        const inputHashBuffer = Buffer.from(String(hashedPassword));
+        const isPasswordCorrect = userHashBuffer.length === inputHashBuffer.length &&
+                                  crypto.timingSafeEqual(userHashBuffer, inputHashBuffer);
+
+        if (!isPasswordCorrect) {
             return NextResponse.json(
                 { error: "Incorrect password" },
                 { status: 401 }

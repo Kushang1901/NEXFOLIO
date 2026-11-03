@@ -56,14 +56,6 @@ const nextConfig = {
     async headers() {
         return [
             {
-                source: "/api/:path*",
-                headers: [
-                    { key: "Access-Control-Allow-Origin", value: "*" },
-                    { key: "Access-Control-Allow-Methods", value: "GET,DELETE,PATCH,POST,PUT,OPTIONS" },
-                    { key: "Access-Control-Allow-Headers", value: "X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, x-app-request, Authorization" },
-                ],
-            },
-            {
                 source: "/(.*)",
                 headers: [
                     // Security headers (also help with Google Trust Score & Lighthouse Best Practices)
@@ -75,6 +67,7 @@ const nextConfig = {
                     { key: "X-XSS-Protection", value: "1; mode=block" },
                     { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
                     { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=()" },
+                    { key: "X-DNS-Prefetch-Control", value: "on" },
                     {
                         key: "Strict-Transport-Security",
                         value: "max-age=63072000; includeSubDomains; preload",

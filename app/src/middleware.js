@@ -1,8 +1,54 @@
 import { NextResponse } from "next/server";
 
+function isAllowedOrigin(origin) {
+    if (!origin) return false;
+    if (
+        origin === "https://cvgrid.in" ||
+        origin === "https://www.cvgrid.in" ||
+        origin === "https://app.cvgrid.in" ||
+        origin === "https://convert.cvgrid.in" ||
+        /^https:\/\/[a-zA-Z0-9-]+\.cvgrid\.in$/.test(origin)
+    ) {
+        return true;
+    }
+    if (origin.startsWith("http://localhost:") || origin.startsWith("http://127.0.0.1:")) {
+        return true;
+    }
+    return false;
+}
+
 export function middleware(req) {
     const url = req.nextUrl;
     const hostname = req.headers.get("host") || "";
+
+    // 1. Handle API CORS with dynamic Origin validation
+    if (url.pathname.startsWith("/api/")) {
+        const origin = req.headers.get("origin");
+        const isOptions = req.method === "OPTIONS";
+        const allowed = isAllowedOrigin(origin);
+
+        if (isOptions) {
+            const preflightHeaders = {
+                "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, PATCH, OPTIONS",
+                "Access-Control-Allow-Headers": "Content-Type, Authorization, Accept, X-Requested-With, X-CSRF-Token",
+                "Access-Control-Max-Age": "86400",
+                "Vary": "Origin"
+            };
+            if (allowed && origin) {
+                preflightHeaders["Access-Control-Allow-Origin"] = origin;
+                preflightHeaders["Access-Control-Allow-Credentials"] = "true";
+            }
+            return new NextResponse(null, { status: 204, headers: preflightHeaders });
+        }
+
+        const res = NextResponse.next();
+        if (allowed && origin) {
+            res.headers.set("Access-Control-Allow-Origin", origin);
+            res.headers.set("Access-Control-Allow-Credentials", "true");
+            res.headers.set("Vary", "Origin");
+        }
+        return res;
+    }
 
     // Define main domains to exclude from subdomain routing
     const isLocalhost = hostname.includes("localhost");

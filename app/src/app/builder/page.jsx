@@ -672,10 +672,6 @@ export default function ResumeBuilder() {
         }
     };
 
-    const handleLinkedInImport = () => {
-        sessionStorage.setItem("resumeData", JSON.stringify(formData));
-        window.location.href = `/api/auth/linkedin${resumeId ? `?id=${resumeId}` : ""}`;
-    };
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -942,26 +938,7 @@ ${formData.skills || "Not provided"}
                                                 </>
                                             )}
                                         </label>
-                                        <button
-                                            type="button"
-                                            onClick={handleLinkedInImport}
-                                            disabled={isImporting || isLoading}
-                                            className="px-4 py-2 fw-semibold d-flex align-items-center gap-2 border-0"
-                                            style={{
-                                                cursor: isImporting || isLoading ? 'not-allowed' : 'pointer',
-                                                borderRadius: '50px',
-                                                backgroundColor: '#0a66c2',
-                                                color: '#ffffff',
-                                                fontSize: '0.9rem',
-                                                transition: 'all 0.2s',
-                                                opacity: isImporting || isLoading ? 0.6 : 1
-                                            }}
-                                            onMouseOver={(e) => { if (!isImporting && !isLoading) e.currentTarget.style.filter = 'brightness(1.15)'; }}
-                                            onMouseOut={(e) => { e.currentTarget.style.filter = 'none'; }}
-                                        >
-                                            <i className="fab fa-linkedin" style={{ fontSize: '1.1rem' }}></i>
-                                            Apply with LinkedIn
-                                        </button>
+
                                     </div>
                                 </div>
                             </div>

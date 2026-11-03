@@ -1,19 +1,31 @@
 import crypto from "crypto";
 
-const JWT_SECRET = process.env.JWT_SECRET || "cvgrid-super-secret-key-123456";
+// Fallback runtime secret if JWT_SECRET is not configured in env
+let fallbackRuntimeSecret = null;
+function getJwtSecret() {
+    if (process.env.JWT_SECRET && process.env.JWT_SECRET !== "cvgrid-super-secret-key-123456") {
+        return process.env.JWT_SECRET;
+    }
+    if (!fallbackRuntimeSecret) {
+        fallbackRuntimeSecret = crypto.randomBytes(32).toString("hex");
+        console.warn("⚠️ [Security Warning] process.env.JWT_SECRET is not set or using default. Initialized cryptographically secure runtime secret.");
+    }
+    return fallbackRuntimeSecret;
+}
 
 /**
  * Generates a signed HS256 JWT for direct database fallback sessions.
  * Requires no external libraries.
  */
 export function generateLocalToken(payload) {
+    const secret = getJwtSecret();
     const header = Buffer.from(JSON.stringify({ alg: "HS256", typ: "JWT" })).toString("base64url");
     const body = Buffer.from(JSON.stringify({
         ...payload,
         exp: Math.floor(Date.now() / 1000) + (7 * 24 * 60 * 60) // 7 days expiry
     })).toString("base64url");
     const signature = crypto
-        .createHmac("sha256", JWT_SECRET)
+        .createHmac("sha256", secret)
         .update(`${header}.${body}`)
         .digest("base64url");
 
@@ -21,19 +33,23 @@ export function generateLocalToken(payload) {
 }
 
 /**
- * Verifies our local custom fallback JWT.
+ * Verifies our local custom fallback JWT using timing-safe comparison.
  */
 export function verifyLocalToken(token) {
     try {
         const [header, body, signature] = token.split(".");
         if (!header || !body || !signature) return null;
 
+        const secret = getJwtSecret();
         const expectedSignature = crypto
-            .createHmac("sha256", JWT_SECRET)
+            .createHmac("sha256", secret)
             .update(`${header}.${body}`)
             .digest("base64url");
 
-        if (signature !== expectedSignature) {
+        const sigBuffer = Buffer.from(signature);
+        const expectedSigBuffer = Buffer.from(expectedSignature);
+
+        if (sigBuffer.length !== expectedSigBuffer.length || !crypto.timingSafeEqual(sigBuffer, expectedSigBuffer)) {
             return null;
         }
 

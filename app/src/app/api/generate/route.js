@@ -1,12 +1,14 @@
 import { NextResponse } from "next/server";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { verifyTurnstile } from "../../../utils/turnstileVerify";
+import { checkRateLimit, getClientIp } from "../../../utils/rateLimiter";
 
 const apiKey = process.env.GEMINI_API_KEY;
 
 export async function POST(request) {
     try {
-        const { prompt, turnstileToken } = await request.json();
+        const body = await request.json().catch(() => ({}));
+        const { prompt, turnstileToken } = body;
 
         if (!prompt || typeof prompt !== "string") {
             return NextResponse.json(
@@ -15,16 +17,31 @@ export async function POST(request) {
             );
         }
 
-        // Verify Turnstile
-        const isApp = request.headers.get("x-app-request") === "true";
-        if (!isApp) {
-            const turnstileResult = await verifyTurnstile(turnstileToken, "generate_resume");
-            if (!turnstileResult.success) {
-                return NextResponse.json(
-                    { error: `Security verification failed: ${turnstileResult.reason || "Bot activity detected."}` },
-                    { status: 403 }
-                );
-            }
+        // Limit maximum prompt length to prevent excessive token abuse
+        if (prompt.length > 15000) {
+            return NextResponse.json(
+                { error: "Prompt exceeds maximum allowed length (15,000 characters)." },
+                { status: 413 }
+            );
+        }
+
+        // Rate limit: 20 generations per 10 minutes per IP
+        const clientIp = getClientIp(request);
+        const rateCheck = checkRateLimit(`ai-generate:ip:${clientIp}`, 20, 10 * 60 * 1000);
+        if (!rateCheck.allowed) {
+            return NextResponse.json(
+                { error: "Too many AI generation requests. Please wait a few minutes before trying again." },
+                { status: 429 }
+            );
+        }
+
+        // Verify Turnstile security token
+        const turnstileResult = await verifyTurnstile(turnstileToken, "generate_resume");
+        if (!turnstileResult.success) {
+            return NextResponse.json(
+                { error: `Security verification failed: ${turnstileResult.reason || "Bot activity detected."}` },
+                { status: 403 }
+            );
         }
 
         if (!apiKey) {
