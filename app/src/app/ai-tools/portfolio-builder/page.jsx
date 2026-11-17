@@ -825,11 +825,7 @@ function PortfolioBuilderContent() {
                             </div>
                         </div>
 
-                            </div>
-                        </div>
-
-                    </div>
-                </div>
+                    </div>{/* end row g-3 (preview + right column) */}
 
                 {/* Feature Highlights Banner */}
                 <div className="row g-3">
@@ -863,7 +859,8 @@ function PortfolioBuilderContent() {
                             </p>
                         </div>
                     </div>
-                </div>
+                </div>{/* end Feature Highlights row */}
+                </div>{/* end glass-panel-custom */}
             </section>
 
             {/* Custom AI Prompt Modal */}
