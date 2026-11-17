@@ -924,7 +924,7 @@ function PortfolioBuilderContent() {
                                 {generatingAI ? (
                                     <>
                                         <RefreshCw size={14} className="animate-spin" />
-                                        Developing Portfolio with Gemini...
+                                        Developing Portfolio with classic movements...
                                     </>
                                 ) : (
                                     <>
