@@ -104,6 +104,14 @@ export const metadata = {
       "max-snippet": -1,
     },
   },
+  verification: {
+    other: {
+      "msvalidate.01": "8CA0B8636020035C1FAD4EF19EE7540D",
+    },
+  },
+  other: {
+    "msvalidate.01": "8CA0B8636020035C1FAD4EF19EE7540D",
+  },
 };
 
 export default function RootLayout({ children }) {
@@ -140,6 +148,7 @@ export default function RootLayout({ children }) {
       className={`${inter.variable} ${spaceGrotesk.variable} h-full antialiased`}
     >
       <head>
+        <meta name="msvalidate.01" content="8CA0B8636020035C1FAD4EF19EE7540D" />
         <link rel="icon" href="/favicon-48x48.png" sizes="48x48" type="image/png" />
         <link rel="icon" href="/logo192.png" sizes="192x192" type="image/png" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" sizes="180x180" />

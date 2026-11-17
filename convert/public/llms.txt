@@ -4,11 +4,15 @@
 
 ## Core Capabilities & Online Tools
 
-- [Multiple PDF to Image Converter](https://convert.cvgrid.in/pdf-to-image): Convert single or multiple PDF documents into high-resolution PNG or JPG images at 2x density. Supports batch document upload and ZIP downloads.
+- [PDF to JPG Converter](https://convert.cvgrid.in/pdf-to-jpg): Convert single or multi-page PDF documents into crystal-clear, high-resolution JPG images.
+- [JPG to PDF Converter](https://convert.cvgrid.in/jpg-to-pdf): Turn multiple JPG photos into a single, clean PDF file with customizable A4/Letter sizing.
+- [PDF to PNG Converter](https://convert.cvgrid.in/pdf-to-png): Lossless conversion of PDF pages to high-resolution PNG images, preserving fine details and signatures.
+- [PNG to PDF Converter](https://convert.cvgrid.in/png-to-pdf): Combine transparent and lossless PNG images into unified, ready-to-share PDF documents.
+- [Multiple PDF to Image Converter](https://convert.cvgrid.in/pdf-to-image): Convert batch PDF documents into high-resolution PNG or JPG images at 2x density with ZIP export.
 - [Multiple Images to PDF Converter](https://convert.cvgrid.in/image-to-pdf): Stack and combine multiple JPG, PNG, WebP, or GIF images into formatted PDFs with custom page sizes (Fit Image, A4, US Letter), orientation, and margins.
-- [Merge PDF Files](https://convert.cvgrid.in/merge): Stitch multiple PDF files into one consolidated document with visual reordering.
-- [Split PDF Pages](https://convert.cvgrid.in/split): Extract specific pages or custom page ranges from multi-page documents.
-- [Compress PDF](https://convert.cvgrid.in/compress): Reduce PDF file size below 2MB for ATS job application portals while preserving text layer and layout.
+- [Merge PDF Files](https://convert.cvgrid.in/merge): Stitch multiple PDF files into one consolidated document with visual drag-and-drop reordering.
+- [Split PDF Pages](https://convert.cvgrid.in/split): Extract specific pages or custom page ranges from multi-page documents with instant visual page selection.
+- [Compress PDF](https://convert.cvgrid.in/compress): Reduce PDF file size below 2MB for ATS job application portals while preserving text layers, fonts, and layout.
 
 ## Key Facts & Privacy Model
 

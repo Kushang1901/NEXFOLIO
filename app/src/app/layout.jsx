@@ -208,9 +208,9 @@ export const metadata = {
     verification: {
         google: "ZN33n6Kcv99nzcC0QejmpdyibLv0xQP7mOR8vtqFwgs",
         yandex: "add-your-yandex-verification-token-here",
-        bing: "add-your-bing-webmaster-token-here",
+        bing: "8CA0B8636020035C1FAD4EF19EE7540D",
         other: {
-            "msvalidate.01": "add-your-bing-token-here",
+            "msvalidate.01": "8CA0B8636020035C1FAD4EF19EE7540D",
             "p:domain_verify": "add-your-pinterest-token-here",
         },
     },

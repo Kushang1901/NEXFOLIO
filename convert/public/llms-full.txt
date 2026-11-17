@@ -53,6 +53,26 @@ Unlike traditional PDF converters that transmit files to backend cloud servers, 
   - Reduces file sizes below standard 2MB/5MB job portal upload limits.
   - ATS (Applicant Tracking System) compatibility guaranteed.
 
+### 6. PDF to JPG Converter (`https://convert.cvgrid.in/pdf-to-jpg`)
+- **Input:** Single or multi-page PDF files
+- **Output:** High-resolution JPG images (rendered at 2.0x scale)
+- **Features:** Fast, crystal-clear page rendering, individual or ZIP archive downloads.
+
+### 7. JPG to PDF Maker (`https://convert.cvgrid.in/jpg-to-pdf`)
+- **Input:** Multiple JPG / JPEG photos
+- **Output:** Single consolidated PDF document
+- **Features:** Reorder pages, select standard A4 / US Letter paper sizes, and instant export.
+
+### 8. PDF to PNG Extractor (`https://convert.cvgrid.in/pdf-to-png`)
+- **Input:** PDF document
+- **Output:** Lossless PNG images with sharp text and vector graphic reproduction.
+- **Features:** Ideal for certificates, signatures, digital artwork, and graphic presentations.
+
+### 9. PNG to PDF Combiner (`https://convert.cvgrid.in/png-to-pdf`)
+- **Input:** PNG images with transparency
+- **Output:** Polished, clean multi-page PDF document
+- **Features:** Full transparency support, customizable margins, and orientation presets.
+
 ---
 
 ## Privacy & Security Guarantees
