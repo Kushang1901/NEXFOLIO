@@ -1,12 +1,12 @@
 /** @type {import('next').NextConfig} */
 const cspHeader = `
   default-src 'self';
-  script-src 'self' 'unsafe-inline' 'unsafe-eval' blob:;
-  worker-src 'self' blob:;
+  script-src 'self' 'unsafe-inline' 'unsafe-eval' blob: https://unpkg.com https://cdnjs.cloudflare.com;
+  worker-src 'self' blob: https://unpkg.com;
   style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
   img-src 'self' data: blob: https://cvgrid.in;
   font-src 'self' data: https://fonts.gstatic.com;
-  connect-src 'self' blob: data: https://app.cvgrid.in https://cvgrid.in;
+  connect-src 'self' blob: data: https://app.cvgrid.in https://cvgrid.in https://unpkg.com;
   object-src 'none';
   base-uri 'self';
   form-action 'self';

@@ -7,7 +7,7 @@ import {
     Sparkles, LayoutTemplate, ShieldCheck, ArrowLeft, RefreshCw, Crown,
     Code, Eye, Download, Lock, ExternalLink, Monitor, Tablet, Smartphone,
     Maximize2, Minimize2, Copy, Check, Palette, Terminal, Zap, FileCode, CheckCircle2, ChevronRight,
-    Flame, Landmark, User
+    Flame, Landmark, User, Layers
 } from "lucide-react";
 import Link from "next/link";
 import { showToast } from "../../../utils/toast";
@@ -695,73 +695,96 @@ function PortfolioBuilderContent() {
                             </div>
                         </div>
 
-                        {/* Code Editor & Export Suite (Right column) */}
+                        {/* Export & Deployment Suite (Right column) */}
                         <div className="col-lg-4">
-                            <div className="p-3 rounded-16 h-100 d-flex flex-column" style={{ background: "rgba(10, 13, 25, 0.7)", border: "1px solid rgba(255,255,255,0.08)" }}>
+                            <div className="p-3.5 rounded-16 h-100 d-flex flex-column justify-content-between" style={{ background: "rgba(10, 13, 25, 0.7)", border: "1px solid rgba(255,255,255,0.08)" }}>
                                 
-                                {/* Editor Header */}
-                                <div className="d-flex justify-content-between align-items-center mb-2.5">
-                                    <div className="d-flex gap-1">
-                                        {["html", "css", "js"].map(tab => (
-                                            <button 
-                                                key={tab}
-                                                onClick={() => setActiveEditorTab(tab)}
-                                                className="btn btn-sm px-2.5 py-1 text-uppercase"
-                                                style={{
-                                                    borderRadius: "6px",
-                                                    fontSize: "0.75rem",
-                                                    fontWeight: "700",
-                                                    background: activeEditorTab === tab ? "rgba(99, 102, 241, 0.2)" : "rgba(255,255,255,0.03)",
-                                                    border: `1px solid ${activeEditorTab === tab ? "#6366f1" : "rgba(255,255,255,0.08)"}`,
-                                                    color: activeEditorTab === tab ? "#fff" : "rgba(255,255,255,0.6)"
-                                                }}
-                                            >
-                                                {tab === "html" ? "index.html" : tab === "css" ? "style.css" : "script.js"}
-                                            </button>
-                                        ))}
-                                    </div>
-                                    <button
-                                        onClick={handleCopyCode}
-                                        className="btn btn-sm btn-outline-light py-1 px-2 d-flex align-items-center gap-1 text-white-50 hover-white"
-                                        style={{ borderRadius: "6px", fontSize: "0.72rem" }}
-                                        title="Copy active code file"
-                                    >
-                                        {copiedTab ? <Check size={12} className="text-success" /> : <Copy size={12} />}
-                                        <span>{copiedTab ? "Copied!" : "Copy"}</span>
-                                    </button>
-                                </div>
-
-                                {/* Code Editor Textarea */}
-                                <div className="flex-grow-1 mb-3 position-relative">
-                                    <textarea 
-                                        value={activeEditorTab === "html" ? htmlCode : activeEditorTab === "css" ? cssCode : jsCode}
-                                        onChange={(e) => {
-                                            if (activeEditorTab === "html") setHtmlCode(e.target.value);
-                                            else if (activeEditorTab === "css") setCssCode(e.target.value);
-                                            else setJsCode(e.target.value);
-                                        }}
-                                        className="form-control text-white p-2.5"
-                                        style={{
-                                            height: "360px",
-                                            background: "#05070e",
-                                            border: "1px solid rgba(255,255,255,0.08)",
-                                            borderRadius: "10px",
-                                            fontSize: "0.78rem",
-                                            fontFamily: "'Fira Code', 'Courier New', monospace",
-                                            lineHeight: "1.45"
-                                        }}
-                                    />
-                                </div>
-
-                                {/* Export & Deployment Actions */}
-                                <div className="p-3 rounded-12 mt-auto" style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.06)" }}>
-                                    <div className="d-flex justify-content-between align-items-center mb-2">
-                                        <span className="text-white fw-bold small">Export & Deployment</span>
-                                        {isPortfolioPaid && (
+                                <div>
+                                    {/* Header */}
+                                    <div className="d-flex justify-content-between align-items-center mb-3">
+                                        <div className="d-flex align-items-center gap-2">
+                                            <div className="rounded-8 p-1.5" style={{ background: "rgba(99, 102, 241, 0.15)", border: "1px solid rgba(99, 102, 241, 0.3)" }}>
+                                                <Layers size={16} className="text-indigo-400" />
+                                            </div>
+                                            <div>
+                                                <h4 className="text-white fw-bold mb-0" style={{ fontSize: "0.95rem" }}>Portfolio Package</h4>
+                                                <span className="text-white-50" style={{ fontSize: "0.72rem" }}>Production-Ready Web Bundle</span>
+                                            </div>
+                                        </div>
+                                        {isPortfolioPaid ? (
                                             <span className="badge bg-success/20 text-success border border-success/30 px-2 py-0.5" style={{ fontSize: "0.68rem" }}>
                                                 License Unlocked
                                             </span>
+                                        ) : (
+                                            <span className="badge bg-warning/20 text-warning border border-warning/30 px-2 py-0.5" style={{ fontSize: "0.68rem" }}>
+                                                Commercial License
+                                            </span>
                                         )}
+                                    </div>
+
+                                    {/* What's Included Card */}
+                                    <div className="p-3 rounded-12 mb-3" style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.06)" }}>
+                                        <span className="text-white-50 fw-semibold text-uppercase d-block mb-2" style={{ fontSize: "0.68rem", letterSpacing: "0.5px" }}>
+                                            What&apos;s Included in Your Build
+                                        </span>
+                                        <div className="d-flex flex-column gap-2">
+                                            <div className="d-flex align-items-center justify-content-between text-white-50 small" style={{ fontSize: "0.78rem" }}>
+                                                <span className="d-flex align-items-center gap-2 text-white">
+                                                    <Check size={14} className="text-success" /> Semantic HTML5 File
+                                                </span>
+                                                <span className="badge bg-dark text-white-50 border border-secondary" style={{ fontSize: "0.68rem" }}>index.html</span>
+                                            </div>
+                                            <div className="d-flex align-items-center justify-content-between text-white-50 small" style={{ fontSize: "0.78rem" }}>
+                                                <span className="d-flex align-items-center gap-2 text-white">
+                                                    <Check size={14} className="text-success" /> Modern Responsive CSS
+                                                </span>
+                                                <span className="badge bg-dark text-white-50 border border-secondary" style={{ fontSize: "0.68rem" }}>style.css</span>
+                                            </div>
+                                            <div className="d-flex align-items-center justify-content-between text-white-50 small" style={{ fontSize: "0.78rem" }}>
+                                                <span className="d-flex align-items-center gap-2 text-white">
+                                                    <Check size={14} className="text-success" /> Interactive Effects & Animations
+                                                </span>
+                                                <span className="badge bg-dark text-white-50 border border-secondary" style={{ fontSize: "0.68rem" }}>script.js</span>
+                                            </div>
+                                            <div className="d-flex align-items-center justify-content-between text-white-50 small" style={{ fontSize: "0.78rem" }}>
+                                                <span className="d-flex align-items-center gap-2 text-white">
+                                                    <Check size={14} className="text-success" /> Instant 2-Min Deploy Guides
+                                                </span>
+                                                <span className="badge bg-dark text-white-50 border border-secondary" style={{ fontSize: "0.68rem" }}>README.md</span>
+                                            </div>
+                                            <div className="d-flex align-items-center justify-content-between text-white-50 small" style={{ fontSize: "0.78rem" }}>
+                                                <span className="d-flex align-items-center gap-2 text-white">
+                                                    <Check size={14} className="text-success" /> Responsive Mobile & Desktop Layout
+                                                </span>
+                                                <span className="text-emerald-400 font-monospace" style={{ fontSize: "0.72rem" }}>100% Verified</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Deployment Targets */}
+                                    <div className="p-3 rounded-12 mb-3" style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.06)" }}>
+                                        <span className="text-white-50 fw-semibold text-uppercase d-block mb-2" style={{ fontSize: "0.68rem", letterSpacing: "0.5px" }}>
+                                            1-Click Free Hosting Compatible
+                                        </span>
+                                        <div className="d-flex flex-wrap gap-1.5">
+                                            {["Vercel", "Netlify", "GitHub Pages", "Cloudflare Pages", "Any Host"].map((platform) => (
+                                                <span 
+                                                    key={platform}
+                                                    className="px-2 py-1 rounded-6 text-white"
+                                                    style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)", fontSize: "0.72rem" }}
+                                                >
+                                                    {platform}
+                                                </span>
+                                            ))}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Export & Deployment Actions */}
+                                <div className="p-3 rounded-12 mt-2" style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.08)" }}>
+                                    <div className="d-flex justify-content-between align-items-center mb-2.5">
+                                        <span className="text-white fw-bold small">Export Package</span>
+                                        <span className="text-white-50" style={{ fontSize: "0.72rem" }}>Instant Delivery</span>
                                     </div>
                                     
                                     {/* Primary Download Button */}
@@ -795,9 +818,12 @@ function PortfolioBuilderContent() {
                                     </button>
 
                                     <p className="text-white-50 text-center small mt-2 mb-0" style={{ fontSize: "0.68rem" }}>
-                                        Includes <code className="text-indigo-300">README.md</code> with 2-min free deploy guides for Vercel, Netlify & GitHub Pages.
+                                        Zero lock-in. Full ownership of all source files.
                                     </p>
                                 </div>
+
+                            </div>
+                        </div>
 
                             </div>
                         </div>

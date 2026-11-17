@@ -33,7 +33,7 @@ export default function SplitPdf() {
       import("pdfjs-dist")
         .then((pdfjs) => {
           pdfjsRef.current = pdfjs;
-          pdfjs.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
+          pdfjs.GlobalWorkerOptions.workerSrc = "/pdf.worker.min.mjs";
         })
         .catch((err) => console.error("Error loading PDF.js:", err));
     }
@@ -43,10 +43,12 @@ export default function SplitPdf() {
     e.preventDefault();
   };
 
+  const isPdf = (f) => f && (f.type === "application/pdf" || (f.name && f.name.toLowerCase().endsWith(".pdf")));
+
   const handleDrop = (e) => {
     e.preventDefault();
     const droppedFile = e.dataTransfer.files[0];
-    if (droppedFile && droppedFile.type === "application/pdf") {
+    if (isPdf(droppedFile)) {
       processFile(droppedFile);
     } else {
       setError("Please drop a valid PDF file.");
@@ -55,7 +57,7 @@ export default function SplitPdf() {
 
   const handleFileChange = (e) => {
     const selectedFile = e.target.files[0];
-    if (selectedFile && selectedFile.type === "application/pdf") {
+    if (isPdf(selectedFile)) {
       processFile(selectedFile);
     } else if (selectedFile) {
       setError("Please select a valid PDF file.");

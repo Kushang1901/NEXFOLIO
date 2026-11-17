@@ -42,7 +42,7 @@ export default function PdfToImageClient({
       import("pdfjs-dist")
         .then((pdfjs) => {
           pdfjsRef.current = pdfjs;
-          pdfjs.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
+          pdfjs.GlobalWorkerOptions.workerSrc = "/pdf.worker.min.mjs";
         })
         .catch((err) => console.error("Error loading PDF.js:", err));
     }

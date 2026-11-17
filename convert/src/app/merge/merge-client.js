@@ -41,7 +41,9 @@ export default function MergePdf() {
 
   const handlePdfFiles = async (selectedFiles) => {
     setError("");
-    const pdfFiles = selectedFiles.filter((file) => file.type === "application/pdf");
+    const pdfFiles = selectedFiles.filter(
+      (file) => file.type === "application/pdf" || (file.name && file.name.toLowerCase().endsWith(".pdf"))
+    );
 
     if (pdfFiles.length === 0) {
       setError("Please upload valid PDF files.");
